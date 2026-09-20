@@ -1283,9 +1283,9 @@ async function renderCheckoutStep2(){
     </div>
 
     ${currentUser ? `
-    <div class="modal-section">
-      <div class="modal-label">💰 WALLET BALANCE: ${walletBalance.toLocaleString()} ကျပ်</div>
-      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink);" onclick="payWithWallet()">Wallet ဖြင့် ချက်ချင်း ဝယ်မည်</button>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည်</p>`}
+    <div class="modal-section" style="${canPayWithWallet?'background:#1f2a0a; border:2px solid var(--acid); padding:14px;':''}">
+      <div class="modal-label" style="${canPayWithWallet?'color:var(--acid);':''}">💰 PREPAID CARD (WALLET) — လက်ကျန်: ${walletBalance.toLocaleString()} ကျပ်</div>
+      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); font-size:15px; padding:14px;" onclick="payWithWallet()">⚡ Prepaid Card ဖြင့် ချက်ချင်း ဝယ်မည် (Screenshot မလို)</button>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည် (သို့) <a href="#" onclick="closeCheckout(); return false;" class="auth-link" style="display:inline; margin:0;">Profile ကနေ ငွေဖြည့်ပါ</a></p>`}
     </div>` : ''}
 
     <div class="modal-section">
@@ -1646,6 +1646,84 @@ function buildCustomerReceiptHtml(rows){
 
 function openCustomerReceipt(rows){
   const html = buildCustomerReceiptHtml(rows);
+  const win = window.open('', '_blank', 'width=400,height=700');
+  if(!win){ alert('Popup ပိတ်ခံနေရပါသည် — Browser Settings ထဲက Popup ခွင့်ပြုပေးပါ'); return; }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
+function buildTransactionReceiptHtml(kind, record){
+  // kind: 'topup' or 'giftcard'
+  const statusLabels = { pending:'⏳ စစ်ဆေးဆဲ', approved:'✅ အတည်ပြုပြီး', rejected:'❌ ငြင်းပယ်ခံရ', active:'✅ Active', redeemed:'☑️ Redeemed' };
+  const title = kind==='topup' ? 'WALLET TOP-UP RECEIPT' : 'GIFT CARD RECEIPT';
+  const name = kind==='topup' ? (record.customer_name||currentUser?.email) : (record.purchaser_name||currentUser?.email);
+  const stamp = kind==='topup' ? 'WALLET TOP-UP' : 'GIFT CARD';
+
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>${title} — SUWATI MEN FASHION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#141412; --rust:#C13B1F; --acid:#7a9600; --grey:#666; }
+  *{box-sizing:border-box;}
+  body{ font-family:'Space Mono',monospace; width:320px; margin:20px auto; padding:0; color:var(--ink); background:#fff; }
+  .receipt-box{ border:3px solid var(--ink); padding:18px 16px; }
+  .brand{ text-align:center; }
+  .brand .logo{ font-family:'Anton',sans-serif; font-size:30px; letter-spacing:.01em; line-height:1; }
+  .brand .logo .dot{ color:var(--rust); }
+  .brand .tagline{ font-size:10px; letter-spacing:.25em; color:var(--grey); margin-top:2px; }
+  .stamp-row{ display:flex; justify-content:center; margin:12px 0; }
+  .stamp{ border:2px solid var(--ink); padding:4px 14px; font-size:10px; letter-spacing:.15em; transform:rotate(-1.5deg); }
+  hr.solid{ border:none; border-top:3px solid var(--ink); margin:12px 0; }
+  hr.dashed{ border:none; border-top:1.5px dashed #999; margin:10px 0; }
+  .meta{ font-size:11.5px; line-height:1.9; }
+  .meta b{ font-weight:700; }
+  .total-box{ border:3px solid var(--ink); padding:10px 14px; margin:14px 0; display:flex; justify-content:space-between; align-items:center; }
+  .total-box .label{ font-family:'Anton',sans-serif; font-size:16px; letter-spacing:.03em; }
+  .total-box .value{ font-family:'Anton',sans-serif; font-size:24px; }
+  .payment-tag{ display:inline-block; border:2px solid var(--ink); padding:4px 10px; font-size:11px; letter-spacing:.05em; margin-top:6px; }
+  .giftcard-code-box{background:#f2efe6; border:3px dashed var(--rust); padding:14px; text-align:center; margin:12px 0;}
+  .giftcard-code-box .gc-code{font-size:17px; font-weight:700; letter-spacing:1.5px; color:var(--rust);}
+  .footer{ text-align:center; margin-top:16px; }
+  .footer .thanks{ font-family:'Anton',sans-serif; font-size:18px; }
+  .footer .sub{ font-size:10px; color:var(--grey); letter-spacing:.1em; margin-top:4px; }
+  .print-btn{ display:block; width:100%; margin-top:16px; padding:12px; background:var(--ink); color:#fff; border:none; font-family:'Space Mono',monospace; font-size:13px; cursor:pointer; letter-spacing:.05em; }
+  @media print{ .print-btn{ display:none; } }
+</style>
+</head>
+<body>
+  <div class="receipt-box">
+    <div class="brand">
+      <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
+      <div class="tagline">FASHION</div>
+    </div>
+    <div class="stamp-row"><div class="stamp">${stamp}</div></div>
+    <hr class="solid">
+    <div class="meta">
+      <b>Reference #</b>&nbsp; ${(kind==='topup'?record.id:record.code).toString().slice(0,12).toUpperCase()}<br>
+      <b>Date</b>&nbsp; ${new Date(record.created_at).toLocaleString()}<br>
+      <b>Name</b>&nbsp; ${name}
+    </div>
+    <hr class="dashed">
+    <div class="total-box">
+      <span class="label">${kind==='topup'?'TOP-UP':'AMOUNT'}</span>
+      <span class="value">${Number(record.amount).toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
+    </div>
+    <div class="payment-tag">Status: ${statusLabels[record.status]||record.status}</div>
+    ${kind==='giftcard' && record.status==='active' ? `<div class="giftcard-code-box"><div class="mono" style="font-size:10px; color:var(--grey); margin-bottom:4px;">GIFT CARD CODE</div><div class="gc-code">${record.code}</div></div>` : ''}
+    <hr class="solid">
+    <div class="footer">
+      <div class="thanks">ကျေးဇူးတင်ပါသည်!</div>
+      <div class="sub">SUWATI MEN FASHION · @swtmenfashion517</div>
+    </div>
+  </div>
+  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+</body></html>`;
+}
+
+function openTransactionReceipt(kind, record){
+  const html = buildTransactionReceiptHtml(kind, record);
   const win = window.open('', '_blank', 'width=400,height=700');
   if(!win){ alert('Popup ပိတ်ခံနေရပါသည် — Browser Settings ထဲက Popup ခွင့်ပြုပေးပါ'); return; }
   win.document.open();
@@ -2106,12 +2184,14 @@ async function openWalletHistory(){
   const box = document.getElementById('checkout-modal-content');
   const { data, error } = await sb.from('wallet_topups').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
   const statusLabels = { pending:'⏳ စစ်ဆေးဆဲ', approved:'✅ အတည်ပြုပြီး', rejected:'❌ ငြင်းပယ်ခံရ' };
+  window.walletTopupCache = data || [];
 
-  const listHtml = (!error && data && data.length) ? data.map(t=>`
+  const listHtml = (!error && data && data.length) ? data.map((t,i)=>`
     <div class="history-item">
       <div class="row1"><span>${new Date(t.created_at).toLocaleDateString()}</span><span>${statusLabels[t.status]||t.status}</span></div>
       <h5>${Number(t.amount).toLocaleString()} ကျပ်</h5>
       ${t.status==='rejected' && t.rejection_reason ? `<div class="mono" style="font-size:11px; color:var(--rust);">${t.rejection_reason}</div>` : ''}
+      <button type="button" class="auth-link" style="display:inline-block; margin-top:6px;" onclick="openTransactionReceipt('topup', walletTopupCache[${i}])">🧾 Receipt ကြည့်ရန်</button>
     </div>`).join('') : '<p class="hint">Top-up မှတ်တမ်း မရှိသေးပါ</p>';
 
   box.innerHTML = `
@@ -2257,12 +2337,17 @@ async function openMyGiftCards(){
   const box = document.getElementById('checkout-modal-content');
   const { data, error } = await sb.from('gift_cards').select('*').eq('purchased_by', currentUser.id).order('created_at', { ascending:false });
   const statusLabels = { pending:'⏳ စစ်ဆေးဆဲ', active:'✅ အသုံးပြုနိုင်ပြီ', redeemed:'☑️ အသုံးပြုပြီးသား', rejected:'❌ ငြင်းပယ်ခံရ' };
+  window.myGiftCardsCache = data || [];
 
-  const listHtml = (!error && data && data.length) ? data.map(g=>`
+  const listHtml = (!error && data && data.length) ? data.map((g,i)=>`
     <div class="history-item">
       <div class="row1"><span>${new Date(g.created_at).toLocaleDateString()}</span><span>${statusLabels[g.status]||g.status}</span></div>
       <h5>${Number(g.amount).toLocaleString()} ကျပ်</h5>
       ${g.status==='active' ? `<div class="giftcard-code-box" style="margin-top:8px; padding:10px;"><div class="gc-code" style="font-size:15px;">${g.code}</div></div>` : ''}
+      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+        <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openTransactionReceipt('giftcard', myGiftCardsCache[${i}])">🧾 Receipt</button>
+        ${g.status==='active' ? `<button type="button" class="auth-link" style="display:inline-block; margin:0; color:var(--acid);" onclick="useMyGiftCardNow(${i})">🎁 ယခုပဲ သုံးမည်</button>` : ''}
+      </div>
     </div>`).join('') : '<p class="hint">Gift Card မရှိသေးပါ</p>';
 
   box.innerHTML = `
@@ -2270,6 +2355,16 @@ async function openMyGiftCards(){
     <h3>🎁 ကျွန်ုပ်၏ Gift Card များ</h3>
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">${listHtml}</div>
     <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="renderProfileView()">← Profile ပြန်သွားရန်</button>`;
+}
+
+async function useMyGiftCardNow(idx){
+  const g = window.myGiftCardsCache[idx];
+  if(!confirm(`ဒီ Gift Card (${Number(g.amount).toLocaleString()} ကျပ်) ကို ယခုပဲ Wallet ထဲ ထည့်သုံးမှာ သေချာပါသလား?`)) return;
+  const { data, error } = await sb.rpc('redeem_gift_card', { p_code: g.code });
+  if(error || !data){ showSiteToast('Error: ' + (error?.message || 'မသိသော Error')); return; }
+  if(!data.success){ showSiteToast(data.message); return; }
+  showSiteToast(`🎉 ${Number(data.amount).toLocaleString()} ကျပ် Wallet ထဲ ဝင်ပါပြီ`);
+  renderProfileView();
 }
 
 function renderProfileEdit(){
