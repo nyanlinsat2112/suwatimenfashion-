@@ -1,0 +1,3210 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD/ElEQVR4nO2Wa4hVVRTHf3vvc885c8dznXtnxnTEHphWjkWIUhYRSQoRKUkUTRr2oAf4oQ+BEBgRQRmUiBI9ILVSP4gRk1b2tKRvRWom5WOcwZkxipm5d+6Ze+6595y9+zAPayjmjI4NQevj2RzWj7X+67+WaGjIGSYx5GQm/x/gvw8ghEAI8e8CSClRSgEQxzFxHAOg1Lnv4wlrvMl9f4AoiqitTeO6LkJAWKlSKBQxxpDJeBiTfLITAwgh8H2fW25ezMq772LunNnkslmEgEJ/kTOdXez76FNa936Cbdsk7YxIYkRSSopFn7VPPspz69fhuA4C6MsXAMjW1VGNqggh2LT5dZ59/iUynofW+sIBpBQEQcicK69g/749WJbF6fYOXtywkeMnTgFw3bXNrH/maWbOnEHa81i+4j4+/+JrPG/KmBBjtkAISRiGzG++Btu2SaUstm7fye49rTQ21hPHmsNHfkIIeOSh1bSdbkfHGqmS6TuRBoQQVCpVpBCEYYWbblzEjl27KfT3o6Qim53Kh/v207p3P6VSCduxSdfUTEwLhBBUq1UaGur57OP3yWWzVKtVTpw8xZcHDnL48FF+OX6SM51d+P4AmYyHUoooihJ5RGIR+v4Ay5bexqsvv8CMGZeQSqWQUlIqBfT09HK6vYOvDhxk27u76O3to2aiKjAaoqlpOnfesZTFNyziqrlzaGqaTraujljHWEpx9NjPtDz4GN3dZ7Fte0xPSAwwXM4gKFOpVFBKUp/Lcells1i44HrWrL6fpqbp1Nfn2Lp9B2ufWjcINuSUFwxQLodkMh61tWny+QKpVIowDKlWI3zfp7n5aj7Y/R6NjQ38ePQYy1e2JNJA4inYsmkDixYuAGNYcc8q2tra8TwPpSSu69Dd/SulUgmlJFprjDETA6CUIp8vEARl5s2fR89vv/PmaxvZtOUNOjrOoI0hWzeVh9c8wLRpjTi2ww+HjuD7A2SzE9ACIQRRFOE4Dm+/tZnbl9yKALQ29OXzaK3JZDLUuA7aGL77/hCr1jxOT08vqVRqYkQ47AUpy2JVy70sW7qEWbNmkvGmDC2pAbq6z3Lgm2/Z9s5O+vuLuK6L1vpv9/2fh3NcU6C1pr9YxHUccrks6XQaAZSCMn19fZRKAZ43Bcuy0FqjgbI2DCvBMHiAuPKcNhIDDENIOSiyKIpGjEZKiWVZI2/GGDSQUYLZriIeaoMEygaOB+d0Ma6DxBgzIirLsv7xTQKBNsxOK165vJZADwI4AtrKMU+0DZwfwOiEY4UGStoQDgFoAeGo3yb9Kj7vCiQJCbgChlXoCLBHedNFAxBAoKEt1CMtsAV0Vv66Icc1BRcjJl0Dkw7wB12FsHsHaQV6AAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUWATI Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root{
+    --ink:#141412; --concrete:#E9E4D8; --rust:#C13B1F; --acid:#D6FF3F; --grey:#87806f; --paper:#f2efe6;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--ink); color:var(--concrete); font-family:'Noto Sans Myanmar',sans-serif; min-height:100vh;}
+  .display{font-family:'Anton',sans-serif;}
+  .mono{font-family:'Space Mono',monospace;}
+  a{color:inherit;}
+
+  /* ---- LOGIN ---- */
+  #login-screen{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:18px; padding:24px;
+  }
+  #login-screen h1{font-size:clamp(34px,7vw,54px);}
+  #login-screen .dot{color:var(--rust);}
+  #login-screen form{display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px;}
+  input,textarea,select{
+    background:var(--paper); color:var(--ink); border:2.5px solid var(--concrete); padding:12px; font-family:'Space Mono',monospace; font-size:14px; width:100%;
+  }
+  textarea{font-family:'Noto Sans Myanmar',sans-serif; min-height:90px;}
+  button{
+    cursor:pointer; border:2.5px solid var(--concrete); background:var(--rust); color:var(--concrete);
+    font-family:'Space Mono',monospace; font-size:14px; padding:12px; letter-spacing:.03em;
+  }
+  button.secondary{background:transparent;}
+  button.acid{background:var(--acid); color:var(--ink); border-color:var(--acid); font-weight:700;}
+  #login-error{color:var(--rust); font-family:'Space Mono',monospace; font-size:13px; min-height:16px;}
+
+  /* ---- DASHBOARD ---- */
+  #dashboard{display:none;}
+  header{
+    display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:3px solid var(--concrete);
+  }
+  header .logo{font-size:22px;}
+  .tabs{display:flex; gap:8px; padding:20px 24px 0;}
+  .tab-btn{
+    background:transparent; border:2.5px solid var(--concrete); color:var(--concrete); padding:9px 18px; font-size:13px;
+  }
+  .tab-btn.active{background:var(--concrete); color:var(--ink);}
+  .panel{display:none; padding:24px; max-width:900px; margin:0 auto;}
+  .panel.active{display:block;}
+
+  .form-card{
+    background:#1f1e1a; border:2.5px solid var(--concrete); padding:20px; margin-bottom:26px;
+  }
+  .form-card h3{font-family:'Anton',sans-serif; font-size:20px; margin-bottom:14px;}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .form-grid .full{grid-column:1/-1;}
+  @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
+  .form-actions{display:flex; gap:10px; margin-top:14px;}
+
+  .list-item{
+    display:flex; gap:14px; align-items:center; border:2px solid #3a382f; padding:12px; margin-bottom:10px; background:#1a1916;
+  }
+  .list-item img{width:64px; height:64px; object-fit:cover; border:2px solid var(--concrete); flex-shrink:0;}
+  .list-item .info{flex:1; min-width:0;}
+  .list-item .info h4{font-size:15px;}
+  .list-item .info p{font-size:12.5px; color:var(--grey); font-family:'Space Mono',monospace; margin-top:3px;}
+  .list-item .actions{display:flex; gap:8px;}
+  .list-item .actions button{padding:8px 12px; font-size:12px;}
+  .status-badge{
+    font-family:'Space Mono',monospace; font-size:11px; padding:3px 8px; border:1.5px solid; display:inline-block; margin-top:4px;
+  }
+  .status-badge.available{color:var(--acid); border-color:var(--acid);}
+  .status-badge.sold_out{color:var(--rust); border-color:var(--rust);}
+  #toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--acid); color:var(--ink);
+    padding:12px 22px; font-family:'Space Mono',monospace; font-size:13px; display:none; z-index:99;
+  }
+  .hint{font-family:'Space Mono',monospace; font-size:11.5px; color:var(--grey); margin-top:-6px; margin-bottom:10px;}
+
+#color-stock-fields{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
+.color-stock-field{display:flex; align-items:center; gap:6px; background:#1f1e1a; border:1.5px solid var(--concrete); padding:6px 10px;}
+.color-stock-field label{font-family:'Space Mono',monospace; font-size:12px;}
+.color-stock-field input{width:60px; padding:5px; margin:0;}
+
+.size-chip-btn{
+  font-family:'Space Mono',monospace; font-size:12.5px; padding:7px 14px; border:2px solid var(--concrete);
+  background:transparent; color:var(--concrete); cursor:pointer;
+}
+.size-chip-btn.active{background:var(--acid); color:var(--ink); border-color:var(--acid);}
+
+.tag-toggle-btn{
+  font-family:'Space Mono',monospace; font-size:12.5px; padding:7px 14px; border:2px solid var(--concrete);
+  background:transparent; color:var(--concrete); cursor:pointer; white-space:nowrap;
+}
+.tag-toggle-btn.active{background:var(--rust); color:var(--concrete); border-color:var(--rust);}
+
+.img-preview-thumb{position:relative; width:64px; height:64px;}
+.img-preview-thumb img{width:100%; height:100%; object-fit:cover; border:2px solid var(--concrete); cursor:zoom-in;}
+.img-preview-thumb .cover-badge{position:absolute; bottom:-2px; left:-2px; background:var(--acid); color:var(--ink); font-size:9px; padding:1px 4px; font-family:'Space Mono',monospace;}
+
+#lightbox-overlay{
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:500;
+  align-items:center; justify-content:center; cursor:zoom-out; padding:30px;
+}
+#lightbox-overlay.open{display:flex;}
+#lightbox-overlay img{max-width:100%; max-height:100%; object-fit:contain; border:2px solid var(--concrete);}
+
+.variant-stock-table{border-collapse:collapse; width:100%; margin-bottom:10px;}
+.variant-stock-table th, .variant-stock-table td{border:1.5px solid var(--concrete); padding:6px; text-align:center; font-family:'Space Mono',monospace; font-size:12px;}
+.variant-stock-table th{background:#1f1e1a;}
+.variant-stock-table input{width:56px; padding:4px; margin:0; text-align:center;}
+
+.order-card{border:2px solid #3a382f; background:#1a1916; padding:16px; margin-bottom:14px;}
+.order-card .row1{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
+.order-card h4{font-family:'Anton',sans-serif; font-size:17px;}
+.order-card .oid{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey);}
+.order-card .details{font-family:'Space Mono',monospace; font-size:12.5px; color:#c9c4b6; margin-top:8px; line-height:1.8;}
+.order-card .ss-thumb{width:70px; height:70px; object-fit:cover; border:2px solid var(--concrete); margin-top:10px; cursor:pointer;}
+.order-card select{width:auto; margin-top:10px; margin-right:8px; display:inline-block;}
+
+.inventory-table-styled{width:100%; border-collapse:collapse; font-family:'Space Mono',monospace; font-size:13.5px; line-height:1.7;}
+.inventory-table-styled thead tr{border-bottom:2px solid var(--concrete);}
+.inventory-table-styled th{padding:12px 14px; text-align:left; font-size:12px; letter-spacing:.04em; color:var(--grey); white-space:nowrap;}
+#inventory-table td{padding:14px; border-bottom:1px solid #3a382f; vertical-align:top;}
+#inventory-table tr:hover td{background:#1f1e1a;}
+#inventory-table tr.low-stock td{color:#ff8a5c;}
+#inventory-table tr.out-stock td{color:#6b665a;}
+.stock-badge{padding:3px 8px; border:1.5px solid; font-size:10.5px; white-space:nowrap; display:inline-block; line-height:1.5;}
+.inventory-table-styled td:last-child{white-space:nowrap;}
+@media (max-width:600px){
+  .inventory-table-styled{font-size:11.5px;}
+  .inventory-table-styled th, #inventory-table td{padding:8px 6px;}
+}
+.stock-badge.ok{color:var(--acid); border-color:var(--acid);}
+.stock-badge.low{color:#ff8a5c; border-color:#ff8a5c;}
+.stock-badge.out{color:var(--rust); border-color:var(--rust);}
+
+.inventory-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
+.inventory-card .inv-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px;}
+.inventory-card .inv-name{font-weight:700; font-size:15px;}
+.inventory-card .inv-meta{font-family:'Space Mono',monospace; font-size:11.5px; color:var(--grey);}
+.inventory-card .inv-price{font-family:'Space Mono',monospace; font-size:13px; color:var(--concrete); margin-top:2px;}
+.variant-chip-row{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px;}
+.variant-chip{
+  font-family:'Space Mono',monospace; font-size:11.5px; padding:5px 9px; border:1.5px solid; white-space:nowrap;
+}
+.variant-chip.stock-good{color:var(--acid); border-color:var(--acid);}
+.variant-chip.stock-low{color:#ff8a5c; border-color:#ff8a5c;}
+.variant-chip.stock-out{color:var(--rust); border-color:var(--rust); opacity:.7;}
+.inventory-card .inv-footer{display:flex; justify-content:space-between; margin-top:10px; font-family:'Space Mono',monospace; font-size:11.5px; color:var(--grey);}
+
+@keyframes flashNewOrder{
+  0%, 100% { background:transparent; }
+  50% { background:var(--rust); color:var(--concrete); }
+}
+.tab-btn.flash-alert{ animation:flashNewOrder .6s ease-in-out 4; }
+.new-order-dot{
+  display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--rust);
+  margin-left:5px; vertical-align:middle;
+}
+
+.log-entry{border-bottom:1px solid #3a382f; padding:10px 4px; font-family:'Space Mono',monospace; font-size:12.5px;}
+.log-entry .log-time{color:var(--grey); font-size:11px;}
+.log-entry .log-admin{color:var(--acid);}
+.log-entry .log-action{color:var(--concrete); font-weight:700;}
+
+.msg-thread-item{display:flex; justify-content:space-between; align-items:center; border:2px solid #3a382f; background:#1a1916; padding:12px 14px; margin-bottom:8px; cursor:pointer;}
+.msg-thread-item:hover{background:#232219;}
+.msg-thread-item .mt-name{font-weight:700;}
+.msg-thread-item .mt-preview{font-size:12px; color:var(--grey); margin-top:3px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.msg-thread-item .mt-time{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey);}
+.msg-thread-item.unread{border-color:var(--acid);}
+.admin-chat-bubble{padding:9px 13px; margin:6px 0; max-width:80%; font-size:13px; border-radius:2px;}
+.admin-chat-bubble.customer{background:#2a2924; border:1.5px solid var(--concrete);}
+.admin-chat-bubble.admin{background:var(--rust); color:var(--concrete); margin-left:auto;}
+.admin-chat-log{max-height:340px; overflow-y:auto; display:flex; flex-direction:column; margin:12px 0; padding:10px; background:#1a1916; border:1.5px solid #3a382f;}
+
+.delivery-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
+.delivery-card.delivered-done{opacity:.75; border-color:var(--acid);}
+.dc-status.dc-done{border-color:var(--acid); color:var(--acid);}
+.delivery-card .dc-status{font-family:'Space Mono',monospace; font-size:10.5px; padding:2px 8px; border:1.5px solid var(--acid); color:var(--acid); display:inline-block; margin-top:6px;}
+
+.sr-period-btn.active{background:var(--acid); color:var(--ink); border-color:var(--acid);}
+
+.customer-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
+.customer-card .row1{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
+.customer-card h4{font-family:'Anton',sans-serif; font-size:16px;}
+.customer-card .cstats{font-family:'Space Mono',monospace; font-size:12px; color:var(--acid); text-align:right;}
+.customer-card .cdetails{font-family:'Space Mono',monospace; font-size:12.5px; color:#c9c4b6; margin-top:8px; line-height:1.8;}
+.customer-card .view-orders-btn{margin-top:10px; padding:8px 14px; font-size:12px;}
+.customer-order-history{margin-top:10px; padding-top:10px; border-top:1px solid #3a382f; display:none;}
+.customer-order-history.open{display:block;}
+.customer-order-history .coh-item{font-family:'Space Mono',monospace; font-size:12px; padding:6px 0; border-bottom:1px dashed #3a382f;}
+
+.pos-result-item{display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#1f1e1a; border:1.5px solid var(--concrete); cursor:pointer;}
+.pos-result-item:hover{background:#2a2924;}
+.pos-quick-tile{
+  background:#1f1e1a; border:2px solid var(--acid); padding:8px 12px; cursor:pointer; text-align:center; min-width:100px;
+}
+.pos-quick-tile:hover{background:var(--acid); color:var(--ink);}
+.pos-quick-tile .pqt-name{font-size:12px; font-weight:700; font-family:'Space Mono',monospace;}
+.pos-quick-tile .pqt-count{font-size:10px; color:var(--grey); margin-top:2px;}
+.pos-quick-tile:hover .pqt-count{color:var(--ink);}
+.pos-selected-box{background:#1f1e1a; border:2px solid var(--acid); padding:14px; margin-top:10px;}
+.pos-cart-item{display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed #3a382f; font-family:'Space Mono',monospace; font-size:13px;}
+.channel-badge{font-family:'Space Mono',monospace; font-size:10px; padding:2px 7px; border:1px solid; margin-left:6px;}
+.channel-badge.in_store{color:var(--acid); border-color:var(--acid);}
+.channel-badge.online{color:#87806f; border-color:#87806f;}
+
+.closing-summary-row{display:flex; gap:20px; flex-wrap:wrap; margin:14px 0;}
+.closing-method-card{background:#1f1e1a; border:1.5px solid var(--concrete); padding:14px 18px; min-width:150px;}
+.closing-method-card .cm-label{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey);}
+.closing-method-card .cm-value{font-family:'Anton',sans-serif; font-size:22px; color:var(--acid); margin-top:4px;}
+.closing-method-card .cm-count{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div id="login-screen">
+  <h1 class="display">SUWATI<span class="dot">.</span>ADMIN</h1>
+  <p class="hint" style="text-align:center; margin-top:-10px; margin-bottom:20px;">Admin / Staff / Delivery Login</p>
+  <form id="login-form">
+    <input type="email" id="login-email" placeholder="Email" required>
+    <input type="password" id="login-password" placeholder="Password" required>
+    <button type="submit" class="acid">Login</button>
+    <div id="login-error"></div>
+  </form>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div id="dashboard">
+  <header>
+    <div class="logo display" id="dashboard-logo">SUWATI<span class="dot">.</span>ADMIN</div>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <span id="admin-email-display" class="hint" style="margin:0;"></span>
+      <button id="refresh-btn" class="secondary" title="လက်ရှိ Tab ကို Refresh လုပ်ရန်">🔄</button>
+      <button id="logout-btn" class="secondary">Logout</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn" data-tab="pos-panel" id="pos-tab-btn">🏪 POS (အပြင်ရောင်း)</button>
+    <button class="tab-btn active" data-tab="products-panel">ပစ္စည်းများ</button>
+    <button class="tab-btn" data-tab="inventory-panel">Inventory</button>
+    <button class="tab-btn" data-tab="categories-panel">Categories</button>
+    <button class="tab-btn" data-tab="activitylog-panel">Activity Log</button>
+    <button class="tab-btn" data-tab="posts-panel">Post များ</button>
+    <button class="tab-btn" data-tab="orders-panel" id="orders-tab-btn">🌐 Online အော်ဒါများ</button>
+    <button class="tab-btn" data-tab="salesreport-panel">Sales Report</button>
+    <button class="tab-btn" data-tab="customers-panel">Customers</button>
+    <button class="tab-btn" data-tab="banners-panel">Banners</button>
+    <button class="tab-btn" data-tab="settings-panel">Settings</button>
+    <button class="tab-btn" data-tab="staff-panel">Staff</button>
+    <button class="tab-btn" data-tab="messages-panel" id="messages-tab-btn">💬 Messages</button>
+    <button class="tab-btn" data-tab="delivery-panel" id="delivery-tab-btn">🚚 Delivery</button>
+    <button class="tab-btn" data-tab="salehistory-panel" id="salehistory-tab-btn">📋 Sale History</button>
+    <button class="tab-btn" data-tab="wallet-panel" id="wallet-tab-btn">💰 Wallet</button>
+  </div>
+
+  <!-- POS (IN-STORE SALE) -->
+  <div class="panel" id="pos-panel">
+    <div class="form-card">
+      <h3>🏪 POS — အပြင်ဆိုင်ရောင်းချမှု မှတ်တမ်းတင်ရန်</h3>
+      <div class="hint">ဒီနေရာက ထည့်တဲ့ အရောင်းများကို Stock ချက်ချင်း လျှော့ချ၊ Sales Report/Revenue ထဲ auto ပေါင်းထည့်ပေးပါမည်</div>
+
+      <div class="hint" style="margin-top:14px;">⚡ အမြဲရောင်းရသော ပစ္စည်းများ — တစ်ချက်နှိပ်ရုံ</div>
+      <div id="pos-quick-tap-grid" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px;"></div>
+
+      <div class="form-grid" style="margin-top:14px;">
+        <input type="text" id="pos-product-search" placeholder="ပစ္စည်းနာမည်ဖြင့် ရှာပါ..." class="full">
+        <div id="pos-product-results" class="full" style="display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto;"></div>
+      </div>
+
+      <div id="pos-selected-product-area"></div>
+
+      <h3 style="margin-top:20px;">ရောင်းချမှု ခြင်း</h3>
+      <div id="pos-cart-list" style="margin:10px 0;"></div>
+      <div class="hint" id="pos-cart-empty">ပစ္စည်း မထည့်ရသေးပါ</div>
+
+      <div class="form-grid" style="margin-top:6px;">
+        <select id="pos-discount-type">
+          <option value="none">ဈေးလျှော့ မလုပ်ပါ</option>
+          <option value="percent">% ဖြင့် လျှော့ရန်</option>
+          <option value="amount">ကျပ်ပမာဏဖြင့် လျှော့ရန်</option>
+        </select>
+        <input type="number" id="pos-discount-value" placeholder="ဥပမာ 10 (%) or 5000 (ကျပ်)" min="0" value="0">
+      </div>
+
+      <div id="pos-price-breakdown" style="font-family:'Space Mono',monospace; font-size:13px; margin:10px 0; line-height:1.9;"></div>
+
+      <div class="form-grid">
+        <input type="text" id="pos-customer-name" placeholder="ဖောက်သည်အမည် (Optional — Walk-in Customer)">
+        <input type="tel" id="pos-customer-phone" placeholder="ဖုန်းနံပါတ် (Optional)">
+        <select id="pos-payment-method" class="full">
+          <option value="Cash">ငွေသား (Cash)</option>
+          <option value="KBZPay">KBZPay</option>
+          <option value="Other">အခြား</option>
+        </select>
+      </div>
+
+      <div id="pos-cash-calculator" class="form-grid">
+        <input type="number" id="pos-tendered-input" placeholder="ဖောက်သည်ပေးငွေ (ကျပ်)" min="0">
+        <div class="display" id="pos-change-display" style="font-size:20px; align-self:center;"></div>
+      </div>
+
+      <button type="button" class="acid" style="padding:14px; width:100%; margin-top:10px;" id="pos-complete-sale-btn">✅ အရောင်းပြီးစီးပါပြီ</button>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="panel active" id="products-panel">
+    <div class="form-card">
+      <h3 id="product-form-title">ပစ္စည်းအသစ် Add ရန်</h3>
+      <form id="product-form">
+        <input type="hidden" id="product-id">
+        <div class="form-grid">
+          <input type="text" id="product-name" placeholder="ပစ္စည်းနာမည် (ဥပမာ BLACK ICON TEE)" required>
+          <select id="product-category"></select>
+          <select id="product-subcategory"><option value="">Sub-Category (Optional)</option></select>
+          <input type="number" id="product-price" placeholder="ဈေးနှုန်း (ကျပ်)" required>
+          <div class="full">
+            <div class="hint" style="margin-bottom:6px;">Size ရွေးရန် (နှိပ်ပြီး ရွေးလို့ရသည်)</div>
+            <div id="size-quick-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;"></div>
+          </div>
+          <input type="text" id="product-sizes" placeholder="Size (ဥပမာ S, M, L, XL) — အပေါ်က ခလုတ်တွေ နှိပ်ရင် auto ဖြည့်ပေးမည်" class="full">
+          <input type="text" id="product-colors" placeholder="အရောင် (ဥပမာ Black, White, Navy)" class="full">
+          <button type="button" id="gen-color-stock-btn" class="secondary full" style="margin:4px 0;">Size + အရောင် အလိုက် Stock သတ်မှတ်ရန်</button>
+          <div id="color-stock-fields" class="full"></div>
+          <input type="number" id="product-stock" placeholder="စုစုပေါင်း လက်ကျန်အရေအတွက် (အပေါ်က Stock ဇယား မသုံးရင်)" class="full">
+          <select id="product-status">
+            <option value="available">ရနိုင်သေးသည် (Available)</option>
+            <option value="sold_out">ကုန်သွားပြီ (Sold Out)</option>
+          </select>
+          <input type="file" id="product-image" accept="image/*" multiple>
+          <div id="image-preview-area" class="full" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;"></div>
+          <div class="full">
+            <div class="hint" style="margin-bottom:6px;">Product Tag (တစ်ခုထက်ပို ရွေးလို့ရသည်)</div>
+            <div id="tag-checkboxes" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+              <button type="button" class="tag-toggle-btn" data-tag="New Arrival">New Arrival</button>
+              <button type="button" class="tag-toggle-btn" data-tag="Best Seller">Best Seller</button>
+              <button type="button" class="tag-toggle-btn" data-tag="Featured">Featured</button>
+              <button type="button" class="tag-toggle-btn" data-tag="Sale">Sale</button>
+            </div>
+          </div>
+          <textarea id="product-description" class="full" placeholder="ပစ္စည်း အသေးစိတ် ဖော်ပြချက် (Description)"></textarea>
+        </div>
+        <div class="hint">ပုံအများကြီး တစ်ကြိမ်တည်း ရွေးတင်နိုင်ပါသည် (ပထမဆုံးပုံက Cover ပုံဖြစ်မည်) — ပုံအသစ် မတင်ရင် ရှိပြီးသားပုံများ ဆက်သုံးပါမယ်</div>
+        <div class="form-actions">
+          <button type="submit" class="acid">သိမ်းမည်</button>
+          <button type="button" class="secondary" id="product-cancel" style="display:none;">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div id="products-list"></div>
+  </div>
+
+  <!-- INVENTORY -->
+  <div class="panel" id="inventory-panel">
+    <div class="form-card" style="display:flex; gap:24px; flex-wrap:wrap;">
+      <div>
+        <div class="hint" style="margin:0;">ပစ္စည်းအမျိုးအစား</div>
+        <div class="display" style="font-size:24px;" id="stat-total-products">-</div>
+      </div>
+      <div>
+        <div class="hint" style="margin:0;">စုစုပေါင်း Stock အရေအတွက်</div>
+        <div class="display" style="font-size:24px; color:var(--acid);" id="stat-total-stock-qty">-</div>
+      </div>
+      <div>
+        <div class="hint" style="margin:0;">Inventory Value (Stock × ဈေးနှုန်း)</div>
+        <div class="display" style="font-size:24px; color:var(--rust);" id="stat-inventory-value">-</div>
+      </div>
+    </div>
+    <div class="form-card">
+      <h3>Stock + ဈေးနှုန်း + အရောင် — အကုန်တစ်နေရာတည်း</h3>
+      <div class="hint">🟢 = Stock ရှိသည် · 🟠 = ၃ ခုအောက် ကျန်တော့သည် · 🔴 = ကုန်သွားပြီ</div>
+      <div id="inventory-cards"></div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div class="panel" id="categories-panel">
+    <div class="form-card">
+      <h3>Category အသစ် Add ရန်</h3>
+      <form id="category-form">
+        <div class="form-grid">
+          <input type="text" id="category-name" placeholder="Category နာမည် (ဥပမာ Shoes)" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="acid">Add မည်</button>
+        </div>
+      </form>
+    </div>
+    <div id="categories-list"></div>
+
+    <div class="form-card">
+      <h3>Sub-Category အသစ် Add ရန်</h3>
+      <div class="hint">ဥပမာ — "Top Wear" အောက်မှာ "Shirt", "Polo Shirt", "Tee" စသည် ခွဲခြားနိုင်ပါသည်</div>
+      <form id="subcategory-form">
+        <div class="form-grid">
+          <select id="subcategory-parent" required></select>
+          <input type="text" id="subcategory-name" placeholder="Sub-Category နာမည် (ဥပမာ Polo Shirt)" required>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="acid">Add မည်</button>
+        </div>
+      </form>
+    </div>
+    <div id="subcategories-list"></div>
+  </div>
+
+  <!-- ACTIVITY LOG -->
+  <div class="panel" id="activitylog-panel">
+    <div class="form-card">
+      <h3>Admin Activity Log</h3>
+      <div class="hint">Admin App ထဲက ပြင်ဆင်မှု/ဖျက်ခြင်း/ထည့်ခြင်း အားလုံးကို မှတ်တမ်းတင်ထားပါသည်</div>
+      <div id="activity-log-list"></div>
+    </div>
+  </div>
+
+  <!-- POSTS -->
+  <div class="panel" id="posts-panel">
+    <div class="form-card">
+      <h3 id="post-form-title">Post အသစ် တင်ရန်</h3>
+      <form id="post-form">
+        <input type="hidden" id="post-id">
+        <div class="form-grid">
+          <input type="text" id="post-title" class="full" placeholder="ခေါင်းစဉ်" required>
+          <textarea id="post-content" class="full" placeholder="အကြောင်းအရာ ရေးပါ..."></textarea>
+          <input type="file" id="post-image" class="full" accept="image/*">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="acid">Post တင်မည်</button>
+          <button type="button" class="secondary" id="post-cancel" style="display:none;">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div id="posts-list"></div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="panel" id="orders-panel">
+    <div class="form-card" id="revenue-stats" style="display:flex; gap:24px; flex-wrap:wrap;">
+      <div>
+        <div class="hint" style="margin:0;">စုစုပေါင်း Order</div>
+        <div class="display" style="font-size:26px;" id="stat-total-orders">-</div>
+      </div>
+      <div>
+        <div class="hint" style="margin:0;">အတည်ပြုပြီး Order</div>
+        <div class="display" style="font-size:26px; color:var(--acid);" id="stat-confirmed-orders">-</div>
+      </div>
+      <div>
+        <div class="hint" style="margin:0;">အတည်မပြုရသေး Order</div>
+        <div class="display" style="font-size:26px; color:#ff8a5c;" id="stat-pending-orders">-</div>
+      </div>
+      <div>
+        <div class="hint" style="margin:0;">ရောင်းရငွေ (Order အားလုံး)</div>
+        <div class="display" style="font-size:26px; color:var(--acid);" id="stat-total-revenue">-</div>
+      </div>
+      <div>
+        <div class="hint" style="margin:0;">အတည်ပြုပြီး ငွေ (Confirmed+)</div>
+        <div class="display" style="font-size:26px; color:var(--rust);" id="stat-confirmed-revenue">-</div>
+      </div>
+    </div>
+    <div id="orders-list"></div>
+  </div>
+
+  <!-- SALES REPORT -->
+  <div class="panel" id="salesreport-panel">
+    <div class="form-card">
+      <h3>🧾 Daily Closing Report (တစ်နေ့တာ ငွေရှင်းချက်)</h3>
+      <div class="hint">Cash Drawer ချိန်ညှိဖို့ တစ်နေ့တာ ရောင်းချမှု အားလုံး (Online + In-Store) ကို ငွေပေးချေနည်းအလိုက် ခွဲပြပေးပါသည် — ပယ်ဖျက်/Refund လုပ်ထားတာများ မပါဝင်ပါ</div>
+      <div style="display:flex; gap:10px; align-items:center; margin:12px 0; flex-wrap:wrap;">
+        <input type="date" id="closing-date-input" style="width:auto;">
+        <button type="button" class="acid" id="closing-report-btn">ငွေရှင်းချက် ကြည့်ရန်</button>
+      </div>
+      <div id="closing-report-result"></div>
+    </div>
+    <div class="form-card">
+      <h3>Sales Report</h3>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin:14px 0;">
+        <button type="button" class="secondary sr-period-btn active" data-period="daily">Daily</button>
+        <button type="button" class="secondary sr-period-btn" data-period="weekly">Weekly</button>
+        <button type="button" class="secondary sr-period-btn" data-period="monthly">Monthly</button>
+        <button type="button" class="secondary sr-period-btn" data-period="yearly">Yearly</button>
+        <button type="button" class="secondary" id="export-sales-csv-btn" style="margin-left:auto;">📥 CSV/Excel Export</button>
+      </div>
+
+      <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:16px;">
+        <div>
+          <div class="hint" style="margin:0;">ရောင်းရငွေ (ကာလအလိုက်)</div>
+          <div class="display" style="font-size:24px; color:var(--acid);" id="sr-total-revenue">-</div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0;">Order အရေအတွက်</div>
+          <div class="display" style="font-size:24px;" id="sr-total-orders">-</div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0;">ရောင်းရသည့် ပစ္စည်း အရေအတွက်</div>
+          <div class="display" style="font-size:24px; color:var(--rust);" id="sr-total-items">-</div>
+        </div>
+      </div>
+
+      <div style="background:#1f1e1a; padding:16px; border:1.5px solid var(--concrete); margin-bottom:16px;">
+        <canvas id="sales-chart" height="90"></canvas>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="inventory-table-styled" id="sales-report-table">
+          <thead><tr><th>ကာလ</th><th>Order အရေအတွက်</th><th>ရောင်းရငွေ</th></tr></thead>
+          <tbody id="sales-report-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOMERS -->
+  <div class="panel" id="customers-panel">
+    <div class="form-card">
+      <h3>Customer Management</h3>
+      <div class="hint">Order မှတ်တမ်းများမှ ဖောက်သည်စာရင်း အလိုအလျောက် ဖန်တီးထားပါသည်</div>
+      <input type="text" id="customer-search-input" placeholder="အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ..." style="margin-top:10px;">
+      <div style="display:flex; gap:24px; flex-wrap:wrap; margin:14px 0;">
+        <div>
+          <div class="hint" style="margin:0;">ဖောက်သည် အရေအတွက်</div>
+          <div class="display" style="font-size:24px;" id="stat-total-customers">-</div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0;">ပျမ်းမျှ ဝယ်ယူမှု (တစ်ဦးလျှင်)</div>
+          <div class="display" style="font-size:24px; color:var(--acid);" id="stat-avg-spend">-</div>
+        </div>
+      </div>
+      <div id="customers-list"></div>
+    </div>
+  </div>
+
+  <!-- BANNERS -->
+  <div class="panel" id="banners-panel">
+    <div class="form-card">
+      <h3 id="banner-form-title">Banner အသစ် Add ရန်</h3>
+      <form id="banner-form">
+        <input type="hidden" id="banner-id">
+        <div class="form-grid">
+          <input type="text" id="banner-title" placeholder="ခေါင်းစဉ် (ဥပမာ NEW ARRIVAL)" required>
+          <input type="text" id="banner-subtitle" placeholder="အောက်စာသား (ဥပမာ 20% OFF)">
+          <input type="text" id="banner-link" placeholder="Link (ဥပမာ #products) — Optional">
+          <input type="number" id="banner-sort" placeholder="Order (နံပါတ်ငယ်ရင် အရင်ပေါ်မည်)" value="0">
+          <input type="file" id="banner-image" accept="image/*" class="full">
+          <div id="banner-image-preview" class="full" style="display:flex; gap:8px; margin-top:6px;"></div>
+          <label class="full" style="display:flex; align-items:center; gap:6px; font-family:'Space Mono',monospace; font-size:12.5px;">
+            <input type="checkbox" id="banner-active" checked> Active (Website ပေါ်မှာ ပြမည်)
+          </label>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="acid">သိမ်းမည်</button>
+          <button type="button" class="secondary" id="banner-cancel" style="display:none;">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <div id="banners-list"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="settings-panel">
+    <div class="form-card">
+      <h3>KBZPay QR Code + Payment Instructions</h3>
+      <form id="settings-form">
+        <div class="form-grid">
+          <div class="full">
+            <div class="hint" style="margin-bottom:8px;">လက်ရှိ QR Code:</div>
+            <img id="current-qr" src="" style="max-width:140px; display:none; border:2px solid var(--concrete); margin-bottom:10px;">
+          </div>
+          <input type="file" id="settings-qr" class="full" accept="image/*">
+          <textarea id="settings-instructions" class="full" placeholder="ငွေပေးချေမှု ညွှန်ကြားချက်"></textarea>
+          <input type="email" id="settings-admin-email" class="full" placeholder="Admin Email (Order အသစ်ရှိရင် အသိပေးမည့် email)">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="acid">Settings သိမ်းမည်</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- STAFF -->
+  <div class="panel" id="staff-panel">
+    <div class="form-card">
+      <h3>Staff အသစ် ထည့်ရန်</h3>
+      <div class="hint">
+        အဆင့် ၁: Supabase Dashboard → Authentication → Users → "Add user" ကနေ Staff အတွက် Email/Password Account အသစ် ဖန်တီးပါ<br>
+        အဆင့် ၂: အဲ့ User ရဲ့ User UID ကို Copy ယူပြီး အောက်မှာ ထည့်ပါ
+      </div>
+      <form id="staff-form">
+        <input type="hidden" id="staff-edit-id" value="">
+        <div class="form-grid">
+          <input type="text" id="staff-name" placeholder="အမည် (Name)" required>
+          <input type="email" id="staff-email" placeholder="Staff Email (မှတ်ရန်အတွက်)" required>
+          <input type="text" id="staff-uid" placeholder="Staff User UID (Supabase Auth ကနေ)" required class="full">
+          <select id="staff-role" class="full">
+            <option value="staff">Staff (POS/Orders/Inventory)</option>
+            <option value="manager">Manager (Permission ကိုယ်တိုင် ရွေးနိုင်)</option>
+            <option value="delivery">Delivery (ပို့ဆောင်ရေးသမား)</option>
+            <option value="owner">Owner (အပြည့်အစုံ လုပ်ပိုင်ခွင့်)</option>
+          </select>
+          <label style="font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); grid-column:1/-1; margin-bottom:-6px;">မွေးသက္ကရာဇ် (DOB)</label>
+          <input type="date" id="staff-dob">
+          <input type="tel" id="staff-phone" placeholder="ဖုန်းနံပါတ်">
+          <input type="text" id="staff-job-position" placeholder="Job Position (ဥပမာ Cashier, Rider)" class="full">
+          <textarea id="staff-address" placeholder="လိပ်စာ" rows="2" class="full"></textarea>
+        </div>
+
+        <div id="manager-permissions-area" style="display:none; margin-top:14px;">
+          <div class="hint">Manager ကို ဘယ် Tab တွေ ဖွင့်ပေးမလဲ ရွေးပါ (POS/Orders/Inventory အမြဲ ရနိုင်ပါသည်)</div>
+          <div id="manager-permissions-checkboxes" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;"></div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="acid" id="staff-submit-btn">Staff ထည့်မည်</button>
+          <button type="button" class="secondary" id="staff-cancel-edit-btn" style="display:none;">Cancel</button>
+        </div>
+      </form>
+    </div>
+    <h3 style="margin:20px 0 10px;">👤 Staff Profiles</h3>
+    <div id="staff-list"></div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="panel" id="messages-panel">
+    <div class="form-card">
+      <h3>💬 Customer Messages</h3>
+      <div class="hint">Customer တွေက Login ဝင်ပြီး ပို့ထားတဲ့ Message များ</div>
+      <input type="text" id="messages-search" placeholder="ဖောက်သည်အမည်ဖြင့် ရှာပါ...">
+    </div>
+    <div id="messages-thread-list"></div>
+    <div id="messages-conversation-view" style="display:none;"></div>
+  </div>
+
+  <!-- DELIVERY -->
+  <div class="panel" id="delivery-panel">
+    <div class="form-card">
+      <h3>🚚 Delivery Queue</h3>
+      <div class="hint">ပို့ဆောင်ရန် ကျန်နေသော Order များ — ပို့ပြီးရင် ပုံတင်ပြီး "ပို့ပြီးပါပြီ" သတ်မှတ်ပါ</div>
+    </div>
+    <div id="delivery-queue-list"></div>
+    <div id="delivery-action-view" style="display:none;"></div>
+  </div>
+
+  <!-- SALE HISTORY -->
+  <div class="panel" id="salehistory-panel">
+    <div class="form-card">
+      <h3>📋 Sale History (Online + In-Store)</h3>
+      <div class="hint">ရောင်းချမှု မှတ်တမ်း အားလုံး — Online Order နှင့် အပြင်ဆိုင် (Walk-in) Sale နှစ်မျိုးစလုံး</div>
+      <input type="text" id="salehistory-search" placeholder="ဖောက်သည်အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+    </div>
+    <div id="salehistory-list"></div>
+  </div>
+
+  <!-- WALLET -->
+  <div class="panel" id="wallet-panel">
+    <div class="form-card">
+      <h3>💰 Wallet Top-up Requests</h3>
+      <div class="hint">Customer တွေ ငွေဖြည့်ဖို့ တင်ထားတဲ့ KBZPay Screenshot များ — Payment စစ်ဆေးပြီး Approve/Reject လုပ်ပါ</div>
+    </div>
+    <div id="topup-requests-list"></div>
+
+    <div class="form-card">
+      <h3>🎁 Gift Card Purchase Requests</h3>
+      <div class="hint">Gift Card ဝယ်ယူထားသူများ — Approve လုပ်ရင် Code ချက်ချင်း Active ဖြစ်သွားမည်</div>
+    </div>
+    <div id="giftcard-requests-list"></div>
+
+    <div class="form-card">
+      <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
+      <input type="text" id="giftcard-search" placeholder="Code (သို့) ဝယ်ယူသူ အမည်ဖြင့် ရှာပါ...">
+    </div>
+    <div id="giftcard-all-list"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<div id="lightbox-overlay" onclick="closeLightbox()"><img id="lightbox-img" src=""></div>
+
+<script>
+// ============ CONFIG — ဒီနေရာကို Supabase project ရဲ့ တန်ဖိုးများနဲ့ အစားထိုးပါ ============
+const SUPABASE_URL = "https://gfatvhxougswmzrjpqkp.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmYXR2aHhvdWdzd216cmpwcWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NzQ0NTEsImV4cCI6MjEwNTA1MDQ1MX0.SZDCjKzOyQBZCPXib1EyLEdj9NimYbhvA6PXk-9j42U";
+// ============================================================================
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(()=> t.style.display='none', 2200);
+}
+
+// ---------- AUTH ----------
+let currentAdminEmail = null;
+let currentAdminRole = 'owner';
+let currentAdminUserId = null;
+let currentAdminAllowedTabs = [];
+
+async function checkSession(){
+  const { data:{ session } } = await sb.auth.getSession();
+  if(session){
+    // ★ Admin table ထဲ ပါမပါ စစ်ဆေး — Customer account ဆို Dashboard မပြပါ
+    const { data: adminRow } = await sb.from('admins').select('user_id, role, allowed_tabs').eq('user_id', session.user.id).maybeSingle();
+    if(!adminRow){
+      await sb.auth.signOut();
+      document.getElementById('login-screen').style.display='flex';
+      document.getElementById('dashboard').style.display='none';
+      document.getElementById('login-error').textContent = 'ဒီ account က Admin မဟုတ်ပါ — Admin App ကို ဝင်ခွင့်မရှိပါ';
+      return;
+    }
+
+    currentAdminEmail = session.user.email;
+    currentAdminUserId = session.user.id;
+    currentAdminRole = adminRow.role || 'owner';
+    currentAdminAllowedTabs = adminRow.allowed_tabs || [];
+    const roleDisplayMap = { owner:'Owner', delivery:'Delivery', manager:'Manager', staff:'Staff' };
+    document.getElementById('admin-email-display').textContent = `Logged in: ${currentAdminEmail} (${roleDisplayMap[currentAdminRole]||'Staff'})`;
+    document.getElementById('dashboard-logo').innerHTML = currentAdminRole === 'delivery'
+      ? 'SUWATI<span class="dot">.</span>DELIVERY SYSTEM'
+      : 'SUWATI<span class="dot">.</span>ADMIN';
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    applyRolePermissions();
+    loadProducts();
+    loadPosts();
+    loadOrders();
+    loadSettingsForm();
+    loadInventory();
+    loadCategories();
+    loadActivityLog();
+    initSalesReport();
+    loadCustomers();
+    loadBanners();
+    loadPosProducts();
+    loadSaleHistory();
+    loadTopupRequests();
+    loadGiftCardRequests();
+    loadAllGiftCards();
+    if(currentAdminRole==='owner') { loadStaffList(); loadDeliveryQueue(); }
+    loadMessages();
+    subscribeToAdminChatRealtime();
+    subscribeToOrderRealtime();
+  } else {
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('dashboard').style.display='none';
+  }
+}
+
+const RESTRICTABLE_TABS = [
+  { id:'products-panel', label:'Products' },
+  { id:'categories-panel', label:'Categories' },
+  { id:'activitylog-panel', label:'Activity Log' },
+  { id:'posts-panel', label:'Post' },
+  { id:'salesreport-panel', label:'Sales Report' },
+  { id:'customers-panel', label:'Customers' },
+  { id:'banners-panel', label:'Banners' },
+  { id:'settings-panel', label:'Settings' },
+  { id:'salehistory-panel', label:'Sale History' },
+  { id:'wallet-panel', label:'Wallet' },
+];
+
+function applyRolePermissions(){
+  const ownerOnlyTabs = RESTRICTABLE_TABS.map(t=>t.id).concat(['staff-panel']);
+  const nonDeliveryTabs = ['pos-panel','orders-panel','inventory-panel','messages-panel'].concat(ownerOnlyTabs);
+
+  if(currentAdminRole === 'delivery'){
+    // Delivery Person ကို "Delivery" tab ချည်းသာ ခွင့်ပြု
+    nonDeliveryTabs.forEach(tabId=>{
+      const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+      if(btn) btn.style.display = 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('delivery-tab-btn').classList.add('active');
+    document.getElementById('delivery-panel').classList.add('active');
+    loadDeliveryQueue();
+  } else if(currentAdminRole === 'owner'){
+    // Owner — အားလုံး ကြည့်ခွင့်ရှိသည် — ဘာမှ ဖျောက်စရာ မလိုပါ
+  } else {
+    // Delivery/Staff tab ကို Staff/Manager တို့ မမြင်ရ
+    const deliveryBtn = document.querySelector('.tab-btn[data-tab="delivery-panel"]');
+    if(deliveryBtn) deliveryBtn.style.display = 'none';
+    document.querySelector('.tab-btn[data-tab="staff-panel"]').style.display = 'none';
+
+    if(currentAdminRole === 'manager'){
+      // Manager — Owner ကရွေးပေးထားတဲ့ allowed_tabs ကိုသာ ခွင့်ပြု (POS/Orders/Inventory/Messages အမြဲရ)
+      const allowed = new Set(currentAdminAllowedTabs || []);
+      RESTRICTABLE_TABS.forEach(t=>{
+        const btn = document.querySelector(`.tab-btn[data-tab="${t.id}"]`);
+        if(btn) btn.style.display = allowed.has(t.id) ? '' : 'none';
+      });
+    } else {
+      // Staff — POS / Orders / Inventory / Messages ကိုပဲ ခွင့်ပြု
+      RESTRICTABLE_TABS.forEach(t=>{
+        const btn = document.querySelector(`.tab-btn[data-tab="${t.id}"]`);
+        if(btn) btn.style.display = 'none';
+      });
+    }
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('pos-tab-btn').classList.add('active');
+    document.getElementById('pos-panel').classList.add('active');
+  }
+}
+
+async function logActivity(action, details){
+  try{
+    await sb.from('activity_logs').insert({ admin_email: currentAdminEmail, action, details });
+  }catch(e){ /* logging fail ဖြစ်လည်း main action ကို မထိခိုက်စေရ */ }
+}
+
+async function loadActivityLog(){
+  const list = document.getElementById('activity-log-list');
+  const { data, error } = await sb.from('activity_logs').select('*').order('created_at', { ascending:false }).limit(100);
+  if(error){ list.innerHTML = '<p class="hint">Log ကြည့်၍မရပါ</p>'; return; }
+  if(!data.length){ list.innerHTML = '<p class="hint">Activity မှတ်တမ်း မရှိသေးပါ</p>'; return; }
+  list.innerHTML = data.map(l=>`
+    <div class="log-entry">
+      <span class="log-time">${new Date(l.created_at).toLocaleString()}</span> ·
+      <span class="log-admin">${l.admin_email||'unknown'}</span> —
+      <span class="log-action">${l.action}</span>
+      ${l.details ? ': '+l.details : ''}
+    </div>`).join('');
+}
+
+document.getElementById('login-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if(error){
+    document.getElementById('login-error').textContent = 'Error: ' + error.message;
+  } else {
+    document.getElementById('login-error').textContent='';
+    checkSession();
+  }
+});
+
+document.getElementById('logout-btn').addEventListener('click', async ()=>{
+  await sb.auth.signOut();
+  checkSession();
+});
+
+// ---------- TABS ----------
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    if(btn.id === 'orders-tab-btn'){
+      const dot = document.getElementById('new-order-dot');
+      if(dot) dot.remove();
+    }
+  });
+});
+
+// ---------- IMAGE UPLOAD HELPER ----------
+async function uploadImage(file){
+  if(!file) return null;
+  const ext = file.name.split('.').pop();
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error } = await sb.storage.from('images').upload(path, file);
+  if(error){ showToast('ပုံတင်ရာတွင် error ("'+file.name+'"): '+error.message); return null; }
+  const { data } = sb.storage.from('images').getPublicUrl(path);
+  return data.publicUrl;
+}
+
+// ---------- LIGHTBOX (ပုံကို Zoom ချဲ့ကြည့်ရန်) ----------
+function openLightbox(src){
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-overlay').classList.add('open');
+}
+function closeLightbox(){
+  document.getElementById('lightbox-overlay').classList.remove('open');
+}
+
+// ---------- SIZE QUICK-SELECT CHIPS ----------
+const STANDARD_SIZES = ['XS','S','M','L','XL','XXL'];
+function initSizeChips(){
+  const container = document.getElementById('size-quick-chips');
+  container.innerHTML = STANDARD_SIZES.map(s=>`<button type="button" class="size-chip-btn" data-size="${s}">${s}</button>`).join('');
+  container.querySelectorAll('.size-chip-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.classList.toggle('active');
+      syncSizeChipsToField();
+    });
+  });
+}
+function syncSizeChipsToField(){
+  const active = Array.from(document.querySelectorAll('.size-chip-btn.active')).map(b=>b.dataset.size);
+  document.getElementById('product-sizes').value = active.join(', ');
+}
+function setActiveSizeChipsFromField(){
+  const sizes = document.getElementById('product-sizes').value.split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
+  document.querySelectorAll('.size-chip-btn').forEach(btn=>{
+    btn.classList.toggle('active', sizes.includes(btn.dataset.size));
+  });
+}
+initSizeChips();
+
+document.querySelectorAll('.tag-toggle-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{ btn.classList.toggle('active'); });
+});
+
+// ---------- IMAGE PREVIEW (ရွေးလိုက်တဲ့ ပုံအသစ်များ / လက်ရှိ ပုံများ — ဖျက်နိုင်) ----------
+let productImageList = []; // { type:'existing', url } or { type:'new', file, previewUrl }
+
+document.getElementById('product-image').addEventListener('change', (e)=>{
+  const files = Array.from(e.target.files);
+  files.forEach(f=>{
+    productImageList.push({ type:'new', file:f, previewUrl:URL.createObjectURL(f) });
+  });
+  e.target.value = ''; // input ကို ပြန် Clear (ထပ်ရွေးရင် ထပ်ပေါင်းထည့်ရန်)
+  renderProductImagePreview();
+});
+
+function renderProductImagePreview(){
+  const preview = document.getElementById('image-preview-area');
+  if(!productImageList.length){ preview.innerHTML = ''; return; }
+  preview.innerHTML = '<div class="hint" style="width:100%; margin:0;">ပုံများ (ပထမဆုံးပုံက Cover ဖြစ်မည် — ✕ နှိပ်ပြီး ဖျက်နိုင်သည်):</div>' +
+    productImageList.map((item,i)=>{
+      const url = item.type==='existing' ? item.url : item.previewUrl;
+      return `<div class="img-preview-thumb">
+        <img src="${url}" onclick="openLightbox('${url}')">
+        ${i===0?'<span class="cover-badge">COVER</span>':''}
+        <button type="button" onclick="removeProductImage(${i})" style="position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%; background:var(--rust); color:#fff; border:2px solid var(--ink); font-size:12px; cursor:pointer; line-height:1; padding:0;">✕</button>
+      </div>`;
+    }).join('');
+}
+
+function removeProductImage(idx){
+  productImageList.splice(idx,1);
+  renderProductImagePreview();
+}
+
+// ---------- PRODUCTS ----------
+const productForm = document.getElementById('product-form');
+
+productForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const id = document.getElementById('product-id').value;
+
+  let finalImageUrls = [];
+  const newFiles = productImageList.filter(item=>item.type==='new');
+  if(newFiles.length){
+    showToast('ပုံများ တင်နေသည်... ခဏစောင့်ပါ');
+  }
+  for(const item of productImageList){
+    if(item.type==='existing'){
+      finalImageUrls.push(item.url);
+    } else {
+      const url = await uploadImage(item.file);
+      if(url) finalImageUrls.push(url);
+    }
+  }
+
+  const variantStock = readVariantStockFields();
+  const selectedTags = Array.from(document.querySelectorAll('.tag-toggle-btn.active')).map(b=>b.dataset.tag);
+  const payload = {
+    name: document.getElementById('product-name').value,
+    category: document.getElementById('product-category').value,
+    subcategory: document.getElementById('product-subcategory').value || null,
+    price: parseFloat(document.getElementById('product-price').value),
+    sizes: document.getElementById('product-sizes').value,
+    colors: document.getElementById('product-colors').value,
+    status: document.getElementById('product-status').value,
+    description: document.getElementById('product-description').value,
+    tags: selectedTags.join(', '),
+  };
+  if(variantStock){
+    payload.variant_stock = variantStock;
+    let total = 0;
+    Object.values(variantStock).forEach(colorsObj=>{
+      Object.values(colorsObj).forEach(q=>{ total += q; });
+    });
+    payload.stock_qty = total;
+  } else {
+    payload.stock_qty = parseInt(document.getElementById('product-stock').value) || 0;
+  }
+  // Stock ဂဏန်း စစ်စစ် 0 ဖြစ်နေရင် Admin က "Available" ရွေးထားခဲ့လည်း Sold Out အဖြစ် Auto ပြောင်းပေး
+  if(payload.stock_qty <= 0){
+    payload.status = 'sold_out';
+  }
+  // ပုံအားလုံး ဖျက်ထားရင်တောင် Field ကို Update လုပ်ရန် (empty string ဖြစ်စေ)
+  payload.image_url = finalImageUrls[0] || null;
+  payload.images = finalImageUrls.join(',');
+
+  let error;
+  if(id){
+    ({ error } = await sb.from('products').update(payload).eq('id', id));
+  } else {
+    ({ error } = await sb.from('products').insert(payload));
+  }
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('သိမ်းပြီးပါပြီ');
+  logActivity(id ? 'product_updated' : 'product_created', payload.name);
+  resetProductForm();
+  loadProducts();
+  loadInventory();
+});
+
+document.getElementById('product-cancel').addEventListener('click', resetProductForm);
+
+document.getElementById('gen-color-stock-btn').addEventListener('click', ()=>{
+  generateVariantStockTable({});
+});
+
+function generateVariantStockTable(existingVariantStock){
+  let sizes = document.getElementById('product-sizes').value.split(',').map(s=>s.trim()).filter(Boolean);
+  let colors = document.getElementById('product-colors').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const container = document.getElementById('color-stock-fields');
+
+  if(!sizes.length && !colors.length){
+    container.innerHTML = '<span class="hint" style="margin:0;">အရင်ဆုံး Size (Size ခလုတ်တွေ နှိပ်ပါ) (သို့) "အရောင်" ဘောင်ထဲ ဖြည့်ပေးပါ</span>';
+    return;
+  }
+  const usesPlaceholderSize = !sizes.length;
+  const usesPlaceholderColor = !colors.length;
+  if(usesPlaceholderSize) sizes = ['_'];
+  if(usesPlaceholderColor) colors = ['_'];
+
+  let html = `<table class="variant-stock-table"><thead><tr><th>${usesPlaceholderSize?'':'Size'} ${usesPlaceholderColor?'':'\\ Color'}</th>`;
+  colors.forEach(c=>{ html += `<th>${usesPlaceholderColor?'Stock':c}</th>`; });
+  html += '</tr></thead><tbody>';
+  sizes.forEach(sz=>{
+    html += `<tr><th>${usesPlaceholderSize?'Stock':sz}</th>`;
+    colors.forEach(c=>{
+      const existing = (existingVariantStock[sz] && existingVariantStock[sz][c]) || 0;
+      html += `<td><input type="number" min="0" class="variant-stock-input" data-size="${sz}" data-color="${c}" value="${existing}"></td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+function readVariantStockFields(){
+  const inputs = document.querySelectorAll('.variant-stock-input');
+  if(!inputs.length) return null;
+  const result = {};
+  inputs.forEach(inp=>{
+    const sz = inp.dataset.size, c = inp.dataset.color;
+    if(!result[sz]) result[sz] = {};
+    result[sz][c] = parseInt(inp.value) || 0;
+  });
+  return result;
+}
+
+function resetProductForm(){
+  productForm.reset();
+  document.getElementById('product-id').value='';
+  document.getElementById('product-form-title').textContent='ပစ္စည်းအသစ် Add ရန်';
+  document.getElementById('product-cancel').style.display='none';
+  document.getElementById('color-stock-fields').innerHTML='';
+  productImageList = [];
+  document.getElementById('image-preview-area').innerHTML='';
+  document.querySelectorAll('.size-chip-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tag-toggle-btn').forEach(b=>b.classList.remove('active'));
+}
+
+async function loadProducts(){
+  const { data, error } = await sb.from('products').select('*').order('created_at', { ascending:false });
+  const list = document.getElementById('products-list');
+  list.innerHTML='';
+  if(error){ list.innerHTML = '<p class="mono">Error loading products</p>'; return; }
+  data.forEach(p=>{
+    const div = document.createElement('div');
+    div.className='list-item';
+    const imgSrc = p.image_url || 'https://placehold.co/64x64/141412/E9E4D8?text=IMG';
+    div.innerHTML = `
+      <img src="${imgSrc}" style="cursor:zoom-in;" onclick="openLightbox('${imgSrc}')">
+      <div class="info">
+        <h4>${p.name} <span class="mono" style="font-size:10px; color:var(--acid);">[${p.category||'Top Wear'}${p.subcategory?' / '+p.subcategory:''}]</span></h4>
+        <p>${Number(p.price).toLocaleString()} ကျပ် · Size: ${p.sizes||'-'} · အရောင်: ${p.colors||'-'} · လက်ကျန်: ${p.stock_qty}</p>
+        ${p.tags ? `<p class="mono" style="font-size:10px; color:var(--rust);">🏷️ ${p.tags}</p>` : ''}
+        ${(()=>{ const isOut = p.status==='sold_out' || (p.stock_qty||0)<=0; return `<span class="status-badge ${isOut?'sold_out':'available'}">${isOut?'SOLD OUT':'AVAILABLE'}</span>`; })()}
+      </div>
+      <div class="actions">
+        <button class="secondary edit-btn">ပြင်မည်</button>
+        <button class="secondary del-btn">ဖျက်မည်</button>
+      </div>`;
+    div.querySelector('.edit-btn').addEventListener('click', ()=>editProduct(p));
+    div.querySelector('.del-btn').addEventListener('click', ()=>deleteProduct(p.id, p.name));
+    list.appendChild(div);
+  });
+}
+
+async function editProduct(p){
+  document.getElementById('product-id').value = p.id;
+  document.getElementById('product-name').value = p.name;
+  document.getElementById('product-category').value = p.category || 'Top Wear';
+  await updateProductSubcategoryDropdown();
+  document.getElementById('product-subcategory').value = p.subcategory || '';
+  document.getElementById('product-price').value = p.price;
+  document.getElementById('product-sizes').value = p.sizes||'';
+  document.getElementById('product-colors').value = p.colors||'';
+  document.getElementById('product-stock').value = p.stock_qty;
+  document.getElementById('product-status').value = p.status;
+  document.getElementById('product-description').value = p.description || '';
+  const existingTags = (p.tags||'').split(',').map(t=>t.trim());
+  document.querySelectorAll('.tag-toggle-btn').forEach(b=>{ b.classList.toggle('active', existingTags.includes(b.dataset.tag)); });
+  setActiveSizeChipsFromField();
+  generateVariantStockTable(p.variant_stock || {});
+
+  // လက်ရှိ ပုံများကို Array ထဲ ထည့် (Preview + ဖျက်နိုင်ရန်)
+  const imgs = (p.images ? p.images.split(',').map(s=>s.trim()).filter(Boolean) : (p.image_url ? [p.image_url] : []));
+  productImageList = imgs.map(url=>({ type:'existing', url }));
+  renderProductImagePreview();
+
+  document.getElementById('product-form-title').textContent='ပစ္စည်း ပြင်ဆင်ရန်';
+  document.getElementById('product-cancel').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function deleteProduct(id, name){
+  if(!confirm('ဒီပစ္စည်းကို ဖျက်မှာ သေချာပါသလား?')) return;
+  const { error } = await sb.from('products').delete().eq('id', id);
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('ဖျက်ပြီးပါပြီ');
+  logActivity('product_deleted', name);
+  loadProducts();
+  loadInventory();
+}
+
+// ---------- INVENTORY (Stock + Price + Colors + Sold — တစ်နေရာတည်း) ----------
+async function loadInventory(){
+  const container = document.getElementById('inventory-cards');
+  if(!container) return;
+  const { data: products, error: pErr } = await sb.from('products').select('*').order('name');
+  const { data: orders } = await sb.from('orders').select('product_name, quantity');
+
+  if(pErr || !products){ container.innerHTML = '<p class="hint">Error loading inventory</p>'; return; }
+
+  // Top stats
+  const totalStockQty = products.reduce((s,p)=>s+(p.stock_qty||0),0);
+  const inventoryValue = products.reduce((s,p)=>s+((p.stock_qty||0)*Number(p.price||0)),0);
+  document.getElementById('stat-total-products').textContent = products.length;
+  document.getElementById('stat-total-stock-qty').textContent = totalStockQty.toLocaleString();
+  document.getElementById('stat-inventory-value').textContent = inventoryValue.toLocaleString()+' ကျပ်';
+
+  const soldMap = {};
+  (orders||[]).forEach(o=>{
+    soldMap[o.product_name] = (soldMap[o.product_name]||0) + (o.quantity||0);
+  });
+
+  function stockChipClass(q){
+    if(q<=0) return 'stock-out';
+    if(q<=3) return 'stock-low';
+    return 'stock-good';
+  }
+
+  container.innerHTML = products.map(p=>{
+    const sold = soldMap[p.name] || 0;
+    const stock = p.stock_qty || 0;
+    const isSoldOut = stock===0 || p.status==='sold_out';
+    const isLow = !isSoldOut && stock<=3;
+    const badgeClass = isSoldOut?'out':(isLow?'low':'ok');
+    const badgeText = isSoldOut?'ကုန်သွားပြီ':(isLow?`${stock} ခုပဲ ကျန်သည်`:'ရရှိနိုင်သည်');
+
+    let chips = '';
+    if(p.variant_stock && Object.keys(p.variant_stock).length){
+      chips = Object.entries(p.variant_stock).map(([sz,colorsObj])=>
+        Object.entries(colorsObj).map(([c,q])=>{
+          const label = (sz!=='_'&&c!=='_') ? `${sz} / ${c}` : (sz!=='_' ? sz : c);
+          return `<span class="variant-chip ${stockChipClass(q)}">${label}: ${q}</span>`;
+        }).join('')
+      ).join('');
+    } else if(p.color_stock && Object.keys(p.color_stock).length){
+      chips = Object.entries(p.color_stock).map(([c,q])=>`<span class="variant-chip ${stockChipClass(q)}">${c}: ${q}</span>`).join('');
+    } else {
+      chips = `<span class="variant-chip ${stockChipClass(stock)}">စုစုပေါင်း: ${stock}</span>`;
+    }
+
+    const isVisible = p.visible !== false;
+
+    return `
+    <div class="inventory-card">
+      <div class="inv-head">
+        <span class="inv-name">${p.name} ${!isVisible?'<span class="mono" style="font-size:10px; color:var(--grey);">(ဖျောက်ထား)</span>':''}</span>
+        <span class="stock-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <div class="inv-meta">${p.category||'-'}${p.subcategory?' / '+p.subcategory:''}</div>
+      <div class="inv-price">${Number(p.price).toLocaleString()} ကျပ်</div>
+      <div class="variant-chip-row">${chips}</div>
+      <div class="inv-footer">
+        <span>Total Stock: ${stock}</span>
+        <span>ရောင်းပြီး: ${sold}</span>
+      </div>
+      <button type="button" class="secondary toggle-visibility-btn" data-id="${p.id}" data-visible="${isVisible}" style="width:100%; margin-top:10px; ${isVisible?'':'color:var(--grey); border-color:var(--grey);'}">
+        ${isVisible ? '👁️ Website မှာ ပေါ်နေသည် — ဖျောက်ရန် နှိပ်ပါ' : '🚫 ဖျောက်ထားသည် — ပြန်ပေါ်စေရန် နှိပ်ပါ'}
+      </button>
+    </div>`;
+  }).join('');
+
+  container.querySelectorAll('.toggle-visibility-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const currentlyVisible = btn.dataset.visible === 'true';
+      const { error } = await sb.from('products').update({ visible: !currentlyVisible }).eq('id', btn.dataset.id);
+      if(error){ showToast('Error: '+error.message); return; }
+      showToast(currentlyVisible ? 'Website မှာ ဖျောက်ပြီးပါပြီ' : 'Website မှာ ပြန်ပေါ်စေပြီးပါပြီ');
+      logActivity('product_visibility_toggled', btn.closest('.inventory-card').querySelector('.inv-name').textContent.trim());
+      loadInventory();
+      loadProducts();
+    });
+  });
+}
+
+// ---------- POSTS ----------
+const postForm = document.getElementById('post-form');
+
+postForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const id = document.getElementById('post-id').value;
+  const file = document.getElementById('post-image').files[0];
+  let image_url = null;
+  if(file) image_url = await uploadImage(file);
+
+  const payload = {
+    title: document.getElementById('post-title').value,
+    content: document.getElementById('post-content').value,
+  };
+  if(image_url) payload.image_url = image_url;
+
+  let error;
+  if(id){
+    ({ error } = await sb.from('posts').update(payload).eq('id', id));
+  } else {
+    ({ error } = await sb.from('posts').insert(payload));
+  }
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Post တင်ပြီးပါပြီ');
+  logActivity(id ? 'post_updated' : 'post_created', payload.title);
+  resetPostForm();
+  loadPosts();
+});
+
+document.getElementById('post-cancel').addEventListener('click', resetPostForm);
+
+function resetPostForm(){
+  postForm.reset();
+  document.getElementById('post-id').value='';
+  document.getElementById('post-form-title').textContent='Post အသစ် တင်ရန်';
+  document.getElementById('post-cancel').style.display='none';
+}
+
+async function loadPosts(){
+  const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending:false });
+  const list = document.getElementById('posts-list');
+  list.innerHTML='';
+  if(error){ list.innerHTML = '<p class="mono">Error loading posts</p>'; return; }
+  data.forEach(p=>{
+    const div = document.createElement('div');
+    div.className='list-item';
+    div.innerHTML = `
+      <img src="${p.image_url || 'https://placehold.co/64x64/141412/E9E4D8?text=POST'}">
+      <div class="info">
+        <h4>${p.title}</h4>
+        <p>${(p.content||'').slice(0,60)}...</p>
+      </div>
+      <div class="actions">
+        <button class="secondary edit-btn">ပြင်မည်</button>
+        <button class="secondary del-btn">ဖျက်မည်</button>
+      </div>`;
+    div.querySelector('.edit-btn').addEventListener('click', ()=>editPost(p));
+    div.querySelector('.del-btn').addEventListener('click', ()=>deletePost(p.id, p.title));
+    list.appendChild(div);
+  });
+}
+
+function editPost(p){
+  document.getElementById('post-id').value = p.id;
+  document.getElementById('post-title').value = p.title;
+  document.getElementById('post-content').value = p.content||'';
+  document.getElementById('post-form-title').textContent='Post ပြင်ဆင်ရန်';
+  document.getElementById('post-cancel').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function deletePost(id, title){
+  if(!confirm('ဒီ post ကို ဖျက်မှာ သေချာပါသလား?')) return;
+  const { error } = await sb.from('posts').delete().eq('id', id);
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('ဖျက်ပြီးပါပြီ');
+  logActivity('post_deleted', title);
+  loadPosts();
+}
+
+// ---------- CATEGORIES ----------
+async function loadCategories(){
+  const { data, error } = await sb.from('categories').select('*').order('sort_order').order('name');
+  if(error) return;
+
+  // Product form dropdown ကို ဖြည့်ပေး
+  const select = document.getElementById('product-category');
+  const prevValue = select.value;
+  select.innerHTML = data.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+  if(prevValue && data.some(c=>c.name===prevValue)) select.value = prevValue;
+
+  // Sub-Category Form ရဲ့ Parent Category Dropdown ကိုပါ ဖြည့်ပေး
+  const subParentSelect = document.getElementById('subcategory-parent');
+  subParentSelect.innerHTML = data.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+
+  // Categories tab ထဲက List
+  const list = document.getElementById('categories-list');
+  list.innerHTML = '';
+  data.forEach(cat=>{
+    const div = document.createElement('div');
+    div.className='list-item';
+    div.innerHTML = `
+      <div class="info">
+        <h4>${cat.name}</h4>
+      </div>
+      <div class="actions">
+        <button class="secondary rename-cat-btn">ပြင်မည်</button>
+        <button class="secondary del-cat-btn">ဖျက်မည်</button>
+      </div>`;
+    div.querySelector('.rename-cat-btn').addEventListener('click', ()=>renameCategory(cat));
+    div.querySelector('.del-cat-btn').addEventListener('click', ()=>deleteCategory(cat));
+    list.appendChild(div);
+  });
+
+  loadSubcategories();
+  updateProductSubcategoryDropdown();
+}
+
+document.getElementById('product-category').addEventListener('change', updateProductSubcategoryDropdown);
+
+async function updateProductSubcategoryDropdown(){
+  const category = document.getElementById('product-category').value;
+  const select = document.getElementById('product-subcategory');
+  const prevValue = select.value;
+  const { data } = await sb.from('subcategories').select('*').eq('category_name', category).order('sort_order').order('name');
+  select.innerHTML = '<option value="">Sub-Category (Optional)</option>' + (data||[]).map(s=>`<option value="${s.name}">${s.name}</option>`).join('');
+  if(prevValue && (data||[]).some(s=>s.name===prevValue)) select.value = prevValue;
+}
+
+async function loadSubcategories(){
+  const { data, error } = await sb.from('subcategories').select('*').order('category_name').order('sort_order');
+  const list = document.getElementById('subcategories-list');
+  if(error || !data){ list.innerHTML=''; return; }
+  if(!data.length){ list.innerHTML = '<p class="hint">Sub-Category မရှိသေးပါ</p>'; return; }
+  list.innerHTML = data.map(s=>`
+    <div class="list-item">
+      <div class="info">
+        <h4>${s.name} <span class="mono" style="font-size:10px; color:var(--acid);">[${s.category_name}]</span></h4>
+      </div>
+      <div class="actions">
+        <button class="secondary del-subcat-btn" data-id="${s.id}" data-category="${s.category_name}">ဖျက်မည်</button>
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('.del-subcat-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('ဒီ Sub-Category ကို ဖျက်မှာ သေချာပါသလား?')) return;
+      const { error } = await sb.from('subcategories').delete().eq('id', btn.dataset.id);
+      if(error){ showToast('Error: '+error.message); return; }
+      showToast('Sub-Category ဖျက်ပြီးပါပြီ');
+      logActivity('subcategory_deleted', btn.closest('.list-item').querySelector('h4').textContent.trim());
+      loadSubcategories();
+      updateProductSubcategoryDropdown();
+    });
+  });
+}
+
+document.getElementById('subcategory-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const category_name = document.getElementById('subcategory-parent').value;
+  const name = document.getElementById('subcategory-name').value.trim();
+  if(!category_name || !name) return;
+  const { error } = await sb.from('subcategories').insert({ category_name, name });
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Sub-Category Add ပြီးပါပြီ');
+  logActivity('subcategory_created', `${name} [${category_name}]`);
+  document.getElementById('subcategory-form').reset();
+  loadSubcategories();
+  updateProductSubcategoryDropdown();
+});
+
+document.getElementById('category-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('category-name').value.trim();
+  if(!name) return;
+  const { error } = await sb.from('categories').insert({ name });
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Category Add ပြီးပါပြီ');
+  logActivity('category_created', name);
+  document.getElementById('category-form').reset();
+  loadCategories();
+});
+
+async function renameCategory(cat){
+  const newName = prompt('Category နာမည်အသစ်:', cat.name);
+  if(!newName || newName.trim()===cat.name) return;
+  const trimmed = newName.trim();
+
+  const { error } = await sb.from('categories').update({ name: trimmed }).eq('id', cat.id);
+  if(error){ showToast('Error: '+error.message); return; }
+
+  // ဒီ Category အောက်က ပစ္စည်းများရဲ့ category text ကိုပါ Update လိုက်မည်
+  await sb.from('products').update({ category: trimmed }).eq('category', cat.name);
+
+  showToast('Category နာမည်ပြောင်းပြီးပါပြီ');
+  logActivity('category_renamed', `${cat.name} → ${trimmed}`);
+  loadCategories();
+  loadProducts();
+  loadInventory();
+}
+
+async function deleteCategory(cat){
+  if(!confirm(`"${cat.name}" ကို ဖျက်မှာ သေချာပါသလား? (ဒီ Category ပါတဲ့ ပစ္စည်းရှိပြီးသားဆိုရင် ပစ္စည်းက ဒီ Category နာမည်ကို ဆက်ကိုင်ထားမည် — Category List ကနေပဲ ပျောက်သွားမည်)`)) return;
+  const { error } = await sb.from('categories').delete().eq('id', cat.id);
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Category ဖျက်ပြီးပါပြီ');
+  logActivity('category_deleted', cat.name);
+  loadCategories();
+}
+async function loadOrders(){
+  const list = document.getElementById('orders-list');
+  const { data, error } = await sb.from('orders').select('*').neq('sale_channel','in_store').order('created_at', { ascending:false });
+  const { data: productsForImg } = await sb.from('products').select('name,image_url');
+  const imgMap = {};
+  (productsForImg||[]).forEach(p=>{ imgMap[p.name] = p.image_url; });
+  list.innerHTML='';
+  if(error){ list.innerHTML = '<p class="mono">Error loading orders</p>'; return; }
+
+  // ---- Order rows တွေကို order_group_id အလိုက် စုပေါင်း (group_id မရှိရင် ကိုယ်ပိုင် row ချည်း သီးသန့် group) ----
+  const groupsMap = {};
+  (data||[]).forEach(o=>{
+    const key = o.order_group_id || o.id;
+    if(!groupsMap[key]) groupsMap[key] = [];
+    groupsMap[key].push(o);
+  });
+  const groups = Object.values(groupsMap).map(rows=>{
+    rows.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+    const first = rows[0];
+    return {
+      ids: rows.map(r=>r.id),
+      rows,
+      customer_name: first.customer_name,
+      phone: first.phone,
+      email: first.email,
+      address: first.address,
+      created_at: first.created_at,
+      order_status: first.order_status,
+      payment_screenshot_url: rows.find(r=>r.payment_screenshot_url)?.payment_screenshot_url,
+      total_amount: rows.reduce((s,r)=>s+Number(r.total_amount),0),
+      group_display_id: (first.order_group_id || first.id),
+      sale_channel: first.sale_channel || 'online',
+    };
+  }).sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+
+  // ---- Stats ----
+  const confirmedStatuses = ['confirmed','processing','shipped','delivered'];
+  const nonCancelledGroups = groups.filter(g=>g.order_status!=='cancelled');
+  const totalRevenue = nonCancelledGroups.reduce((s,g)=>s+g.total_amount,0);
+  const confirmedGroups = groups.filter(g=>confirmedStatuses.includes(g.order_status));
+  const confirmedRevenue = confirmedGroups.reduce((s,g)=>s+g.total_amount,0);
+  const pendingGroups = groups.filter(g=>g.order_status==='pending_verification');
+
+  document.getElementById('stat-total-orders').textContent = groups.length;
+  document.getElementById('stat-total-revenue').textContent = totalRevenue.toLocaleString()+' ကျပ်';
+  document.getElementById('stat-confirmed-revenue').textContent = confirmedRevenue.toLocaleString()+' ကျပ်';
+  document.getElementById('stat-confirmed-orders').textContent = confirmedGroups.length;
+  document.getElementById('stat-pending-orders').textContent = pendingGroups.length;
+
+  if(!groups.length){ list.innerHTML = '<p class="hint">အော်ဒါများ မရှိသေးပါ</p>'; return; }
+
+  const statusOptions = ['pending_verification','confirmed','processing','shipped','delivered','cancelled'];
+  const statusLabels = {
+    pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
+    shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး', cancelled:'ပယ်ဖျက်'
+  };
+
+  groups.forEach(g=>{
+    const div = document.createElement('div');
+    div.className='order-card';
+    const itemsHtml = g.rows.map(o=>{
+      const productImg = imgMap[o.product_name] || 'https://placehold.co/70x70/141412/E9E4D8?text=IMG';
+      return `
+        <div style="display:flex; gap:12px; margin-top:8px;">
+          <img src="${productImg}" style="width:56px; height:56px; object-fit:cover; border:2px solid var(--concrete); flex-shrink:0; cursor:zoom-in;" onclick="openLightbox('${productImg}')">
+          <div class="details" style="margin-top:0;">
+            🛍️ ${o.product_name} ${o.size?'· Size: '+o.size:''} ${o.color?'· Color: '+o.color:''} · x${o.quantity}<br>
+            ${Number(o.total_amount).toLocaleString()} ကျပ်
+          </div>
+        </div>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="row1">
+        <h4>${g.customer_name} ${g.rows.length>1 ? `<span class="mono" style="font-size:11px; color:var(--acid);">(${g.rows.length} ပစ္စည်း)</span>` : ''}</h4>
+        <span class="oid">#${g.group_display_id.slice(0,8).toUpperCase()} · ${new Date(g.created_at).toLocaleString()} <span class="channel-badge ${g.sale_channel}">${g.sale_channel==='in_store'?'🏪 In-Store':'🌐 Online'}</span></span>
+      </div>
+      <div class="details" style="margin-top:6px;">
+        📞 ${g.phone} ${g.email ? '· ✉️ '+g.email : ''}<br>
+        📍 ${g.address}
+      </div>
+      ${itemsHtml}
+      <div class="details" style="margin-top:8px; font-weight:700;">💰 စုစုပေါင်း: ${g.total_amount.toLocaleString()} ကျပ်</div>
+      ${g.payment_screenshot_url ? `<img class="ss-thumb" src="${g.payment_screenshot_url}" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
+      <div>
+        <select class="order-status-select">
+          ${statusOptions.map(s=>`<option value="${s}" ${g.order_status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}
+        </select>
+        <button type="button" class="secondary view-receipt-btn" style="padding:9px 14px;">🧾 Receipt</button>
+        <button type="button" class="secondary del-order-btn" style="padding:9px 14px;">ဖျက်မည်</button>
+      </div>`;
+
+    div.querySelector('.view-receipt-btn').addEventListener('click', ()=>{
+      printPosReceipt(g.rows, g.rows[0].payment_method || 'KBZPay', g.group_display_id, null);
+    });
+
+    div.querySelector('.del-order-btn').addEventListener('click', async ()=>{
+      if(!confirm('ဒီ Order (ပစ္စည်း အားလုံး) ကို ဖျက်မှာ သေချာပါသလား?')) return;
+      const { error } = await sb.from('orders').delete().in('id', g.ids);
+      if(error){ showToast('Error: '+error.message); return; }
+      showToast('Order ဖျက်ပြီးပါပြီ');
+      logActivity('order_deleted', `#${g.group_display_id.slice(0,8).toUpperCase()} (${g.customer_name})`);
+      loadOrders();
+      loadInventory();
+      loadCustomers();
+    });
+    div.querySelector('.order-status-select').addEventListener('change', async (e)=>{
+      const newStatus = e.target.value;
+      const wasAlreadyCancelled = g.order_status === 'cancelled';
+
+      let cancellation_reason = null;
+      if(newStatus === 'cancelled' && !wasAlreadyCancelled){
+        cancellation_reason = prompt('ဘာကြောင့် Cancel လုပ်ရတာလဲ? (Customer မြင်ရပါမည်)', '');
+        if(cancellation_reason === null){
+          e.target.value = g.order_status; // Prompt ကို Cancel လိုက်ရင် Dropdown ကို မူလ Status ပြန်ထား
+          return;
+        }
+      }
+
+      const updatePayload = { order_status: newStatus };
+      if(cancellation_reason !== null) updatePayload.cancellation_reason = cancellation_reason || null;
+
+      const { error } = await sb.from('orders').update(updatePayload).in('id', g.ids);
+      if(error){ showToast('Error: '+error.message); return; }
+      showToast('Order status update ပြီးပါပြီ');
+      logActivity('order_status_changed', `#${g.group_display_id.slice(0,8).toUpperCase()} → ${newStatus}`);
+
+      // Order ကို "ပယ်ဖျက်" (Cancelled/Refund) ပြောင်းလိုက်ရင် Stock ကို ပြန်တိုးပေး
+      if(newStatus === 'cancelled' && !wasAlreadyCancelled){
+        await restoreStockForRows(g.rows);
+        showToast('Stock ပြန်တိုးပေးပြီးပါပြီ');
+      }
+
+      // Customer ဆီ status update email — group ထဲက ပစ္စည်းအားလုံးပါတဲ့ email တစ်စောင်တည်း ပို့မယ် (Cancel Reason ပါ ပါမည်)
+      fetch(`${SUPABASE_URL}/functions/v1/send-order-email`, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
+        body: JSON.stringify({ order_ids:g.ids, type:'status_update', status:newStatus, cancellation_reason }),
+      }).catch(()=>{});
+      loadOrders();
+      loadCustomers();
+      loadInventory();
+      loadProducts();
+    });
+    list.appendChild(div);
+  });
+}
+
+async function restoreStockForRows(rows){
+  for(const r of rows){
+    try{
+      await sb.rpc('increment_stock', { p_name:r.product_name, p_qty:r.quantity, p_color:r.color||null, p_size:r.size||null });
+    }catch(e){ console.error('Stock restore failed', e); }
+  }
+}
+
+// ---------- SETTINGS ----------
+async function loadSettingsForm(){
+  const { data, error } = await sb.from('settings').select('*').eq('id', 1).single();
+  if(error) return;
+  document.getElementById('settings-instructions').value = data.payment_instructions || '';
+  document.getElementById('settings-admin-email').value = data.admin_email || '';
+  if(data.kbzpay_qr_url){
+    const img = document.getElementById('current-qr');
+    img.src = data.kbzpay_qr_url;
+    img.style.display='block';
+  }
+}
+
+document.getElementById('settings-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const file = document.getElementById('settings-qr').files[0];
+  const payload = { payment_instructions: document.getElementById('settings-instructions').value, admin_email: document.getElementById('settings-admin-email').value };
+  if(file){
+    const url = await uploadImage(file);
+    if(url) payload.kbzpay_qr_url = url;
+  }
+  const { error } = await sb.from('settings').update(payload).eq('id', 1);
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Settings သိမ်းပြီးပါပြီ');
+  logActivity('settings_updated', 'KBZPay/Instructions/Admin Email');
+  loadSettingsForm();
+});
+
+// ---------- REAL-TIME ORDER NOTIFICATION ----------
+let realtimeSubscribed = false;
+
+function playNotificationSound(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1100].forEach((freq, i)=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      const start = ctx.currentTime + i*0.18;
+      gain.gain.setValueAtTime(0.2, start);
+      gain.gain.exponentialRampToValueAtTime(0.001, start+0.16);
+      osc.start(start);
+      osc.stop(start+0.18);
+    });
+  }catch(e){ /* audio not supported/blocked — silently ignore */ }
+}
+
+function subscribeToOrderRealtime(){
+  if(realtimeSubscribed) return;
+  realtimeSubscribed = true;
+
+  sb.channel('admin-orders-realtime')
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'orders' }, (payload)=>{
+      playNotificationSound();
+      showToast('🔔 Order အသစ် ဝင်လာပါပြီ!');
+
+      const tabBtn = document.getElementById('orders-tab-btn');
+      tabBtn.classList.remove('flash-alert');
+      void tabBtn.offsetWidth; // restart animation
+      tabBtn.classList.add('flash-alert');
+      if(!document.getElementById('new-order-dot')){
+        tabBtn.insertAdjacentHTML('beforeend', '<span id="new-order-dot" class="new-order-dot"></span>');
+      }
+
+      loadOrders();
+      loadInventory();
+    })
+    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'orders' }, async (payload)=>{
+      if(payload.new.order_status === 'delivered' && payload.old.order_status !== 'delivered'){
+        let deliverName = 'Delivery Person';
+        if(payload.new.delivered_by){
+          const { data: adminRow } = await sb.from('admins').select('email,name').eq('user_id', payload.new.delivered_by).maybeSingle();
+          if(adminRow) deliverName = adminRow.name || adminRow.email || deliverName;
+        }
+        playNotificationSound();
+        showToast(`📦 ${deliverName} — Order #${(payload.new.order_group_id||payload.new.id).slice(0,8).toUpperCase()} ပို့ပြီးပါပြီ!`);
+        loadOrders();
+        loadDeliveryQueue();
+      }
+    })
+    .subscribe();
+}
+
+// ---------- SALES REPORT ----------
+let salesChartInstance = null;
+let currentSalesPeriod = 'daily';
+let currentSalesBuckets = [];
+
+document.querySelectorAll('.sr-period-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.sr-period-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSalesPeriod = btn.dataset.period;
+    loadSalesReport();
+  });
+});
+
+document.getElementById('export-sales-csv-btn').addEventListener('click', exportSalesCSV);
+
+function initSalesReport(){
+  loadSalesReport();
+}
+
+function bucketKey(date, period){
+  const d = new Date(date);
+  if(period === 'daily'){
+    return d.toISOString().slice(0,10); // YYYY-MM-DD
+  }
+  if(period === 'weekly'){
+    const onejan = new Date(d.getFullYear(),0,1);
+    const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay()+1)/7);
+    return `${d.getFullYear()}-W${String(week).padStart(2,'0')}`;
+  }
+  if(period === 'monthly'){
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+  // yearly
+  return `${d.getFullYear()}`;
+}
+
+function periodRangeStart(period){
+  const now = new Date();
+  if(period === 'daily') return new Date(now.getTime() - 13*86400000); // last 14 days
+  if(period === 'weekly') return new Date(now.getTime() - 12*7*86400000); // last 12 weeks
+  if(period === 'monthly'){ const d = new Date(now); d.setMonth(d.getMonth()-11); return d; } // last 12 months
+  const d = new Date(now); d.setFullYear(d.getFullYear()-4); return d; // last 5 years
+}
+
+async function loadSalesReport(){
+  const { data: orders, error } = await sb.from('orders').select('created_at, total_amount, quantity, order_status');
+  if(error || !orders) return;
+
+  const rangeStart = periodRangeStart(currentSalesPeriod);
+  const filtered = orders.filter(o => new Date(o.created_at) >= rangeStart && o.order_status !== 'cancelled');
+
+  const buckets = {};
+  filtered.forEach(o=>{
+    const key = bucketKey(o.created_at, currentSalesPeriod);
+    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0 };
+    buckets[key].revenue += Number(o.total_amount);
+    buckets[key].orders += 1;
+    buckets[key].items += (o.quantity||0);
+  });
+
+  const sortedKeys = Object.keys(buckets).sort();
+  currentSalesBuckets = sortedKeys.map(k=>({ label:k, ...buckets[k] }));
+
+  const totalRevenue = currentSalesBuckets.reduce((s,b)=>s+b.revenue,0);
+  const totalOrders = currentSalesBuckets.reduce((s,b)=>s+b.orders,0);
+  const totalItems = currentSalesBuckets.reduce((s,b)=>s+b.items,0);
+
+  document.getElementById('sr-total-revenue').textContent = totalRevenue.toLocaleString()+' ကျပ်';
+  document.getElementById('sr-total-orders').textContent = totalOrders;
+  document.getElementById('sr-total-items').textContent = totalItems;
+
+  // Table
+  const tbody = document.getElementById('sales-report-tbody');
+  if(!currentSalesBuckets.length){
+    tbody.innerHTML = '<tr><td colspan="3" class="hint">ဒီကာလအတွက် Order မရှိသေးပါ</td></tr>';
+  } else {
+    tbody.innerHTML = currentSalesBuckets.slice().reverse().map(b=>`
+      <tr><td>${b.label}</td><td>${b.orders}</td><td>${b.revenue.toLocaleString()} ကျပ်</td></tr>
+    `).join('');
+  }
+
+  // Chart
+  const ctx = document.getElementById('sales-chart').getContext('2d');
+  if(salesChartInstance) salesChartInstance.destroy();
+  salesChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: currentSalesBuckets.map(b=>b.label),
+      datasets: [{
+        label: 'ရောင်းရငွေ (ကျပ်)',
+        data: currentSalesBuckets.map(b=>b.revenue),
+        backgroundColor: '#D6FF3F',
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#E9E4D8' } } },
+      scales: {
+        x: { ticks: { color: '#E9E4D8' }, grid: { color: '#3a382f' } },
+        y: { ticks: { color: '#E9E4D8' }, grid: { color: '#3a382f' } }
+      }
+    }
+  });
+}
+
+function exportSalesCSV(){
+  if(!currentSalesBuckets.length){ showToast('Export လုပ်ရန် Data မရှိပါ'); return; }
+  let csv = 'Period,Orders,Revenue (MMK)\n';
+  currentSalesBuckets.forEach(b=>{
+    csv += `${b.label},${b.orders},${b.revenue}\n`;
+  });
+  const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `suwati-sales-report-${currentSalesPeriod}-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  logActivity('sales_report_exported', currentSalesPeriod);
+}
+
+// ---------- CUSTOMER MANAGEMENT ----------
+let allCustomers = [];
+let customerSearchQuery = '';
+
+document.getElementById('customer-search-input').addEventListener('input', (e)=>{
+  customerSearchQuery = e.target.value.trim().toLowerCase();
+  renderCustomersList();
+});
+
+async function loadCustomers(){
+  const { data: orders, error } = await sb.from('orders').select('*').order('created_at', { ascending:false });
+  if(error || !orders) return;
+
+  // ၁) Order rows များကို order_group_id (သို့) id အလိုက် group လုပ်ပြီး Order တစ်ခုချင်းစီအဖြစ် ပြန်ဆောက်
+  const groupsMap = {};
+  orders.forEach(o=>{
+    const key = o.order_group_id || o.id;
+    if(!groupsMap[key]) groupsMap[key] = [];
+    groupsMap[key].push(o);
+  });
+  const orderSummaries = Object.values(groupsMap).map(rows=>{
+    rows.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+    const first = rows[0];
+    return {
+      customer_name: first.customer_name,
+      phone: first.phone,
+      email: first.email,
+      address: first.address,
+      created_at: first.created_at,
+      order_status: first.order_status,
+      sale_channel: first.sale_channel || 'online',
+      user_id: first.user_id,
+      total_amount: rows.reduce((s,r)=>s+Number(r.total_amount),0),
+      items: rows.map(r=>`${r.product_name}${r.size?' ('+r.size+(r.color?', '+r.color:'')+')':''} x${r.quantity}`).join(', '),
+    };
+  });
+
+  // ၂) Order summary များကို ဖုန်းနံပါတ် (Customer ID အဖြစ်) အလိုက် ထပ် Group
+  const customersMap = {};
+  orderSummaries.forEach(o=>{
+    // Walk-in Customer ဆိုပြီး နာမည်စစ်စစ် မပါဘဲ POS ကနေ ရောင်းထားတာမျိုးကို Customer List ထဲ မထည့်ပါ
+    if(o.sale_channel==='in_store' && (!o.customer_name || o.customer_name.trim()==='Walk-in Customer')) return;
+
+    const key = o.phone || o.email || o.customer_name;
+    if(!customersMap[key]){
+      customersMap[key] = { name:o.customer_name, phone:o.phone, email:o.email, address:o.address, orders:[], totalSpent:0, isRegistered:false, channel:o.sale_channel };
+    }
+    if(o.user_id) customersMap[key].isRegistered = true;
+    customersMap[key].orders.push(o);
+    if(o.order_status !== 'cancelled') customersMap[key].totalSpent += o.total_amount;
+    // အနောက်ဆုံး Order ရဲ့ အချက်အလက်ဖြင့် Update (နာမည်/လိပ်စာ ပြောင်းနိုင်လို့)
+    if(new Date(o.created_at) > new Date(customersMap[key].orders[0].created_at)){
+      customersMap[key].name = o.customer_name;
+      customersMap[key].address = o.address;
+      customersMap[key].email = o.email;
+      customersMap[key].channel = o.sale_channel;
+    }
+  });
+
+  allCustomers = Object.values(customersMap).sort((a,b)=> b.totalSpent - a.totalSpent);
+
+  document.getElementById('stat-total-customers').textContent = allCustomers.length;
+  const avgSpend = allCustomers.length ? allCustomers.reduce((s,c)=>s+c.totalSpent,0)/allCustomers.length : 0;
+  document.getElementById('stat-avg-spend').textContent = Math.round(avgSpend).toLocaleString()+' ကျပ်';
+
+  renderCustomersList();
+}
+
+function renderCustomersList(){
+  const list = document.getElementById('customers-list');
+  let customers = allCustomers;
+  if(customerSearchQuery){
+    customers = customers.filter(c =>
+      (c.name||'').toLowerCase().includes(customerSearchQuery) ||
+      (c.phone||'').toLowerCase().includes(customerSearchQuery)
+    );
+  }
+
+  if(!customers.length){
+    list.innerHTML = '<p class="hint">ဖောက်သည် မတွေ့ပါ</p>';
+    return;
+  }
+
+  list.innerHTML = '';
+  customers.forEach((c, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'customer-card';
+    div.innerHTML = `
+      <div class="row1">
+        <h4>${c.name} <span class="mono" style="font-size:10px; color:${c.isRegistered?'var(--acid)':(c.channel==='in_store'?'#4da3ff':'var(--grey)')};">[${c.isRegistered?'Website Member':(c.channel==='in_store'?'In-Store':'Online Guest')}]</span></h4>
+        <div class="cstats">${c.orders.length} Order · ${c.totalSpent.toLocaleString()} ကျပ်</div>
+      </div>
+      <div class="cdetails">
+        📞 ${c.phone||'-'} ${c.email?'· ✉️ '+c.email:''}<br>
+        📍 ${c.address||'-'}
+      </div>
+      <button type="button" class="secondary view-orders-btn">Order မှတ်တမ်း ကြည့်ရန်</button>
+      <div class="customer-order-history" id="coh-${idx}">
+        ${c.orders.map(o=>`
+          <div class="coh-item">
+            ${new Date(o.created_at).toLocaleDateString()} — ${o.items}<br>
+            <span style="color:var(--acid);">${o.total_amount.toLocaleString()} ကျပ်</span> · ${o.order_status}
+          </div>`).join('')}
+      </div>`;
+    div.querySelector('.view-orders-btn').addEventListener('click', ()=>{
+      const hist = div.querySelector('.customer-order-history');
+      hist.classList.toggle('open');
+    });
+    list.appendChild(div);
+  });
+}
+
+// ---------- BANNER MANAGEMENT ----------
+const bannerForm = document.getElementById('banner-form');
+let currentBannerImageUrl = null;
+
+document.getElementById('banner-image').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  const preview = document.getElementById('banner-image-preview');
+  if(file){
+    const url = URL.createObjectURL(file);
+    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}" onclick="openLightbox('${url}')"></div>`;
+  }
+});
+
+bannerForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const id = document.getElementById('banner-id').value;
+  const file = document.getElementById('banner-image').files[0];
+  let imageUrl = currentBannerImageUrl;
+  if(file){
+    imageUrl = await uploadImage(file);
+  }
+
+  const payload = {
+    title: document.getElementById('banner-title').value,
+    subtitle: document.getElementById('banner-subtitle').value,
+    link_url: document.getElementById('banner-link').value,
+    sort_order: parseInt(document.getElementById('banner-sort').value) || 0,
+    active: document.getElementById('banner-active').checked,
+  };
+  if(imageUrl) payload.image_url = imageUrl;
+
+  let error;
+  if(id){
+    ({ error } = await sb.from('banners').update(payload).eq('id', id));
+  } else {
+    ({ error } = await sb.from('banners').insert(payload));
+  }
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Banner သိမ်းပြီးပါပြီ');
+  logActivity(id ? 'banner_updated' : 'banner_created', payload.title);
+  resetBannerForm();
+  loadBanners();
+});
+
+document.getElementById('banner-cancel').addEventListener('click', resetBannerForm);
+
+function resetBannerForm(){
+  bannerForm.reset();
+  document.getElementById('banner-id').value='';
+  document.getElementById('banner-form-title').textContent='Banner အသစ် Add ရန်';
+  document.getElementById('banner-cancel').style.display='none';
+  document.getElementById('banner-image-preview').innerHTML='';
+  document.getElementById('banner-active').checked = true;
+  currentBannerImageUrl = null;
+}
+
+async function loadBanners(){
+  const { data, error } = await sb.from('banners').select('*').order('sort_order');
+  const list = document.getElementById('banners-list');
+  list.innerHTML='';
+  if(error){ list.innerHTML = '<p class="mono">Error loading banners</p>'; return; }
+  if(!data.length){ list.innerHTML = '<p class="hint">Banner မရှိသေးပါ</p>'; return; }
+  data.forEach(b=>{
+    const div = document.createElement('div');
+    div.className='list-item';
+    const imgSrc = b.image_url || 'https://placehold.co/64x64/141412/E9E4D8?text=BNR';
+    div.innerHTML = `
+      <img src="${imgSrc}" style="cursor:zoom-in;" onclick="openLightbox('${imgSrc}')">
+      <div class="info">
+        <h4>${b.title} ${!b.active ? '<span class="mono" style="font-size:10px; color:var(--grey);">(Inactive)</span>' : ''}</h4>
+        <p>${b.subtitle||'-'} · Order: ${b.sort_order} ${b.link_url ? '· Link: '+b.link_url : ''}</p>
+      </div>
+      <div class="actions">
+        <button class="secondary edit-btn">ပြင်မည်</button>
+        <button class="secondary del-btn">ဖျက်မည်</button>
+      </div>`;
+    div.querySelector('.edit-btn').addEventListener('click', ()=>editBanner(b));
+    div.querySelector('.del-btn').addEventListener('click', ()=>deleteBanner(b.id, b.title));
+    list.appendChild(div);
+  });
+}
+
+function editBanner(b){
+  document.getElementById('banner-id').value = b.id;
+  document.getElementById('banner-title').value = b.title;
+  document.getElementById('banner-subtitle').value = b.subtitle || '';
+  document.getElementById('banner-link').value = b.link_url || '';
+  document.getElementById('banner-sort').value = b.sort_order || 0;
+  document.getElementById('banner-active').checked = b.active;
+  currentBannerImageUrl = b.image_url;
+  const preview = document.getElementById('banner-image-preview');
+  preview.innerHTML = b.image_url ? `<div class="img-preview-thumb"><img src="${b.image_url}" onclick="openLightbox('${b.image_url}')"></div>` : '';
+  document.getElementById('banner-form-title').textContent = 'Banner ပြင်ဆင်ရန်';
+  document.getElementById('banner-cancel').style.display='inline-block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+async function deleteBanner(id, title){
+  if(!confirm('ဒီ Banner ကို ဖျက်မှာ သေချာပါသလား?')) return;
+  const { error } = await sb.from('banners').delete().eq('id', id);
+  if(error){ showToast('Error: '+error.message); return; }
+  showToast('Banner ဖျက်ပြီးပါပြီ');
+  logActivity('banner_deleted', title);
+  loadBanners();
+}
+
+// ---------- POS (IN-STORE SALE) ----------
+let posProductsCache = [];
+let posCart = [];
+let posSelectedProduct = null;
+let posSelectedSize = null;
+let posSelectedColor = null;
+
+async function loadPosProducts(){
+  const { data } = await sb.from('products').select('*').order('name');
+  posProductsCache = data || [];
+  loadPosQuickTapTiles();
+}
+
+async function loadPosQuickTapTiles(){
+  const grid = document.getElementById('pos-quick-tap-grid');
+  const { data: orders } = await sb.from('orders').select('product_name, quantity');
+  if(!orders || !orders.length){ grid.innerHTML = '<span class="hint" style="margin:0;">အရောင်းမှတ်တမ်း မရှိသေးပါ</span>'; return; }
+
+  const freq = {};
+  orders.forEach(o=>{ freq[o.product_name] = (freq[o.product_name]||0) + (o.quantity||0); });
+
+  const topNames = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
+  const tiles = topNames
+    .map(name => posProductsCache.find(p=>p.name===name))
+    .filter(p => p && p.status !== 'sold_out');
+
+  if(!tiles.length){ grid.innerHTML = '<span class="hint" style="margin:0;">ရနိုင်သော ရေပန်းစားပစ္စည်း မရှိသေးပါ</span>'; return; }
+
+  grid.innerHTML = tiles.map(p=>`
+    <div class="pos-quick-tile" data-name="${p.name.replace(/"/g,'&quot;')}">
+      <div class="pqt-name">${p.name}</div>
+      <div class="pqt-count">${Number(p.price).toLocaleString()} ကျပ် · ${freq[p.name]} ရောင်းရ</div>
+    </div>`).join('');
+  grid.querySelectorAll('.pos-quick-tile').forEach(el=>{
+    el.addEventListener('click', ()=>selectPosProduct(el.dataset.name));
+  });
+}
+
+document.getElementById('pos-product-search').addEventListener('input', (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  const results = document.getElementById('pos-product-results');
+  if(!q){ results.innerHTML=''; return; }
+  const matches = posProductsCache.filter(p=>p.name.toLowerCase().includes(q)).slice(0,8);
+  results.innerHTML = matches.map(p=>`
+    <div class="pos-result-item" data-name="${p.name.replace(/"/g,'&quot;')}">
+      <span>${p.name} ${p.status==='sold_out'?'<span class="mono" style="color:var(--rust);">(Sold Out)</span>':''}</span>
+      <span class="mono">${Number(p.price).toLocaleString()} ကျပ်</span>
+    </div>`).join('');
+  results.querySelectorAll('.pos-result-item').forEach(el=>{
+    el.addEventListener('click', ()=>selectPosProduct(el.dataset.name));
+  });
+});
+
+function selectPosProduct(name){
+  const p = posProductsCache.find(x=>x.name===name);
+  if(!p) return;
+  posSelectedProduct = p;
+  posSelectedSize = null;
+  posSelectedColor = null;
+  document.getElementById('pos-product-search').value = '';
+  document.getElementById('pos-product-results').innerHTML = '';
+  renderPosSelectedProduct();
+  document.getElementById('pos-selected-product-area').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function getPosVariantStock(){
+  if(!posSelectedProduct) return 0;
+  const size = posSelectedSize || '_';
+  const color = posSelectedColor || '_';
+  const p = posSelectedProduct;
+  if(p.variant_stock && p.variant_stock[size] && p.variant_stock[size][color] !== undefined) return p.variant_stock[size][color];
+  if(posSelectedColor && p.color_stock && p.color_stock[posSelectedColor] !== undefined) return p.color_stock[posSelectedColor];
+  return p.status==='sold_out' ? 0 : (p.stock_qty||0);
+}
+
+function renderPosSelectedProduct(){
+  const area = document.getElementById('pos-selected-product-area');
+  const p = posSelectedProduct;
+  if(!p){ area.innerHTML=''; return; }
+  const sizes = (p.sizes||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const colors = (p.colors||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const stock = getPosVariantStock();
+
+  area.innerHTML = `
+    <div class="pos-selected-box">
+      <h4 style="font-family:'Anton',sans-serif;">${p.name} — ${Number(p.price).toLocaleString()} ကျပ်</h4>
+      ${sizes.length ? `<div class="hint" style="margin:8px 0 4px;">Size</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${sizes.map(s=>`<button type="button" class="size-chip-btn pos-size-btn ${s===posSelectedSize?'active':''}" data-size="${s}">${s}</button>`).join('')}
+        </div>` : ''}
+      ${colors.length ? `<div class="hint" style="margin:10px 0 4px;">အရောင်</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${colors.map(c=>`<button type="button" class="size-chip-btn pos-color-btn ${c===posSelectedColor?'active':''}" data-color="${c}">${c}</button>`).join('')}
+        </div>` : ''}
+      <div class="hint" style="margin-top:10px;" id="pos-stock-hint">လက်ကျန်: ${stock}</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+        <input type="number" id="pos-qty-input" value="1" min="1" style="width:80px;">
+        <button type="button" class="acid" id="pos-add-to-cart-btn">ခြင်းထဲ ထည့်မည်</button>
+      </div>
+    </div>`;
+
+  area.querySelectorAll('.pos-size-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ posSelectedSize = btn.dataset.size; renderPosSelectedProduct(); });
+  });
+  area.querySelectorAll('.pos-color-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ posSelectedColor = btn.dataset.color; renderPosSelectedProduct(); });
+  });
+  document.getElementById('pos-add-to-cart-btn').addEventListener('click', addPosCartItem);
+}
+
+function addPosCartItem(){
+  const p = posSelectedProduct;
+  const qty = parseInt(document.getElementById('pos-qty-input').value) || 1;
+  const stock = getPosVariantStock();
+  if(stock <= 0){ showToast('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
+  if(qty > stock){ showToast(`လက်ကျန် ${stock} ခုပဲ ရှိပါတယ်`); return; }
+
+  posCart.push({
+    name: p.name, price: Number(p.price), size: posSelectedSize, color: posSelectedColor, quantity: qty,
+  });
+  posSelectedProduct = null; posSelectedSize = null; posSelectedColor = null;
+  document.getElementById('pos-selected-product-area').innerHTML = '';
+  renderPosCart();
+}
+
+function getPosSubtotal(){
+  return posCart.reduce((s,i)=>s+i.price*i.quantity,0);
+}
+
+function getPosDiscountAmount(){
+  const subtotal = getPosSubtotal();
+  const type = document.getElementById('pos-discount-type').value;
+  const value = parseFloat(document.getElementById('pos-discount-value').value) || 0;
+  if(type === 'percent') return Math.min(subtotal, subtotal * (value/100));
+  if(type === 'amount') return Math.min(subtotal, value);
+  return 0;
+}
+
+function getPosFinalTotal(){
+  return Math.max(0, getPosSubtotal() - getPosDiscountAmount());
+}
+
+function renderPosCart(){
+  const list = document.getElementById('pos-cart-list');
+  const emptyMsg = document.getElementById('pos-cart-empty');
+  const breakdown = document.getElementById('pos-price-breakdown');
+
+  if(!posCart.length){
+    list.innerHTML = '';
+    emptyMsg.style.display = 'block';
+    breakdown.innerHTML = '';
+    updatePosChangeDisplay();
+    return;
+  }
+  emptyMsg.style.display = 'none';
+  list.innerHTML = posCart.map((item,idx)=>`
+    <div class="pos-cart-item">
+      <span>${item.name}${item.size?' ('+item.size+(item.color?', '+item.color:'')+')':''} x${item.quantity}</span>
+      <span>${(item.price*item.quantity).toLocaleString()} ကျပ် <a href="#" onclick="removePosCartItem(${idx}); return false;" style="color:var(--rust); margin-left:8px;">✕</a></span>
+    </div>`).join('');
+
+  const subtotal = getPosSubtotal();
+  const discount = getPosDiscountAmount();
+  const final = getPosFinalTotal();
+
+  breakdown.innerHTML = `
+    <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><span>${subtotal.toLocaleString()} ကျပ်</span></div>
+    ${discount > 0 ? `<div style="display:flex; justify-content:space-between; color:var(--rust);"><span>ဈေးလျှော့</span><span>-${discount.toLocaleString()} ကျပ်</span></div>` : ''}
+    <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:var(--acid); border-top:1px solid #3a382f; padding-top:6px; margin-top:4px;"><span>Total</span><span>${final.toLocaleString()} ကျပ်</span></div>
+  `;
+  updatePosChangeDisplay();
+}
+
+function updatePosChangeDisplay(){
+  const tenderedInput = document.getElementById('pos-tendered-input');
+  const changeDisplay = document.getElementById('pos-change-display');
+  const tendered = parseFloat(tenderedInput.value) || 0;
+  const final = getPosFinalTotal();
+  if(!tenderedInput.value){ changeDisplay.textContent = ''; return; }
+  const change = tendered - final;
+  if(change < 0){
+    changeDisplay.innerHTML = `<span style="color:var(--rust);">ငွေမလုံလောက်ပါ (-${Math.abs(change).toLocaleString()})</span>`;
+  } else {
+    changeDisplay.innerHTML = `<span style="color:var(--acid);">အကြွင်း: ${change.toLocaleString()} ကျပ်</span>`;
+  }
+}
+
+document.getElementById('pos-discount-type').addEventListener('change', renderPosCart);
+document.getElementById('pos-discount-value').addEventListener('input', renderPosCart);
+document.getElementById('pos-tendered-input').addEventListener('input', updatePosChangeDisplay);
+document.getElementById('pos-payment-method').addEventListener('change', (e)=>{
+  document.getElementById('pos-cash-calculator').style.display = e.target.value === 'Cash' ? 'grid' : 'none';
+});
+
+function removePosCartItem(idx){
+  posCart.splice(idx,1);
+  renderPosCart();
+}
+
+document.getElementById('pos-complete-sale-btn').addEventListener('click', async ()=>{
+  if(!posCart.length){ showToast('ပစ္စည်း ထည့်ပါဦး'); return; }
+
+  const paymentMethodCheck = document.getElementById('pos-payment-method').value;
+  const finalTotalCheck = getPosFinalTotal();
+  const tenderedCheck = parseFloat(document.getElementById('pos-tendered-input').value) || 0;
+  if(paymentMethodCheck === 'Cash' && document.getElementById('pos-tendered-input').value && tenderedCheck < finalTotalCheck){
+    showToast('ဖောက်သည်ပေးငွေ မလုံလောက်ပါ');
+    return;
+  }
+
+  const btn = document.getElementById('pos-complete-sale-btn');
+  btn.disabled = true; btn.textContent = 'သိမ်းနေသည်...';
+
+  // Popup ပိတ်ခံရတာ မဖြစ်အောင် User Click အတွင်းမှာပဲ Window ကို သီးသန့် ဖွင့်ထားမည် (content ကို နောက်မှ ရေးထည့်မည်)
+  const receiptWindow = window.open('', '_blank', 'width=380,height=650');
+
+  const customerName = document.getElementById('pos-customer-name').value.trim() || 'Walk-in Customer';
+  const customerPhone = document.getElementById('pos-customer-phone').value.trim() || '-';
+  const paymentMethod = document.getElementById('pos-payment-method').value;
+  const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
+
+  const subtotal = getPosSubtotal();
+  const totalDiscount = getPosDiscountAmount();
+
+  const rows = posCart.map(i=>{
+    const lineSubtotal = i.price * i.quantity;
+    // Discount ကို ပစ္စည်းတစ်ခုချင်းစီရဲ့ Subtotal အချိုးအစားအတိုင်း ခွဲသိမ်း
+    const lineDiscount = subtotal > 0 ? totalDiscount * (lineSubtotal / subtotal) : 0;
+    return {
+      order_group_id: groupId,
+      customer_name: customerName,
+      phone: customerPhone,
+      address: 'အပြင်ဆိုင် (In-Store)',
+      product_name: i.name,
+      size: i.size,
+      color: i.color,
+      quantity: i.quantity,
+      unit_price: i.price,
+      total_amount: Math.max(0, lineSubtotal - lineDiscount),
+      discount_amount: lineDiscount,
+      order_status: 'confirmed',
+      payment_status: 'confirmed',
+      sale_channel: 'in_store',
+      payment_method: paymentMethod,
+    };
+  });
+
+  const { data: orderData, error } = await sb.from('orders').insert(rows).select();
+  if(error){
+    showToast('Error: '+error.message);
+    btn.disabled=false; btn.textContent='✅ အရောင်းပြီးစီးပါပြီ';
+    if(receiptWindow) receiptWindow.close();
+    return;
+  }
+
+  // Stock လျှော့ချ (Stock မလုံလောက်ရင် Warning ပြပါမည် — ဒါပေမယ့် POS Sale ကတော့ ပြီးသွားပြီဖြစ်လို့ Admin ကိုယ်တိုင် Adjust လုပ်ရန် လိုအပ်ပါမည်)
+  for(const i of posCart){
+    try{
+      const { data: ok } = await sb.rpc('decrement_stock', { p_name:i.name, p_qty:i.quantity, p_color:i.color||null, p_size:i.size||null });
+      if(ok !== true){
+        showToast(`⚠️ "${i.name}" — Stock မလုံလောက်တော့ပါ (Sale ကတော့ ပြီးသွားပါပြီ၊ Inventory ကို ကိုယ်တိုင် Adjust ပေးပါ)`);
+      }
+    }
+    catch(e){ console.error('Stock decrement failed', e); }
+  }
+
+  const finalTotal = rows.reduce((s,r)=>s+Number(r.total_amount),0);
+  const tendered = parseFloat(document.getElementById('pos-tendered-input').value) || null;
+  const change = (paymentMethod==='Cash' && tendered!==null) ? tendered - finalTotal : null;
+
+  logActivity('pos_sale_completed', `${customerName} — ${finalTotal.toLocaleString()} ကျပ် (${paymentMethod})${totalDiscount>0?' [Discount: '+totalDiscount.toLocaleString()+']':''}`);
+  printPosReceipt(rows, paymentMethod, groupId, receiptWindow, { tendered, change, discount: totalDiscount });
+  showToast('✅ အရောင်း မှတ်တမ်းတင်ပြီးပါပြီ');
+
+  posCart = [];
+  document.getElementById('pos-discount-type').value = 'none';
+  document.getElementById('pos-discount-value').value = '0';
+  document.getElementById('pos-tendered-input').value = '';
+  renderPosCart();
+  document.getElementById('pos-customer-name').value='';
+  document.getElementById('pos-customer-phone').value='';
+  btn.disabled = false; btn.textContent = '✅ အရောင်းပြီးစီးပါပြီ';
+
+  loadProducts(); loadInventory(); loadOrders(); loadCustomers(); loadPosProducts(); loadSaleHistory();
+});
+
+function buildReceiptHtmlDoc(rows, paymentMethod, groupId, extra){
+  extra = extra || {};
+  const total = rows.reduce((s,r)=>s+Number(r.total_amount),0);
+  const discountTotal = extra.discount || rows.reduce((s,r)=>s+Number(r.discount_amount||0),0);
+  const subtotal = total + discountTotal;
+  const isVoided = rows[0].order_status === 'cancelled';
+  const voidLabel = rows[0].sale_channel === 'in_store' ? 'VOIDED' : 'CANCELED';
+  const itemsHtml = rows.map(r=>`
+    <tr>
+      <td class="item-name">${r.product_name}${r.size||r.color?`<div class="item-variant">${r.size?'Size: '+r.size:''}${r.size&&r.color?' · ':''}${r.color?'Color: '+r.color:''}</div>`:''}</td>
+      <td class="qty">x${r.quantity}</td>
+      <td class="amt">${Number(r.total_amount).toLocaleString()}</td>
+    </tr>`).join('');
+
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Receipt — SUWATI MEN FASHION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#141412; --rust:#C13B1F; --acid:#7a9600; --grey:#666; }
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Space Mono',monospace; width:300px; margin:20px auto; padding:0; color:var(--ink);
+    background:#fff;
+  }
+  .receipt-box{ border:3px solid var(--ink); padding:18px 16px; position:relative; overflow:hidden; }
+  .voided-watermark{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-28deg);
+    font-family:'Anton',sans-serif; font-size:64px; letter-spacing:.06em; white-space:nowrap;
+    color:rgba(193,59,31,.55); border:6px solid rgba(193,59,31,.55); padding:4px 20px;
+    pointer-events:none; z-index:10;
+  }
+  .brand{ text-align:center; }
+  .brand .logo{ font-family:'Anton',sans-serif; font-size:30px; letter-spacing:.01em; line-height:1; }
+  .brand .logo .dot{ color:var(--rust); }
+  .brand .tagline{ font-size:10px; letter-spacing:.25em; color:var(--grey); margin-top:2px; }
+  .brand .address{ font-size:11px; margin-top:8px; color:var(--grey); }
+  .stamp-row{ display:flex; justify-content:center; margin:12px 0; }
+  .stamp{ border:2px solid var(--ink); padding:4px 14px; font-size:10px; letter-spacing:.15em; transform:rotate(-1.5deg); }
+  hr.solid{ border:none; border-top:3px solid var(--ink); margin:12px 0; }
+  hr.dashed{ border:none; border-top:1.5px dashed #999; margin:10px 0; }
+  .meta{ font-size:11.5px; line-height:1.9; }
+  .meta b{ font-weight:700; }
+  table.items{ width:100%; border-collapse:collapse; margin:6px 0; }
+  table.items th{
+    text-align:left; font-size:9.5px; letter-spacing:.1em; color:var(--grey); font-weight:400;
+    border-bottom:1.5px solid var(--ink); padding-bottom:4px;
+  }
+  table.items td{ padding:8px 0; font-size:12.5px; vertical-align:top; border-bottom:1px dashed #ccc; }
+  .item-name{ font-weight:700; }
+  .item-variant{ font-size:10.5px; color:var(--grey); font-weight:400; margin-top:2px; }
+  .qty{ text-align:center; white-space:nowrap; }
+  .amt{ text-align:right; white-space:nowrap; }
+  .summary-row{ display:flex; justify-content:space-between; font-size:12.5px; padding:3px 0; }
+  .summary-row.discount{ color:var(--rust); }
+  .total-box{
+    border:3px solid var(--ink); padding:10px 14px; margin:14px 0; display:flex; justify-content:space-between; align-items:center;
+  }
+  .total-box .label{ font-family:'Anton',sans-serif; font-size:16px; letter-spacing:.03em; }
+  .total-box .value{ font-family:'Anton',sans-serif; font-size:24px; }
+  .payment-tag{
+    display:inline-block; border:2px solid var(--ink); padding:4px 10px; font-size:11px; letter-spacing:.05em; margin-top:6px;
+  }
+  .cash-row{ display:flex; justify-content:space-between; font-size:12px; margin-top:8px; }
+  .footer{ text-align:center; margin-top:16px; }
+  .footer .thanks{ font-family:'Anton',sans-serif; font-size:18px; }
+  .footer .sub{ font-size:10px; color:var(--grey); letter-spacing:.1em; margin-top:4px; }
+  @media print{ body{ margin:0 auto; } }
+</style>
+</head>
+<body>
+  <div class="receipt-box">
+    ${isVoided ? `<div class="voided-watermark">${voidLabel}</div>` : ''}
+    <div class="brand">
+      <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
+      <div class="tagline">FASHION</div>
+      <div class="address">နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့</div>
+    </div>
+
+    <div class="stamp-row"><div class="stamp">OFFICIAL RECEIPT</div></div>
+
+    <hr class="solid">
+    <div class="meta">
+      <b>Receipt #</b>&nbsp; ${groupId.slice(0,8).toUpperCase()}<br>
+      <b>Date</b>&nbsp; ${new Date().toLocaleString()}<br>
+      <b>Customer</b>&nbsp; ${rows[0].customer_name}${rows[0].phone?'<br><b>Phone</b>&nbsp; '+rows[0].phone:''}
+    </div>
+    <hr class="dashed">
+
+    <table class="items">
+      <thead><tr><th>ITEM</th><th style="text-align:center;">QTY</th><th style="text-align:right;">AMOUNT</th></tr></thead>
+      <tbody>${itemsHtml}</tbody>
+    </table>
+
+    ${discountTotal > 0 ? `
+    <div class="summary-row"><span>Subtotal</span><span>${subtotal.toLocaleString()} ကျပ်</span></div>
+    <div class="summary-row discount"><span>Discount</span><span>-${discountTotal.toLocaleString()} ကျပ်</span></div>
+    ` : ''}
+
+    <div class="total-box">
+      <span class="label">TOTAL</span>
+      <span class="value">${total.toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
+    </div>
+
+    <div class="payment-tag">PAYMENT: ${paymentMethod}</div>
+    ${extra.tendered!==undefined && extra.tendered!==null ? `
+    <div class="cash-row"><span>Cash Received</span><span><b>${extra.tendered.toLocaleString()}</b></span></div>
+    <div class="cash-row"><span>Change</span><span><b>${(extra.change||0).toLocaleString()}</b></span></div>
+    ` : ''}
+    ${isVoided && rows[0].cancellation_reason ? `<div style="margin-top:10px; padding:8px 10px; border:1.5px dashed #333; font-size:11.5px;"><b>${voidLabel} Reason:</b> ${rows[0].cancellation_reason}</div>` : ''}
+
+    <hr class="solid">
+    <div class="footer">
+      <div class="thanks">ကျေးဇူးတင်ပါသည်!</div>
+      <div class="sub">SUWATI MEN FASHION · @swtmenfashion517</div>
+    </div>
+  </div>
+  <script>window.onload = function(){ window.print(); };<\/script>
+</body></html>`;
+}
+
+function printPosReceipt(rows, paymentMethod, groupId, existingWindow, extra){
+  const html = buildReceiptHtmlDoc(rows, paymentMethod, groupId, extra);
+  let win = existingWindow;
+  if(!win || win.closed){
+    win = window.open('', '_blank', 'width=380,height=650');
+  }
+  if(!win){
+    showToast('Popup ပိတ်ခံနေရပါသည် — Browser Settings ထဲက Popup ခွင့်ပြုပေးပါ');
+    return;
+  }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
+// ---------- SALE HISTORY (Online + In-Store) ----------
+let saleHistoryCache = [];
+
+document.getElementById('salehistory-search').addEventListener('input', renderSaleHistory);
+
+async function loadSaleHistory(){
+  const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending:false });
+  if(error || !data) return;
+
+  const groupsMap = {};
+  data.forEach(o=>{
+    const key = o.order_group_id || o.id;
+    if(!groupsMap[key]) groupsMap[key] = [];
+    groupsMap[key].push(o);
+  });
+  saleHistoryCache = Object.values(groupsMap).map(rows=>{
+    rows.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+    const first = rows[0];
+    return {
+      ids: rows.map(r=>r.id),
+      rows,
+      customer_name: first.customer_name,
+      phone: first.phone,
+      created_at: first.created_at,
+      total_amount: rows.reduce((s,r)=>s+Number(r.total_amount),0),
+      group_display_id: (first.order_group_id || first.id),
+      order_status: first.order_status,
+      sale_channel: first.sale_channel || 'online',
+    };
+  }).sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+
+  renderSaleHistory();
+}
+
+function renderSaleHistory(){
+  const list = document.getElementById('salehistory-list');
+  const q = document.getElementById('salehistory-search').value.trim().toLowerCase();
+  let items = saleHistoryCache;
+  if(q){
+    items = items.filter(g => (g.customer_name||'').toLowerCase().includes(q) || (g.phone||'').toLowerCase().includes(q));
+  }
+  if(!items.length){ list.innerHTML = '<p class="hint">ရောင်းချမှု မှတ်တမ်း မရှိသေးပါ</p>'; return; }
+
+  list.innerHTML = items.map((g,idx)=>`
+    <div class="order-card">
+      <div class="row1">
+        <h4>${g.customer_name} ${g.order_status==='cancelled' ? '<span class="mono" style="color:var(--rust); font-size:11px;">(Refunded/Voided)</span>' : ''}</h4>
+        <span class="oid">#${g.group_display_id.slice(0,8).toUpperCase()} · ${new Date(g.created_at).toLocaleString()} <span class="channel-badge ${g.sale_channel}">${g.sale_channel==='in_store'?'🏪 In-Store':'🌐 Online'}</span></span>
+      </div>
+      <div class="details" style="margin-top:6px;">
+        ${g.rows.map(r=>`${r.product_name}${r.size?' ('+r.size+(r.color?', '+r.color:'')+')':''} x${r.quantity}`).join('<br>')}
+      </div>
+      <div class="details" style="margin-top:6px; font-weight:700; ${g.order_status==='cancelled'?'text-decoration:line-through; color:var(--grey);':''}">💰 ${g.total_amount.toLocaleString()} ကျပ်</div>
+      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+        <button type="button" class="secondary reprint-btn" data-idx="${idx}">🖨️ Receipt</button>
+        ${g.order_status!=='cancelled' ? `<button type="button" class="secondary refund-btn" data-idx="${idx}" style="color:var(--rust); border-color:var(--rust);">↩️ Refund/Void</button>` : ''}
+      </div>
+    </div>`).join('');
+
+  list.querySelectorAll('.reprint-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const g = items[parseInt(btn.dataset.idx)];
+      printPosReceipt(g.rows, g.rows[0].payment_method || 'KBZPay', g.group_display_id, null);
+    });
+  });
+
+  list.querySelectorAll('.refund-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const g = items[parseInt(btn.dataset.idx)];
+      if(!confirm(`"${g.customer_name}" ရဲ့ ${g.total_amount.toLocaleString()} ကျပ် Order ကို Refund/Void လုပ်မှာ သေချာပါသလား? (Stock ပြန်တိုးမည်)`)) return;
+      let cancellation_reason = prompt('ဘာကြောင့် Void/Cancel လုပ်ရတာလဲ? (Record အတွက် သိမ်းထားပါမည်)', '');
+      if(cancellation_reason === null) return;
+      btn.disabled = true; btn.textContent = 'လုပ်ဆောင်နေသည်...';
+      const updatePayload = { order_status:'cancelled', payment_status:'refunded' };
+      if(cancellation_reason) updatePayload.cancellation_reason = cancellation_reason;
+      const { error } = await sb.from('orders').update(updatePayload).in('id', g.ids);
+      if(error){ showToast('Error: '+error.message); btn.disabled=false; return; }
+      await restoreStockForRows(g.rows);
+      logActivity('sale_refunded', `#${g.group_display_id.slice(0,8).toUpperCase()} (${g.customer_name}) — ${g.total_amount.toLocaleString()} ကျပ်`);
+      if(g.sale_channel !== 'in_store'){
+        fetch(`${SUPABASE_URL}/functions/v1/send-order-email`, {
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
+          body: JSON.stringify({ order_ids:g.ids, type:'status_update', status:'cancelled', cancellation_reason }),
+        }).catch(()=>{});
+      }
+      showToast('✅ Refund/Void ပြီးပါပြီ — Stock ပြန်တိုးပြီးပါပြီ');
+      loadSaleHistory();
+      loadOrders();
+      loadInventory();
+      loadProducts();
+      loadCustomers();
+      loadPosProducts();
+    });
+  });
+}
+
+// ---------- DAILY CLOSING REPORT ----------
+(function initClosingDateDefault(){
+  const input = document.getElementById('closing-date-input');
+  if(input) input.value = new Date().toISOString().slice(0,10);
+})();
+
+document.getElementById('closing-report-btn').addEventListener('click', loadClosingReport);
+
+async function loadClosingReport(){
+  const dateStr = document.getElementById('closing-date-input').value;
+  if(!dateStr){ showToast('ရက်စွဲ ရွေးပါ'); return; }
+  const result = document.getElementById('closing-report-result');
+  result.innerHTML = '<p class="hint">Load လုပ်နေသည်...</p>';
+
+  const dayStart = new Date(dateStr+'T00:00:00');
+  const dayEnd = new Date(dateStr+'T23:59:59.999');
+
+  const { data, error } = await sb.from('orders').select('*')
+    .neq('order_status','cancelled')
+    .gte('created_at', dayStart.toISOString())
+    .lte('created_at', dayEnd.toISOString());
+
+  if(error){ result.innerHTML = '<p class="hint">Error loading report</p>'; return; }
+
+  if(!data.length){
+    result.innerHTML = '<p class="hint">ဒီရက်အတွက် ရောင်းချမှု မရှိပါ</p>';
+    return;
+  }
+
+  // Transaction count (order_group_id အလိုက် ရေတွက်)
+  const groupIds = new Set(data.map(o=>o.order_group_id || o.id));
+  const totalItems = data.reduce((s,o)=>s+(o.quantity||0),0);
+  const totalRevenue = data.reduce((s,o)=>s+Number(o.total_amount),0);
+
+  // Payment method အလိုက် ခွဲ (Online Order များအတွက် KBZPay ဖြင့် သတ်မှတ်)
+  const methodMap = {};
+  data.forEach(o=>{
+    const m = o.payment_method || (o.sale_channel==='in_store' ? 'Unknown' : 'KBZPay (Online)');
+    if(!methodMap[m]) methodMap[m] = { amount:0, groupIds:new Set() };
+    methodMap[m].amount += Number(o.total_amount);
+    methodMap[m].groupIds.add(o.order_group_id || o.id);
+  });
+
+  const methodCardsHtml = Object.entries(methodMap).map(([method, info])=>`
+    <div class="closing-method-card">
+      <div class="cm-label">${method}</div>
+      <div class="cm-value">${info.amount.toLocaleString()} ကျပ်</div>
+      <div class="cm-count">${info.groupIds.size} Transaction</div>
+    </div>`).join('');
+
+  result.innerHTML = `
+    <div class="closing-summary-row">
+      <div class="closing-method-card">
+        <div class="cm-label">စုစုပေါင်း ရောင်းရငွေ</div>
+        <div class="cm-value" style="color:var(--rust);">${totalRevenue.toLocaleString()} ကျပ်</div>
+        <div class="cm-count">${groupIds.size} Transaction · ${totalItems} ပစ္စည်း</div>
+      </div>
+      ${methodCardsHtml}
+    </div>
+    <button type="button" class="secondary" id="closing-export-btn" style="margin-top:8px;">📥 CSV Export</button>
+  `;
+
+  document.getElementById('closing-export-btn').addEventListener('click', ()=>{
+    let csv = 'Payment Method,Transactions,Amount (MMK)\n';
+    Object.entries(methodMap).forEach(([method, info])=>{
+      csv += `${method},${info.groupIds.size},${info.amount}\n`;
+    });
+    csv += `\nTOTAL,${groupIds.size},${totalRevenue}\n`;
+    const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `suwati-daily-closing-${dateStr}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  logActivity('daily_closing_viewed', dateStr);
+}
+
+// ---------- STAFF MANAGEMENT (Owner ချည်းသာ) ----------
+document.getElementById('staff-form').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const editId = document.getElementById('staff-edit-id').value;
+  const name = document.getElementById('staff-name').value.trim();
+  const email = document.getElementById('staff-email').value.trim();
+  const uid = document.getElementById('staff-uid').value.trim();
+  const role = document.getElementById('staff-role').value;
+  const dob = document.getElementById('staff-dob').value || null;
+  const phone = document.getElementById('staff-phone').value.trim() || null;
+  const job_position = document.getElementById('staff-job-position').value.trim() || null;
+  const address = document.getElementById('staff-address').value.trim() || null;
+  const allowed_tabs = role==='manager'
+    ? Array.from(document.querySelectorAll('.mgr-perm-checkbox:checked')).map(cb=>cb.value)
+    : null;
+  if(!email || !uid || !name) return;
+
+  if(role === 'owner'){
+    if(!confirm(`"${name}" (${email}) ကို Owner (အပြည့်အစုံ လုပ်ပိုင်ခွင့်) ပေးမှာ သေချာပါသလား?`)) return;
+  }
+
+  if(editId){
+    const { error } = await sb.from('admins').update({ name, email, role, dob, phone, job_position, address, allowed_tabs }).eq('user_id', editId);
+    if(error){ showToast('Error: '+error.message); return; }
+    showToast('Profile Update ပြီးပါပြီ');
+    logActivity('staff_updated', email);
+  } else {
+    const { error } = await sb.from('admins').insert({ user_id: uid, email, role, name, dob, phone, job_position, address, allowed_tabs });
+    if(error){ showToast('Error: '+error.message); return; }
+    showToast((role==='delivery'?'Delivery Person':(role==='manager'?'Manager':'Staff'))+' ထည့်ပြီးပါပြီ');
+    logActivity(role==='delivery'?'delivery_person_added':(role==='manager'?'manager_added':'staff_added'), email);
+  }
+  resetStaffForm();
+  loadStaffList();
+});
+
+document.getElementById('staff-cancel-edit-btn').addEventListener('click', resetStaffForm);
+
+function renderManagerPermCheckboxes(checkedTabs){
+  checkedTabs = checkedTabs || [];
+  const area = document.getElementById('manager-permissions-checkboxes');
+  area.innerHTML = RESTRICTABLE_TABS.map(t=>`
+    <label style="display:inline-flex; align-items:center; gap:5px; font-family:'Space Mono',monospace; font-size:12px; border:1.5px solid #3a382f; padding:6px 10px; white-space:nowrap;">
+      <input type="checkbox" class="mgr-perm-checkbox" value="${t.id}" ${checkedTabs.includes(t.id)?'checked':''}> ${t.label}
+    </label>`).join('');
+}
+
+document.getElementById('staff-role').addEventListener('change', (e)=>{
+  const area = document.getElementById('manager-permissions-area');
+  if(e.target.value === 'manager'){
+    area.style.display = 'block';
+    if(!area.dataset.filled){ renderManagerPermCheckboxes([]); area.dataset.filled = '1'; }
+  } else {
+    area.style.display = 'none';
+  }
+});
+
+function resetStaffForm(){
+  document.getElementById('staff-form').reset();
+  document.getElementById('staff-edit-id').value = '';
+  document.getElementById('staff-uid').disabled = false;
+  document.getElementById('staff-submit-btn').textContent = 'Staff ထည့်မည်';
+  document.getElementById('staff-cancel-edit-btn').style.display = 'none';
+  document.getElementById('manager-permissions-area').style.display = 'none';
+  document.getElementById('manager-permissions-area').dataset.filled = '';
+}
+
+function calcAge(dobStr){
+  if(!dobStr) return null;
+  const dob = new Date(dobStr);
+  const diff = Date.now() - dob.getTime();
+  return Math.floor(diff / (365.25*24*60*60*1000));
+}
+
+async function loadStaffList(){
+  const { data, error } = await sb.from('admins').select('*').order('added_at', { ascending:false });
+  const list = document.getElementById('staff-list');
+  if(error || !data){ list.innerHTML = '<p class="hint">Error loading staff list</p>'; return; }
+  window.staffListCache = data;
+  list.innerHTML = data.map((a,i)=>{
+    const roleLabelMap = { owner:'OWNER', delivery:'DELIVERY', manager:'MANAGER', staff:'STAFF' };
+    const roleColorMap = { owner:'var(--acid)', delivery:'#4da3ff', manager:'#c98fff', staff:'var(--rust)' };
+    const roleLabel = roleLabelMap[a.role] || 'STAFF';
+    const roleColor = roleColorMap[a.role] || 'var(--rust)';
+    const age = calcAge(a.dob);
+    return `
+    <div class="list-item">
+      <div class="info">
+        <h4>${a.name || a.email || '(အမည် မထည့်ရသေးပါ)'} <span class="mono" style="font-size:10px; color:${roleColor};">[${roleLabel}]</span></h4>
+        <p class="mono" style="font-size:11px; color:var(--grey);">
+          ${a.email?'✉️ '+a.email+' · ':''}${age?'Age: '+age+' · ':''}${a.phone?'📞 '+a.phone+' · ':''}${a.job_position?'💼 '+a.job_position:''}
+        </p>
+        ${a.address ? `<p class="mono" style="font-size:11px; color:var(--grey);">📍 ${a.address}</p>` : ''}
+        <p class="mono" style="font-size:10px; color:#5a5748;">UID: ${a.user_id}</p>
+      </div>
+      <div class="actions">
+        <button class="secondary edit-staff-btn" data-idx="${i}">ပြင်မည်</button>
+        ${a.role!=='owner' ? `<button class="secondary del-staff-btn" data-id="${a.user_id}">ဖျက်မည်</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  list.querySelectorAll('.edit-staff-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const a = window.staffListCache[parseInt(btn.dataset.idx)];
+      document.getElementById('staff-edit-id').value = a.user_id;
+      document.getElementById('staff-name').value = a.name || '';
+      document.getElementById('staff-email').value = a.email || '';
+      document.getElementById('staff-uid').value = a.user_id;
+      document.getElementById('staff-uid').disabled = true;
+      document.getElementById('staff-role').value = a.role;
+      document.getElementById('staff-dob').value = a.dob || '';
+      document.getElementById('staff-phone').value = a.phone || '';
+      document.getElementById('staff-job-position').value = a.job_position || '';
+      document.getElementById('staff-address').value = a.address || '';
+      document.getElementById('staff-submit-btn').textContent = 'Profile Update လုပ်မည်';
+      document.getElementById('staff-cancel-edit-btn').style.display = 'inline-block';
+      const permArea = document.getElementById('manager-permissions-area');
+      if(a.role === 'manager'){
+        permArea.style.display = 'block';
+        renderManagerPermCheckboxes(a.allowed_tabs || []);
+        permArea.dataset.filled = '1';
+      } else {
+        permArea.style.display = 'none';
+      }
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  list.querySelectorAll('.del-staff-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm('ဒီ Staff ကို ဖယ်ရှားမှာ သေချာပါသလား? (Admin App ဝင်ခွင့် ပျက်သွားမည်)')) return;
+      const { error } = await sb.from('admins').delete().eq('user_id', btn.dataset.id);
+      if(error){ showToast('Error: '+error.message); return; }
+      showToast('Staff ဖယ်ရှားပြီးပါပြီ');
+      logActivity('staff_removed', btn.dataset.id);
+      loadStaffList();
+    });
+  });
+}
+
+// ---------- CUSTOMER MESSAGES ----------
+let messagesCache = [];
+let currentMessageUserId = null;
+let adminChatChannel = null;
+
+document.getElementById('messages-search').addEventListener('input', renderMessageThreads);
+
+async function loadMessages(){
+  const { data, error } = await sb.from('chat_messages').select('*').order('created_at', { ascending:true });
+  if(error || !data) return;
+  messagesCache = data;
+  renderMessageThreads();
+}
+
+function renderMessageThreads(){
+  const list = document.getElementById('messages-thread-list');
+  const q = document.getElementById('messages-search').value.trim().toLowerCase();
+
+  const threadsMap = {};
+  messagesCache.forEach(m=>{
+    if(!threadsMap[m.user_id]) threadsMap[m.user_id] = [];
+    threadsMap[m.user_id].push(m);
+  });
+
+  let threads = Object.entries(threadsMap).map(([userId, msgs])=>{
+    msgs.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+    const last = msgs[msgs.length-1];
+    return { userId, name: msgs.find(m=>m.customer_name)?.customer_name || 'Unknown', last, msgs };
+  }).sort((a,b)=> new Date(b.last.created_at) - new Date(a.last.created_at));
+
+  if(q){ threads = threads.filter(t=>t.name.toLowerCase().includes(q)); }
+
+  if(!threads.length){ list.innerHTML = '<p class="hint">Message မရှိသေးပါ</p>'; return; }
+
+  list.innerHTML = threads.map(t=>`
+    <div class="msg-thread-item" data-uid="${t.userId}">
+      <div>
+        <div class="mt-name">${t.name}</div>
+        <div class="mt-preview">${t.last.sender==='admin'?'You: ':''}${t.last.image_url?'📷 Photo '+(t.last.message||''):t.last.message}</div>
+      </div>
+      <div class="mt-time">${new Date(t.last.created_at).toLocaleString()}</div>
+    </div>`).join('');
+
+  list.querySelectorAll('.msg-thread-item').forEach(el=>{
+    el.addEventListener('click', ()=>openConversation(el.dataset.uid));
+  });
+}
+
+function openConversation(userId){
+  currentMessageUserId = userId;
+  const thread = messagesCache.filter(m=>m.user_id===userId);
+  const name = thread.find(m=>m.customer_name)?.customer_name || 'Unknown';
+  const view = document.getElementById('messages-conversation-view');
+  document.getElementById('messages-thread-list').style.display = 'none';
+  view.style.display = 'block';
+  view.innerHTML = `
+    <div class="form-card">
+      <button type="button" class="secondary" id="back-to-threads-btn" style="margin-bottom:12px;">← Thread များ ပြန်ကြည့်ရန်</button>
+      <h3>${name}</h3>
+      <div class="admin-chat-log" id="admin-chat-log">
+        ${thread.map(m=>`<div class="admin-chat-bubble ${m.sender}">${m.image_url?`<img src="${m.image_url}" style="max-width:100%; display:block; margin-bottom:${m.message?'6px':'0'}; cursor:zoom-in;" onclick="openLightbox('${m.image_url}')">`:''}${m.message||''}</div>`).join('')}
+      </div>
+      <div id="admin-chat-image-preview" style="margin-bottom:8px;"></div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <label for="admin-chat-image-input" style="cursor:pointer; font-size:22px; flex-shrink:0;">📎</label>
+        <input type="file" id="admin-chat-image-input" accept="image/*" style="display:none;">
+        <input type="text" id="admin-chat-input" placeholder="အဖြေ ရေးပါ...">
+        <button type="button" class="acid" id="admin-chat-send-btn" style="width:auto; padding:12px 18px;">ပို့မည်</button>
+      </div>
+    </div>`;
+  document.getElementById('admin-chat-log').scrollTop = document.getElementById('admin-chat-log').scrollHeight;
+  document.getElementById('back-to-threads-btn').addEventListener('click', ()=>{
+    view.style.display = 'none';
+    document.getElementById('messages-thread-list').style.display = 'block';
+    currentMessageUserId = null;
+  });
+  document.getElementById('admin-chat-send-btn').addEventListener('click', sendAdminReply);
+  document.getElementById('admin-chat-input').addEventListener('keypress', (e)=>{ if(e.key==='Enter') sendAdminReply(); });
+  document.getElementById('admin-chat-image-input').addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    pendingAdminChatImageFile = file;
+    const preview = document.getElementById('admin-chat-image-preview');
+    const url = URL.createObjectURL(file);
+    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingAdminChatImageFile=null; document.getElementById('admin-chat-image-preview').innerHTML=''; return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
+  });
+}
+
+let pendingAdminChatImageFile = null;
+
+async function sendAdminReply(){
+  const input = document.getElementById('admin-chat-input');
+  const text = input.value.trim();
+  if(!text && !pendingAdminChatImageFile) return;
+  if(!currentMessageUserId) return;
+
+  let image_url = null;
+  if(pendingAdminChatImageFile){
+    const ext = pendingAdminChatImageFile.name.split('.').pop();
+    const path = `admin/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: upErr } = await sb.storage.from('chat-images').upload(path, pendingAdminChatImageFile);
+    if(upErr){ showToast('ပုံ ပို့၍ မရပါ — ' + upErr.message); return; }
+    const { data: urlData } = sb.storage.from('chat-images').getPublicUrl(path);
+    image_url = urlData.publicUrl;
+  }
+
+  input.value = '';
+  pendingAdminChatImageFile = null;
+  const previewEl = document.getElementById('admin-chat-image-preview');
+  if(previewEl) previewEl.innerHTML = '';
+
+  const { error } = await sb.from('chat_messages').insert({ user_id: currentMessageUserId, sender:'admin', message:text, image_url });
+  if(error){ showToast('Error: '+error.message); return; }
+  await loadMessages();
+  if(currentMessageUserId) openConversation(currentMessageUserId);
+}
+
+function subscribeToAdminChatRealtime(){
+  if(adminChatChannel) return;
+  adminChatChannel = sb.channel('admin-chat-realtime')
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages' }, (payload)=>{
+      if(payload.new.sender === 'customer'){
+        playNotificationSound();
+        showToast('💬 Message အသစ် ဝင်လာပါပြီ!');
+      }
+      loadMessages();
+      if(currentMessageUserId === payload.new.user_id) openConversation(currentMessageUserId);
+    })
+    .subscribe();
+}
+
+// ---------- DELIVERY QUEUE ----------
+let deliveryOrdersCache = [];
+let currentDeliveryGroup = null;
+
+async function loadDeliveryQueue(){
+  const { data, error } = await sb.from('orders').select('*')
+    .in('order_status', ['confirmed','processing','shipped','delivered'])
+    .neq('sale_channel', 'in_store')
+    .order('created_at', { ascending:false });
+  const list = document.getElementById('delivery-queue-list');
+  if(error || !data){ list.innerHTML = '<p class="hint">Error loading delivery queue</p>'; return; }
+
+  const groupsMap = {};
+  data.forEach(o=>{
+    const key = o.order_group_id || o.id;
+    if(!groupsMap[key]) groupsMap[key] = [];
+    groupsMap[key].push(o);
+  });
+  deliveryOrdersCache = Object.values(groupsMap).map(rows=>{
+    rows.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
+    const first = rows[0];
+    return {
+      ids: rows.map(r=>r.id), rows, customer_name: first.customer_name, phone: first.phone,
+      address: first.address, created_at: first.created_at, order_status: first.order_status,
+      delivery_note: first.delivery_note, delivery_photo_url: first.delivery_photo_url,
+      total_amount: rows.reduce((s,r)=>s+Number(r.total_amount),0),
+      group_display_id: (first.order_group_id || first.id),
+    };
+  });
+
+  if(!deliveryOrdersCache.length){ list.innerHTML = '<p class="hint">ပို့ဆောင်ရန် Order မရှိသေးပါ 🎉</p>'; return; }
+
+  const statusLabels = { confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ', shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပို့ပြီးပါပြီ ✓' };
+
+  list.innerHTML = deliveryOrdersCache.map((g,idx)=>`
+    <div class="delivery-card ${g.order_status==='delivered'?'delivered-done':''}">
+      <div class="row1">
+        <h4>${g.customer_name}</h4>
+        <span class="oid">#${g.group_display_id.slice(0,8).toUpperCase()}</span>
+      </div>
+      <div class="details" style="margin-top:6px;">
+        📞 ${g.phone}<br>📍 ${g.address}<br>
+        ${g.rows.map(r=>`🛍️ ${r.product_name}${r.size?' ('+r.size+(r.color?', '+r.color:'')+')':''} x${r.quantity}`).join('<br>')}
+      </div>
+      <div class="details" style="margin-top:6px; font-weight:700;">💰 ${g.total_amount.toLocaleString()} ကျပ်</div>
+      <span class="dc-status ${g.order_status==='delivered'?'dc-done':''}">${statusLabels[g.order_status]||g.order_status}</span>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        ${g.order_status!=='delivered' ? `
+        <select class="delivery-status-select" data-idx="${idx}" style="width:auto; margin-bottom:0;">
+          <option value="confirmed" ${g.order_status==='confirmed'?'selected':''}>အတည်ပြုပြီး</option>
+          <option value="processing" ${g.order_status==='processing'?'selected':''}>ပြင်ဆင်နေဆဲ</option>
+          <option value="shipped" ${g.order_status==='shipped'?'selected':''}>ပို့ဆောင်နေဆဲ (ထွက်ခွာပြီ)</option>
+          <option value="delivered" ${g.order_status==='delivered'?'selected':''}>ပို့ဆောင်ပြီးပါပြီ</option>
+        </select>` : `<div class="hint" style="margin:0; color:var(--acid);">🔒 ပို့ပြီးသွားပါပြီ — Status ကို ပြန်ပြင်လို့ မရတော့ပါ</div>`}
+        <button type="button" class="acid delivery-action-btn" data-idx="${idx}">${g.order_status==='delivered'?'📋 အသေးစိတ် ကြည့်ရန်':'📦 ပို့ပြီးကြောင်း မှတ်တမ်းတင်ရန်'}</button>
+      </div>
+    </div>`).join('');
+
+  list.querySelectorAll('.delivery-status-select').forEach(sel=>{
+    sel.addEventListener('change', async (e)=>{
+      const idx = parseInt(sel.dataset.idx);
+      const g = deliveryOrdersCache[idx];
+      const newStatus = e.target.value;
+      if(newStatus === 'delivered'){
+        // ပို့ပြီးပါပြီ ရွေးရင် ပုံတင်ဖို့ လိုအပ်လို့ Photo Upload Flow ကို ဖွင့်ပေးမယ်
+        sel.value = g.order_status; // Dropdown ကို မူလအတိုင်း ပြန်ထား (Photo မတင်ခင် Status ကို မပြောင်းသေး)
+        openDeliveryAction(idx);
+        return;
+      }
+      const { error } = await sb.from('orders').update({ order_status:newStatus }).in('id', g.ids);
+      if(error){ showToast('Error: '+error.message); return; }
+      showToast('Status Update ပြီးပါပြီ');
+      logActivity('delivery_status_changed', `#${g.group_display_id.slice(0,8).toUpperCase()} → ${newStatus}`);
+      loadDeliveryQueue();
+      loadOrders();
+    });
+  });
+
+  list.querySelectorAll('.delivery-action-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>openDeliveryAction(parseInt(btn.dataset.idx)));
+  });
+}
+
+function openDeliveryAction(idx){
+  currentDeliveryGroup = deliveryOrdersCache[idx];
+  const g = currentDeliveryGroup;
+  const alreadyDelivered = g.order_status==='delivered';
+  document.getElementById('delivery-queue-list').style.display = 'none';
+  const view = document.getElementById('delivery-action-view');
+  view.style.display = 'block';
+  view.innerHTML = `
+    <div class="form-card">
+      <button type="button" class="secondary" id="back-to-queue-btn" style="margin-bottom:12px;">← Queue ပြန်ကြည့်ရန်</button>
+      <h3>${g.customer_name} — Order #${g.group_display_id.slice(0,8).toUpperCase()}</h3>
+      <div class="details" style="margin-top:8px;">📍 ${g.address}<br>📞 ${g.phone}</div>
+
+      ${alreadyDelivered ? `
+        <div class="hint" style="margin-top:14px; color:var(--acid);">✅ ပို့ပြီးပါပြီ</div>
+        ${g.delivery_note ? `<div class="details" style="margin-top:8px; padding:10px; background:#1a1916; border:1.5px solid #3a382f;">${g.delivery_note}</div>` : ''}
+        ${g.delivery_photo_url ? `<img src="${g.delivery_photo_url}" style="width:100%; margin-top:10px; border:2px solid var(--concrete); cursor:zoom-in;" onclick="openLightbox('${g.delivery_photo_url}')">` : ''}
+      ` : `
+        <div class="hint" style="margin-top:14px;">ပစ္စည်း ဘယ်နေရာမှာ ထားခဲ့တယ်ဆိုတာ ပုံတင်ပါ (လိုအပ်သည်)</div>
+        <input type="file" id="delivery-photo-input" accept="image/*" capture="environment">
+        <div id="delivery-photo-preview" style="margin-top:10px;"></div>
+
+        <div class="hint" style="margin-top:14px;">Customer ဆီ စာသား ရေးထားချင်ရင် (Optional)</div>
+        <textarea id="delivery-note-input" rows="2" placeholder="ဥပမာ - Gate အနီးမှာ ထားခဲ့ပါသည်"></textarea>
+
+        <button type="button" class="acid" id="confirm-delivered-btn" style="width:100%; padding:14px; margin-top:14px;">✅ ပို့ပြီးပါပြီ — မှတ်တမ်းတင်မည်</button>
+      `}
+    </div>`;
+
+  document.getElementById('back-to-queue-btn').addEventListener('click', ()=>{
+    view.style.display = 'none';
+    document.getElementById('delivery-queue-list').style.display = 'block';
+    currentDeliveryGroup = null;
+  });
+
+  if(!alreadyDelivered){
+    document.getElementById('delivery-photo-input').addEventListener('change', (e)=>{
+      const file = e.target.files[0];
+      const preview = document.getElementById('delivery-photo-preview');
+      if(file){
+        const url = URL.createObjectURL(file);
+        preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}" onclick="openLightbox('${url}')"></div>`;
+      }
+    });
+    document.getElementById('confirm-delivered-btn').addEventListener('click', confirmDelivered);
+  }
+}
+
+async function confirmDelivered(){
+  const g = currentDeliveryGroup;
+  const file = document.getElementById('delivery-photo-input').files[0];
+  const note = document.getElementById('delivery-note-input').value.trim();
+  const btn = document.getElementById('confirm-delivered-btn');
+  if(!file){ showToast('ပို့ဆောင်ပြီးကြောင်း ပုံတင်ရန် လိုအပ်ပါသည်'); return; }
+
+  btn.disabled = true; btn.textContent = 'သိမ်းနေသည်...';
+
+  const ext = file.name.split('.').pop();
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const { error: upErr } = await sb.storage.from('delivery-photos').upload(path, file);
+  if(upErr){ showToast('ပုံတင်ရာတွင် error: '+upErr.message); btn.disabled=false; btn.textContent='✅ ပို့ပြီးပါပြီ — မှတ်တမ်းတင်မည်'; return; }
+  const { data: urlData } = sb.storage.from('delivery-photos').getPublicUrl(path);
+
+  const { error } = await sb.from('orders').update({
+    order_status: 'delivered',
+    delivery_photo_url: urlData.publicUrl,
+    delivery_note: note || null,
+    delivered_by: currentAdminUserId,
+    delivered_at: new Date().toISOString(),
+  }).in('id', g.ids);
+
+  if(error){ showToast('Error: '+error.message); btn.disabled=false; btn.textContent='✅ ပို့ပြီးပါပြီ — မှတ်တမ်းတင်မည်'; return; }
+
+  // Customer ဆီ Email အသိပေး
+  fetch(`${SUPABASE_URL}/functions/v1/send-order-email`, {
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
+    body: JSON.stringify({ order_ids:g.ids, type:'status_update', status:'delivered' }),
+  }).catch(()=>{});
+
+  logActivity('order_delivered', `#${g.group_display_id.slice(0,8).toUpperCase()} (${g.customer_name}) — ${currentAdminEmail} မှ ပို့ဆောင်ပြီး`);
+  showToast('✅ ပို့ပြီးကြောင်း မှတ်တမ်းတင်ပြီးပါပြီ! Customer ဆီ Email ပို့ထားပါပြီ');
+
+  document.getElementById('delivery-action-view').style.display = 'none';
+  document.getElementById('delivery-queue-list').style.display = 'block';
+  currentDeliveryGroup = null;
+  loadDeliveryQueue();
+}
+
+// ---------- REFRESH BUTTON ----------
+const TAB_REFRESH_MAP = {
+  'pos-panel': ()=>{ loadPosProducts(); },
+  'salehistory-panel': loadSaleHistory,
+  'wallet-panel': ()=>{ loadTopupRequests(); loadGiftCardRequests(); loadAllGiftCards(); },
+  'products-panel': loadProducts,
+  'inventory-panel': loadInventory,
+  'categories-panel': loadCategories,
+  'activitylog-panel': loadActivityLog,
+  'posts-panel': loadPosts,
+  'orders-panel': loadOrders,
+  'salesreport-panel': loadSalesReport,
+  'customers-panel': loadCustomers,
+  'banners-panel': loadBanners,
+  'settings-panel': loadSettingsForm,
+  'staff-panel': loadStaffList,
+  'messages-panel': async ()=>{ await loadMessages(); if(currentMessageUserId) openConversation(currentMessageUserId); },
+  'delivery-panel': loadDeliveryQueue,
+};
+
+document.getElementById('refresh-btn').addEventListener('click', async ()=>{
+  const btn = document.getElementById('refresh-btn');
+  const activePanel = document.querySelector('.panel.active');
+  if(!activePanel) return;
+  btn.disabled = true;
+  btn.textContent = '⏳';
+  try{
+    const fn = TAB_REFRESH_MAP[activePanel.id];
+    if(fn) await fn();
+    showToast('✅ Refresh ပြီးပါပြီ');
+  }catch(e){
+    showToast('Refresh error: '+e.message);
+  }
+  btn.disabled = false;
+  btn.textContent = '🔄';
+});
+
+// ---------- WALLET TOP-UP MANAGEMENT ----------
+async function loadTopupRequests(){
+  const { data, error } = await sb.from('wallet_topups').select('*').eq('status','pending').order('created_at', { ascending:true });
+  const list = document.getElementById('topup-requests-list');
+  if(!list) return;
+  if(error){ list.innerHTML = '<p class="hint">Error loading top-up requests</p>'; return; }
+  if(!data.length){ list.innerHTML = '<p class="hint">စစ်ဆေးရန် Top-up Request မရှိသေးပါ</p>'; return; }
+
+  list.innerHTML = data.map(t=>`
+    <div class="order-card">
+      <div class="row1"><h4>${t.customer_name}</h4><span class="oid">${new Date(t.created_at).toLocaleString()}</span></div>
+      <div class="details" style="margin-top:6px;">📞 ${t.phone||'-'}</div>
+      <div class="details" style="margin-top:6px; font-weight:700; color:var(--acid);">💰 ${Number(t.amount).toLocaleString()} ကျပ်</div>
+      ${t.payment_screenshot_url ? `<img src="${t.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${t.payment_screenshot_url}')">` : ''}
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="acid approve-topup-btn" data-id="${t.id}" data-uid="${t.user_id}" data-amt="${t.amount}">✅ Approve</button>
+        <button type="button" class="secondary reject-topup-btn" data-id="${t.id}" style="color:var(--rust); border-color:var(--rust);">❌ Reject</button>
+      </div>
+    </div>`).join('');
+
+  list.querySelectorAll('.approve-topup-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      if(!confirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Wallet ထဲ ဖြည့်ပေးမှာ သေချာပါသလား?`)) return;
+      btn.disabled = true;
+      const { error: creditErr } = await sb.rpc('credit_wallet', { p_user_id: btn.dataset.uid, p_amount: parseFloat(btn.dataset.amt) });
+      if(creditErr){ showToast('Error: '+creditErr.message); btn.disabled=false; return; }
+      await sb.from('wallet_topups').update({ status:'approved', reviewed_at:new Date().toISOString() }).eq('id', btn.dataset.id);
+      logActivity('wallet_topup_approved', `${btn.dataset.amt} ကျပ်`);
+      showToast('✅ Wallet ဖြည့်ပြီးပါပြီ');
+      loadTopupRequests();
+    });
+  });
+  list.querySelectorAll('.reject-topup-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const reason = prompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
+      if(reason === null) return;
+      await sb.from('wallet_topups').update({ status:'rejected', rejection_reason:reason||null, reviewed_at:new Date().toISOString() }).eq('id', btn.dataset.id);
+      logActivity('wallet_topup_rejected', btn.dataset.id);
+      showToast('Top-up Reject လုပ်ပြီးပါပြီ');
+      loadTopupRequests();
+    });
+  });
+}
+
+// ---------- GIFT CARD MANAGEMENT ----------
+async function loadGiftCardRequests(){
+  const { data, error } = await sb.from('gift_cards').select('*').eq('status','pending').order('created_at', { ascending:true });
+  const list = document.getElementById('giftcard-requests-list');
+  if(!list) return;
+  if(error){ list.innerHTML = '<p class="hint">Error loading gift card requests</p>'; return; }
+  if(!data.length){ list.innerHTML = '<p class="hint">စစ်ဆေးရန် Gift Card Request မရှိသေးပါ</p>'; return; }
+
+  list.innerHTML = data.map(g=>`
+    <div class="order-card">
+      <div class="row1"><h4>${g.purchaser_name}</h4><span class="oid">${new Date(g.created_at).toLocaleString()}</span></div>
+      <div class="details" style="margin-top:6px;">📞 ${g.phone||'-'}</div>
+      <div class="details" style="margin-top:6px; font-weight:700; color:var(--rust);">🎁 ${Number(g.amount).toLocaleString()} ကျပ်</div>
+      ${g.payment_screenshot_url ? `<img src="${g.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <button type="button" class="acid approve-gift-btn" data-id="${g.id}">✅ Approve</button>
+        <button type="button" class="secondary reject-gift-btn" data-id="${g.id}" style="color:var(--rust); border-color:var(--rust);">❌ Reject</button>
+      </div>
+    </div>`).join('');
+
+  list.querySelectorAll('.approve-gift-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      btn.disabled = true;
+      const { error } = await sb.from('gift_cards').update({ status:'active' }).eq('id', btn.dataset.id);
+      if(error){ showToast('Error: '+error.message); btn.disabled=false; return; }
+      logActivity('gift_card_approved', btn.dataset.id);
+      showToast('✅ Gift Card Active ဖြစ်သွားပါပြီ');
+      loadGiftCardRequests();
+      loadAllGiftCards();
+    });
+  });
+  list.querySelectorAll('.reject-gift-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const reason = prompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
+      if(reason === null) return;
+      await sb.from('gift_cards').update({ status:'rejected', rejection_reason:reason||null }).eq('id', btn.dataset.id);
+      logActivity('gift_card_rejected', btn.dataset.id);
+      showToast('Gift Card Reject လုပ်ပြီးပါပြီ');
+      loadGiftCardRequests();
+    });
+  });
+}
+
+let giftCardCache = [];
+async function loadAllGiftCards(){
+  const { data, error } = await sb.from('gift_cards').select('*').order('created_at', { ascending:false });
+  const list = document.getElementById('giftcard-all-list');
+  if(!list) return;
+  if(error || !data){ list.innerHTML = '<p class="hint">Error loading gift cards</p>'; return; }
+  giftCardCache = data;
+  renderGiftCardList();
+}
+
+function renderGiftCardList(){
+  const list = document.getElementById('giftcard-all-list');
+  const q = (document.getElementById('giftcard-search')?.value || '').trim().toLowerCase();
+  const statusLabels = { pending:'⏳ Pending', active:'✅ Active', redeemed:'☑️ Redeemed', rejected:'❌ Rejected' };
+  let items = giftCardCache;
+  if(q){ items = items.filter(g => g.code.toLowerCase().includes(q) || (g.purchaser_name||'').toLowerCase().includes(q)); }
+  if(!items.length){ list.innerHTML = '<p class="hint">Gift Card မရှိသေးပါ</p>'; return; }
+
+  list.innerHTML = items.map(g=>`
+    <div class="list-item">
+      <div class="info">
+        <h4>${g.code} <span class="mono" style="font-size:10px; color:var(--grey);">[${statusLabels[g.status]||g.status}]</span></h4>
+        <p class="mono" style="font-size:11px; color:var(--grey);">${Number(g.amount).toLocaleString()} ကျပ် · ဝယ်သူ: ${g.purchaser_name||'-'}</p>
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('giftcard-search')?.addEventListener('input', renderGiftCardList);
+
+checkSession();
+</script>
+</body>
+</html>
