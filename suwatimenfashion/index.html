@@ -1367,7 +1367,10 @@ async function payWithWallet(){
   }
 
   // Wallet ကို နုတ်ယူ
-  const { data: debitOk, error: debitErr } = await sb.rpc('debit_wallet', { p_amount: currentOrder.total });
+  const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
+  const { data: debitOk, error: debitErr } = await sb.rpc('debit_wallet', {
+    p_amount: currentOrder.total, p_type: 'purchase', p_description: `Website Order — #${groupId.slice(0,8).toUpperCase()}`, p_reference: groupId,
+  });
   if(debitErr || debitOk !== true){
     for(const r of reservedItems){ await safeRestoreStockGlobal(r); }
     showSiteToast('Wallet ငွေ မလုံလောက်တော့ပါ');
@@ -1375,7 +1378,6 @@ async function payWithWallet(){
     return;
   }
 
-  const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
   const nowIso = new Date().toISOString();
   const rows = currentOrder.items.map(i=>({
     id: (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2))),
@@ -2088,7 +2090,7 @@ async function renderProfileView(){
       </div>
       <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
         <button type="button" class="order-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openWalletTopup()">➕ ငွေဖြည့်ရန်</button>
-        <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openWalletHistory()">📜 မှတ်တမ်း</button>
+        <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openWalletHistory()">📜 Usage History</button>
       </div>
       <button type="button" class="auth-link" style="margin-top:10px;" onclick="openPrepaidCard()">🎫 ကျွန်ုပ်၏ Prepaid Card ကြည့်ရန် (အပြင်ဆိုင်တွင် သုံးရန်)</button>
     </div>
@@ -2243,22 +2245,58 @@ function togglePinReveal(){
 
 async function openWalletHistory(){
   const box = document.getElementById('checkout-modal-content');
-  const { data, error } = await sb.from('wallet_topups').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
-  const statusLabels = { pending:'⏳ စစ်ဆေးဆဲ', approved:'✅ အတည်ပြုပြီး', rejected:'❌ ငြင်းပယ်ခံရ' };
-  window.walletTopupCache = data || [];
 
-  const listHtml = (!error && data && data.length) ? data.map((t,i)=>`
+  const { data: topups } = await sb.from('wallet_topups').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
+  const { data: txns, error } = await sb.from('wallet_transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
+  window.walletTopupCache = topups || [];
+
+  const statusLabels = { pending:'⏳ စစ်ဆေးဆဲ', approved:'✅ အတည်ပြုပြီး', rejected:'❌ ငြင်းပယ်ခံရ' };
+  const typeIcons = { topup:'➕', gift_card_redeem:'🎁', refund:'↩️', purchase:'🛍️', pos_purchase:'🏪' };
+  const typeLabels = { topup:'ငွေဖြည့်ခြင်း', gift_card_redeem:'Gift Card သုံးစွဲမှု', refund:'ငွေပြန်အမ်းခြင်း', purchase:'ဝယ်ယူမှု (Website)', pos_purchase:'ဝယ်ယူမှု (ဆိုင်ထဲ)' };
+
+  // Pending Top-up Request များ (Admin မစစ်ရသေးသည်များ) ကို အပေါ်ဆုံးမှာ ဆက်ပြ
+  const pendingTopups = (topups||[]).filter(t=>t.status==='pending');
+  const pendingHtml = pendingTopups.length ? `
+    <div class="modal-label" style="margin-top:0;">⏳ စစ်ဆေးဆဲ Top-up Request</div>
+    ${pendingTopups.map((t,i)=>`
+      <div class="history-item">
+        <div class="row1"><span>${new Date(t.created_at).toLocaleDateString()}</span><span>${statusLabels[t.status]}</span></div>
+        <h5>${Number(t.amount).toLocaleString()} ကျပ်</h5>
+        <button type="button" class="auth-link" style="display:inline-block; margin-top:6px;" onclick="openTransactionReceipt('topup', walletTopupCache[${topups.indexOf(t)}])">🧾 Receipt ကြည့်ရန်</button>
+      </div>`).join('')}` : '';
+
+  const rejectedTopups = (topups||[]).filter(t=>t.status==='rejected');
+  const rejectedHtml = rejectedTopups.length ? `
+    <div class="modal-label">❌ ငြင်းပယ်ခံရသော Request</div>
+    ${rejectedTopups.map(t=>`
+      <div class="history-item">
+        <div class="row1"><span>${new Date(t.created_at).toLocaleDateString()}</span><span>${statusLabels[t.status]}</span></div>
+        <h5 style="text-decoration:line-through; color:var(--grey);">${Number(t.amount).toLocaleString()} ကျပ်</h5>
+        ${t.rejection_reason ? `<div class="mono" style="font-size:11px; color:var(--rust);">${t.rejection_reason}</div>` : ''}
+      </div>`).join('')}` : '';
+
+  const txnHtml = (!error && txns && txns.length) ? txns.map(tx=>{
+    const isCredit = Number(tx.amount) >= 0;
+    return `
     <div class="history-item">
-      <div class="row1"><span>${new Date(t.created_at).toLocaleDateString()}</span><span>${statusLabels[t.status]||t.status}</span></div>
-      <h5>${Number(t.amount).toLocaleString()} ကျပ်</h5>
-      ${t.status==='rejected' && t.rejection_reason ? `<div class="mono" style="font-size:11px; color:var(--rust);">${t.rejection_reason}</div>` : ''}
-      <button type="button" class="auth-link" style="display:inline-block; margin-top:6px;" onclick="openTransactionReceipt('topup', walletTopupCache[${i}])">🧾 Receipt ကြည့်ရန်</button>
-    </div>`).join('') : '<p class="hint">Top-up မှတ်တမ်း မရှိသေးပါ</p>';
+      <div class="row1">
+        <span>${typeIcons[tx.type]||'💰'} ${typeLabels[tx.type]||tx.type}</span>
+        <span style="color:${isCredit?'var(--ink)':'var(--rust)'}; font-weight:700;">${isCredit?'+':''}${Number(tx.amount).toLocaleString()} ကျပ်</span>
+      </div>
+      <div class="mono" style="font-size:11px; color:var(--grey); margin-top:4px;">${new Date(tx.created_at).toLocaleString()}</div>
+      ${tx.description ? `<div style="font-size:12.5px; margin-top:2px;">${tx.description}</div>` : ''}
+    </div>`;
+  }).join('') : '<p class="hint">Usage History မရှိသေးပါ</p>';
 
   box.innerHTML = `
     <button class="modal-close" onclick="closeCheckout()">&times;</button>
-    <h3>📜 Wallet Top-up မှတ်တမ်း</h3>
-    <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">${listHtml}</div>
+    <h3>📜 Prepaid Card Usage History</h3>
+    <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
+      ${pendingHtml}
+      ${rejectedHtml}
+      <div class="modal-label" style="${pendingHtml||rejectedHtml?'':'margin-top:0;'}">📋 Transaction Record အားလုံး</div>
+      ${txnHtml}
+    </div>
     <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="renderProfileView()">← Profile ပြန်သွားရန်</button>`;
 }
 
@@ -2405,9 +2443,9 @@ async function openMyGiftCards(){
       <div class="row1"><span>${new Date(g.created_at).toLocaleDateString()}</span><span>${statusLabels[g.status]||g.status}</span></div>
       <h5>${Number(g.amount).toLocaleString()} ကျပ်</h5>
       ${g.status==='active' ? `<div class="giftcard-code-box" style="margin-top:8px; padding:10px;"><div class="gc-code" style="font-size:15px;">${g.code}</div></div>` : ''}
-      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
         <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openTransactionReceipt('giftcard', myGiftCardsCache[${i}])">🧾 Receipt</button>
-        ${g.status==='active' ? `<button type="button" class="auth-link" style="display:inline-block; margin:0; color:var(--acid);" onclick="useMyGiftCardNow(${i})">🎁 ယခုပဲ သုံးမည်</button>` : ''}
+        ${g.status==='active' ? `<button type="button" class="order-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); width:auto; margin-top:0; padding:9px 16px; font-size:12px;" onclick="useMyGiftCardNow(${i})">🎁 ယခုပဲ သုံးမည်</button>` : ''}
       </div>
     </div>`).join('') : '<p class="hint">Gift Card မရှိသေးပါ</p>';
 
@@ -2819,7 +2857,10 @@ async function detailPayWithPrepaidCard(){
   }
 
   const totalPrice = Number(p.price) * detailState.qty;
-  const { data: debitOk, error: debitErr } = await sb.rpc('debit_wallet', { p_amount: totalPrice });
+  const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
+  const { data: debitOk, error: debitErr } = await sb.rpc('debit_wallet', {
+    p_amount: totalPrice, p_type: 'purchase', p_description: `Website Order — "${p.name}" (#${groupId.slice(0,8).toUpperCase()})`, p_reference: groupId,
+  });
   if(debitErr || debitOk !== true){
     await safeRestoreStockGlobal({ name:p.name, quantity:detailState.qty, size:detailState.size, color:detailState.color });
     showSiteToast('Prepaid Card ငွေ မလုံလောက်တော့ပါ');
@@ -2827,7 +2868,6 @@ async function detailPayWithPrepaidCard(){
     return;
   }
 
-  const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
   const row = {
     id: (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2))),
     user_id: currentUser.id, order_group_id: groupId,

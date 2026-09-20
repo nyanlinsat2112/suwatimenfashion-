@@ -164,6 +164,13 @@
   margin-left:5px; vertical-align:middle;
 }
 
+@keyframes pulseAttention{
+  0%, 100% { background:transparent; color:var(--concrete); transform:scale(1); }
+  15% { background:var(--rust); color:#fff; transform:scale(1.06); }
+  30% { background:transparent; color:var(--concrete); transform:scale(1); }
+}
+.tab-btn.needs-attention{ animation:pulseAttention 3s ease-in-out infinite; border-color:var(--rust); }
+
 .log-entry{border-bottom:1px solid #3a382f; padding:10px 4px; font-family:'Space Mono',monospace; font-size:12.5px;}
 .log-entry .log-time{color:var(--grey); font-size:11px;}
 .log-entry .log-admin{color:var(--acid);}
@@ -510,6 +517,14 @@
           <div class="hint" style="margin:0;">ရောင်းရသည့် ပစ္စည်း အရေအတွက်</div>
           <div class="display" style="font-size:24px; color:var(--rust);" id="sr-total-items">-</div>
         </div>
+        <div>
+          <div class="hint" style="margin:0;">💰 Prepaid Card ငွေဖြည့်ခံရငွေ (ကာလအလိုက်)</div>
+          <div class="display" style="font-size:24px; color:#4da3ff;" id="sr-total-topup">-</div>
+        </div>
+        <div>
+          <div class="hint" style="margin:0;">🎁 Gift Card ရောင်းရငွေ (ကာလအလိုက်)</div>
+          <div class="display" style="font-size:24px; color:#c98fff;" id="sr-total-giftcard">-</div>
+        </div>
       </div>
 
       <div style="background:#1f1e1a; padding:16px; border:1.5px solid var(--concrete); margin-bottom:16px;">
@@ -755,6 +770,7 @@ async function checkSession(){
     loadMessages();
     subscribeToAdminChatRealtime();
     subscribeToOrderRealtime();
+    subscribeToWalletRealtime();
   } else {
     document.getElementById('login-screen').style.display='flex';
     document.getElementById('dashboard').style.display='none';
@@ -867,8 +883,18 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
       const dot = document.getElementById('new-order-dot');
       if(dot) dot.remove();
     }
+    if(['orders-tab-btn','messages-tab-btn','delivery-tab-btn','wallet-tab-btn'].includes(btn.id)){
+      setTabAttention(btn.id, false);
+    }
   });
 });
+
+// ---------- TAB ATTENTION PULSE (Online Order/Messages/Delivery/Wallet — အသစ်ရောက်ရင် သတိပေး) ----------
+function setTabAttention(tabBtnId, active){
+  const btn = document.getElementById(tabBtnId);
+  if(!btn) return;
+  btn.classList.toggle('needs-attention', active);
+}
 
 // ---------- IMAGE UPLOAD HELPER ----------
 async function uploadImage(file){
@@ -1143,9 +1169,7 @@ async function loadInventory(){
   const container = document.getElementById('inventory-cards');
   if(!container) return;
   const { data: products, error: pErr } = await sb.from('products').select('*').order('name');
-  const { data: orders } = await sb.from('orders').select('product_name, quantity');
-
-  if(pErr || !products){ container.innerHTML = '<p class="hint">Error loading inventory</p>'; return; }
+  const { data: orders } = await sb.from('orders').select('product_name, quantity').neq('order_status','cancelled');
 
   // Top stats
   const totalStockQty = products.reduce((s,p)=>s+(p.stock_qty||0),0);
@@ -1565,7 +1589,10 @@ async function loadOrders(){
         const paidMethod = g.rows[0].payment_method;
         if((paidMethod === 'Prepaid Card' || paidMethod === 'Wallet') && g.rows[0].user_id){
           const refundTotal = g.rows.reduce((s,r)=>s+Number(r.total_amount),0);
-          await sb.rpc('credit_wallet', { p_user_id: g.rows[0].user_id, p_amount: refundTotal });
+          await sb.rpc('credit_wallet', {
+            p_user_id: g.rows[0].user_id, p_amount: refundTotal,
+            p_type: 'refund', p_description: `Order Refund — #${g.group_display_id.slice(0,8).toUpperCase()}`, p_reference: g.group_display_id,
+          });
           showToast(`✅ Prepaid Card ထဲ ${refundTotal.toLocaleString()} ကျပ် ပြန်ထည့်ပေးပြီးပါပြီ`);
         }
       }
@@ -1623,6 +1650,7 @@ document.getElementById('settings-form').addEventListener('submit', async (e)=>{
 
 // ---------- REAL-TIME ORDER NOTIFICATION ----------
 let realtimeSubscribed = false;
+let walletRealtimeSubscribed = false;
 
 function playNotificationSound(){
   try{
@@ -1648,16 +1676,10 @@ function subscribeToOrderRealtime(){
 
   sb.channel('admin-orders-realtime')
     .on('postgres_changes', { event:'INSERT', schema:'public', table:'orders' }, (payload)=>{
+      if(payload.new.sale_channel === 'in_store') { loadOrders(); loadInventory(); return; } // In-store Sale ဖြစ်ရင် Notification မလို
       playNotificationSound();
       showToast('🔔 Order အသစ် ဝင်လာပါပြီ!');
-
-      const tabBtn = document.getElementById('orders-tab-btn');
-      tabBtn.classList.remove('flash-alert');
-      void tabBtn.offsetWidth; // restart animation
-      tabBtn.classList.add('flash-alert');
-      if(!document.getElementById('new-order-dot')){
-        tabBtn.insertAdjacentHTML('beforeend', '<span id="new-order-dot" class="new-order-dot"></span>');
-      }
+      setTabAttention('orders-tab-btn', true);
 
       loadOrders();
       loadInventory();
@@ -1674,6 +1696,34 @@ function subscribeToOrderRealtime(){
         loadOrders();
         loadDeliveryQueue();
       }
+      // Order တစ်ခု "အတည်ပြုပြီး" ဖြစ်လာလို့ ပို့ဆောင်ဖို့ အသင့်ဖြစ်လာရင် Delivery Tab ကို သတိပေး
+      if(payload.new.order_status === 'confirmed' && payload.old.order_status !== 'confirmed' && payload.new.sale_channel !== 'in_store'){
+        const deliveryTabActive = document.getElementById('delivery-tab-btn')?.classList.contains('active');
+        if(!deliveryTabActive) setTabAttention('delivery-tab-btn', true);
+        loadDeliveryQueue();
+      }
+    })
+    .subscribe();
+}
+
+function subscribeToWalletRealtime(){
+  if(walletRealtimeSubscribed) return;
+  walletRealtimeSubscribed = true;
+
+  sb.channel('admin-wallet-realtime')
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'wallet_topups' }, ()=>{
+      playNotificationSound();
+      showToast('💰 Wallet Top-up Request အသစ် ဝင်လာပါပြီ!');
+      const walletTabActive = document.getElementById('wallet-tab-btn')?.classList.contains('active');
+      if(!walletTabActive) setTabAttention('wallet-tab-btn', true);
+      loadTopupRequests();
+    })
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'gift_cards' }, ()=>{
+      playNotificationSound();
+      showToast('🎁 Gift Card Purchase Request အသစ် ဝင်လာပါပြီ!');
+      const walletTabActive = document.getElementById('wallet-tab-btn')?.classList.contains('active');
+      if(!walletTabActive) setTabAttention('wallet-tab-btn', true);
+      loadGiftCardRequests();
     })
     .subscribe();
 }
@@ -1750,6 +1800,15 @@ async function loadSalesReport(){
   document.getElementById('sr-total-orders').textContent = totalOrders;
   document.getElementById('sr-total-items').textContent = totalItems;
 
+  // Prepaid Card Top-up + Gift Card ရောင်းရငွေ (ဒီကာလအတွက်) — Admin မှ Approve လုပ်ပြီးသားများသာ ရေတွက်
+  const { data: topups } = await sb.from('wallet_topups').select('amount, created_at, status').eq('status','approved');
+  const topupTotal = (topups||[]).filter(t => new Date(t.created_at) >= rangeStart).reduce((s,t)=>s+Number(t.amount),0);
+  document.getElementById('sr-total-topup').textContent = topupTotal.toLocaleString()+' ကျပ်';
+
+  const { data: giftCards } = await sb.from('gift_cards').select('amount, created_at, status').neq('status','pending').neq('status','rejected');
+  const giftCardTotal = (giftCards||[]).filter(g => new Date(g.created_at) >= rangeStart).reduce((s,g)=>s+Number(g.amount),0);
+  document.getElementById('sr-total-giftcard').textContent = giftCardTotal.toLocaleString()+' ကျပ်';
+
   // Table
   const tbody = document.getElementById('sales-report-tbody');
   if(!currentSalesBuckets.length){
@@ -1813,6 +1872,8 @@ document.getElementById('customer-search-input').addEventListener('input', (e)=>
 
 async function loadCustomers(){
   const { data: orders, error } = await sb.from('orders').select('*').order('created_at', { ascending:false });
+  const { data: hidden } = await sb.from('hidden_customers').select('customer_key');
+  const hiddenKeys = new Set((hidden||[]).map(h=>h.customer_key));
   if(error || !orders) return;
 
   // ၁) Order rows များကို order_group_id (သို့) id အလိုက် group လုပ်ပြီး Order တစ်ခုချင်းစီအဖြစ် ပြန်ဆောက်
@@ -1846,12 +1907,17 @@ async function loadCustomers(){
     if(o.sale_channel==='in_store' && (!o.customer_name || o.customer_name.trim()==='Walk-in Customer')) return;
 
     const key = o.phone || o.email || o.customer_name;
+    if(hiddenKeys.has(key)) return; // Admin က List ကနေ ဖျောက်ထားတဲ့ Customer ဖြစ်ရင် ကျော်သွား
+
     if(!customersMap[key]){
-      customersMap[key] = { name:o.customer_name, phone:o.phone, email:o.email, address:o.address, orders:[], totalSpent:0, isRegistered:false, channel:o.sale_channel };
+      customersMap[key] = { key, name:o.customer_name, phone:o.phone, email:o.email, address:o.address, orders:[], activeOrderCount:0, totalSpent:0, isRegistered:false, channel:o.sale_channel };
     }
     if(o.user_id) customersMap[key].isRegistered = true;
     customersMap[key].orders.push(o);
-    if(o.order_status !== 'cancelled') customersMap[key].totalSpent += o.total_amount;
+    if(o.order_status !== 'cancelled'){
+      customersMap[key].totalSpent += o.total_amount;
+      customersMap[key].activeOrderCount += 1;
+    }
     // အနောက်ဆုံး Order ရဲ့ အချက်အလက်ဖြင့် Update (နာမည်/လိပ်စာ ပြောင်းနိုင်လို့)
     if(new Date(o.created_at) > new Date(customersMap[key].orders[0].created_at)){
       customersMap[key].name = o.customer_name;
@@ -1892,23 +1958,34 @@ function renderCustomersList(){
     div.innerHTML = `
       <div class="row1">
         <h4>${c.name} <span class="mono" style="font-size:10px; color:${c.isRegistered?'var(--acid)':(c.channel==='in_store'?'#4da3ff':'var(--grey)')};">[${c.isRegistered?'Website Member':(c.channel==='in_store'?'In-Store':'Online Guest')}]</span></h4>
-        <div class="cstats">${c.orders.length} Order · ${c.totalSpent.toLocaleString()} ကျပ်</div>
+        <div class="cstats">${c.activeOrderCount} Order · ${c.totalSpent.toLocaleString()} ကျပ်</div>
       </div>
       <div class="cdetails">
         📞 ${c.phone||'-'} ${c.email?'· ✉️ '+c.email:''}<br>
         📍 ${c.address||'-'}
       </div>
-      <button type="button" class="secondary view-orders-btn">Order မှတ်တမ်း ကြည့်ရန်</button>
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button type="button" class="secondary view-orders-btn">Order မှတ်တမ်း ကြည့်ရန်</button>
+        <button type="button" class="secondary delete-customer-btn" style="color:var(--rust); border-color:var(--rust);">🗑️ List ကနေ ဖျက်ရန်</button>
+      </div>
       <div class="customer-order-history" id="coh-${idx}">
         ${c.orders.map(o=>`
           <div class="coh-item">
             ${new Date(o.created_at).toLocaleDateString()} — ${o.items}<br>
-            <span style="color:var(--acid);">${o.total_amount.toLocaleString()} ကျပ်</span> · ${o.order_status}
+            <span style="color:${o.order_status==='cancelled'?'var(--rust)':'var(--acid)'};">${o.total_amount.toLocaleString()} ကျပ်</span> · ${o.order_status}
           </div>`).join('')}
       </div>`;
     div.querySelector('.view-orders-btn').addEventListener('click', ()=>{
       const hist = div.querySelector('.customer-order-history');
       hist.classList.toggle('open');
+    });
+    div.querySelector('.delete-customer-btn').addEventListener('click', async ()=>{
+      if(!confirm(`"${c.name}" ကို Customer List ကနေ ဖျက်မှာ သေချာပါသလား? (Order မှတ်တမ်းများကတော့ ဖျက်မဖျက်ဘဲ ဒီ List ထဲကနေပဲ ဖျောက်ပေးပါမည်)`)) return;
+      const { error } = await sb.from('hidden_customers').insert({ customer_key: c.key });
+      if(error){ showToast('Error: '+error.message); return; }
+      showToast('Customer List ကနေ ဖျက်ပြီးပါပြီ');
+      logActivity('customer_hidden', c.name);
+      loadCustomers();
     });
     list.appendChild(div);
   });
@@ -2542,7 +2619,10 @@ function renderSaleHistory(){
       // Prepaid Card ဖြင့် ဝယ်ထားတဲ့ Order/Sale ဖြစ်ရင် ငွေကို Card ထဲ ပြန်ထည့်ပေး
       const paidMethod = g.rows[0].payment_method;
       if((paidMethod === 'Prepaid Card' || paidMethod === 'Wallet') && g.rows[0].user_id){
-        await sb.rpc('credit_wallet', { p_user_id: g.rows[0].user_id, p_amount: g.total_amount });
+        await sb.rpc('credit_wallet', {
+          p_user_id: g.rows[0].user_id, p_amount: g.total_amount,
+          p_type: 'refund', p_description: `Order Refund — #${g.group_display_id.slice(0,8).toUpperCase()}`, p_reference: g.group_display_id,
+        });
         showToast(`✅ Prepaid Card ထဲ ${g.total_amount.toLocaleString()} ကျပ် ပြန်ထည့်ပေးပြီးပါပြီ`);
       }
 
@@ -2588,11 +2668,6 @@ async function loadClosingReport(){
 
   if(error){ result.innerHTML = '<p class="hint">Error loading report</p>'; return; }
 
-  if(!data.length){
-    result.innerHTML = '<p class="hint">ဒီရက်အတွက် ရောင်းချမှု မရှိပါ</p>';
-    return;
-  }
-
   // Transaction count (order_group_id အလိုက် ရေတွက်)
   const groupIds = new Set(data.map(o=>o.order_group_id || o.id));
   const totalItems = data.reduce((s,o)=>s+(o.quantity||0),0);
@@ -2614,6 +2689,32 @@ async function loadClosingReport(){
       <div class="cm-count">${info.groupIds.size} Transaction</div>
     </div>`).join('');
 
+  // ဒီရက်အတွက် Prepaid Card ငွေဖြည့်ခြင်း (Approved) + Gift Card ရောင်းရငွေ
+  const { data: topupsToday } = await sb.from('wallet_topups').select('amount, reviewed_at, status')
+    .eq('status','approved').gte('reviewed_at', dayStart.toISOString()).lte('reviewed_at', dayEnd.toISOString());
+  const topupTotalToday = (topupsToday||[]).reduce((s,t)=>s+Number(t.amount),0);
+
+  const { data: giftCardsToday } = await sb.from('gift_cards').select('amount, created_at, status')
+    .neq('status','pending').neq('status','rejected').gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  const giftCardTotalToday = (giftCardsToday||[]).reduce((s,g)=>s+Number(g.amount),0);
+
+  if(!data.length && !(topupsToday||[]).length && !(giftCardsToday||[]).length){
+    result.innerHTML = '<p class="hint">ဒီရက်အတွက် ရောင်းချမှု မရှိပါ</p>';
+    return;
+  }
+
+  const extraCardsHtml = `
+    <div class="closing-method-card">
+      <div class="cm-label">💰 Prepaid Card ငွေဖြည့်ခံရငွေ</div>
+      <div class="cm-value" style="color:#4da3ff;">${topupTotalToday.toLocaleString()} ကျပ်</div>
+      <div class="cm-count">${(topupsToday||[]).length} Top-up</div>
+    </div>
+    <div class="closing-method-card">
+      <div class="cm-label">🎁 Gift Card ရောင်းရငွေ</div>
+      <div class="cm-value" style="color:#c98fff;">${giftCardTotalToday.toLocaleString()} ကျပ်</div>
+      <div class="cm-count">${(giftCardsToday||[]).length} Gift Card</div>
+    </div>`;
+
   result.innerHTML = `
     <div class="closing-summary-row">
       <div class="closing-method-card">
@@ -2622,6 +2723,7 @@ async function loadClosingReport(){
         <div class="cm-count">${groupIds.size} Transaction · ${totalItems} ပစ္စည်း</div>
       </div>
       ${methodCardsHtml}
+      ${extraCardsHtml}
     </div>
     <button type="button" class="secondary" id="closing-export-btn" style="margin-top:8px;">📥 CSV Export</button>
   `;
@@ -2911,6 +3013,8 @@ function subscribeToAdminChatRealtime(){
       if(payload.new.sender === 'customer'){
         playNotificationSound();
         showToast('💬 Message အသစ် ဝင်လာပါပြီ!');
+        const messagesTabActive = document.getElementById('messages-tab-btn')?.classList.contains('active');
+        if(!messagesTabActive) setTabAttention('messages-tab-btn', true);
       }
       loadMessages();
       if(currentMessageUserId === payload.new.user_id) openConversation(currentMessageUserId);
@@ -3151,9 +3255,15 @@ async function loadTopupRequests(){
     btn.addEventListener('click', async ()=>{
       if(!confirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Wallet ထဲ ဖြည့်ပေးမှာ သေချာပါသလား?`)) return;
       btn.disabled = true;
-      const { error: creditErr } = await sb.rpc('credit_wallet', { p_user_id: btn.dataset.uid, p_amount: parseFloat(btn.dataset.amt) });
+      const { error: creditErr } = await sb.rpc('credit_wallet', {
+        p_user_id: btn.dataset.uid, p_amount: parseFloat(btn.dataset.amt),
+        p_type: 'topup', p_description: 'Wallet Top-up — Admin မှ အတည်ပြုပြီး', p_reference: btn.dataset.id,
+      });
       if(creditErr){ showToast('Error: '+creditErr.message); btn.disabled=false; return; }
-      await sb.from('wallet_topups').update({ status:'approved', reviewed_at:new Date().toISOString() }).eq('id', btn.dataset.id);
+      await sb.from('wallet_topups').update({
+        status:'approved', reviewed_at:new Date().toISOString(),
+        reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail,
+      }).eq('id', btn.dataset.id);
       logActivity('wallet_topup_approved', `${btn.dataset.amt} ကျပ်`);
       showToast('✅ Wallet ဖြည့်ပြီးပါပြီ');
       loadTopupRequests();

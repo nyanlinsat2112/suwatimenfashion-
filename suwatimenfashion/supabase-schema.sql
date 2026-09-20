@@ -606,7 +606,9 @@ create table if not exists wallet_topups (
   status text default 'pending', -- pending / approved / rejected
   rejection_reason text,
   created_at timestamptz default now(),
-  reviewed_at timestamptz
+  reviewed_at timestamptz,
+  reviewed_by uuid references auth.users(id) on delete set null,
+  reviewed_by_email text
 );
 
 alter table wallet_topups enable row level security;
@@ -627,18 +629,42 @@ drop policy if exists "Admin can update topups" on wallet_topups;
 create policy "Admin can update topups" on wallet_topups for update
   using (is_admin());
 
--- Wallet ကို ငွေ ဖြည့်ခြင်း/နုတ်ခြင်း (Race Condition မဖြစ်စေရန် Atomic Function များ)
-create or replace function credit_wallet(p_user_id uuid, p_amount numeric)
+-- Wallet Transaction Ledger — Prepaid Card Usage History အတွက် (Top-up/Redeem/Refund/Purchase အားလုံး မှတ်တမ်းတင်ရန်)
+create table if not exists wallet_transactions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  type text not null, -- topup / gift_card_redeem / refund / purchase / pos_purchase
+  amount numeric not null, -- Credit ဆို +, Debit ဆို -
+  description text,
+  reference_id text,
+  created_at timestamptz default now()
+);
+
+alter table wallet_transactions enable row level security;
+
+drop policy if exists "Customer can view own transactions" on wallet_transactions;
+create policy "Customer can view own transactions" on wallet_transactions for select
+  using (auth.uid() = user_id);
+
+drop policy if exists "Admin can view all transactions" on wallet_transactions;
+create policy "Admin can view all transactions" on wallet_transactions for select
+  using (is_admin());
+
+-- Wallet ကို ငွေ ဖြည့်ခြင်း/နုတ်ခြင်း (Race Condition မဖြစ်စေရန် Atomic Function များ) — Transaction Log ပါ အလိုအလျောက် တင်ပေးမည်
+create or replace function credit_wallet(p_user_id uuid, p_amount numeric, p_type text default 'credit', p_description text default null, p_reference text default null)
 returns void as $$
 begin
   insert into wallets (user_id, balance) values (p_user_id, p_amount)
   on conflict (user_id) do update set balance = wallets.balance + p_amount, updated_at = now();
+
+  insert into wallet_transactions (user_id, type, amount, description, reference_id)
+  values (p_user_id, p_type, p_amount, p_description, p_reference);
 end;
 $$ language plpgsql security definer;
 
-grant execute on function credit_wallet(uuid, numeric) to authenticated;
+grant execute on function credit_wallet(uuid, numeric, text, text, text) to authenticated;
 
-create or replace function debit_wallet(p_amount numeric)
+create or replace function debit_wallet(p_amount numeric, p_type text default 'debit', p_description text default null, p_reference text default null)
 returns boolean as $$
 declare
   cur numeric;
@@ -648,11 +674,15 @@ begin
     return false;
   end if;
   update wallets set balance = balance - p_amount, updated_at = now() where user_id = auth.uid();
+
+  insert into wallet_transactions (user_id, type, amount, description, reference_id)
+  values (auth.uid(), p_type, -p_amount, p_description, p_reference);
+
   return true;
 end;
 $$ language plpgsql security definer;
 
-grant execute on function debit_wallet(numeric) to authenticated;
+grant execute on function debit_wallet(numeric, text, text, text) to authenticated;
 
 -- ၂၉) Gift Card System (၁၀,၀၀၀ ကျပ် — ၅၀၀,၀၀၀ ကျပ်)
 create table if not exists gift_cards (
@@ -713,7 +743,7 @@ begin
   end if;
 
   update gift_cards set status = 'redeemed', redeemed_by = auth.uid(), redeemed_at = now() where id = gc.id;
-  perform credit_wallet(auth.uid(), gc.amount);
+  perform credit_wallet(auth.uid(), gc.amount, 'gift_card_redeem', 'Gift Card သုံးစွဲမှု — '||gc.code, gc.code);
 
   return jsonb_build_object('success', true, 'amount', gc.amount);
 end;
@@ -782,8 +812,29 @@ begin
   end if;
 
   update wallets set balance = balance - p_amount, updated_at = now() where user_id = w.user_id;
+
+  insert into wallet_transactions (user_id, type, amount, description, reference_id)
+  values (w.user_id, 'pos_purchase', -p_amount, 'ဆိုင်တွင် Prepaid Card ဖြင့် ဝယ်ယူမှု', p_card_number);
   return jsonb_build_object('success', true, 'user_id', w.user_id, 'remaining_balance', w.balance - p_amount);
 end;
 $$ language plpgsql security definer;
 
 grant execute on function pos_debit_by_card(text, text, numeric) to authenticated;
+
+-- ၃၁) Customer Management List ကနေ Customer Entry တစ်ခုကို ဖျောက်ရန် (Order Data ကို ဖျက်တာမဟုတ်ပါ — List ထဲက ချန်ထားရုံသာ)
+create table if not exists hidden_customers (
+  id uuid primary key default gen_random_uuid(),
+  customer_key text unique not null,
+  hidden_by uuid references auth.users(id) on delete set null,
+  created_at timestamptz default now()
+);
+
+alter table hidden_customers enable row level security;
+
+drop policy if exists "Admin can view hidden customers" on hidden_customers;
+create policy "Admin can view hidden customers" on hidden_customers for select
+  using (is_admin());
+
+drop policy if exists "Owner can manage hidden customers" on hidden_customers;
+create policy "Owner can manage hidden customers" on hidden_customers for all
+  using (is_owner()) with check (is_owner());
