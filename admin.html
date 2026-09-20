@@ -300,8 +300,14 @@
         <select id="pos-payment-method" class="full">
           <option value="Cash">ငွေသား (Cash)</option>
           <option value="KBZPay">KBZPay</option>
+          <option value="Prepaid Card">🎫 Prepaid Card</option>
           <option value="Other">အခြား</option>
         </select>
+      </div>
+
+      <div id="pos-prepaid-card-area" class="form-grid" style="display:none;">
+        <input type="text" id="pos-card-number" placeholder="Card Number (ဥပမာ 0000 0000 0000 0000)">
+        <input type="text" id="pos-card-pin" placeholder="Security PIN">
       </div>
 
       <div id="pos-cash-calculator" class="form-grid">
@@ -2198,6 +2204,7 @@ document.getElementById('pos-discount-value').addEventListener('input', renderPo
 document.getElementById('pos-tendered-input').addEventListener('input', updatePosChangeDisplay);
 document.getElementById('pos-payment-method').addEventListener('change', (e)=>{
   document.getElementById('pos-cash-calculator').style.display = e.target.value === 'Cash' ? 'grid' : 'none';
+  document.getElementById('pos-prepaid-card-area').style.display = e.target.value === 'Prepaid Card' ? 'grid' : 'none';
 });
 
 function removePosCartItem(idx){
@@ -2214,6 +2221,22 @@ document.getElementById('pos-complete-sale-btn').addEventListener('click', async
   if(paymentMethodCheck === 'Cash' && document.getElementById('pos-tendered-input').value && tenderedCheck < finalTotalCheck){
     showToast('ဖောက်သည်ပေးငွေ မလုံလောက်ပါ');
     return;
+  }
+
+  // Prepaid Card ဖြင့် ရှင်းရင် Card Number + PIN ကို အရင်စစ်ပြီး ချက်ချင်း နုတ်ယူ
+  if(paymentMethodCheck === 'Prepaid Card'){
+    const cardNumber = document.getElementById('pos-card-number').value.trim();
+    const cardPin = document.getElementById('pos-card-pin').value.trim();
+    if(!cardNumber || !cardPin){ showToast('Card Number + PIN ထည့်ပါ'); return; }
+
+    const btnCheck = document.getElementById('pos-complete-sale-btn');
+    btnCheck.disabled = true; btnCheck.textContent = 'Card စစ်ဆေးနေသည်...';
+    const { data: cardResult, error: cardErr } = await sb.rpc('pos_debit_by_card', { p_card_number: cardNumber, p_pin: cardPin, p_amount: finalTotalCheck });
+    btnCheck.disabled = false; btnCheck.textContent = '✅ အရောင်းပြီးစီးပါပြီ';
+
+    if(cardErr || !cardResult){ showToast('Error: ' + (cardErr?.message||'')); return; }
+    if(!cardResult.success){ showToast(cardResult.message); return; }
+    showToast(`✅ Card ကနေ ${finalTotalCheck.toLocaleString()} ကျပ် နုတ်ယူပြီးပါပြီ (လက်ကျန်: ${Number(cardResult.remaining_balance).toLocaleString()} ကျပ်)`);
   }
 
   const btn = document.getElementById('pos-complete-sale-btn');

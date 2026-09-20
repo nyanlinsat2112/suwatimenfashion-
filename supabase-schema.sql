@@ -720,3 +720,70 @@ end;
 $$ language plpgsql security definer;
 
 grant execute on function redeem_gift_card(text) to authenticated;
+
+-- ၃၀) Virtual Prepaid Card — Card Number + PIN + Barcode (In-Store POS မှာ သုံးရန်)
+alter table wallets add column if not exists card_number text unique;
+alter table wallets add column if not exists card_pin text;
+
+-- Customer ရဲ့ Prepaid Card ကို ရယူရန် (မရှိသေးရင် တစ်ခါတည်း Auto ဖန်တီးပေးမည်)
+create or replace function get_or_create_card()
+returns wallets as $$
+declare
+  w wallets;
+begin
+  if auth.uid() is null then
+    raise exception 'Login ဝင်ရန် လိုအပ်ပါသည်';
+  end if;
+
+  select * into w from wallets where user_id = auth.uid();
+
+  if w.user_id is null then
+    insert into wallets (user_id, balance, card_number, card_pin)
+    values (
+      auth.uid(), 0,
+      lpad((random()*9999)::int::text,4,'0')||' '||lpad((random()*9999)::int::text,4,'0')||' '||lpad((random()*9999)::int::text,4,'0')||' '||lpad((random()*9999)::int::text,4,'0'),
+      lpad((random()*9999)::int::text,4,'0')
+    )
+    returning * into w;
+  elsif w.card_number is null then
+    update wallets set
+      card_number = lpad((random()*9999)::int::text,4,'0')||' '||lpad((random()*9999)::int::text,4,'0')||' '||lpad((random()*9999)::int::text,4,'0')||' '||lpad((random()*9999)::int::text,4,'0'),
+      card_pin = lpad((random()*9999)::int::text,4,'0')
+    where user_id = auth.uid()
+    returning * into w;
+  end if;
+
+  return w;
+end;
+$$ language plpgsql security definer;
+
+grant execute on function get_or_create_card() to authenticated;
+
+-- POS (အပြင်ဆိုင်) မှာ Card Number + PIN ဖြင့် Wallet ကို ငွေရှင်းရန် (Admin/Staff အသုံးပြုမည်)
+create or replace function pos_debit_by_card(p_card_number text, p_pin text, p_amount numeric)
+returns jsonb as $$
+declare
+  w record;
+begin
+  if not is_admin() then
+    return jsonb_build_object('success', false, 'message', 'ခွင့်ပြုချက် မရှိပါ');
+  end if;
+
+  select * into w from wallets where replace(card_number,' ','') = replace(p_card_number,' ','') for update;
+
+  if w.user_id is null then
+    return jsonb_build_object('success', false, 'message', 'Card Number မှားနေပါသည်');
+  end if;
+  if w.card_pin != p_pin then
+    return jsonb_build_object('success', false, 'message', 'PIN မှားနေပါသည်');
+  end if;
+  if w.balance < p_amount then
+    return jsonb_build_object('success', false, 'message', 'Balance မလုံလောက်ပါ — လက်ကျန်: '||w.balance||' ကျပ်');
+  end if;
+
+  update wallets set balance = balance - p_amount, updated_at = now() where user_id = w.user_id;
+  return jsonb_build_object('success', true, 'user_id', w.user_id, 'remaining_balance', w.balance - p_amount);
+end;
+$$ language plpgsql security definer;
+
+grant execute on function pos_debit_by_card(text, text, numeric) to authenticated;
