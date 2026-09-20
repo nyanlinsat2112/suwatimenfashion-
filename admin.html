@@ -1560,6 +1560,14 @@ async function loadOrders(){
       if(newStatus === 'cancelled' && !wasAlreadyCancelled){
         await restoreStockForRows(g.rows);
         showToast('Stock ပြန်တိုးပေးပြီးပါပြီ');
+
+        // Prepaid Card ဖြင့် ဝယ်ထားတဲ့ Order ဖြစ်ရင် ငွေကို Card ထဲ ပြန်ထည့်ပေး
+        const paidMethod = g.rows[0].payment_method;
+        if((paidMethod === 'Prepaid Card' || paidMethod === 'Wallet') && g.rows[0].user_id){
+          const refundTotal = g.rows.reduce((s,r)=>s+Number(r.total_amount),0);
+          await sb.rpc('credit_wallet', { p_user_id: g.rows[0].user_id, p_amount: refundTotal });
+          showToast(`✅ Prepaid Card ထဲ ${refundTotal.toLocaleString()} ကျပ် ပြန်ထည့်ပေးပြီးပါပြီ`);
+        }
       }
 
       // Customer ဆီ status update email — group ထဲက ပစ္စည်းအားလုံးပါတဲ့ email တစ်စောင်တည်း ပို့မယ် (Cancel Reason ပါ ပါမည်)
@@ -2419,7 +2427,7 @@ function buildReceiptHtmlDoc(rows, paymentMethod, groupId, extra){
       <span class="value">${total.toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
     </div>
 
-    <div class="payment-tag">PAYMENT: ${paymentMethod}</div>
+    <div class="payment-tag">PAYMENT: ${(paymentMethod==='Prepaid Card'||paymentMethod==='Wallet') ? 'SUWATI.PREPAID CARD' : paymentMethod}</div>
     ${extra.tendered!==undefined && extra.tendered!==null ? `
     <div class="cash-row"><span>Cash Received</span><span><b>${extra.tendered.toLocaleString()}</b></span></div>
     <div class="cash-row"><span>Change</span><span><b>${(extra.change||0).toLocaleString()}</b></span></div>
@@ -2530,6 +2538,14 @@ function renderSaleHistory(){
       if(error){ showToast('Error: '+error.message); btn.disabled=false; return; }
       await restoreStockForRows(g.rows);
       logActivity('sale_refunded', `#${g.group_display_id.slice(0,8).toUpperCase()} (${g.customer_name}) — ${g.total_amount.toLocaleString()} ကျပ်`);
+
+      // Prepaid Card ဖြင့် ဝယ်ထားတဲ့ Order/Sale ဖြစ်ရင် ငွေကို Card ထဲ ပြန်ထည့်ပေး
+      const paidMethod = g.rows[0].payment_method;
+      if((paidMethod === 'Prepaid Card' || paidMethod === 'Wallet') && g.rows[0].user_id){
+        await sb.rpc('credit_wallet', { p_user_id: g.rows[0].user_id, p_amount: g.total_amount });
+        showToast(`✅ Prepaid Card ထဲ ${g.total_amount.toLocaleString()} ကျပ် ပြန်ထည့်ပေးပြီးပါပြီ`);
+      }
+
       if(g.sale_channel !== 'in_store'){
         fetch(`${SUPABASE_URL}/functions/v1/send-order-email`, {
           method:'POST',

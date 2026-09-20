@@ -206,7 +206,7 @@
     border:3px solid var(--ink); padding:22px 20px; color:var(--concrete); position:relative; overflow:hidden;
   }
   .prepaid-card::after{ content:""; position:absolute; top:-40px; right:-40px; width:140px; height:140px; background:rgba(214,255,63,.08); border-radius:50%; }
-  .prepaid-card .pc-brand{ font-family:'Anton',sans-serif; font-size:22px; }
+  .prepaid-card .pc-brand{ font-family:'Anton',sans-serif; font-size:19px; line-height:1.2; }
   .prepaid-card .pc-brand .dot{ color:var(--acid); }
   .prepaid-card .pc-balance-label{ font-family:'Space Mono',monospace; font-size:10px; color:#a39d8c; margin-top:14px; }
   .prepaid-card .pc-balance{ font-family:'Anton',sans-serif; font-size:26px; color:var(--acid); margin-top:2px; }
@@ -1300,7 +1300,7 @@ async function renderCheckoutStep2(){
     ${currentUser ? `
     <div class="modal-section" style="${canPayWithWallet?'background:#1f2a0a; border:2px solid var(--acid); padding:14px;':''}">
       <div class="modal-label" style="${canPayWithWallet?'color:var(--acid);':''}">💰 PREPAID CARD (WALLET) — လက်ကျန်: ${walletBalance.toLocaleString()} ကျပ်</div>
-      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); font-size:15px; padding:14px;" onclick="payWithWallet()">⚡ Prepaid Card ဖြင့် ချက်ချင်း ဝယ်မည် (Screenshot မလို)</button>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည် (သို့) <a href="#" onclick="closeCheckout(); return false;" class="auth-link" style="display:inline; margin:0;">Profile ကနေ ငွေဖြည့်ပါ</a></p>`}
+      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); font-size:15px; padding:14px;" onclick="payWithWallet()">⚡ Prepaid Card ဖြင့် ချက်ချင်း ဝယ်မည်</button>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည် (သို့) <a href="#" onclick="closeCheckout(); return false;" class="auth-link" style="display:inline; margin:0;">Profile ကနေ ငွေဖြည့်ပါ</a></p>`}
     </div>` : ''}
 
     <div class="modal-section">
@@ -1348,6 +1348,7 @@ async function getActualVariantStock(productName, size, color){
 }
 
 async function payWithWallet(){
+  if(!confirm(`Prepaid Card ဖြင့် ${currentOrder.total.toLocaleString()} ကျပ် ဝယ်မှာ သေချာပါသလား?`)) return;
   const btn = document.getElementById('pay-wallet-btn');
   btn.disabled = true; btn.textContent = 'လုပ်ဆောင်နေသည်...';
 
@@ -1386,7 +1387,7 @@ async function payWithWallet(){
     address: currentOrder.address,
     product_name: i.name, size: i.size, color: i.color, quantity: i.quantity,
     unit_price: i.price, total_amount: i.price * i.quantity,
-    payment_method: 'Wallet', order_status: 'confirmed', payment_status: 'confirmed', created_at: nowIso,
+    payment_method: 'Prepaid Card', order_status: 'confirmed', payment_status: 'confirmed', created_at: nowIso,
   }));
 
   const { error: orderErr } = await sb.from('orders').insert(rows);
@@ -1647,7 +1648,7 @@ function buildCustomerReceiptHtml(rows){
       <span class="label">TOTAL</span>
       <span class="value">${total.toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
     </div>
-    <div class="payment-tag">${first.payment_method||'KBZPay'} — ${statusLabels[first.order_status]||first.order_status}</div>
+    <div class="payment-tag">${first.payment_method==='Prepaid Card'||first.payment_method==='Wallet' ? 'SUWATI.PREPAID CARD' : (first.payment_method||'KBZPay')} — ${statusLabels[first.order_status]||first.order_status}</div>
     ${isVoided && first.cancellation_reason ? `<div style="margin-top:10px; padding:8px 10px; border:1.5px dashed #333; font-size:11.5px;"><b>Cancel Reason:</b> ${first.cancellation_reason}</div>` : ''}
     <hr class="solid">
     <div class="footer">
@@ -1721,8 +1722,13 @@ function buildTransactionReceiptHtml(kind, record){
       <b>Name</b>&nbsp; ${name}
     </div>
     <hr class="dashed">
+    <div class="meta" style="display:flex; justify-content:space-between;">
+      <span>${kind==='topup' ? 'Prepaid Card Charge' : 'Gift Card'}</span>
+      <span><b>${Number(record.amount).toLocaleString()} ကျပ်</b></span>
+    </div>
+    <hr class="dashed">
     <div class="total-box">
-      <span class="label">${kind==='topup'?'TOP-UP':'AMOUNT'}</span>
+      <span class="label">${kind==='topup'?'PREPAID CARD CHARGE':'GIFT CARD'}</span>
       <span class="value">${Number(record.amount).toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
     </div>
     <div class="payment-tag">Status: ${statusLabels[record.status]||record.status}</div>
@@ -2211,20 +2217,28 @@ async function openPrepaidCard(){
 
   area.innerHTML = `
     <div class="prepaid-card">
-      <div class="pc-brand">SUWATI<span class="dot">.</span>CARD</div>
+      <div class="pc-brand">SUWATI<span class="dot">.</span>PREPAID CARD</div>
       <div class="pc-balance-label">လက်ကျန် ငွေပမာဏ</div>
       <div class="pc-balance">${Number(data.balance||0).toLocaleString()} ကျပ်</div>
       <div class="pc-number">${data.card_number}</div>
       <div class="pc-row">
         <div><div class="pc-field-label">CARDHOLDER</div><div class="pc-field-value" style="font-size:12px; letter-spacing:1px;">${(currentUser.user_metadata?.full_name||currentUser.email).toUpperCase()}</div></div>
-        <div><div class="pc-field-label">SECURITY PIN</div><div class="pc-field-value">${data.card_pin}</div></div>
+        <div><div class="pc-field-label">SECURITY PIN</div><div class="pc-field-value" id="pc-pin-display" data-pin="${data.card_pin}" data-revealed="false" onclick="togglePinReveal()" style="cursor:pointer;">****</div></div>
       </div>
       <div class="prepaid-card-barcode"><svg id="prepaid-barcode-svg"></svg></div>
-    </div>`;
+    </div>
+    <p class="hint" style="text-align:center; margin-top:8px;">PIN ကို ကြည့်ချင်ရင် PIN ဂဏန်းပေါ် တို့ပါ</p>`;
 
   try{
     JsBarcode('#prepaid-barcode-svg', data.card_number.replace(/\s/g,''), { format:'CODE128', width:2, height:50, displayValue:false, margin:0 });
   }catch(e){ console.error('Barcode render failed', e); }
+}
+
+function togglePinReveal(){
+  const el = document.getElementById('pc-pin-display');
+  const revealed = el.dataset.revealed === 'true';
+  el.textContent = revealed ? '****' : el.dataset.pin;
+  el.dataset.revealed = revealed ? 'false' : 'true';
 }
 
 async function openWalletHistory(){
@@ -2782,7 +2796,7 @@ async function renderDetailPrepaidButton(p){
   const { data: w } = await sb.from('wallets').select('balance').eq('user_id', currentUser.id).maybeSingle();
   const balance = w?.balance || 0;
   if(balance >= Number(p.price) && currentDetailProduct && currentDetailProduct.name===p.name){
-    area.innerHTML = `<button type="button" class="order-btn" id="detail-prepaid-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); margin-bottom:10px;" onclick="detailPayWithPrepaidCard()">🎫 Prepaid Card ဖြင့် ဝယ်မည် (${balance.toLocaleString()} ကျပ် ရှိသည်)</button>`;
+    area.innerHTML = `<button type="button" class="order-btn" id="detail-prepaid-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); margin-bottom:10px;" onclick="detailPayWithPrepaidCard()">🎫 Prepaid Card ဖြင့် ဝယ်မည်</button>`;
   }
 }
 
@@ -2790,6 +2804,9 @@ async function detailPayWithPrepaidCard(){
   const p = currentDetailProduct;
   const stock = getCurrentVariantStock(p);
   if(stock !== null && stock <= 0){ alert('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
+
+  const totalConfirm = Number(p.price) * detailState.qty;
+  if(!confirm(`Prepaid Card ဖြင့် "${p.name}" — ${totalConfirm.toLocaleString()} ကျပ် ဝယ်မှာ သေချာပါသလား?`)) return;
 
   const btn = document.getElementById('detail-prepaid-btn');
   btn.disabled = true; btn.textContent = 'လုပ်ဆောင်နေသည်...';
