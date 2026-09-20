@@ -2119,7 +2119,19 @@ async function openOrderHistory(){
     if(!groupsMap[key]) groupsMap[key] = [];
     groupsMap[key].push(o);
   });
-  orderHistoryCache = Object.values(groupsMap).sort((a,b)=> new Date(b[0].created_at) - new Date(a[0].created_at));
+  let groups = Object.values(groupsMap);
+
+  // Gift Card ဝယ်ယူထားမှုများကိုပါ Order History ထဲ ပေါင်းထည့်
+  const { data: giftCards } = await sb.from('gift_cards').select('*').eq('purchased_by', currentUser.id);
+  (giftCards||[]).forEach(g=>{
+    groups.push([{
+      id: g.id, order_group_id: 'GC-'+g.id, product_name: `🎁 Gift Card (${g.code})`,
+      size: null, color: null, quantity: 1, total_amount: g.amount, created_at: g.created_at,
+      order_status: g.status, is_gift_card: true, gift_card_code: g.code, gift_card_row: g,
+    }]);
+  });
+
+  orderHistoryCache = groups.sort((a,b)=> new Date(b[0].created_at) - new Date(a[0].created_at));
   window.orderGroupsForReceipt = orderHistoryCache;
   renderOrderHistoryList();
 }
@@ -2130,8 +2142,9 @@ function renderOrderHistoryList(){
 
   const statusLabels = {
     pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
-    shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး', cancelled:'ပယ်ဖျက်'
+    shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး', cancelled:'ပယ်ဖျက်',
   };
+  const giftStatusLabels = { pending:'⏳ စစ်ဆေးဆဲ', active:'✅ အသုံးပြုနိုင်ပြီ', redeemed:'☑️ အသုံးပြုပြီးသား', rejected:'❌ ငြင်းပယ်ခံရ' };
 
   let groups = orderHistoryCache;
   if(orderHistorySearchQuery){
@@ -2150,16 +2163,21 @@ function renderOrderHistoryList(){
     const first = rows[0];
     const total = rows.reduce((s,r)=>s+Number(r.total_amount),0);
     const itemsLine = rows.map(r=>`${r.product_name}${r.size?' ('+r.size+(r.color?', '+r.color:'')+')':''} x${r.quantity}`).join('<br>');
+    const statusTag = first.is_gift_card ? (giftStatusLabels[first.order_status]||first.order_status) : (statusLabels[first.order_status]||first.order_status);
     return `
     <div class="history-item">
       <div class="row1"><span>#${(first.order_group_id||first.id).slice(0,8).toUpperCase()}</span><span>${new Date(first.created_at).toLocaleDateString()}</span></div>
       <h5>${itemsLine}</h5>
       <div>${total.toLocaleString()} ကျပ်</div>
-      <span class="status-tag">${statusLabels[first.order_status]||first.order_status}</span>
+      <span class="status-tag">${statusTag}</span>
       <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-        <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="renderOrderTrackingResult(orderGroupsForReceipt[${idx}])">📦 Track ကြည့်ရန်</button>
-        <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openCustomerReceipt(orderGroupsForReceipt[${idx}])">🧾 Receipt ကြည့်ရန်</button>
-        <button type="button" class="auth-link" style="display:inline-block; margin:0; color:var(--rust);" onclick="deleteOrderHistoryItem(${idx})">🗑️ ဖျက်မည်</button>
+        ${first.is_gift_card ? `
+          <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openTransactionReceipt('giftcard', orderGroupsForReceipt[${idx}][0].gift_card_row)">🧾 Receipt ကြည့်ရန်</button>
+        ` : `
+          <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="renderOrderTrackingResult(orderGroupsForReceipt[${idx}])">📦 Track ကြည့်ရန်</button>
+          <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openCustomerReceipt(orderGroupsForReceipt[${idx}])">🧾 Receipt ကြည့်ရန်</button>
+        `}
+        ${!first.is_gift_card ? `<button type="button" class="auth-link" style="display:inline-block; margin:0; color:var(--rust);" onclick="deleteOrderHistoryItem(${idx})">🗑️ ဖျက်မည်</button>` : ''}
       </div>
     </div>`;
   }).join('') + (orderHistoryCache.length ? `<button type="button" class="submit-order-btn" style="background:transparent; color:var(--rust); margin-top:10px; border-color:var(--rust);" onclick="deleteAllOrderHistory()">🗑️ Order History အားလုံး ဖျက်မည်</button>` : '');

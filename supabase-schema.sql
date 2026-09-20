@@ -698,6 +698,9 @@ create table if not exists gift_cards (
   rejection_reason text,
   redeemed_by uuid references auth.users(id) on delete set null,
   redeemed_at timestamptz,
+  reviewed_by uuid references auth.users(id) on delete set null,
+  reviewed_by_email text,
+  reviewed_at timestamptz,
   created_at timestamptz default now()
 );
 

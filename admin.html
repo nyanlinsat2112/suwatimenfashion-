@@ -156,6 +156,12 @@
 .stock-badge.ok{color:var(--acid); border-color:var(--acid);}
 .stock-badge.low{color:#ff8a5c; border-color:#ff8a5c;}
 .stock-badge.out{color:var(--rust); border-color:var(--rust);}
+.denom-chip{
+  display:inline-block; border:2px solid var(--concrete); padding:10px 16px; font-family:'Space Mono',monospace; font-size:13px; cursor:pointer;
+}
+.denom-chip.active{ background:var(--acid); color:var(--ink); border-color:var(--acid); }
+.giftcard-code-box{ background:#1f1e1a; border:3px dashed var(--acid); padding:16px; text-align:center; margin-top:10px; }
+.giftcard-code-box .gc-code{ font-family:'Space Mono',monospace; font-size:20px; font-weight:700; letter-spacing:2px; color:var(--acid); }
 
 .inventory-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
 .inventory-card .inv-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px;}
@@ -358,6 +364,30 @@
       </div>
 
       <button type="button" class="acid" style="padding:14px; width:100%; margin-top:10px;" id="pos-complete-sale-btn">✅ အရောင်းပြီးစီးပါပြီ</button>
+    </div>
+
+    <div class="form-card">
+      <h3>🎁 Gift Card ရောင်းရန် (ဆိုင်ထဲက Customer)</h3>
+      <div class="hint">ငွေကို ဆိုင်ထဲမှာ တိုက်ရိုက် ရယူပြီးသားမို့ Screenshot မလိုပါ — ရောင်းလိုက်ပြီးရင် Code ချက်ချင်း ထွက်ပါမည်</div>
+
+      <div class="hint" style="margin-top:12px;">ပမာဏ ရွေးပါ</div>
+      <div id="pos-gift-denom-chips" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+        <span class="denom-chip" data-amt="10000">10,000</span>
+        <span class="denom-chip" data-amt="20000">20,000</span>
+        <span class="denom-chip" data-amt="50000">50,000</span>
+        <span class="denom-chip" data-amt="100000">100,000</span>
+        <span class="denom-chip" data-amt="200000">200,000</span>
+        <span class="denom-chip" data-amt="500000">500,000</span>
+      </div>
+      <input type="number" id="pos-gift-custom-amount" placeholder="သို့မဟုတ် ကိုယ်တိုင် ပမာဏ ရိုက်ထည့်ပါ" min="1000">
+
+      <div class="form-grid" style="margin-top:10px;">
+        <input type="text" id="pos-gift-customer-name" placeholder="ဝယ်ယူသူ အမည် (Optional)">
+        <input type="tel" id="pos-gift-customer-phone" placeholder="ဖုန်းနံပါတ် (Optional)">
+      </div>
+
+      <button type="button" class="acid" style="padding:14px; width:100%; margin-top:10px;" id="pos-sell-giftcard-btn">🎁 ရောင်းချပြီး Code ထုတ်မည်</button>
+      <div id="pos-giftcard-result" style="margin-top:14px;"></div>
     </div>
   </div>
 
@@ -728,6 +758,13 @@
     <div id="topup-requests-list"></div>
 
     <div class="form-card">
+      <h3>📜 Wallet Top-up မှတ်တမ်း အားလုံး</h3>
+      <div class="hint">Approve/Reject ဖြစ်ပြီးသား Top-up များ — ဘယ် Admin က လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
+      <input type="text" id="topup-search" placeholder="Customer အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+    </div>
+    <div id="topup-all-list"></div>
+
+    <div class="form-card">
       <h3>🎁 Gift Card Purchase Requests</h3>
       <div class="hint">Gift Card ဝယ်ယူထားသူများ — Approve လုပ်ရင် Code ချက်ချင်း Active ဖြစ်သွားမည်</div>
     </div>
@@ -735,6 +772,7 @@
 
     <div class="form-card">
       <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
+      <div class="hint">ဘယ် Admin က Approve/Reject လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
       <input type="text" id="giftcard-search" placeholder="Code (သို့) ဝယ်ယူသူ အမည်ဖြင့် ရှာပါ...">
     </div>
     <div id="giftcard-all-list"></div>
@@ -802,9 +840,6 @@ async function checkSession(){
     loadBanners();
     loadPosProducts();
     loadSaleHistory();
-    loadTopupRequests();
-    loadGiftCardRequests();
-    loadAllGiftCards();
     if(currentAdminRole==='owner') { loadStaffList(); loadDeliveryQueue(); }
     loadMessages();
     subscribeToAdminChatRealtime();
@@ -924,6 +959,12 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     }
     if(['orders-tab-btn','messages-tab-btn','delivery-tab-btn','wallet-tab-btn'].includes(btn.id)){
       setTabAttention(btn.id, false);
+    }
+    if(btn.id === 'wallet-tab-btn'){
+      loadTopupRequests();
+      loadAllTopups();
+      loadGiftCardRequests();
+      loadAllGiftCards();
     }
   });
 });
@@ -2332,6 +2373,69 @@ function updatePosChangeDisplay(){
 document.getElementById('pos-discount-type').addEventListener('change', renderPosCart);
 document.getElementById('pos-discount-value').addEventListener('input', renderPosCart);
 document.getElementById('pos-tendered-input').addEventListener('input', updatePosChangeDisplay);
+// ---------- POS GIFT CARD SALE (ဆိုင်ထဲက Customer) ----------
+let posGiftSelectedAmount = null;
+
+function generatePosGiftCardCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'SUWATI-';
+  for(let i=0;i<8;i++){ code += chars[Math.floor(Math.random()*chars.length)]; if(i===3) code+='-'; }
+  return code;
+}
+
+document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    posGiftSelectedAmount = parseInt(chip.dataset.amt);
+    document.getElementById('pos-gift-custom-amount').value = '';
+  });
+});
+document.getElementById('pos-gift-custom-amount').addEventListener('input', ()=>{
+  document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(c=>c.classList.remove('active'));
+  posGiftSelectedAmount = null;
+});
+
+document.getElementById('pos-sell-giftcard-btn').addEventListener('click', async ()=>{
+  const customAmt = parseFloat(document.getElementById('pos-gift-custom-amount').value);
+  const amount = posGiftSelectedAmount || customAmt;
+  const resultBox = document.getElementById('pos-giftcard-result');
+  if(!amount || amount < 1000){ showToast('ပမာဏ အနည်းဆုံး 1,000 ကျပ် ရွေးပါ'); return; }
+
+  const btn = document.getElementById('pos-sell-giftcard-btn');
+  btn.disabled = true; btn.textContent = 'ထုတ်နေသည်...';
+
+  const code = generatePosGiftCardCode();
+  const customerName = document.getElementById('pos-gift-customer-name').value.trim() || 'Walk-in Customer';
+  const phone = document.getElementById('pos-gift-customer-phone').value.trim() || null;
+
+  const { error } = await sb.from('gift_cards').insert({
+    code, amount, purchaser_name: customerName, phone,
+    status: 'active', // ဆိုင်ထဲမှာ ငွေရပြီးမို့ ချက်ချင်း Active
+    reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
+  });
+
+  btn.disabled = false; btn.textContent = '🎁 ရောင်းချပြီး Code ထုတ်မည်';
+
+  if(error){ showToast('Error: '+error.message); return; }
+
+  logActivity('pos_gift_card_sold', `${code} — ${amount.toLocaleString()} ကျပ် (${customerName})`);
+  showToast('✅ Gift Card ရောင်းပြီးပါပြီ!');
+
+  resultBox.innerHTML = `
+    <div class="giftcard-code-box">
+      <div class="hint" style="margin-bottom:6px;">Customer ကို ဒီ Code ပေးပါ</div>
+      <div class="gc-code">${code}</div>
+      <div class="mono" style="font-size:12px; color:var(--grey); margin-top:6px;">${amount.toLocaleString()} ကျပ် · ${customerName}</div>
+    </div>`;
+
+  document.getElementById('pos-gift-custom-amount').value = '';
+  document.getElementById('pos-gift-customer-name').value = '';
+  document.getElementById('pos-gift-customer-phone').value = '';
+  document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(c=>c.classList.remove('active'));
+  posGiftSelectedAmount = null;
+});
+
 document.getElementById('pos-payment-method').addEventListener('change', (e)=>{
   document.getElementById('pos-cash-calculator').style.display = e.target.value === 'Cash' ? 'grid' : 'none';
   document.getElementById('pos-prepaid-card-area').style.display = e.target.value === 'Prepaid Card' ? 'grid' : 'none';
@@ -3243,7 +3347,7 @@ async function confirmDelivered(){
 const TAB_REFRESH_MAP = {
   'pos-panel': ()=>{ loadPosProducts(); },
   'salehistory-panel': loadSaleHistory,
-  'wallet-panel': ()=>{ loadTopupRequests(); loadGiftCardRequests(); loadAllGiftCards(); },
+  'wallet-panel': ()=>{ loadTopupRequests(); loadAllTopups(); loadGiftCardRequests(); loadAllGiftCards(); },
   'products-panel': loadProducts,
   'inventory-panel': loadInventory,
   'categories-panel': loadCategories,
@@ -3312,16 +3416,21 @@ async function loadTopupRequests(){
       logActivity('wallet_topup_approved', `${btn.dataset.amt} ကျပ်`);
       showToast('✅ Wallet ဖြည့်ပြီးပါပြီ');
       loadTopupRequests();
+      loadAllTopups();
     });
   });
   list.querySelectorAll('.reject-topup-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const reason = prompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
       if(reason === null) return;
-      await sb.from('wallet_topups').update({ status:'rejected', rejection_reason:reason||null, reviewed_at:new Date().toISOString() }).eq('id', btn.dataset.id);
+      await sb.from('wallet_topups').update({
+        status:'rejected', rejection_reason:reason||null, reviewed_at:new Date().toISOString(),
+        reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail,
+      }).eq('id', btn.dataset.id);
       logActivity('wallet_topup_rejected', btn.dataset.id);
       showToast('Top-up Reject လုပ်ပြီးပါပြီ');
       loadTopupRequests();
+      loadAllTopups();
     });
   });
 }
@@ -3349,7 +3458,9 @@ async function loadGiftCardRequests(){
   list.querySelectorAll('.approve-gift-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       btn.disabled = true;
-      const { error } = await sb.from('gift_cards').update({ status:'active' }).eq('id', btn.dataset.id);
+      const { error } = await sb.from('gift_cards').update({
+        status:'active', reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
+      }).eq('id', btn.dataset.id);
       if(error){ showToast('Error: '+error.message); btn.disabled=false; return; }
       logActivity('gift_card_approved', btn.dataset.id);
       showToast('✅ Gift Card Active ဖြစ်သွားပါပြီ');
@@ -3361,13 +3472,47 @@ async function loadGiftCardRequests(){
     btn.addEventListener('click', async ()=>{
       const reason = prompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
       if(reason === null) return;
-      await sb.from('gift_cards').update({ status:'rejected', rejection_reason:reason||null }).eq('id', btn.dataset.id);
+      await sb.from('gift_cards').update({
+        status:'rejected', rejection_reason:reason||null,
+        reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
+      }).eq('id', btn.dataset.id);
       logActivity('gift_card_rejected', btn.dataset.id);
       showToast('Gift Card Reject လုပ်ပြီးပါပြီ');
       loadGiftCardRequests();
     });
   });
 }
+
+let allTopupsCache = [];
+async function loadAllTopups(){
+  const { data, error } = await sb.from('wallet_topups').select('*').order('created_at', { ascending:false });
+  const list = document.getElementById('topup-all-list');
+  if(!list) return;
+  if(error || !data){ list.innerHTML = '<p class="hint">Error loading top-up history</p>'; return; }
+  allTopupsCache = data;
+  renderTopupList();
+}
+
+function renderTopupList(){
+  const list = document.getElementById('topup-all-list');
+  const q = (document.getElementById('topup-search')?.value || '').trim().toLowerCase();
+  const statusLabels = { pending:'⏳ Pending', approved:'✅ Approved', rejected:'❌ Rejected' };
+  let items = allTopupsCache;
+  if(q){ items = items.filter(t => (t.customer_name||'').toLowerCase().includes(q) || (t.phone||'').toLowerCase().includes(q)); }
+  if(!items.length){ list.innerHTML = '<p class="hint">Top-up မှတ်တမ်း မရှိသေးပါ</p>'; return; }
+
+  list.innerHTML = items.map(t=>`
+    <div class="list-item">
+      <div class="info">
+        <h4>${t.customer_name} <span class="mono" style="font-size:10px; color:var(--grey);">[${statusLabels[t.status]||t.status}]</span></h4>
+        <p class="mono" style="font-size:11px; color:var(--grey);">${Number(t.amount).toLocaleString()} ကျပ် · ${new Date(t.created_at).toLocaleString()}</p>
+        ${t.reviewed_by_email ? `<p class="mono" style="font-size:10.5px; color:var(--acid);">✔️ ${t.status==='rejected'?'Reject':'Approve'} လုပ်သူ: ${t.reviewed_by_email} · ${new Date(t.reviewed_at).toLocaleString()}</p>` : ''}
+        ${t.status==='rejected' && t.rejection_reason ? `<p class="mono" style="font-size:10.5px; color:var(--rust);">${t.rejection_reason}</p>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+document.getElementById('topup-search')?.addEventListener('input', renderTopupList);
 
 let giftCardCache = [];
 async function loadAllGiftCards(){
@@ -3391,7 +3536,9 @@ function renderGiftCardList(){
     <div class="list-item">
       <div class="info">
         <h4>${g.code} <span class="mono" style="font-size:10px; color:var(--grey);">[${statusLabels[g.status]||g.status}]</span></h4>
-        <p class="mono" style="font-size:11px; color:var(--grey);">${Number(g.amount).toLocaleString()} ကျပ် · ဝယ်သူ: ${g.purchaser_name||'-'}</p>
+        <p class="mono" style="font-size:11px; color:var(--grey);">${Number(g.amount).toLocaleString()} ကျပ် · ဝယ်သူ: ${g.purchaser_name||'-'} · ${new Date(g.created_at).toLocaleString()}</p>
+        ${g.reviewed_by_email ? `<p class="mono" style="font-size:10.5px; color:var(--acid);">✔️ ${g.status==='rejected'?'Reject':'Approve'} လုပ်သူ: ${g.reviewed_by_email} · ${new Date(g.reviewed_at).toLocaleString()}</p>` : ''}
+        ${g.status==='rejected' && g.rejection_reason ? `<p class="mono" style="font-size:10.5px; color:var(--rust);">${g.rejection_reason}</p>` : ''}
       </div>
     </div>`).join('');
 }
