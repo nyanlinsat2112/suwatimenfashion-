@@ -826,7 +826,7 @@ function renderProductGrid(){
           </div>
         </div>` : ''}
         <div class="card-variant-stock" style="font-family:'Space Mono',monospace; font-size:11.5px; margin-top:6px;"></div>
-        <button type="button" class="order-btn" data-name="${p.name}">Order ယူမည် (KBZPay)</button>
+        <button type="button" class="order-btn" data-name="${p.name}">Order မှာယူမည် (KBZPay)</button>
         <button type="button" class="order-btn addcart-btn" style="background:transparent; color:var(--ink); margin-top:8px;">ခြင်းထဲ ထည့်မည် +</button>
         <a class="msg-link" href="https://m.me/suwatimenfashion" target="_blank" rel="noopener">မေးစရာရှိရင် Messenger ပို့ပါ</a>
       </div>`;
@@ -2024,48 +2024,7 @@ async function renderProfileView(){
   const box = document.getElementById('checkout-modal-content');
   const meta = currentUser.user_metadata || {};
 
-  const { data, error } = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
-
-  const statusLabels = {
-    pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
-    shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး', cancelled:'ပယ်ဖျက်'
-  };
-
-  let listHtml = '';
-  let orderGroups = [];
-  if(error){
-    listHtml = '<p class="hint">Order History ကြည့်၍မရပါ</p>';
-  } else if(!data.length){
-    listHtml = '<p class="hint">Order မှတ်တမ်း မရှိသေးပါ</p>';
-  } else {
-    const groupsMap = {};
-    data.forEach(o=>{
-      const key = o.order_group_id || o.id;
-      if(!groupsMap[key]) groupsMap[key] = [];
-      groupsMap[key].push(o);
-    });
-    orderGroups = Object.values(groupsMap).sort((a,b)=> new Date(b[0].created_at) - new Date(a[0].created_at));
-
-    listHtml = orderGroups.map((rows,idx)=>{
-      const first = rows[0];
-      const total = rows.reduce((s,r)=>s+Number(r.total_amount),0);
-      const itemsLine = rows.map(r=>`${r.product_name}${r.size?' ('+r.size+(r.color?', '+r.color:'')+')':''} x${r.quantity}`).join('<br>');
-      return `
-      <div class="history-item">
-        <div class="row1"><span>#${(first.order_group_id||first.id).slice(0,8).toUpperCase()}</span><span>${new Date(first.created_at).toLocaleDateString()}</span></div>
-        <h5>${itemsLine}</h5>
-        <div>${total.toLocaleString()} ကျပ်</div>
-        <span class="status-tag">${statusLabels[first.order_status]||first.order_status}</span>
-        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-          <button type="button" class="auth-link" style="display:inline-block; margin:0;" data-group-idx="${idx}" onclick="renderOrderTrackingResult(orderGroupsForReceipt[${idx}])">📦 Track ကြည့်ရန်</button>
-          <button type="button" class="auth-link" style="display:inline-block; margin:0;" data-group-idx="${idx}" onclick="openCustomerReceipt(orderGroupsForReceipt[${idx}])">🧾 Receipt ကြည့်ရန်</button>
-          <button type="button" class="auth-link" style="display:inline-block; margin:0; color:var(--rust);" data-group-idx="${idx}" onclick="deleteOrderHistoryItem(${idx})">🗑️ ဖျက်မည်</button>
-        </div>
-      </div>`;
-    }).join('');
-    listHtml += `<button type="button" class="submit-order-btn" style="background:transparent; color:var(--rust); margin-top:10px; border-color:var(--rust);" onclick="deleteAllOrderHistory()">🗑️ Order History အားလုံး ဖျက်မည်</button>`;
-  }
-  window.orderGroupsForReceipt = orderGroups;
+  const { count } = await sb.from('orders').select('id', { count:'exact', head:true }).eq('user_id', currentUser.id);
 
   const { data: walletData } = await sb.from('wallets').select('*').eq('user_id', currentUser.id).maybeSingle();
   const balance = walletData?.balance || 0;
@@ -2105,11 +2064,85 @@ async function renderProfileView(){
     </div>
 
     <div class="modal-section">
-      <div class="modal-label">MY ORDERS</div>
-      ${listHtml}
+      <div class="modal-label">📦 MY ORDERS</div>
+      <button type="button" class="order-btn" style="background:transparent; color:var(--ink);" onclick="openOrderHistory()">📦 Order History ကြည့်ရန် (${count||0})</button>
     </div>
 
     <button type="button" class="submit-order-btn" style="background:transparent; color:var(--rust); margin-top:6px;" onclick="handleLogout()">Logout</button>`;
+}
+
+let orderHistoryCache = [];
+let orderHistorySearchQuery = '';
+
+async function openOrderHistory(){
+  const box = document.getElementById('checkout-modal-content');
+  box.innerHTML = `
+    <button class="modal-close" onclick="closeCheckout()">&times;</button>
+    <h3>📦 Order History</h3>
+    <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
+      <input type="text" id="order-history-search" placeholder="ပစ္စည်းအမည် (သို့) Order ID ဖြင့် ရှာပါ..." value="${orderHistorySearchQuery}">
+      <div id="order-history-list"><p class="hint">Load လုပ်နေသည်...</p></div>
+    </div>
+    <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="renderProfileView()">← Profile ပြန်သွားရန်</button>`;
+
+  document.getElementById('order-history-search').addEventListener('input', (e)=>{
+    orderHistorySearchQuery = e.target.value.trim().toLowerCase();
+    renderOrderHistoryList();
+  });
+
+  const { data, error } = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
+  if(error){ document.getElementById('order-history-list').innerHTML = '<p class="hint">Order History ကြည့်၍မရပါ</p>'; return; }
+
+  const groupsMap = {};
+  data.forEach(o=>{
+    const key = o.order_group_id || o.id;
+    if(!groupsMap[key]) groupsMap[key] = [];
+    groupsMap[key].push(o);
+  });
+  orderHistoryCache = Object.values(groupsMap).sort((a,b)=> new Date(b[0].created_at) - new Date(a[0].created_at));
+  window.orderGroupsForReceipt = orderHistoryCache;
+  renderOrderHistoryList();
+}
+
+function renderOrderHistoryList(){
+  const listEl = document.getElementById('order-history-list');
+  if(!listEl) return;
+
+  const statusLabels = {
+    pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
+    shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး', cancelled:'ပယ်ဖျက်'
+  };
+
+  let groups = orderHistoryCache;
+  if(orderHistorySearchQuery){
+    groups = groups.filter(rows=>{
+      const idMatch = (rows[0].order_group_id||rows[0].id).toLowerCase().includes(orderHistorySearchQuery);
+      const nameMatch = rows.some(r=>r.product_name.toLowerCase().includes(orderHistorySearchQuery));
+      return idMatch || nameMatch;
+    });
+  }
+
+  if(!orderHistoryCache.length){ listEl.innerHTML = '<p class="hint">Order မှတ်တမ်း မရှိသေးပါ</p>'; return; }
+  if(!groups.length){ listEl.innerHTML = '<p class="hint">ရှာဖွေမှုနှင့် ကိုက်ညီသော Order မတွေ့ပါ</p>'; return; }
+
+  listEl.innerHTML = groups.map((rows)=>{
+    const idx = orderHistoryCache.indexOf(rows);
+    const first = rows[0];
+    const total = rows.reduce((s,r)=>s+Number(r.total_amount),0);
+    const itemsLine = rows.map(r=>`${r.product_name}${r.size?' ('+r.size+(r.color?', '+r.color:'')+')':''} x${r.quantity}`).join('<br>');
+    return `
+    <div class="history-item">
+      <div class="row1"><span>#${(first.order_group_id||first.id).slice(0,8).toUpperCase()}</span><span>${new Date(first.created_at).toLocaleDateString()}</span></div>
+      <h5>${itemsLine}</h5>
+      <div>${total.toLocaleString()} ကျပ်</div>
+      <span class="status-tag">${statusLabels[first.order_status]||first.order_status}</span>
+      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+        <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="renderOrderTrackingResult(orderGroupsForReceipt[${idx}])">📦 Track ကြည့်ရန်</button>
+        <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openCustomerReceipt(orderGroupsForReceipt[${idx}])">🧾 Receipt ကြည့်ရန်</button>
+        <button type="button" class="auth-link" style="display:inline-block; margin:0; color:var(--rust);" onclick="deleteOrderHistoryItem(${idx})">🗑️ ဖျက်မည်</button>
+      </div>
+    </div>`;
+  }).join('') + (orderHistoryCache.length ? `<button type="button" class="submit-order-btn" style="background:transparent; color:var(--rust); margin-top:10px; border-color:var(--rust);" onclick="deleteAllOrderHistory()">🗑️ Order History အားလုံး ဖျက်မည်</button>` : '');
 }
 
 async function deleteOrderHistoryItem(idx){
@@ -2119,7 +2152,7 @@ async function deleteOrderHistoryItem(idx){
   const { error } = await sb.from('orders').delete().in('id', ids);
   if(error){ showSiteToast('ဖျက်၍ မရပါ — '+error.message); return; }
   showSiteToast('Order History ဖျက်ပြီးပါပြီ');
-  renderProfileView();
+  openOrderHistory();
 }
 
 async function deleteAllOrderHistory(){
@@ -2127,7 +2160,7 @@ async function deleteAllOrderHistory(){
   const { error } = await sb.from('orders').delete().eq('user_id', currentUser.id);
   if(error){ showSiteToast('ဖျက်၍ မရပါ — '+error.message); return; }
   showSiteToast('Order History အားလုံး ဖျက်ပြီးပါပြီ');
-  renderProfileView();
+  openOrderHistory();
 }
 
 // ================= WALLET (Prepaid Balance) =================
@@ -2311,8 +2344,8 @@ function generateGiftCardCode(){
   return code;
 }
 
-async function openGiftCardPurchase(){
-  selectedGiftAmount = null;
+async function openGiftCardPurchase(presetAmount){
+  selectedGiftAmount = GIFT_CARD_DENOMS.includes(presetAmount) ? presetAmount : null;
   const box = document.getElementById('checkout-modal-content');
   const settings = await getSettings();
   const qrUrl = settings && settings.kbzpay_qr_url;
@@ -2323,9 +2356,9 @@ async function openGiftCardPurchase(){
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       <div class="modal-label">ပမာဏ ရွေးပါ (၁၀,၀၀၀ — ၅၀၀,၀၀၀ ကျပ်)</div>
       <div id="gift-denom-chips">
-        ${GIFT_CARD_DENOMS.map(d=>`<span class="denom-chip" data-amt="${d}">${d.toLocaleString()}</span>`).join('')}
+        ${GIFT_CARD_DENOMS.map(d=>`<span class="denom-chip ${d===selectedGiftAmount?'active':''}" data-amt="${d}">${d.toLocaleString()}</span>`).join('')}
       </div>
-      <input type="number" id="gift-custom-amount" placeholder="သို့မဟုတ် ကိုယ်တိုင် ပမာဏ ရိုက်ထည့်ပါ (10,000 - 500,000)" min="10000" max="500000" style="margin-top:10px;">
+      <input type="number" id="gift-custom-amount" placeholder="သို့မဟုတ် ကိုယ်တိုင် ပမာဏ ရိုက်ထည့်ပါ (10,000 - 500,000)" min="10000" max="500000" value="${(presetAmount && !selectedGiftAmount)?presetAmount:''}" style="margin-top:10px;">
     </div>
     <div class="modal-section">
       <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန်</div>
@@ -2750,7 +2783,7 @@ function renderOrderTrackingResult(rows){
       <div class="order-summary-line total"><span>Total</span><span>${total.toLocaleString()} ကျပ်</span></div>
     </div>
 
-    <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="${currentUser?'renderProfileView()':"renderOrderTrackingForm()"}">← ${currentUser?'Profile ပြန်သွားရန်':'နောက်တစ်ခု Track လုပ်မည်'}</button>`;
+    <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="${currentUser?'openOrderHistory()':"renderOrderTrackingForm()"}">← ${currentUser?'Order History ပြန်သွားရန်':'နောက်တစ်ခု Track လုပ်မည်'}</button>`;
 }
 
 // ================= PRODUCT DETAIL MODAL =================
@@ -2774,6 +2807,32 @@ function renderProductDetail(p){
   const images = (p.images ? p.images.split(',').map(s=>s.trim()).filter(Boolean) : []);
   if(!images.length && p.image_url) images.push(p.image_url);
   if(!images.length) images.push('https://placehold.co/500x500/141412/E9E4D8?text=SUWATI');
+
+  if(p.is_gift_card){
+    const denoms = (p.sizes||'10000,20000,50000,100000').split(',').map(s=>parseInt(s.trim())).filter(Boolean);
+    if(!detailGiftAmount || !currentDetailProduct || currentDetailProduct.name!==p.name) detailGiftAmount = denoms[0];
+
+    box.innerHTML = `
+      <button class="modal-close" onclick="closeCheckout()">&times;</button>
+      <img class="detail-main-img" id="detail-main-img" src="${images[0]}" alt="${p.name}" onclick="openSiteLightbox(this.src)">
+      <h3>${p.name}</h3>
+      <div class="modal-label" style="margin-top:6px;">🎁 Gift Card</div>
+      ${p.description ? `<p class="detail-desc">${p.description}</p>` : ''}
+
+      <div class="opt-group">
+        <div class="opt-label">ပမာဏ ရွေးပါ (ကျပ်)</div>
+        <div class="opt-chips" id="detail-giftamount-chips">
+          ${denoms.map(d=>`<button type="button" class="chip ${d===detailGiftAmount?'active':''}" onclick="setDetailGiftAmount(${d})">${d.toLocaleString()}</button>`).join('')}
+        </div>
+        <input type="number" id="detail-gift-custom" placeholder="သို့မဟုတ် ကိုယ်တိုင် ပမာဏ ရိုက်ထည့်ပါ" min="1000" style="margin-top:10px;" oninput="setDetailGiftAmount(parseInt(this.value)||0, true)">
+      </div>
+
+      <button type="button" class="order-btn" id="detail-order-btn" style="background:var(--rust); color:var(--concrete); border-color:var(--ink);" onclick="detailBuyGiftCard()">Gift Card မှာယူမည် (KBZPay)</button>
+
+      ${renderRelatedProductsHtml(p)}
+    `;
+    return;
+  }
 
   const sizes = (p.sizes||'').split(',').map(s=>s.trim()).filter(Boolean);
   const colors = (p.colors||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -2814,7 +2873,7 @@ function renderProductDetail(p){
     </div>
 
     <div id="detail-prepaid-btn-area"></div>
-    <button type="button" class="order-btn" id="detail-order-btn" ${soldOut?'disabled':''} style="background:var(--rust); color:var(--concrete); border-color:var(--ink); ${soldOut?'opacity:.5;':''}" onclick="detailOrderNow()">Order ယူမည် (KBZPay)</button>
+    <button type="button" class="order-btn" id="detail-order-btn" ${soldOut?'disabled':''} style="background:var(--rust); color:var(--concrete); border-color:var(--ink); ${soldOut?'opacity:.5;':''}" onclick="detailOrderNow()">Order မှာယူမည် (KBZPay)</button>
     <button type="button" class="order-btn" id="detail-addcart-btn" ${soldOut?'disabled':''} style="background:var(--acid); color:var(--ink); border-color:var(--ink); margin-top:10px; ${soldOut?'opacity:.5;':''}" onclick="detailAddToCart()">ခြင်းထဲ ထည့်မည် +</button>
 
     <button type="button" class="detail-wishlist-heart ${isInWishlist(p.name)?'active':''}" id="detail-wishlist-btn" onclick="toggleWishlist('${p.name.replace(/'/g,"\\'")}')">
@@ -2828,13 +2887,46 @@ function renderProductDetail(p){
   renderDetailPrepaidButton(p);
 }
 
+let detailGiftAmount = null;
+function setDetailGiftAmount(amt, fromCustomInput){
+  if(!amt) return;
+  detailGiftAmount = amt;
+  document.querySelectorAll('#detail-giftamount-chips .chip').forEach(c=>c.classList.remove('active'));
+  if(!fromCustomInput){
+    document.getElementById('detail-gift-custom').value = '';
+    const match = Array.from(document.querySelectorAll('#detail-giftamount-chips .chip')).find(c=>c.textContent.replace(/,/g,'')===String(amt));
+    if(match) match.classList.add('active');
+  }
+}
+
+async function detailBuyGiftCard(){
+  if(!currentUser){
+    closeCheckout();
+    openAuthModal('login');
+    showSiteToast('Gift Card ဝယ်ဖို့ Login ဝင်ရန် လိုအပ်ပါသည်');
+    return;
+  }
+  if(!detailGiftAmount || detailGiftAmount < 1000){ showSiteToast('ပမာဏ အနည်းဆုံး 1,000 ကျပ် ရွေးပါ'); return; }
+  await openGiftCardPurchase(detailGiftAmount);
+}
+
 async function renderDetailPrepaidButton(p){
   const area = document.getElementById('detail-prepaid-btn-area');
-  if(!area || !currentUser) return;
+  if(!area) return;
+  if(p.is_gift_card){ area.innerHTML = ''; return; } // Gift Card Product မှာ Prepaid Card ဖြင့် ဝယ်ခွင့် မပြု
+
+  if(!currentUser){
+    area.innerHTML = `<div class="hint" style="margin-bottom:10px;">🎫 Prepaid Card ဖြင့် ဝယ်ချင်ရင် <a href="#" onclick="closeCheckout(); openAuthModal('login'); return false;" class="auth-link" style="display:inline; margin:0;">Login ဝင်ပါ</a></div>`;
+    return;
+  }
   const { data: w } = await sb.from('wallets').select('balance').eq('user_id', currentUser.id).maybeSingle();
   const balance = w?.balance || 0;
-  if(balance >= Number(p.price) && currentDetailProduct && currentDetailProduct.name===p.name){
+  if(!(currentDetailProduct && currentDetailProduct.name===p.name)) return;
+
+  if(balance >= Number(p.price)){
     area.innerHTML = `<button type="button" class="order-btn" id="detail-prepaid-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); margin-bottom:10px;" onclick="detailPayWithPrepaidCard()">🎫 Prepaid Card ဖြင့် ဝယ်မည်</button>`;
+  } else {
+    area.innerHTML = `<div class="hint" style="margin-bottom:10px;">🎫 Prepaid Card လက်ကျန် ${balance.toLocaleString()} ကျပ်ပဲ ရှိလို့ ဒီပစ္စည်းအတွက် မလုံလောက်ပါ — <a href="#" onclick="closeCheckout(); openWalletTopup(); return false;" class="auth-link" style="display:inline; margin:0;">ငွေဖြည့်ရန်</a></div>`;
   }
 }
 

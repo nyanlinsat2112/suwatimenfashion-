@@ -505,6 +505,7 @@ create policy "Customer can remove from own wishlist" on wishlists for delete
 -- ၂၁) Sub-Category — Category တစ်ခုအောက်မှာ ထပ်ခွဲရန် (ဥပမာ Top Wear > Shirt, Polo Shirt, Tee)
 alter table products add column if not exists subcategory text;
 alter table products add column if not exists visible boolean default true;
+alter table products add column if not exists is_gift_card boolean default false;
 
 create table if not exists subcategories (
   id uuid primary key default gen_random_uuid(),

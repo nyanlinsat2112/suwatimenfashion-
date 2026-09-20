@@ -50,6 +50,23 @@
     background:transparent; border:2.5px solid var(--concrete); color:var(--concrete); padding:9px 18px; font-size:13px;
   }
   .tab-btn.active{background:var(--concrete); color:var(--ink);}
+
+  .tabs-main{ display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; padding:18px 24px 0; }
+  .tab-btn.main-tab{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    padding:14px 6px; font-size:11.5px; line-height:1.25; min-height:62px; text-align:center;
+  }
+  .tab-btn.main-tab .mt-icon{ font-size:20px; }
+  .tabs-group{ padding:16px 24px 0; }
+  .tabs-group-label{
+    font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey); text-transform:uppercase;
+    letter-spacing:.1em; margin-bottom:8px; border-bottom:1px solid #3a382f; padding-bottom:6px;
+  }
+  .tabs-group-row{ display:flex; flex-wrap:wrap; gap:8px; }
+  .tabs-group-row .tab-btn{ padding:8px 14px; font-size:12.5px; }
+  @media (min-width:640px){
+    .tabs-main{ grid-template-columns:repeat(6, 1fr); }
+  }
   .panel{display:none; padding:24px; max-width:900px; margin:0 auto;}
   .panel.active{display:block;}
 
@@ -251,23 +268,41 @@
     </div>
   </header>
 
-  <div class="tabs">
-    <button class="tab-btn" data-tab="pos-panel" id="pos-tab-btn">🏪 POS (အပြင်ရောင်း)</button>
-    <button class="tab-btn active" data-tab="products-panel">ပစ္စည်းများ</button>
-    <button class="tab-btn" data-tab="inventory-panel">Inventory</button>
-    <button class="tab-btn" data-tab="categories-panel">Categories</button>
-    <button class="tab-btn" data-tab="activitylog-panel">Activity Log</button>
-    <button class="tab-btn" data-tab="posts-panel">Post များ</button>
-    <button class="tab-btn" data-tab="orders-panel" id="orders-tab-btn">🌐 Online အော်ဒါများ</button>
-    <button class="tab-btn" data-tab="salesreport-panel">Sales Report</button>
-    <button class="tab-btn" data-tab="customers-panel">Customers</button>
-    <button class="tab-btn" data-tab="banners-panel">Banners</button>
-    <button class="tab-btn" data-tab="settings-panel">Settings</button>
-    <button class="tab-btn" data-tab="staff-panel">Staff</button>
-    <button class="tab-btn" data-tab="messages-panel" id="messages-tab-btn">💬 Messages</button>
-    <button class="tab-btn" data-tab="delivery-panel" id="delivery-tab-btn">🚚 Delivery</button>
-    <button class="tab-btn" data-tab="salehistory-panel" id="salehistory-tab-btn">📋 Sale History</button>
-    <button class="tab-btn" data-tab="wallet-panel" id="wallet-tab-btn">💰 Wallet</button>
+  <div class="tabs-main">
+    <button class="tab-btn main-tab" data-tab="pos-panel" id="pos-tab-btn"><span class="mt-icon">🏪</span>POS<br>(အပြင်ရောင်း)</button>
+    <button class="tab-btn main-tab" data-tab="orders-panel" id="orders-tab-btn"><span class="mt-icon">🌐</span>Online<br>Orders</button>
+    <button class="tab-btn main-tab" data-tab="inventory-panel"><span class="mt-icon">📦</span>Inventory</button>
+    <button class="tab-btn main-tab" data-tab="messages-panel" id="messages-tab-btn"><span class="mt-icon">💬</span>Messages</button>
+    <button class="tab-btn main-tab" data-tab="delivery-panel" id="delivery-tab-btn"><span class="mt-icon">🚚</span>Delivery</button>
+    <button class="tab-btn main-tab" data-tab="wallet-panel" id="wallet-tab-btn"><span class="mt-icon">🎫</span>Prepaid Card<br>System</button>
+  </div>
+
+  <div class="tabs-group">
+    <div class="tabs-group-label">📁 ပစ္စည်း စီမံခန့်ခွဲမှု</div>
+    <div class="tabs-group-row">
+      <button class="tab-btn active" data-tab="products-panel">ပစ္စည်းများ</button>
+      <button class="tab-btn" data-tab="categories-panel">Categories</button>
+      <button class="tab-btn" data-tab="banners-panel">Banners</button>
+      <button class="tab-btn" data-tab="posts-panel">Post များ</button>
+    </div>
+  </div>
+
+  <div class="tabs-group">
+    <div class="tabs-group-label">📊 အစီရင်ခံစာ & ဖောက်သည်</div>
+    <div class="tabs-group-row">
+      <button class="tab-btn" data-tab="salesreport-panel">Sales Report</button>
+      <button class="tab-btn" data-tab="salehistory-panel" id="salehistory-tab-btn">Sale History</button>
+      <button class="tab-btn" data-tab="customers-panel">Customers</button>
+      <button class="tab-btn" data-tab="activitylog-panel">Activity Log</button>
+    </div>
+  </div>
+
+  <div class="tabs-group">
+    <div class="tabs-group-label">⚙️ စနစ် စီမံခန့်ခွဲမှု</div>
+    <div class="tabs-group-row">
+      <button class="tab-btn" data-tab="settings-panel">Settings</button>
+      <button class="tab-btn" data-tab="staff-panel">Staff</button>
+    </div>
   </div>
 
   <!-- POS (IN-STORE SALE) -->
@@ -342,6 +377,10 @@
             <div id="size-quick-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;"></div>
           </div>
           <input type="text" id="product-sizes" placeholder="Size (ဥပမာ S, M, L, XL) — အပေါ်က ခလုတ်တွေ နှိပ်ရင် auto ဖြည့်ပေးမည်" class="full">
+          <label class="full" style="display:flex; align-items:center; gap:8px; font-family:'Space Mono',monospace; font-size:12.5px; border:1.5px solid #3a382f; padding:10px; margin:4px 0;">
+            <input type="checkbox" id="product-is-giftcard" style="width:auto;">
+            🎁 ဒါက Gift Card ဖြစ်သည် — "Size" ကွက်ကို ပမာဏများ (ဥပမာ 10000,20000,50000,100000) အဖြစ် သုံးမည်၊ KBZPay ဖြင့်သာ ဝယ်ယူခွင့်ပြုမည်
+          </label>
           <input type="text" id="product-colors" placeholder="အရောင် (ဥပမာ Black, White, Navy)" class="full">
           <button type="button" id="gen-color-stock-btn" class="secondary full" style="margin:4px 0;">Size + အရောင် အလိုက် Stock သတ်မှတ်ရန်</button>
           <div id="color-stock-fields" class="full"></div>
@@ -1008,8 +1047,13 @@ productForm.addEventListener('submit', async (e)=>{
     status: document.getElementById('product-status').value,
     description: document.getElementById('product-description').value,
     tags: selectedTags.join(', '),
+    is_gift_card: document.getElementById('product-is-giftcard').checked,
   };
-  if(variantStock){
+  if(payload.is_gift_card){
+    // Gift Card Product မှာ Stock ဂဏန်း မလိုအပ်ပါ — အမြဲ Available ဖြစ်နေရမည်
+    payload.stock_qty = 999999;
+    payload.colors = '';
+  } else if(variantStock){
     payload.variant_stock = variantStock;
     let total = 0;
     Object.values(variantStock).forEach(colorsObj=>{
@@ -1019,8 +1063,8 @@ productForm.addEventListener('submit', async (e)=>{
   } else {
     payload.stock_qty = parseInt(document.getElementById('product-stock').value) || 0;
   }
-  // Stock ဂဏန်း စစ်စစ် 0 ဖြစ်နေရင် Admin က "Available" ရွေးထားခဲ့လည်း Sold Out အဖြစ် Auto ပြောင်းပေး
-  if(payload.stock_qty <= 0){
+  // Stock ဂဏန်း စစ်စစ် 0 ဖြစ်နေရင် Admin က "Available" ရွေးထားခဲ့လည်း Sold Out အဖြစ် Auto ပြောင်းပေး (Gift Card မှာ မသက်ဆိုင်)
+  if(!payload.is_gift_card && payload.stock_qty <= 0){
     payload.status = 'sold_out';
   }
   // ပုံအားလုံး ဖျက်ထားရင်တောင် Field ကို Update လုပ်ရန် (empty string ဖြစ်စေ)
@@ -1135,6 +1179,7 @@ async function editProduct(p){
   document.getElementById('product-subcategory').value = p.subcategory || '';
   document.getElementById('product-price').value = p.price;
   document.getElementById('product-sizes').value = p.sizes||'';
+  document.getElementById('product-is-giftcard').checked = !!p.is_gift_card;
   document.getElementById('product-colors').value = p.colors||'';
   document.getElementById('product-stock').value = p.stock_qty;
   document.getElementById('product-status').value = p.status;
