@@ -56,8 +56,14 @@
   .tab-btn.main-tab{
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
     padding:14px 6px; font-size:11.5px; line-height:1.25; min-height:62px; text-align:center;
+    position:relative;
   }
   .tab-btn.main-tab .mt-icon{ font-size:20px; }
+  .tab-count-badge{
+    position:absolute; top:6px; right:6px; background:var(--rust); color:#fff;
+    border-radius:50%; min-width:20px; height:20px; padding:0 4px; font-size:11px; font-weight:700;
+    display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace;
+  }
   .tabs-group{ padding:16px 24px 0; }
   .tabs-group-label{
     font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey); text-transform:uppercase;
@@ -288,7 +294,7 @@
     <button class="tab-btn main-tab" data-tab="pos-panel" id="pos-tab-btn"><span class="mt-icon">🏪</span>POS<br>(အပြင်ရောင်း)</button>
     <button class="tab-btn main-tab" data-tab="orders-panel" id="orders-tab-btn"><span class="mt-icon">🌐</span>Online<br>Orders</button>
     <button class="tab-btn main-tab" data-tab="inventory-panel"><span class="mt-icon">📦</span>Inventory</button>
-    <button class="tab-btn main-tab" data-tab="messages-panel" id="messages-tab-btn"><span class="mt-icon">💬</span>Messages</button>
+    <button class="tab-btn main-tab" data-tab="messages-panel" id="messages-tab-btn"><span class="mt-icon">💬</span>Messages<span id="messages-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
     <button class="tab-btn main-tab" data-tab="delivery-panel" id="delivery-tab-btn"><span class="mt-icon">🚚</span>Delivery</button>
     <button class="tab-btn main-tab" data-tab="wallet-panel" id="wallet-tab-btn"><span class="mt-icon">🎫</span>Prepaid Card<br>System</button>
   </div>
@@ -3333,6 +3339,18 @@ function renderMessageThreads(){
     return { userId, name: msgs.find(m=>m.customer_name)?.customer_name || 'Unknown', last, msgs, hasUnread };
   }).sort((a,b)=> new Date(b.last.created_at) - new Date(a.last.created_at));
 
+  // Messages Tab ပေါ်က Unread Count Badge — Unread Message ရှိတဲ့ Customer အယောက်ရေ (Thread ရေ) ကို ပြသ
+  const unreadThreadCount = threads.filter(t=>t.hasUnread).length;
+  const badge = document.getElementById('messages-unread-badge');
+  if(badge){
+    if(unreadThreadCount > 0){
+      badge.textContent = unreadThreadCount > 9 ? '9+' : unreadThreadCount;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
   if(q){ threads = threads.filter(t=>t.name.toLowerCase().includes(q)); }
 
   if(!threads.length){ list.innerHTML = '<p class="hint">Message မရှိသေးပါ</p>'; return; }
@@ -3630,6 +3648,7 @@ const TAB_REFRESH_MAP = {
     else if(document.getElementById('topup-all-list')) loadAllTopups();
     else if(document.getElementById('giftcard-requests-list')) loadGiftCardRequests();
     else if(document.getElementById('giftcard-all-list')) loadAllGiftCards();
+    else if(document.getElementById('customer-wallets-list')) loadCustomerWallets();
   },
   'products-panel': loadProducts,
   'inventory-panel': loadInventory,
@@ -3662,6 +3681,17 @@ document.getElementById('refresh-btn').addEventListener('click', async ()=>{
   btn.disabled = false;
   btn.textContent = '🔄';
 });
+
+// ★ Auto-Refresh System — လက်ရှိ ဖွင့်ထားတဲ့ Tab ကို ၄၅ စက္ကန့်တစ်ခါ Silent Refresh လုပ်ပေးမည် (Toast Popup မပြပါ)
+// Realtime က Notification/Order/Message/Wallet အသစ်တွေကိုတော့ ချက်ချင်း ပြပေးပြီးသားမို့ ဒါက Fallback Safety Net သာ ဖြစ်ပါသည်
+setInterval(async ()=>{
+  const activePanel = document.querySelector('.panel.active');
+  if(!activePanel) return;
+  const fn = TAB_REFRESH_MAP[activePanel.id];
+  if(fn){
+    try{ await fn(); }catch(e){ console.error('Auto-refresh error:', e); }
+  }
+}, 45000);
 
 // ---------- WALLET TOP-UP MANAGEMENT ----------
 // ---------- WALLET SECTION NAVIGATION (Profile Order History ပုံစံအတိုင်း ဝင်ကြည့်မှသာ Load) ----------

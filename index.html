@@ -971,6 +971,36 @@ loadProducts();
 loadPosts();
 loadBanners();
 
+// ================= AUTO-REFRESH SYSTEM (Website တစ်ခုလုံး အမြဲ Update ဖြစ်နေရန်) =================
+// Product/Banner/Post/Category ပြောင်းလဲမှုများကို Realtime ဖြင့် ချက်ချင်း သိရှိပြီး Silent Refresh လုပ်ပေးမည်
+// (Cart၊ ဖွင့်ထားတဲ့ Modal၊ Scroll Position စသည်တို့ကို မထိခိုက်စေပါ — Product Grid/Banner/Post ဧရိယာကိုသာ ပြန်ဆွဲပေးမည်)
+function initAutoRefreshSystem(){
+  sb.channel('site-auto-refresh')
+    .on('postgres_changes', { event:'*', schema:'public', table:'products' }, ()=>{ loadProducts(); })
+    .on('postgres_changes', { event:'*', schema:'public', table:'banners' }, ()=>{ loadBanners(); })
+    .on('postgres_changes', { event:'*', schema:'public', table:'posts' }, ()=>{ loadPosts(); })
+    .on('postgres_changes', { event:'*', schema:'public', table:'categories' }, ()=>{ loadCategories(); })
+    .on('postgres_changes', { event:'*', schema:'public', table:'subcategories' }, ()=>{ loadCategories(); })
+    .subscribe();
+
+  // Realtime က တစ်ခုခု မှားသွားရင် (Connection ပြတ်တောက်ခြင်း စသည်) အထိန်းအကွပ်အဖြစ် ၆၀ စက္ကန့်တစ်ခါ ပုံမှန် Refresh
+  setInterval(()=>{
+    loadProducts();
+    loadBanners();
+    loadPosts();
+  }, 60000);
+
+  // Customer တစ်ခြား Tab သွားပြီး ပြန်လာတဲ့အခါ (ဥပမာ - ခဏနားပြီးမှ ပြန်ဖွင့်တာမျိုး) Data အသစ်ပြန် Load
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible'){
+      loadProducts();
+      loadBanners();
+      loadPosts();
+    }
+  });
+}
+initAutoRefreshSystem();
+
 async function loadBanners(){
   const { data, error } = await sb.from('banners').select('*').eq('active', true).order('sort_order');
   const strip = document.getElementById('banner-strip');
@@ -2059,6 +2089,7 @@ async function renderProfileView(){
     <h3>Profile</h3>
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       <div class="profile-row"><span class="profile-label">အမည်</span><span>${meta.full_name || '-'}</span></div>
+      <div class="profile-row"><span class="profile-label">Nickname</span><span>${meta.nickname || '-'}</span></div>
       <div class="profile-row"><span class="profile-label">Gmail</span><span>${currentUser.email}</span></div>
       <div class="profile-row"><span class="profile-label">ဖုန်း</span><span>${meta.phone || '-'}</span></div>
       <div class="profile-row"><span class="profile-label">မွေးသက္ကရာဇ်</span><span>${meta.dob || '-'}</span></div>
@@ -2573,9 +2604,11 @@ function renderProfileEdit(){
     <button class="modal-close" onclick="closeCheckout()">&times;</button>
     <h3>Profile ပြင်ဆင်ရန်</h3>
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
-      <label>အမည်</label>
-      <input type="text" id="pf-name" value="${meta.full_name || ''}">
-      <label>ဖုန်းနံပါတ်</label>
+      <label>အမည် (Account ဖွင့်စဉ်က သတ်မှတ်ပြီးသား — ပြောင်း၍မရပါ)</label>
+      <input type="text" id="pf-name" value="${meta.full_name || ''}" disabled style="opacity:.6; background:#e5e0d3;">
+      <label style="margin-top:10px;">Nickname (အလွတ်တန်း ပြောင်းလို့ရသည် — Chat/Website ပေါ်မှာ ဒီနာမည် ပြပါမည်)</label>
+      <input type="text" id="pf-nickname" value="${meta.nickname || ''}" placeholder="ဥပမာ Ah Lin">
+      <label style="margin-top:10px;">ဖုန်းနံပါတ်</label>
       <input type="tel" id="pf-phone" value="${meta.phone || ''}">
       <label>မွေးသက္ကရာဇ်</label>
       <input type="date" id="pf-dob" value="${meta.dob || ''}">
@@ -2587,16 +2620,27 @@ function renderProfileEdit(){
     </div>`;
 }
 
+function getCustomerDisplayName(user){
+  const meta = user.user_metadata || {};
+  const base = meta.full_name || user.email;
+  return meta.nickname ? `${base} (${meta.nickname})` : base;
+}
+
 async function handleProfileSave(){
-  const full_name = document.getElementById('pf-name').value.trim();
+  const nickname = document.getElementById('pf-nickname').value.trim();
   const phone = document.getElementById('pf-phone').value.trim();
   const dob = document.getElementById('pf-dob').value;
   const address = document.getElementById('pf-address').value.trim();
   const err = document.getElementById('auth-error');
 
-  const { data, error } = await sb.auth.updateUser({ data: { full_name, phone, dob, address } });
+  // full_name ကို ဒီနေရာမှာ လုံးဝ မထည့်ပါ — Account ဖွင့်စဉ်က သတ်မှတ်ထားတဲ့ Value ကိုသာ အမြဲ ဆက်ထားရမည် (ပြောင်းလို့ မရအောင်)
+  const { data, error } = await sb.auth.updateUser({ data: { nickname, phone, dob, address } });
   if(error){ err.textContent = 'Error: ' + error.message; return; }
   currentUser = data.user;
+
+  // Chat Message မှတ်တမ်းဟောင်းများထဲက Customer Name ကိုပါ Nickname အသစ်နဲ့ ကိုက်ညီအောင် Sync ပြန်လုပ်
+  await sb.from('chat_messages').update({ customer_name: getCustomerDisplayName(currentUser) }).eq('user_id', currentUser.id);
+
   renderProfileView();
 }
 
@@ -2756,7 +2800,7 @@ async function sendChatMessage(){
   pendingChatImageFile = null;
   document.getElementById('chat-image-preview').innerHTML = '';
 
-  const displayName = currentUser.user_metadata?.full_name || currentUser.email;
+  const displayName = getCustomerDisplayName(currentUser);
   const { error } = await sb.from('chat_messages').insert({ user_id: currentUser.id, customer_name: displayName, sender:'customer', message:text, image_url, read_by_customer:true, read_by_admin:false });
   if(error){ showSiteToast('Message ပို့၍မရပါ — ' + error.message); return; }
   loadChatMessages();

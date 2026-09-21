@@ -887,3 +887,23 @@ begin
     alter publication supabase_realtime add table gift_cards;
   end if;
 end $$;
+
+-- ★ Website Auto-Refresh System — Product/Banner/Post/Category ပြောင်းလဲမှုများကို Customer ဘက်က ချက်ချင်း မြင်ရအောင် Realtime ဖွင့်ပေးရန်
+do $$
+begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'products') then
+    alter publication supabase_realtime add table products;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'banners') then
+    alter publication supabase_realtime add table banners;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'posts') then
+    alter publication supabase_realtime add table posts;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'categories') then
+    alter publication supabase_realtime add table categories;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'subcategories') then
+    alter publication supabase_realtime add table subcategories;
+  end if;
+end $$;
