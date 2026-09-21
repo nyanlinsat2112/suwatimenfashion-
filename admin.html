@@ -217,7 +217,7 @@
 .category-drag-item{ cursor:grab; transition:opacity .15s ease, border-color .15s ease; }
 .category-drag-item.dragging{ opacity:.4; }
 .category-drag-item.drag-over{ border-color:var(--acid); border-width:2px; }
-.drag-handle{ font-size:16px; color:var(--grey); cursor:grab; user-select:none; }
+.drag-handle{ font-size:20px; color:var(--grey); cursor:grab; user-select:none; touch-action:none; padding:8px; margin:-8px; }
 .msg-thread-item .mt-preview{font-size:12px; color:var(--grey); margin-top:3px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .msg-thread-item .mt-time{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey);}
 .msg-thread-item.unread{border-color:var(--acid);}
@@ -296,7 +296,7 @@
     <button class="tab-btn main-tab" data-tab="inventory-panel"><span class="mt-icon">📦</span>Inventory</button>
     <button class="tab-btn main-tab" data-tab="messages-panel" id="messages-tab-btn"><span class="mt-icon">💬</span>Messages<span id="messages-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
     <button class="tab-btn main-tab" data-tab="delivery-panel" id="delivery-tab-btn"><span class="mt-icon">🚚</span>Delivery</button>
-    <button class="tab-btn main-tab" data-tab="wallet-panel" id="wallet-tab-btn"><span class="mt-icon">🎫</span>Prepaid Card<br>System</button>
+    <button class="tab-btn main-tab" data-tab="wallet-panel" id="wallet-tab-btn"><span class="mt-icon">🎫</span>Prepaid Card<br>System<span id="wallet-pending-badge" class="tab-count-badge" style="display:none;"></span></button>
   </div>
 
   <div class="tabs-group">
@@ -877,6 +877,8 @@ async function checkSession(){
     subscribeToAdminChatRealtime();
     subscribeToOrderRealtime();
     subscribeToWalletRealtime();
+    refreshAllAttentionStates();
+    setInterval(refreshAllAttentionStates, 25000); // ၂၅ စက္ကန့်တစ်ခါ Independent Safety-Net Check
   } else {
     document.getElementById('login-screen').style.display='flex';
     document.getElementById('dashboard').style.display='none';
@@ -989,9 +991,6 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
       const dot = document.getElementById('new-order-dot');
       if(dot) dot.remove();
     }
-    if(['orders-tab-btn','messages-tab-btn','delivery-tab-btn','wallet-tab-btn'].includes(btn.id)){
-      setTabAttention(btn.id, false);
-    }
     if(btn.id === 'wallet-tab-btn'){
       backToWalletMenu();
     }
@@ -1003,6 +1002,41 @@ function setTabAttention(tabBtnId, active){
   const btn = document.getElementById(tabBtnId);
   if(!btn) return;
   btn.classList.toggle('needs-attention', active);
+}
+
+// ★ Notification Pulse — Approve/ဖြေရှင်းမပြီးမချင်း Tab Icon တွေ ဆက်ခုန်နေမည် (Realtime တစ်ခုခု လွတ်သွားလည်း ဒီ Function က ပြန်ပြင်ပေးမည်)
+async function refreshAllAttentionStates(){
+  try{
+    // Messages — Unread Message ရှိနေသေးသလား
+    const { count: unreadMsgCount } = await sb.from('chat_messages').select('id', { count:'exact', head:true }).eq('sender','customer').eq('read_by_admin', false);
+    setTabAttention('messages-tab-btn', (unreadMsgCount||0) > 0);
+
+    // Online Orders — Admin မှ မစစ်ဆေးရသေးသည့် Order ရှိနေသလား
+    const { count: pendingOrderCount } = await sb.from('orders').select('id', { count:'exact', head:true }).eq('order_status','pending_verification').neq('sale_channel','in_store');
+    setTabAttention('orders-tab-btn', (pendingOrderCount||0) > 0);
+
+    // Delivery — ပို့ဆောင်ရန် အသင့်ဖြစ်နေသည့် Online Order ရှိနေသလား
+    const { count: deliveryCount } = await sb.from('orders').select('id', { count:'exact', head:true }).in('order_status',['confirmed','processing','shipped']).neq('sale_channel','in_store');
+    setTabAttention('delivery-tab-btn', (deliveryCount||0) > 0);
+
+    // Prepaid Card System — Approve/Reject မလုပ်ရသေးသည့် Top-up (သို့) Gift Card ရှိနေသလား
+    const { count: topupPending } = await sb.from('wallet_topups').select('id', { count:'exact', head:true }).eq('status','pending');
+    const { count: giftPending } = await sb.from('gift_cards').select('id', { count:'exact', head:true }).eq('status','pending');
+    const totalWalletPending = (topupPending||0) + (giftPending||0);
+    setTabAttention('wallet-tab-btn', totalWalletPending > 0);
+
+    const walletBadge = document.getElementById('wallet-pending-badge');
+    if(walletBadge){
+      if(totalWalletPending > 0){
+        walletBadge.textContent = totalWalletPending > 9 ? '9+' : totalWalletPending;
+        walletBadge.style.display = 'flex';
+      } else {
+        walletBadge.style.display = 'none';
+      }
+    }
+  }catch(e){
+    console.error('refreshAllAttentionStates error:', e);
+  }
 }
 
 // ---------- IMAGE UPLOAD HELPER ----------
@@ -1516,7 +1550,7 @@ async function loadCategories(){
   const subParentSelect = document.getElementById('subcategory-parent');
   subParentSelect.innerHTML = data.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
 
-  // Categories tab ထဲက List (ဖိပြီး ရွှေ့လို့ရအောင် Drag & Drop ပါ)
+  // Categories tab ထဲက List (PC မှာ ဖိပြီး ရွှေ့လို့ရသလို Mobile/iPad အတွက် ▲▼ Button ပါ ထည့်ထားသည်)
   const list = document.getElementById('categories-list');
   list.innerHTML = '';
   data.forEach((cat,idx)=>{
@@ -1526,21 +1560,44 @@ async function loadCategories(){
     div.dataset.idx = idx;
     div.innerHTML = `
       <div class="info" style="display:flex; align-items:center; gap:10px;">
-        <span class="drag-handle" title="ဖိပြီး ရွှေ့ပါ">☰</span>
+        <span class="drag-handle" title="ဖိပြီး ရွှေ့ပါ (PC)">☰</span>
         <h4 style="margin:0;">${cat.name}</h4>
       </div>
-      <div class="actions">
+      <div class="actions" style="display:flex; gap:6px; align-items:center;">
+        <button class="secondary move-cat-btn" data-dir="up" ${idx===0?'disabled style="opacity:.3;"':''} title="အပေါ်ကို ရွှေ့ရန်">▲</button>
+        <button class="secondary move-cat-btn" data-dir="down" ${idx===data.length-1?'disabled style="opacity:.3;"':''} title="အောက်ကို ရွှေ့ရန်">▼</button>
         <button class="secondary rename-cat-btn">ပြင်မည်</button>
         <button class="secondary del-cat-btn">ဖျက်မည်</button>
       </div>`;
     div.querySelector('.rename-cat-btn').addEventListener('click', ()=>renameCategory(cat));
     div.querySelector('.del-cat-btn').addEventListener('click', ()=>deleteCategory(cat));
+    div.querySelectorAll('.move-cat-btn').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const dir = btn.dataset.dir;
+        const targetIdx = dir==='up' ? idx-1 : idx+1;
+        if(targetIdx < 0 || targetIdx >= data.length) return;
+        await swapCategoryOrder(data, idx, targetIdx);
+      });
+    });
     list.appendChild(div);
   });
   setupCategoryDragReorder(list, data);
 
   loadSubcategories();
   updateProductSubcategoryDropdown();
+}
+
+async function swapCategoryOrder(data, idxA, idxB){
+  const reordered = [...data];
+  const [moved] = reordered.splice(idxA, 1);
+  reordered.splice(idxB, 0, moved);
+  showToast('စီစဉ်နေသည်...');
+  for(let i=0;i<reordered.length;i++){
+    await sb.from('categories').update({ sort_order: i }).eq('id', reordered[i].id);
+  }
+  showToast('✅ Category အစဉ်လိုက် Save ပြီးပါပြီ');
+  logActivity('categories_reordered', reordered.map(c=>c.name).join(' → '));
+  loadCategories();
 }
 
 let draggedCategoryIdx = null;
@@ -1568,19 +1625,53 @@ function setupCategoryDragReorder(list, data){
       item.classList.remove('drag-over');
       const targetIdx = parseInt(item.dataset.idx);
       if(draggedCategoryIdx === null || draggedCategoryIdx === targetIdx) return;
+      await swapCategoryOrder(data, draggedCategoryIdx, targetIdx);
+    });
+  });
 
-      // Local Array ကို ပြန်စီပြီး sort_order အသစ်များ Database ထဲ Save
-      const reordered = [...data];
-      const [moved] = reordered.splice(draggedCategoryIdx, 1);
-      reordered.splice(targetIdx, 0, moved);
+  // ★ Touch Devices (Mobile/iPad) — HTML5 Drag & Drop က Touch ကို Support မလုပ်လို့ Touch Event များနဲ့ သီးသန့် ထပ်ဆောင့်ထည့်ပေးရပါမည်
+  // Drag Handle (☰) ကနေပဲ Drag စတင်ခွင့်ပြုပါမည် — ဒါမှ Card တခြားနေရာကို လက်ညှိုးနဲ့ Scroll လုပ်ရင် ပုံမှန်အတိုင်း Scroll ဆက်ရနိုင်ပါမည်
+  let touchDraggedIdx = null;
+  let touchTargetIdx = null;
+  items.forEach(item=>{
+    const handle = item.querySelector('.drag-handle');
+    if(!handle) return;
 
-      showToast('စီစဉ်နေသည်...');
-      for(let i=0;i<reordered.length;i++){
-        await sb.from('categories').update({ sort_order: i }).eq('id', reordered[i].id);
+    handle.addEventListener('touchstart', (e)=>{
+      touchDraggedIdx = parseInt(item.dataset.idx);
+      touchTargetIdx = touchDraggedIdx;
+      item.classList.add('dragging');
+    }, { passive:true });
+
+    handle.addEventListener('touchmove', (e)=>{
+      if(touchDraggedIdx === null) return;
+      e.preventDefault(); // Drag နေစဉ် Page ကို Scroll မလုပ်စေရန် (Handle ပေါ်ကနေ စတင်ထိထားချိန်မှသာ)
+      const touch = e.touches[0];
+      const elUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+      const hoveredItem = elUnder ? elUnder.closest('.category-drag-item') : null;
+
+      list.querySelectorAll('.category-drag-item').forEach(el=>el.classList.remove('drag-over'));
+      if(hoveredItem && list.contains(hoveredItem)){
+        hoveredItem.classList.add('drag-over');
+        touchTargetIdx = parseInt(hoveredItem.dataset.idx);
       }
-      showToast('✅ Category အစဉ်လိုက် Save ပြီးပါပြီ');
-      logActivity('categories_reordered', reordered.map(c=>c.name).join(' → '));
-      loadCategories();
+    }, { passive:false });
+
+    handle.addEventListener('touchend', async ()=>{
+      item.classList.remove('dragging');
+      list.querySelectorAll('.category-drag-item').forEach(el=>el.classList.remove('drag-over'));
+      if(touchDraggedIdx !== null && touchTargetIdx !== null && touchDraggedIdx !== touchTargetIdx){
+        await swapCategoryOrder(data, touchDraggedIdx, touchTargetIdx);
+      }
+      touchDraggedIdx = null;
+      touchTargetIdx = null;
+    });
+
+    handle.addEventListener('touchcancel', ()=>{
+      item.classList.remove('dragging');
+      list.querySelectorAll('.category-drag-item').forEach(el=>el.classList.remove('drag-over'));
+      touchDraggedIdx = null;
+      touchTargetIdx = null;
     });
   });
 }
@@ -1758,7 +1849,7 @@ async function loadOrders(){
       </div>
       ${itemsHtml}
       <div class="details" style="margin-top:8px; font-weight:700;">💰 စုစုပေါင်း: ${g.total_amount.toLocaleString()} ကျပ်</div>
-      ${g.payment_screenshot_url ? `<img class="ss-thumb" src="${g.payment_screenshot_url}" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
+      ${g.payment_screenshot_url ? `<img class="ss-thumb" loading="lazy" src="${g.payment_screenshot_url}" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
       <div>
         <select class="order-status-select">
           ${statusOptions.map(s=>`<option value="${s}" ${g.order_status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}
@@ -1800,6 +1891,7 @@ async function loadOrders(){
       const { error } = await sb.from('orders').update(updatePayload).in('id', g.ids);
       if(error){ showToast('Error: '+error.message); return; }
       showToast('Order status update ပြီးပါပြီ');
+      refreshAllAttentionStates();
       logActivity('order_status_changed', `#${g.group_display_id.slice(0,8).toUpperCase()} → ${newStatus}`);
 
       // Order ကို "ပယ်ဖျက်" (Cancelled/Refund) ပြောင်းလိုက်ရင် Stock ကို ပြန်တိုးပေး
@@ -1901,7 +1993,7 @@ function subscribeToOrderRealtime(){
       if(payload.new.sale_channel === 'in_store') { loadOrders(); loadInventory(); return; } // In-store Sale ဖြစ်ရင် Notification မလို
       playNotificationSound();
       showToast('🔔 Order အသစ် ဝင်လာပါပြီ!');
-      setTabAttention('orders-tab-btn', true);
+      refreshAllAttentionStates();
 
       loadOrders();
       loadInventory();
@@ -1920,10 +2012,9 @@ function subscribeToOrderRealtime(){
       }
       // Order တစ်ခု "အတည်ပြုပြီး" ဖြစ်လာလို့ ပို့ဆောင်ဖို့ အသင့်ဖြစ်လာရင် Delivery Tab ကို သတိပေး
       if(payload.new.order_status === 'confirmed' && payload.old.order_status !== 'confirmed' && payload.new.sale_channel !== 'in_store'){
-        const deliveryTabActive = document.getElementById('delivery-tab-btn')?.classList.contains('active');
-        if(!deliveryTabActive) setTabAttention('delivery-tab-btn', true);
         loadDeliveryQueue();
       }
+      refreshAllAttentionStates();
     })
     .subscribe();
 }
@@ -1936,15 +2027,13 @@ function subscribeToWalletRealtime(){
     .on('postgres_changes', { event:'INSERT', schema:'public', table:'wallet_topups' }, ()=>{
       playNotificationSound();
       showToast('💰 Wallet Top-up Request အသစ် ဝင်လာပါပြီ!');
-      const walletTabActive = document.getElementById('wallet-tab-btn')?.classList.contains('active');
-      if(!walletTabActive) setTabAttention('wallet-tab-btn', true);
+      refreshAllAttentionStates();
       loadTopupRequests();
     })
     .on('postgres_changes', { event:'INSERT', schema:'public', table:'gift_cards' }, ()=>{
       playNotificationSound();
       showToast('🎁 Gift Card Purchase Request အသစ် ဝင်လာပါပြီ!');
-      const walletTabActive = document.getElementById('wallet-tab-btn')?.classList.contains('active');
-      if(!walletTabActive) setTabAttention('wallet-tab-btn', true);
+      refreshAllAttentionStates();
       loadGiftCardRequests();
     })
     .subscribe();
@@ -2132,9 +2221,9 @@ async function loadCustomers(){
     if(hiddenKeys.has(key)) return; // Admin က List ကနေ ဖျောက်ထားတဲ့ Customer ဖြစ်ရင် ကျော်သွား
 
     if(!customersMap[key]){
-      customersMap[key] = { key, name:o.customer_name, phone:o.phone, email:o.email, address:o.address, orders:[], activeOrderCount:0, totalSpent:0, isRegistered:false, channel:o.sale_channel };
+      customersMap[key] = { key, name:o.customer_name, phone:o.phone, email:o.email, address:o.address, orders:[], activeOrderCount:0, totalSpent:0, isRegistered:false, channel:o.sale_channel, user_id:null };
     }
-    if(o.user_id) customersMap[key].isRegistered = true;
+    if(o.user_id){ customersMap[key].isRegistered = true; customersMap[key].user_id = o.user_id; }
     customersMap[key].orders.push(o);
     if(o.order_status !== 'cancelled'){
       customersMap[key].totalSpent += o.total_amount;
@@ -2186,8 +2275,9 @@ function renderCustomersList(){
         📞 ${c.phone||'-'} ${c.email?'· ✉️ '+c.email:''}<br>
         📍 ${c.address||'-'}
       </div>
-      <div style="display:flex; gap:8px; margin-top:8px;">
+      <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
         <button type="button" class="secondary view-orders-btn">Order မှတ်တမ်း ကြည့်ရန်</button>
+        <button type="button" class="secondary edit-name-btn">✏️ Name ပြင်ရန်</button>
         <button type="button" class="secondary delete-customer-btn" style="color:var(--rust); border-color:var(--rust);">🗑️ List ကနေ ဖျက်ရန်</button>
       </div>
       <div class="customer-order-history" id="coh-${idx}">
@@ -2200,6 +2290,32 @@ function renderCustomersList(){
     div.querySelector('.view-orders-btn').addEventListener('click', ()=>{
       const hist = div.querySelector('.customer-order-history');
       hist.classList.toggle('open');
+    });
+    div.querySelector('.edit-name-btn').addEventListener('click', async ()=>{
+      const newName = prompt(`"${c.name}" ရဲ့ Name အသစ်ကို ရိုက်ထည့်ပါ (Order/Message/Receipt အားလုံးမှာ ဒီနာမည်အသစ် ပြောင်းပြပါမည်)`, c.name);
+      if(!newName || !newName.trim() || newName.trim() === c.name) return;
+      const trimmed = newName.trim();
+
+      showToast('Update လုပ်နေသည်...');
+      try{
+        if(c.user_id){
+          // Registered Customer ဆိုရင် User ID နဲ့ တိုက်ရိုက် Update (တိကျမှုအမြင့်ဆုံး)
+          await sb.from('orders').update({ customer_name: trimmed }).eq('user_id', c.user_id);
+          await sb.from('chat_messages').update({ customer_name: trimmed }).eq('user_id', c.user_id);
+          await sb.from('wallet_topups').update({ customer_name: trimmed }).eq('user_id', c.user_id);
+          await sb.from('gift_cards').update({ purchaser_name: trimmed }).eq('purchased_by', c.user_id);
+        } else {
+          // Guest ဆိုရင် Phone နံပါတ်နဲ့ ရှာပြီး Update (Phone ရှိမှသာ)
+          if(c.phone){
+            await sb.from('orders').update({ customer_name: trimmed }).eq('phone', c.phone).is('user_id', null);
+          }
+        }
+        logActivity('customer_name_edited', `${c.name} → ${trimmed}`);
+        showToast('✅ Name ပြောင်းပြီးပါပြီ');
+        loadCustomers();
+      }catch(e){
+        showToast('Error: ' + e.message);
+      }
     });
     div.querySelector('.delete-customer-btn').addEventListener('click', async ()=>{
       if(!confirm(`"${c.name}" ကို Customer List ကနေ ဖျက်မှာ သေချာပါသလား? (Order မှတ်တမ်းများကတော့ ဖျက်မဖျက်ဘဲ ဒီ List ထဲကနေပဲ ဖျောက်ပေးပါမည်)`)) return;
@@ -3339,12 +3455,12 @@ function renderMessageThreads(){
     return { userId, name: msgs.find(m=>m.customer_name)?.customer_name || 'Unknown', last, msgs, hasUnread };
   }).sort((a,b)=> new Date(b.last.created_at) - new Date(a.last.created_at));
 
-  // Messages Tab ပေါ်က Unread Count Badge — Unread Message ရှိတဲ့ Customer အယောက်ရေ (Thread ရေ) ကို ပြသ
-  const unreadThreadCount = threads.filter(t=>t.hasUnread).length;
+  // Messages Tab ပေါ်က Unread Count Badge — Customer ပို့ထားတဲ့ မဖတ်ရသေးသော Message အရေအတွက် (Raw Count)
+  const unreadMessageCount = messagesCache.filter(m=>m.sender==='customer' && !m.read_by_admin).length;
   const badge = document.getElementById('messages-unread-badge');
   if(badge){
-    if(unreadThreadCount > 0){
-      badge.textContent = unreadThreadCount > 9 ? '9+' : unreadThreadCount;
+    if(unreadMessageCount > 0){
+      badge.textContent = unreadMessageCount > 9 ? '9+' : unreadMessageCount;
       badge.style.display = 'flex';
     } else {
       badge.style.display = 'none';
@@ -3417,6 +3533,7 @@ async function openConversation(userId){
       if(msg) msg.read_by_admin = true;
     });
     renderMessageThreads();
+    refreshAllAttentionStates();
   }
 }
 
@@ -3456,8 +3573,7 @@ function subscribeToAdminChatRealtime(){
       if(payload.new.sender === 'customer'){
         playNotificationSound();
         showToast('💬 Message အသစ် ဝင်လာပါပြီ!');
-        const messagesTabActive = document.getElementById('messages-tab-btn')?.classList.contains('active');
-        if(!messagesTabActive) setTabAttention('messages-tab-btn', true);
+        refreshAllAttentionStates();
       }
       loadMessages();
       if(currentMessageUserId === payload.new.user_id) openConversation(currentMessageUserId);
@@ -3630,6 +3746,7 @@ async function confirmDelivered(){
 
   logActivity('order_delivered', `#${g.group_display_id.slice(0,8).toUpperCase()} (${g.customer_name}) — ${currentAdminEmail} မှ ပို့ဆောင်ပြီး`);
   showToast('✅ ပို့ပြီးကြောင်း မှတ်တမ်းတင်ပြီးပါပြီ! Customer ဆီ Email ပို့ထားပါပြီ');
+  refreshAllAttentionStates();
 
   document.getElementById('delivery-action-view').style.display = 'none';
   document.getElementById('delivery-queue-list').style.display = 'block';
@@ -3776,7 +3893,7 @@ async function loadTopupRequests(){
       <div class="row1"><h4>${t.customer_name}</h4><span class="oid">${new Date(t.created_at).toLocaleString()}</span></div>
       <div class="details" style="margin-top:6px;">📞 ${t.phone||'-'}</div>
       <div class="details" style="margin-top:6px; font-weight:700; color:var(--acid);">💰 ${Number(t.amount).toLocaleString()} ကျပ်</div>
-      ${t.payment_screenshot_url ? `<img src="${t.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${t.payment_screenshot_url}')">` : ''}
+      ${t.payment_screenshot_url ? `<img loading="lazy" src="${t.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${t.payment_screenshot_url}')">` : ''}
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button type="button" class="acid approve-topup-btn" data-id="${t.id}" data-uid="${t.user_id}" data-amt="${t.amount}">✅ Approve</button>
         <button type="button" class="secondary reject-topup-btn" data-id="${t.id}" style="color:var(--rust); border-color:var(--rust);">❌ Reject</button>
@@ -3820,6 +3937,7 @@ async function loadTopupRequests(){
 
       logActivity('wallet_topup_approved', `${btn.dataset.amt} ကျပ်`);
       showToast('✅ Wallet ဖြည့်ပြီးပါပြီ');
+      refreshAllAttentionStates();
       loadTopupRequests();
       loadAllTopups();
     });
@@ -3834,6 +3952,7 @@ async function loadTopupRequests(){
       }).eq('id', btn.dataset.id);
       logActivity('wallet_topup_rejected', btn.dataset.id);
       showToast('Top-up Reject လုပ်ပြီးပါပြီ');
+      refreshAllAttentionStates();
       loadTopupRequests();
       loadAllTopups();
     });
@@ -3853,7 +3972,7 @@ async function loadGiftCardRequests(){
       <div class="row1"><h4>${g.purchaser_name}</h4><span class="oid">${new Date(g.created_at).toLocaleString()}</span></div>
       <div class="details" style="margin-top:6px;">📞 ${g.phone||'-'}</div>
       <div class="details" style="margin-top:6px; font-weight:700; color:var(--rust);">🎁 ${Number(g.amount).toLocaleString()} ကျပ်</div>
-      ${g.payment_screenshot_url ? `<img src="${g.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
+      ${g.payment_screenshot_url ? `<img loading="lazy" src="${g.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button type="button" class="acid approve-gift-btn" data-id="${g.id}" data-amt="${g.amount}">✅ Approve</button>
         <button type="button" class="secondary reject-gift-btn" data-id="${g.id}" style="color:var(--rust); border-color:var(--rust);">❌ Reject</button>
@@ -3871,6 +3990,7 @@ async function loadGiftCardRequests(){
       if(!updated || updated.length === 0){ showToast('ဒီ Gift Card ကို တခြား Admin တစ်ယောက်က Approve/Reject လုပ်ပြီးသား ဖြစ်နိုင်ပါသည်'); loadGiftCardRequests(); return; }
       logActivity('gift_card_approved', btn.dataset.id);
       showToast('✅ Gift Card Active ဖြစ်သွားပါပြီ');
+      refreshAllAttentionStates();
       loadGiftCardRequests();
       loadAllGiftCards();
     });
@@ -3885,6 +4005,7 @@ async function loadGiftCardRequests(){
       }).eq('id', btn.dataset.id);
       logActivity('gift_card_rejected', btn.dataset.id);
       showToast('Gift Card Reject လုပ်ပြီးပါပြီ');
+      refreshAllAttentionStates();
       loadGiftCardRequests();
     });
   });
