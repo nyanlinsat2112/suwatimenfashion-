@@ -1468,6 +1468,36 @@ async function safeRestoreStockGlobal(item){
   }catch(e){ console.error('Stock restore failed', e); }
 }
 
+// ★ Payment Screenshot ကို Upload မလုပ်ခင် အရွယ်အစား လျှော့ချ (Admin ဘက်က ကြည့်တဲ့အခါ မြန်ဆန်စေရန်)
+function compressImageForUpload(file, maxWidth=1000, quality=0.7){
+  return new Promise((resolve)=>{
+    if(!file.type.startsWith('image/')){ resolve(file); return; }
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let { width, height } = img;
+        if(width > maxWidth){
+          height = Math.round(height * (maxWidth / width));
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob)=>{
+          if(!blob){ resolve(file); return; }
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type:'image/jpeg' }));
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = ()=> resolve(file); // ပုံဖတ်လို့ မရရင် မူရင်း File ကိုပဲ ဆက်သုံး
+      img.src = e.target.result;
+    };
+    reader.onerror = ()=> resolve(file);
+    reader.readAsDataURL(file);
+  });
+}
+
 async function submitOrder(){
   const fileInput = document.getElementById('co-screenshot');
   const file = fileInput.files[0];
@@ -1494,6 +1524,7 @@ async function submitOrder(){
   }
 
   try{
+    file = await compressImageForUpload(file);
     const ext = file.name.split('.').pop();
     const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error: upErr } = await sb.storage.from('payment-screenshots').upload(path, file);
@@ -2289,6 +2320,7 @@ async function submitWalletTopup(){
 
   btn.disabled = true; btn.textContent = 'တင်နေသည်...';
   try{
+    file = await compressImageForUpload(file);
     const ext = file.name.split('.').pop();
     const path = `topup-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error: upErr } = await sb.storage.from('payment-screenshots').upload(path, file);
@@ -2505,6 +2537,7 @@ async function submitGiftCardPurchase(){
       stockReserved = true;
     }
 
+    file = await compressImageForUpload(file);
     const ext = file.name.split('.').pop();
     const path = `giftcard-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error: upErr } = await sb.storage.from('payment-screenshots').upload(path, file);
