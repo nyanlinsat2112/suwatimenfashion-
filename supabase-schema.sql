@@ -422,6 +422,10 @@ create table if not exists chat_messages (
   created_at timestamptz default now()
 );
 
+-- Unread Message Indicator (Admin ဘက်/Customer ဘက် နှစ်ဖက်စလုံး) အတွက်
+alter table chat_messages add column if not exists read_by_admin boolean default false;
+alter table chat_messages add column if not exists read_by_customer boolean default false;
+
 alter table chat_messages enable row level security;
 
 drop policy if exists "Customer can view own messages" on chat_messages;
@@ -439,6 +443,14 @@ create policy "Admin can view all messages" on chat_messages for select
 drop policy if exists "Admin can send messages" on chat_messages;
 create policy "Admin can send messages" on chat_messages for insert
   with check (is_admin() and sender = 'admin');
+
+drop policy if exists "Customer can mark messages read" on chat_messages;
+create policy "Customer can mark messages read" on chat_messages for update
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "Admin can mark messages read" on chat_messages;
+create policy "Admin can mark messages read" on chat_messages for update
+  using (is_admin()) with check (is_admin());
 
 do $$
 begin
@@ -612,6 +624,11 @@ create table if not exists wallet_topups (
   reviewed_by_email text
 );
 
+-- ★ Table က ရှိပြီးသားဖြစ်နေရင် "create table if not exists" က Column အသစ်ကို ထည့်မပေးနိုင်ပါ — ဒါကြောင့် ဒီနေရာမှာ တိုက်ရိုက် ထပ်ထည့်ပေးပါသည်
+alter table wallet_topups add column if not exists reviewed_at timestamptz;
+alter table wallet_topups add column if not exists reviewed_by uuid references auth.users(id) on delete set null;
+alter table wallet_topups add column if not exists reviewed_by_email text;
+
 alter table wallet_topups enable row level security;
 
 drop policy if exists "Customer can create own topup" on wallet_topups;
@@ -703,6 +720,14 @@ create table if not exists gift_cards (
   reviewed_at timestamptz,
   created_at timestamptz default now()
 );
+
+-- ★ Table က ရှိပြီးသားဖြစ်နေရင် "create table if not exists" က Column အသစ်ကို ထည့်မပေးနိုင်ပါ — ဒီနေရာမှာ တိုက်ရိုက် ထပ်ထည့်ပေးပါသည်
+alter table gift_cards add column if not exists redeemed_by uuid references auth.users(id) on delete set null;
+alter table gift_cards add column if not exists redeemed_at timestamptz;
+alter table gift_cards add column if not exists reviewed_by uuid references auth.users(id) on delete set null;
+alter table gift_cards add column if not exists reviewed_by_email text;
+alter table gift_cards add column if not exists reviewed_at timestamptz;
+alter table gift_cards add column if not exists rejection_reason text;
 
 alter table gift_cards enable row level security;
 
@@ -846,3 +871,19 @@ create policy "Admin can view hidden customers" on hidden_customers for select
 drop policy if exists "Owner can manage hidden customers" on hidden_customers;
 create policy "Owner can manage hidden customers" on hidden_customers for all
   using (is_owner()) with check (is_owner());
+
+-- ★ Wallet/Gift Card Table အသစ်တွေအတွက် Realtime Notification (Tab ခုန်ခြင်း) အလုပ်လုပ်ဖို့ Supabase Realtime ကို ဖွင့်ပေးရန်
+-- (Table အသစ် ဖန်တီးတိုင်း Supabase က Realtime ကို Default အနေနဲ့ ဖွင့်မပေးထားပါ — ဒီနေရာမှာ တိုက်ရိုက် ဖွင့်ပေးရပါမည်)
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'wallet_topups'
+  ) then
+    alter publication supabase_realtime add table wallet_topups;
+  end if;
+  if not exists (
+    select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'gift_cards'
+  ) then
+    alter publication supabase_realtime add table gift_cards;
+  end if;
+end $$;

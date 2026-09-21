@@ -43,6 +43,7 @@
   #dashboard{display:none;}
   header{
     display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:3px solid var(--concrete);
+    flex-wrap:wrap; gap:10px;
   }
   header .logo{font-size:22px;}
   .tabs{display:flex; gap:8px; padding:20px 24px 0;}
@@ -75,6 +76,8 @@
   }
   .form-card h3{font-family:'Anton',sans-serif; font-size:20px; margin-bottom:14px;}
   .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .form-grid > *{min-width:0;}
+  input[type="date"]{width:100%; min-width:0;}
   .form-grid .full{grid-column:1/-1;}
   @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
   .form-actions{display:flex; gap:10px; margin-top:14px;}
@@ -204,6 +207,11 @@
 .msg-thread-item{display:flex; justify-content:space-between; align-items:center; border:2px solid #3a382f; background:#1a1916; padding:12px 14px; margin-bottom:8px; cursor:pointer;}
 .msg-thread-item:hover{background:#232219;}
 .msg-thread-item .mt-name{font-weight:700;}
+.unread-dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--rust); margin-right:7px; vertical-align:middle; }
+.category-drag-item{ cursor:grab; transition:opacity .15s ease, border-color .15s ease; }
+.category-drag-item.dragging{ opacity:.4; }
+.category-drag-item.drag-over{ border-color:var(--acid); border-width:2px; }
+.drag-handle{ font-size:16px; color:var(--grey); cursor:grab; user-select:none; }
 .msg-thread-item .mt-preview{font-size:12px; color:var(--grey); margin-top:3px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .msg-thread-item .mt-time{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey);}
 .msg-thread-item.unread{border-color:var(--acid);}
@@ -269,7 +277,7 @@
 <div id="dashboard">
   <header>
     <div class="logo display" id="dashboard-logo">SUWATI<span class="dot">.</span>ADMIN</div>
-    <div style="display:flex; align-items:center; gap:14px;">
+    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
       <span id="admin-email-display" class="hint" style="margin:0;"></span>
       <button id="refresh-btn" class="secondary" title="လက်ရှိ Tab ကို Refresh လုပ်ရန်">🔄</button>
       <button id="logout-btn" class="secondary">Logout</button>
@@ -372,16 +380,10 @@
       <h3>🎁 Gift Card ရောင်းရန် (ဆိုင်ထဲက Customer)</h3>
       <div class="hint">ငွေကို ဆိုင်ထဲမှာ တိုက်ရိုက် ရယူပြီးသားမို့ Screenshot မလိုပါ — ရောင်းလိုက်ပြီးရင် Code ချက်ချင်း ထွက်ပါမည်</div>
 
-      <div class="hint" style="margin-top:12px;">ပမာဏ ရွေးပါ</div>
+      <div class="hint" style="margin-top:12px;">ပမာဏ ရွေးပါ (Stock ရှိသလောက်ချည်း ရွေးလို့ရသည်)</div>
       <div id="pos-gift-denom-chips" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-        <span class="denom-chip" data-amt="10000">10,000</span>
-        <span class="denom-chip" data-amt="20000">20,000</span>
-        <span class="denom-chip" data-amt="50000">50,000</span>
-        <span class="denom-chip" data-amt="100000">100,000</span>
-        <span class="denom-chip" data-amt="200000">200,000</span>
-        <span class="denom-chip" data-amt="500000">500,000</span>
+        <span class="hint">Load လုပ်နေသည်...</span>
       </div>
-      <input type="number" id="pos-gift-custom-amount" placeholder="သို့မဟုတ် ကိုယ်တိုင် ပမာဏ ရိုက်ထည့်ပါ" min="1000">
 
       <div class="form-grid" style="margin-top:10px;">
         <input type="text" id="pos-gift-customer-name" placeholder="ဝယ်ယူသူ အမည် (Optional)">
@@ -404,9 +406,9 @@
           <select id="product-category"></select>
           <select id="product-subcategory"><option value="">Sub-Category (Optional)</option></select>
           <input type="number" id="product-price" placeholder="ဈေးနှုန်း (ကျပ်) — Gift Card ဆိုရင် ဒီကွက်ကို လျစ်လျူရှုပါ" required>
-          <label class="full" style="display:flex; align-items:center; gap:8px; font-family:'Space Mono',monospace; font-size:12.5px; border:1.5px solid #3a382f; padding:10px; margin:4px 0;">
-            <input type="checkbox" id="product-is-giftcard" style="width:auto;">
-            🎁 ဒါက Gift Card ဖြစ်သည် — ပမာဏ Fix (10,000/20,000/50,000/100,000/300,000/500,000) ကို ရွေးပြီး တစ်ခုချင်းစီအတွက် Stock ခွဲသတ်မှတ်ရမည်၊ KBZPay ဖြင့်သာ ဝယ်ယူခွင့်ပြုမည်
+          <label class="full" style="display:flex; align-items:flex-start; gap:8px; font-family:'Space Mono',monospace; font-size:12.5px; border:1.5px solid #3a382f; padding:10px; margin:4px 0;">
+            <input type="checkbox" id="product-is-giftcard" style="width:auto; flex-shrink:0; margin-top:2px;">
+            <span style="flex:1; min-width:0; word-wrap:break-word;">🎁 ဒါက Gift Card ဖြစ်သည် — ပမာဏ Fix (10,000/20,000/50,000/100,000/300,000/500,000) ကို ရွေးပြီး တစ်ခုချင်းစီအတွက် Stock ခွဲသတ်မှတ်ရမည်၊ KBZPay ဖြင့်သာ ဝယ်ယူခွင့်ပြုမည်</span>
           </label>
 
           <div class="full" id="normal-size-area">
@@ -449,6 +451,9 @@
           <button type="button" class="secondary" id="product-cancel" style="display:none;">Cancel</button>
         </div>
       </form>
+    </div>
+    <div class="form-card">
+      <input type="text" id="products-search" placeholder="🔍 ပစ္စည်းအမည် (သို့) Category ဖြင့် ရှာပါ...">
     </div>
     <div id="products-list"></div>
   </div>
@@ -785,6 +790,11 @@
       <div class="form-card wallet-nav-box" onclick="showWalletSection('giftcard-history')" style="cursor:pointer;">
         <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
         <div class="hint">Online + POS ရောင်းထားသမျှ Gift Card မှတ်တမ်းများ ကြည့်ရန်</div>
+      </div>
+
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('customer-wallets')" style="cursor:pointer;">
+        <h3>💳 Customer Wallet Balances</h3>
+        <div class="hint">Customer အားလုံးရဲ့ Prepaid Card လက်ကျန် — ပိုက်ဆံအများဆုံးရှိသူ အပေါ်ဆုံးမှာ ပြပါမည်</div>
       </div>
     </div>
 
@@ -1177,6 +1187,8 @@ function toggleGiftCardFormMode(){
 document.getElementById('product-is-giftcard').addEventListener('change', toggleGiftCardFormMode);
 initGiftCardDenomChips();
 
+document.getElementById('products-search').addEventListener('input', renderProductsList);
+
 document.getElementById('gen-color-stock-btn').addEventListener('click', ()=>{
   generateVariantStockTable({});
 });
@@ -1235,11 +1247,21 @@ function resetProductForm(){
   toggleGiftCardFormMode();
 }
 
+let productsListCache = [];
 async function loadProducts(){
   const { data, error } = await sb.from('products').select('*').order('created_at', { ascending:false });
+  if(error){ document.getElementById('products-list').innerHTML = '<p class="mono">Error loading products</p>'; return; }
+  productsListCache = data || [];
+  renderProductsList();
+}
+
+function renderProductsList(){
   const list = document.getElementById('products-list');
+  const q = (document.getElementById('products-search')?.value || '').trim().toLowerCase();
   list.innerHTML='';
-  if(error){ list.innerHTML = '<p class="mono">Error loading products</p>'; return; }
+  let data = productsListCache;
+  if(q){ data = data.filter(p => p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q)); }
+  if(!data.length){ list.innerHTML = '<p class="hint">ရှာဖွေမှုနှင့် ကိုက်ညီသော ပစ္စည်း မတွေ့ပါ</p>'; return; }
   data.forEach(p=>{
     const div = document.createElement('div');
     div.className='list-item';
@@ -1488,15 +1510,18 @@ async function loadCategories(){
   const subParentSelect = document.getElementById('subcategory-parent');
   subParentSelect.innerHTML = data.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
 
-  // Categories tab ထဲက List
+  // Categories tab ထဲက List (ဖိပြီး ရွှေ့လို့ရအောင် Drag & Drop ပါ)
   const list = document.getElementById('categories-list');
   list.innerHTML = '';
-  data.forEach(cat=>{
+  data.forEach((cat,idx)=>{
     const div = document.createElement('div');
-    div.className='list-item';
+    div.className='list-item category-drag-item';
+    div.draggable = true;
+    div.dataset.idx = idx;
     div.innerHTML = `
-      <div class="info">
-        <h4>${cat.name}</h4>
+      <div class="info" style="display:flex; align-items:center; gap:10px;">
+        <span class="drag-handle" title="ဖိပြီး ရွှေ့ပါ">☰</span>
+        <h4 style="margin:0;">${cat.name}</h4>
       </div>
       <div class="actions">
         <button class="secondary rename-cat-btn">ပြင်မည်</button>
@@ -1506,9 +1531,52 @@ async function loadCategories(){
     div.querySelector('.del-cat-btn').addEventListener('click', ()=>deleteCategory(cat));
     list.appendChild(div);
   });
+  setupCategoryDragReorder(list, data);
 
   loadSubcategories();
   updateProductSubcategoryDropdown();
+}
+
+let draggedCategoryIdx = null;
+function setupCategoryDragReorder(list, data){
+  const items = list.querySelectorAll('.category-drag-item');
+  items.forEach(item=>{
+    item.addEventListener('dragstart', (e)=>{
+      draggedCategoryIdx = parseInt(item.dataset.idx);
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', ()=>{
+      item.classList.remove('dragging');
+      list.querySelectorAll('.category-drag-item').forEach(el=>el.classList.remove('drag-over'));
+    });
+    item.addEventListener('dragover', (e)=>{
+      e.preventDefault();
+      item.classList.add('drag-over');
+    });
+    item.addEventListener('dragleave', ()=>{
+      item.classList.remove('drag-over');
+    });
+    item.addEventListener('drop', async (e)=>{
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      const targetIdx = parseInt(item.dataset.idx);
+      if(draggedCategoryIdx === null || draggedCategoryIdx === targetIdx) return;
+
+      // Local Array ကို ပြန်စီပြီး sort_order အသစ်များ Database ထဲ Save
+      const reordered = [...data];
+      const [moved] = reordered.splice(draggedCategoryIdx, 1);
+      reordered.splice(targetIdx, 0, moved);
+
+      showToast('စီစဉ်နေသည်...');
+      for(let i=0;i<reordered.length;i++){
+        await sb.from('categories').update({ sort_order: i }).eq('id', reordered[i].id);
+      }
+      showToast('✅ Category အစဉ်လိုက် Save ပြီးပါပြီ');
+      logActivity('categories_reordered', reordered.map(c=>c.name).join(' → '));
+      loadCategories();
+    });
+  });
 }
 
 document.getElementById('product-category').addEventListener('change', updateProductSubcategoryDropdown);
@@ -2254,8 +2322,10 @@ let posSelectedColor = null;
 
 async function loadPosProducts(){
   const { data } = await sb.from('products').select('*').order('name');
-  posProductsCache = data || [];
+  // Gift Card Product ကို ပုံမှန် POS Cart ထဲ ထည့်ရောင်းလို့ မရအောင် ဖယ်ထား — Gift Card ရောင်းရန် Section သီးသန့် ကနေသာ ရောင်းနိုင်သည်
+  posProductsCache = (data || []).filter(p => !p.is_gift_card);
   loadPosQuickTapTiles();
+  loadPosGiftCardChips();
 }
 
 async function loadPosQuickTapTiles(){
@@ -2437,6 +2507,7 @@ document.getElementById('pos-discount-value').addEventListener('input', renderPo
 document.getElementById('pos-tendered-input').addEventListener('input', updatePosChangeDisplay);
 // ---------- POS GIFT CARD SALE (ဆိုင်ထဲက Customer) ----------
 let posGiftSelectedAmount = null;
+let posGiftCardProductCache = null;
 
 function generatePosGiftCardCode(){
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -2445,27 +2516,56 @@ function generatePosGiftCardCode(){
   return code;
 }
 
-document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(chip=>{
-  chip.addEventListener('click', ()=>{
-    document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(c=>c.classList.remove('active'));
-    chip.classList.add('active');
-    posGiftSelectedAmount = parseInt(chip.dataset.amt);
-    document.getElementById('pos-gift-custom-amount').value = '';
+async function loadPosGiftCardChips(){
+  const chipsBox = document.getElementById('pos-gift-denom-chips');
+  const { data: gcProduct } = await sb.from('products').select('*').eq('is_gift_card', true).maybeSingle();
+  posGiftCardProductCache = gcProduct;
+
+  if(!gcProduct){
+    chipsBox.innerHTML = '<span class="hint" style="margin:0; color:var(--rust);">Gift Card Product ကို "Products" Tab မှာ အရင် ဖန်တီးထားရန် လိုအပ်ပါသည်</span>';
+    return;
+  }
+
+  const getDenomStock = (d) => (gcProduct.variant_stock && gcProduct.variant_stock[d] && gcProduct.variant_stock[d]['_']) || 0;
+  const denoms = (gcProduct.sizes || '').split(',').map(s=>parseInt(s.trim())).filter(Boolean);
+
+  if(!denoms.length){
+    chipsBox.innerHTML = '<span class="hint" style="margin:0; color:var(--rust);">Gift Card Product မှာ ပမာဏ/Stock သတ်မှတ်ရန် လိုအပ်ပါသည်</span>';
+    return;
+  }
+
+  chipsBox.innerHTML = denoms.map(d=>{
+    const stock = getDenomStock(d);
+    const soldOut = stock <= 0;
+    return `<span class="denom-chip ${soldOut?'sold-out':''}" data-amt="${d}" ${soldOut?'style="opacity:.4; text-decoration:line-through; cursor:not-allowed;"':''}>${d.toLocaleString()}${soldOut?' (ကုန်)':' ('+stock+' လက်ကျန်)'}</span>`;
+  }).join('');
+
+  chipsBox.querySelectorAll('.denom-chip:not(.sold-out)').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      chipsBox.querySelectorAll('.denom-chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      posGiftSelectedAmount = parseInt(chip.dataset.amt);
+    });
   });
-});
-document.getElementById('pos-gift-custom-amount').addEventListener('input', ()=>{
-  document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(c=>c.classList.remove('active'));
-  posGiftSelectedAmount = null;
-});
+}
 
 document.getElementById('pos-sell-giftcard-btn').addEventListener('click', async ()=>{
-  const customAmt = parseFloat(document.getElementById('pos-gift-custom-amount').value);
-  const amount = posGiftSelectedAmount || customAmt;
+  const amount = posGiftSelectedAmount;
   const resultBox = document.getElementById('pos-giftcard-result');
-  if(!amount || amount < 1000){ showToast('ပမာဏ အနည်းဆုံး 1,000 ကျပ် ရွေးပါ'); return; }
+  if(!amount){ showToast('ပမာဏ ရွေးပါ'); return; }
+  if(!posGiftCardProductCache){ showToast('Gift Card Product မတွေ့ပါ'); return; }
 
   const btn = document.getElementById('pos-sell-giftcard-btn');
   btn.disabled = true; btn.textContent = 'ထုတ်နေသည်...';
+
+  // ဒီ Denomination ရဲ့ Stock ကို အရင်ဆုံး Reserve (Decrement) — Stock ကုန်နေရင် ချက်ချင်း ရပ်တန့်
+  const { data: stockOk, error: stockErr } = await sb.rpc('decrement_stock', { p_name: posGiftCardProductCache.name, p_qty: 1, p_color: null, p_size: String(amount) });
+  if(stockErr || stockOk !== true){
+    showToast('တောင်းပန်ပါတယ် — ဒီပမာဏ Stock ကုန်သွားပါပြီ');
+    btn.disabled = false; btn.textContent = '🎁 ရောင်းချပြီး Code ထုတ်မည်';
+    loadPosGiftCardChips();
+    return;
+  }
 
   const code = generatePosGiftCardCode();
   const customerName = document.getElementById('pos-gift-customer-name').value.trim() || 'Walk-in Customer';
@@ -2477,9 +2577,15 @@ document.getElementById('pos-sell-giftcard-btn').addEventListener('click', async
     reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
   });
 
-  btn.disabled = false; btn.textContent = '🎁 ရောင်းချပြီး Code ထုတ်မည်';
+  if(error){
+    // Gift Card Insert မအောင်မြင်ရင် Stock ကို ပြန်တိုးပေး
+    await sb.rpc('increment_stock', { p_name: posGiftCardProductCache.name, p_qty: 1, p_color: null, p_size: String(amount) });
+    showToast('Error: '+error.message+' — Database Schema ကို Update လုပ်ရန် လိုအပ်နေပါသည် (supabase-schema.sql ကို Run ပါ)');
+    btn.disabled = false; btn.textContent = '🎁 ရောင်းချပြီး Code ထုတ်မည်';
+    return;
+  }
 
-  if(error){ showToast('Error: '+error.message+' — Database Schema ကို Update လုပ်ရန် လိုအပ်နေပါသည် (supabase-schema.sql ကို Run ပါ)'); return; }
+  btn.disabled = false; btn.textContent = '🎁 ရောင်းချပြီး Code ထုတ်မည်';
 
   logActivity('pos_gift_card_sold', `${code} — ${amount.toLocaleString()} ကျပ် (${customerName})`);
   showToast('✅ Gift Card ရောင်းပြီးပါပြီ!');
@@ -2492,11 +2598,11 @@ document.getElementById('pos-sell-giftcard-btn').addEventListener('click', async
       <button type="button" class="secondary" style="width:100%; margin-top:12px;" onclick="printGiftCardReceipt('${code}', ${amount}, '${customerName.replace(/'/g,"\\'")}')">🖨️ Receipt ထုတ်မည်</button>
     </div>`;
 
-  document.getElementById('pos-gift-custom-amount').value = '';
   document.getElementById('pos-gift-customer-name').value = '';
   document.getElementById('pos-gift-customer-phone').value = '';
-  document.querySelectorAll('#pos-gift-denom-chips .denom-chip').forEach(c=>c.classList.remove('active'));
   posGiftSelectedAmount = null;
+  loadPosGiftCardChips(); // Stock Update ဖြစ်ပြီးသား Chip များ ပြန်ဆွဲ
+  loadInventory();
 });
 
 document.getElementById('pos-payment-method').addEventListener('change', (e)=>{
@@ -3223,7 +3329,8 @@ function renderMessageThreads(){
   let threads = Object.entries(threadsMap).map(([userId, msgs])=>{
     msgs.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
     const last = msgs[msgs.length-1];
-    return { userId, name: msgs.find(m=>m.customer_name)?.customer_name || 'Unknown', last, msgs };
+    const hasUnread = msgs.some(m => m.sender==='customer' && !m.read_by_admin);
+    return { userId, name: msgs.find(m=>m.customer_name)?.customer_name || 'Unknown', last, msgs, hasUnread };
   }).sort((a,b)=> new Date(b.last.created_at) - new Date(a.last.created_at));
 
   if(q){ threads = threads.filter(t=>t.name.toLowerCase().includes(q)); }
@@ -3233,7 +3340,7 @@ function renderMessageThreads(){
   list.innerHTML = threads.map(t=>`
     <div class="msg-thread-item" data-uid="${t.userId}">
       <div>
-        <div class="mt-name">${t.name}</div>
+        <div class="mt-name">${t.hasUnread?'<span class="unread-dot"></span>':''}${t.name}</div>
         <div class="mt-preview">${t.last.sender==='admin'?'You: ':''}${t.last.image_url?'📷 Photo '+(t.last.message||''):t.last.message}</div>
       </div>
       <div class="mt-time">${new Date(t.last.created_at).toLocaleString()}</div>
@@ -3244,7 +3351,7 @@ function renderMessageThreads(){
   });
 }
 
-function openConversation(userId){
+async function openConversation(userId){
   currentMessageUserId = userId;
   const thread = messagesCache.filter(m=>m.user_id===userId);
   const name = thread.find(m=>m.customer_name)?.customer_name || 'Unknown';
@@ -3282,6 +3389,17 @@ function openConversation(userId){
     const url = URL.createObjectURL(file);
     preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingAdminChatImageFile=null; document.getElementById('admin-chat-image-preview').innerHTML=''; return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
   });
+
+  // Customer ကနေ Message ဖတ်ရသေးသည့်ဟာများကို "ဖတ်ပြီး" အဖြစ် မှတ်တမ်းတင်
+  const unreadIds = thread.filter(m=>m.sender==='customer' && !m.read_by_admin).map(m=>m.id);
+  if(unreadIds.length){
+    await sb.from('chat_messages').update({ read_by_admin: true }).in('id', unreadIds);
+    unreadIds.forEach(id=>{
+      const msg = messagesCache.find(m=>m.id===id);
+      if(msg) msg.read_by_admin = true;
+    });
+    renderMessageThreads();
+  }
 }
 
 let pendingAdminChatImageFile = null;
@@ -3307,7 +3425,7 @@ async function sendAdminReply(){
   const previewEl = document.getElementById('admin-chat-image-preview');
   if(previewEl) previewEl.innerHTML = '';
 
-  const { error } = await sb.from('chat_messages').insert({ user_id: currentMessageUserId, sender:'admin', message:text, image_url });
+  const { error } = await sb.from('chat_messages').insert({ user_id: currentMessageUserId, sender:'admin', message:text, image_url, read_by_admin:true, read_by_customer:false });
   if(error){ showToast('Error: '+error.message); return; }
   await loadMessages();
   if(currentMessageUserId) openConversation(currentMessageUserId);
@@ -3597,6 +3715,16 @@ function showWalletSection(section){
       <div id="giftcard-all-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
     document.getElementById('giftcard-search').addEventListener('input', renderGiftCardList);
     loadAllGiftCards();
+  } else if(section === 'customer-wallets'){
+    content.innerHTML = `
+      <div class="form-card">
+        <h3>💳 Customer Wallet Balances</h3>
+        <div class="hint">ပိုက်ဆံအများဆုံးရှိသူ အပေါ်ဆုံးမှာ ပြထားပါသည်</div>
+        <input type="text" id="customer-wallets-search" placeholder="Customer အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+      </div>
+      <div id="customer-wallets-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
+    document.getElementById('customer-wallets-search').addEventListener('input', renderCustomerWalletsList);
+    loadCustomerWallets();
   }
 }
 
@@ -3762,6 +3890,57 @@ function renderTopupList(){
 }
 
 let giftCardCache = [];
+let customerWalletsCache = [];
+async function loadCustomerWallets(){
+  const list = document.getElementById('customer-wallets-list');
+  const { data: wallets, error } = await sb.from('wallets').select('*').order('balance', { ascending:false });
+  if(error || !wallets){ if(list) list.innerHTML = '<p class="hint">Error loading wallets</p>'; return; }
+
+  // Customer အမည်/ဖုန်းနံပါတ် ရှာဖို့ Orders + Wallet Top-up မှတ်တမ်းများကနေ Lookup Map ဆောက်
+  const nameMap = {};
+  const { data: orders } = await sb.from('orders').select('user_id, customer_name, phone, created_at');
+  const { data: topups } = await sb.from('wallet_topups').select('user_id, customer_name, phone, created_at');
+  [...(orders||[]), ...(topups||[])].forEach(r=>{
+    if(!r.user_id) return;
+    if(!nameMap[r.user_id] || new Date(r.created_at) > new Date(nameMap[r.user_id].created_at)){
+      nameMap[r.user_id] = { customer_name: r.customer_name, phone: r.phone, created_at: r.created_at };
+    }
+  });
+
+  customerWalletsCache = wallets
+    .filter(w => Number(w.balance) > 0 || w.card_number) // လက်ကျန် ၀ ဖြစ်ပြီး Card မထုတ်ရသေးသူများ ဖျောက်
+    .map(w => ({
+      user_id: w.user_id,
+      balance: Number(w.balance) || 0,
+      card_number: w.card_number,
+      customer_name: nameMap[w.user_id]?.customer_name || 'Unknown Customer',
+      phone: nameMap[w.user_id]?.phone || '-',
+    }))
+    .sort((a,b) => b.balance - a.balance); // ပိုက်ဆံအများဆုံးရှိသူ အပေါ်ဆုံး
+
+  renderCustomerWalletsList();
+}
+
+function renderCustomerWalletsList(){
+  const list = document.getElementById('customer-wallets-list');
+  if(!list) return;
+  const q = (document.getElementById('customer-wallets-search')?.value || '').trim().toLowerCase();
+  let items = customerWalletsCache;
+  if(q){ items = items.filter(w => (w.customer_name||'').toLowerCase().includes(q) || (w.phone||'').toLowerCase().includes(q)); }
+  if(!items.length){ list.innerHTML = '<p class="hint">Wallet Balance ရှိသော Customer မရှိသေးပါ</p>'; return; }
+
+  list.innerHTML = items.map((w,idx)=>`
+    <div class="list-item">
+      <div class="info">
+        <h4>${idx===0 && w.balance>0 ? '👑 ' : ''}${w.customer_name}</h4>
+        <p class="mono" style="font-size:11px; color:var(--grey);">📞 ${w.phone} ${w.card_number ? '· 💳 '+w.card_number : ''}</p>
+      </div>
+      <div style="text-align:right;">
+        <div class="mono" style="font-size:18px; font-weight:700; color:var(--acid);">${w.balance.toLocaleString()} ကျပ်</div>
+      </div>
+    </div>`).join('');
+}
+
 async function loadAllGiftCards(){
   const { data, error } = await sb.from('gift_cards').select('*').order('created_at', { ascending:false });
   const list = document.getElementById('giftcard-all-list');
