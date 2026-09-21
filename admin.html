@@ -162,6 +162,8 @@
 .denom-chip.active{ background:var(--acid); color:var(--ink); border-color:var(--acid); }
 .giftcard-code-box{ background:#1f1e1a; border:3px dashed var(--acid); padding:16px; text-align:center; margin-top:10px; }
 .giftcard-code-box .gc-code{ font-family:'Space Mono',monospace; font-size:20px; font-weight:700; letter-spacing:2px; color:var(--acid); }
+.wallet-nav-box:hover{ border-color:var(--acid); }
+.wallet-nav-box:active{ transform:scale(.99); }
 
 .inventory-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
 .inventory-card .inv-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px;}
@@ -751,31 +753,32 @@
 
   <!-- WALLET -->
   <div class="panel" id="wallet-panel">
-    <div class="form-card">
-      <h3>💰 Wallet Top-up Requests</h3>
-      <div class="hint">Customer တွေ ငွေဖြည့်ဖို့ တင်ထားတဲ့ KBZPay Screenshot များ — Payment စစ်ဆေးပြီး Approve/Reject လုပ်ပါ</div>
-    </div>
-    <div id="topup-requests-list"></div>
+    <div id="wallet-menu">
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('topup-requests')" style="cursor:pointer;">
+        <h3>💰 Wallet Top-up Requests <span class="mono" id="topup-pending-badge" style="font-size:13px; color:var(--rust);"></span></h3>
+        <div class="hint">Customer တွေ ငွေဖြည့်ဖို့ တင်ထားတဲ့ Screenshot များ — ဝင်ကြည့်ပြီး Approve/Reject လုပ်ရန်</div>
+      </div>
 
-    <div class="form-card">
-      <h3>📜 Wallet Top-up မှတ်တမ်း အားလုံး</h3>
-      <div class="hint">Approve/Reject ဖြစ်ပြီးသား Top-up များ — ဘယ် Admin က လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
-      <input type="text" id="topup-search" placeholder="Customer အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
-    </div>
-    <div id="topup-all-list"></div>
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('topup-history')" style="cursor:pointer;">
+        <h3>📜 Wallet Top-up မှတ်တမ်း အားလုံး</h3>
+        <div class="hint">Approve/Reject ဖြစ်ပြီးသား မှတ်တမ်းများ + ဘယ် Admin က လုပ်ခဲ့လဲ ကြည့်ရန်</div>
+      </div>
 
-    <div class="form-card">
-      <h3>🎁 Gift Card Purchase Requests</h3>
-      <div class="hint">Gift Card ဝယ်ယူထားသူများ — Approve လုပ်ရင် Code ချက်ချင်း Active ဖြစ်သွားမည်</div>
-    </div>
-    <div id="giftcard-requests-list"></div>
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('giftcard-requests')" style="cursor:pointer;">
+        <h3>🎁 Gift Card Purchase Requests <span class="mono" id="giftcard-pending-badge" style="font-size:13px; color:var(--rust);"></span></h3>
+        <div class="hint">Online ကနေ ဝယ်ယူထားသူများ — ဝင်ကြည့်ပြီး Approve/Reject လုပ်ရန်</div>
+      </div>
 
-    <div class="form-card">
-      <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
-      <div class="hint">ဘယ် Admin က Approve/Reject လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
-      <input type="text" id="giftcard-search" placeholder="Code (သို့) ဝယ်ယူသူ အမည်ဖြင့် ရှာပါ...">
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('giftcard-history')" style="cursor:pointer;">
+        <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
+        <div class="hint">Online + POS ရောင်းထားသမျှ Gift Card မှတ်တမ်းများ ကြည့်ရန်</div>
+      </div>
     </div>
-    <div id="giftcard-all-list"></div>
+
+    <div id="wallet-section-detail" style="display:none;">
+      <button type="button" class="secondary" onclick="backToWalletMenu()" style="margin-bottom:16px;">← Prepaid Card System ပြန်သွားရန်</button>
+      <div id="wallet-section-content"></div>
+    </div>
   </div>
 </div>
 
@@ -961,10 +964,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
       setTabAttention(btn.id, false);
     }
     if(btn.id === 'wallet-tab-btn'){
-      loadTopupRequests();
-      loadAllTopups();
-      loadGiftCardRequests();
-      loadAllGiftCards();
+      backToWalletMenu();
     }
   });
 });
@@ -2427,6 +2427,7 @@ document.getElementById('pos-sell-giftcard-btn').addEventListener('click', async
       <div class="hint" style="margin-bottom:6px;">Customer ကို ဒီ Code ပေးပါ</div>
       <div class="gc-code">${code}</div>
       <div class="mono" style="font-size:12px; color:var(--grey); margin-top:6px;">${amount.toLocaleString()} ကျပ် · ${customerName}</div>
+      <button type="button" class="secondary" style="width:100%; margin-top:12px;" onclick="printGiftCardReceipt('${code}', ${amount}, '${customerName.replace(/'/g,"\\'")}')">🖨️ Receipt ထုတ်မည်</button>
     </div>`;
 
   document.getElementById('pos-gift-custom-amount').value = '';
@@ -2480,7 +2481,7 @@ document.getElementById('pos-complete-sale-btn').addEventListener('click', async
   const receiptWindow = window.open('', '_blank', 'width=380,height=650');
 
   const customerName = document.getElementById('pos-customer-name').value.trim() || 'Walk-in Customer';
-  const customerPhone = document.getElementById('pos-customer-phone').value.trim() || '-';
+  const customerPhone = document.getElementById('pos-customer-phone').value.trim() || '';
   const paymentMethod = document.getElementById('pos-payment-method').value;
   const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
 
@@ -2680,6 +2681,78 @@ function printPosReceipt(rows, paymentMethod, groupId, existingWindow, extra){
     showToast('Popup ပိတ်ခံနေရပါသည် — Browser Settings ထဲက Popup ခွင့်ပြုပေးပါ');
     return;
   }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+}
+
+function buildGiftCardReceiptHtml(code, amount, customerName){
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Gift Card Receipt — SUWATI MEN FASHION</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#141412; --rust:#C13B1F; --acid:#7a9600; --grey:#666; }
+  *{box-sizing:border-box;}
+  body{ font-family:'Space Mono',monospace; width:300px; margin:20px auto; padding:0; color:var(--ink); background:#fff; }
+  .receipt-box{ border:3px solid var(--ink); padding:18px 16px; }
+  .brand{ text-align:center; }
+  .brand .logo{ font-family:'Anton',sans-serif; font-size:30px; letter-spacing:.01em; line-height:1; }
+  .brand .logo .dot{ color:var(--rust); }
+  .brand .tagline{ font-size:10px; letter-spacing:.25em; color:var(--grey); margin-top:2px; }
+  .stamp-row{ display:flex; justify-content:center; margin:12px 0; }
+  .stamp{ border:2px solid var(--ink); padding:4px 14px; font-size:10px; letter-spacing:.15em; transform:rotate(-1.5deg); }
+  hr.solid{ border:none; border-top:3px solid var(--ink); margin:12px 0; }
+  hr.dashed{ border:none; border-top:1.5px dashed #999; margin:10px 0; }
+  .meta{ font-size:11.5px; line-height:1.9; }
+  .meta b{ font-weight:700; }
+  .total-box{ border:3px solid var(--ink); padding:10px 14px; margin:14px 0; display:flex; justify-content:space-between; align-items:center; }
+  .total-box .label{ font-family:'Anton',sans-serif; font-size:16px; letter-spacing:.03em; }
+  .total-box .value{ font-family:'Anton',sans-serif; font-size:24px; }
+  .giftcard-code-box{ background:#f2efe6; border:3px dashed var(--rust); padding:14px; text-align:center; margin:12px 0; }
+  .giftcard-code-box .gc-code{ font-size:17px; font-weight:700; letter-spacing:1.5px; color:var(--rust); }
+  .footer{ text-align:center; margin-top:16px; }
+  .footer .thanks{ font-family:'Anton',sans-serif; font-size:18px; }
+  .footer .sub{ font-size:10px; color:var(--grey); letter-spacing:.1em; margin-top:4px; }
+  .print-btn{ display:block; width:100%; margin-top:16px; padding:12px; background:var(--ink); color:#fff; border:none; font-family:'Space Mono',monospace; font-size:13px; cursor:pointer; letter-spacing:.05em; }
+  @media print{ .print-btn{ display:none; } }
+</style>
+</head>
+<body>
+  <div class="receipt-box">
+    <div class="brand">
+      <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
+      <div class="tagline">FASHION</div>
+    </div>
+    <div class="stamp-row"><div class="stamp">GIFT CARD (IN-STORE)</div></div>
+    <hr class="solid">
+    <div class="meta">
+      <b>Date</b>&nbsp; ${new Date().toLocaleString()}<br>
+      <b>Customer</b>&nbsp; ${customerName}
+    </div>
+    <hr class="dashed">
+    <div class="total-box">
+      <span class="label">GIFT CARD</span>
+      <span class="value">${Number(amount).toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
+    </div>
+    <div class="giftcard-code-box">
+      <div class="mono" style="font-size:10px; color:var(--grey); margin-bottom:4px;">GIFT CARD CODE</div>
+      <div class="gc-code">${code}</div>
+    </div>
+    <hr class="solid">
+    <div class="footer">
+      <div class="thanks">ကျေးဇူးတင်ပါသည်!</div>
+      <div class="sub">SUWATI MEN FASHION · @swtmenfashion517</div>
+    </div>
+  </div>
+  <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+</body></html>`;
+}
+
+function printGiftCardReceipt(code, amount, customerName){
+  const html = buildGiftCardReceiptHtml(code, amount, customerName);
+  const win = window.open('', '_blank', 'width=380,height=650');
+  if(!win){ showToast('Popup ပိတ်ခံနေရပါသည် — Browser Settings ထဲက Popup ခွင့်ပြုပေးပါ'); return; }
   win.document.open();
   win.document.write(html);
   win.document.close();
@@ -3347,7 +3420,14 @@ async function confirmDelivered(){
 const TAB_REFRESH_MAP = {
   'pos-panel': ()=>{ loadPosProducts(); },
   'salehistory-panel': loadSaleHistory,
-  'wallet-panel': ()=>{ loadTopupRequests(); loadAllTopups(); loadGiftCardRequests(); loadAllGiftCards(); },
+  'wallet-panel': ()=>{
+    const detailVisible = document.getElementById('wallet-section-detail')?.style.display === 'block';
+    if(!detailVisible){ updateWalletPendingBadges(); return; }
+    if(document.getElementById('topup-requests-list')) loadTopupRequests();
+    else if(document.getElementById('topup-all-list')) loadAllTopups();
+    else if(document.getElementById('giftcard-requests-list')) loadGiftCardRequests();
+    else if(document.getElementById('giftcard-all-list')) loadAllGiftCards();
+  },
   'products-panel': loadProducts,
   'inventory-panel': loadInventory,
   'categories-panel': loadCategories,
@@ -3381,6 +3461,66 @@ document.getElementById('refresh-btn').addEventListener('click', async ()=>{
 });
 
 // ---------- WALLET TOP-UP MANAGEMENT ----------
+// ---------- WALLET SECTION NAVIGATION (Profile Order History ပုံစံအတိုင်း ဝင်ကြည့်မှသာ Load) ----------
+async function updateWalletPendingBadges(){
+  const { count: topupCount } = await sb.from('wallet_topups').select('id', { count:'exact', head:true }).eq('status','pending');
+  const { count: giftCount } = await sb.from('gift_cards').select('id', { count:'exact', head:true }).eq('status','pending');
+  const topupBadge = document.getElementById('topup-pending-badge');
+  const giftBadge = document.getElementById('giftcard-pending-badge');
+  if(topupBadge) topupBadge.textContent = topupCount ? `(${topupCount})` : '';
+  if(giftBadge) giftBadge.textContent = giftCount ? `(${giftCount})` : '';
+}
+
+function showWalletSection(section){
+  document.getElementById('wallet-menu').style.display = 'none';
+  document.getElementById('wallet-section-detail').style.display = 'block';
+  const content = document.getElementById('wallet-section-content');
+
+  if(section === 'topup-requests'){
+    content.innerHTML = `
+      <div class="form-card">
+        <h3>💰 Wallet Top-up Requests</h3>
+        <div class="hint">Customer တွေ ငွေဖြည့်ဖို့ တင်ထားတဲ့ KBZPay Screenshot များ — Payment စစ်ဆေးပြီး Approve/Reject လုပ်ပါ</div>
+      </div>
+      <div id="topup-requests-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
+    loadTopupRequests();
+  } else if(section === 'topup-history'){
+    content.innerHTML = `
+      <div class="form-card">
+        <h3>📜 Wallet Top-up မှတ်တမ်း အားလုံး</h3>
+        <div class="hint">Approve/Reject ဖြစ်ပြီးသား Top-up များ — ဘယ် Admin က လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
+        <input type="text" id="topup-search" placeholder="Customer အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+      </div>
+      <div id="topup-all-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
+    document.getElementById('topup-search').addEventListener('input', renderTopupList);
+    loadAllTopups();
+  } else if(section === 'giftcard-requests'){
+    content.innerHTML = `
+      <div class="form-card">
+        <h3>🎁 Gift Card Purchase Requests</h3>
+        <div class="hint">Gift Card ဝယ်ယူထားသူများ — Approve လုပ်ရင် Code ချက်ချင်း Active ဖြစ်သွားမည်</div>
+      </div>
+      <div id="giftcard-requests-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
+    loadGiftCardRequests();
+  } else if(section === 'giftcard-history'){
+    content.innerHTML = `
+      <div class="form-card">
+        <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
+        <div class="hint">ဘယ် Admin က Approve/Reject လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
+        <input type="text" id="giftcard-search" placeholder="Code (သို့) ဝယ်ယူသူ အမည်ဖြင့် ရှာပါ...">
+      </div>
+      <div id="giftcard-all-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
+    document.getElementById('giftcard-search').addEventListener('input', renderGiftCardList);
+    loadAllGiftCards();
+  }
+}
+
+function backToWalletMenu(){
+  document.getElementById('wallet-section-detail').style.display = 'none';
+  document.getElementById('wallet-menu').style.display = 'block';
+  updateWalletPendingBadges();
+}
+
 async function loadTopupRequests(){
   const { data, error } = await sb.from('wallet_topups').select('*').eq('status','pending').order('created_at', { ascending:true });
   const list = document.getElementById('topup-requests-list');
@@ -3512,8 +3652,6 @@ function renderTopupList(){
     </div>`).join('');
 }
 
-document.getElementById('topup-search')?.addEventListener('input', renderTopupList);
-
 let giftCardCache = [];
 async function loadAllGiftCards(){
   const { data, error } = await sb.from('gift_cards').select('*').order('created_at', { ascending:false });
@@ -3542,8 +3680,6 @@ function renderGiftCardList(){
       </div>
     </div>`).join('');
 }
-
-document.getElementById('giftcard-search')?.addEventListener('input', renderGiftCardList);
 
 checkSession();
 </script>
