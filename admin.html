@@ -2417,7 +2417,7 @@ document.getElementById('pos-sell-giftcard-btn').addEventListener('click', async
 
   btn.disabled = false; btn.textContent = '🎁 ရောင်းချပြီး Code ထုတ်မည်';
 
-  if(error){ showToast('Error: '+error.message); return; }
+  if(error){ showToast('Error: '+error.message+' — Database Schema ကို Update လုပ်ရန် လိုအပ်နေပါသည် (supabase-schema.sql ကို Run ပါ)'); return; }
 
   logActivity('pos_gift_card_sold', `${code} — ${amount.toLocaleString()} ကျပ် (${customerName})`);
   showToast('✅ Gift Card ရောင်းပြီးပါပြီ!');
@@ -3544,15 +3544,37 @@ async function loadTopupRequests(){
     btn.addEventListener('click', async ()=>{
       if(!confirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Wallet ထဲ ဖြည့်ပေးမှာ သေချာပါသလား?`)) return;
       btn.disabled = true;
+
+      // ★ Status ကို "pending" ကနေ "approved" ပြောင်းခြင်းကို အရင်ဆုံး လုပ် — "pending" အနေအထားမှသာ ပြောင်းခွင့်ပြု (တခြား Admin တစ်ယောက် Approve ပြီးသားဖြစ်ရင် (သို့) Error တက်ရင် ဒီနေရာမှာပဲ ရပ်သွားမည် — Wallet ကို ထပ်ဆင့် ငွေ ထည့်ပေးမိမှာ လုံးဝ မဖြစ်စေရ)
+      const { data: updated, error: updateErr } = await sb.from('wallet_topups').update({
+        status:'approved', reviewed_at:new Date().toISOString(),
+        reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail,
+      }).eq('id', btn.dataset.id).eq('status', 'pending').select();
+
+      if(updateErr){
+        showToast('Error: ' + updateErr.message + ' — Database Schema ကို Update လုပ်ရန် လိုအပ်နေပါသည်');
+        btn.disabled = false;
+        return;
+      }
+      if(!updated || updated.length === 0){
+        showToast('ဒီ Request ကို တခြား Admin တစ်ယောက်က Approve/Reject လုပ်ပြီးသား ဖြစ်နိုင်ပါသည်');
+        loadTopupRequests();
+        return;
+      }
+
+      // Status Update အောင်မြင်မှသာ Wallet ထဲ ငွေ ဖြည့်ပေး
       const { error: creditErr } = await sb.rpc('credit_wallet', {
         p_user_id: btn.dataset.uid, p_amount: parseFloat(btn.dataset.amt),
         p_type: 'topup', p_description: 'Wallet Top-up — Admin မှ အတည်ပြုပြီး', p_reference: btn.dataset.id,
       });
-      if(creditErr){ showToast('Error: '+creditErr.message); btn.disabled=false; return; }
-      await sb.from('wallet_topups').update({
-        status:'approved', reviewed_at:new Date().toISOString(),
-        reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail,
-      }).eq('id', btn.dataset.id);
+      if(creditErr){
+        // Credit မအောင်မြင်ရင် Status ကို "pending" ပြန်ထား (ပြန်စမ်း Approve လို့ရအောင်)
+        await sb.from('wallet_topups').update({ status:'pending', reviewed_at:null, reviewed_by:null, reviewed_by_email:null }).eq('id', btn.dataset.id);
+        showToast('Wallet ထဲ ငွေ ဖြည့်ရာတွင် Error ဖြစ်ခဲ့ပါသည်: ' + creditErr.message);
+        btn.disabled = false;
+        return;
+      }
+
       logActivity('wallet_topup_approved', `${btn.dataset.amt} ကျပ်`);
       showToast('✅ Wallet ဖြည့်ပြီးပါပြီ');
       loadTopupRequests();
@@ -3598,10 +3620,11 @@ async function loadGiftCardRequests(){
   list.querySelectorAll('.approve-gift-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       btn.disabled = true;
-      const { error } = await sb.from('gift_cards').update({
+      const { data: updated, error } = await sb.from('gift_cards').update({
         status:'active', reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
-      }).eq('id', btn.dataset.id);
-      if(error){ showToast('Error: '+error.message); btn.disabled=false; return; }
+      }).eq('id', btn.dataset.id).eq('status', 'pending').select();
+      if(error){ showToast('Error: '+error.message+' — Database Schema ကို Update လုပ်ရန် လိုအပ်နေပါသည်'); btn.disabled=false; return; }
+      if(!updated || updated.length === 0){ showToast('ဒီ Gift Card ကို တခြား Admin တစ်ယောက်က Approve/Reject လုပ်ပြီးသား ဖြစ်နိုင်ပါသည်'); loadGiftCardRequests(); return; }
       logActivity('gift_card_approved', btn.dataset.id);
       showToast('✅ Gift Card Active ဖြစ်သွားပါပြီ');
       loadGiftCardRequests();

@@ -2125,7 +2125,7 @@ async function openOrderHistory(){
   const { data: giftCards } = await sb.from('gift_cards').select('*').eq('purchased_by', currentUser.id);
   (giftCards||[]).forEach(g=>{
     groups.push([{
-      id: g.id, order_group_id: 'GC-'+g.id, product_name: `🎁 Gift Card (${g.code})`,
+      id: g.id, order_group_id: 'GC-'+g.id, product_name: `🎁 Gift Card${g.status==='active'||g.status==='redeemed' ? ' ('+g.code+')' : ''}`,
       size: null, color: null, quantity: 1, total_amount: g.amount, created_at: g.created_at,
       order_status: g.status, is_gift_card: true, gift_card_code: g.code, gift_card_row: g,
     }]);

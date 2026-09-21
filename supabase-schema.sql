@@ -710,6 +710,10 @@ drop policy if exists "Customer can purchase gift card" on gift_cards;
 create policy "Customer can purchase gift card" on gift_cards for insert
   with check (auth.uid() = purchased_by);
 
+drop policy if exists "Admin can issue gift card" on gift_cards;
+create policy "Admin can issue gift card" on gift_cards for insert
+  with check (is_admin());
+
 drop policy if exists "Customer can view own gift cards" on gift_cards;
 create policy "Customer can view own gift cards" on gift_cards for select
   using (auth.uid() = purchased_by or auth.uid() = redeemed_by);
