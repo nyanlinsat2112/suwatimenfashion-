@@ -403,17 +403,26 @@
           <input type="text" id="product-name" placeholder="ပစ္စည်းနာမည် (ဥပမာ BLACK ICON TEE)" required>
           <select id="product-category"></select>
           <select id="product-subcategory"><option value="">Sub-Category (Optional)</option></select>
-          <input type="number" id="product-price" placeholder="ဈေးနှုန်း (ကျပ်)" required>
-          <div class="full">
-            <div class="hint" style="margin-bottom:6px;">Size ရွေးရန် (နှိပ်ပြီး ရွေးလို့ရသည်)</div>
-            <div id="size-quick-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;"></div>
-          </div>
-          <input type="text" id="product-sizes" placeholder="Size (ဥပမာ S, M, L, XL) — အပေါ်က ခလုတ်တွေ နှိပ်ရင် auto ဖြည့်ပေးမည်" class="full">
+          <input type="number" id="product-price" placeholder="ဈေးနှုန်း (ကျပ်) — Gift Card ဆိုရင် ဒီကွက်ကို လျစ်လျူရှုပါ" required>
           <label class="full" style="display:flex; align-items:center; gap:8px; font-family:'Space Mono',monospace; font-size:12.5px; border:1.5px solid #3a382f; padding:10px; margin:4px 0;">
             <input type="checkbox" id="product-is-giftcard" style="width:auto;">
-            🎁 ဒါက Gift Card ဖြစ်သည် — "Size" ကွက်ကို ပမာဏများ (ဥပမာ 10000,20000,50000,100000) အဖြစ် သုံးမည်၊ KBZPay ဖြင့်သာ ဝယ်ယူခွင့်ပြုမည်
+            🎁 ဒါက Gift Card ဖြစ်သည် — ပမာဏ Fix (10,000/20,000/50,000/100,000/300,000/500,000) ကို ရွေးပြီး တစ်ခုချင်းစီအတွက် Stock ခွဲသတ်မှတ်ရမည်၊ KBZPay ဖြင့်သာ ဝယ်ယူခွင့်ပြုမည်
           </label>
-          <input type="text" id="product-colors" placeholder="အရောင် (ဥပမာ Black, White, Navy)" class="full">
+
+          <div class="full" id="normal-size-area">
+            <div class="hint" style="margin-bottom:6px;">Size ရွေးရန် (နှိပ်ပြီး ရွေးလို့ရသည်)</div>
+            <div id="size-quick-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;"></div>
+            <input type="text" id="product-sizes" placeholder="Size (ဥပမာ S, M, L, XL) — အပေါ်က ခလုတ်တွေ နှိပ်ရင် auto ဖြည့်ပေးမည်" class="full">
+          </div>
+
+          <div class="full" id="giftcard-denom-area" style="display:none;">
+            <div class="hint" style="margin-bottom:6px;">ပမာဏများ ရွေးရန် (Stock ရှိသလောက်ချည်း Customer ကို ပြပါမည်)</div>
+            <div id="giftcard-denom-chips" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;"></div>
+          </div>
+
+          <div class="full" id="normal-color-area">
+            <input type="text" id="product-colors" placeholder="အရောင် (ဥပမာ Black, White, Navy)" class="full">
+          </div>
           <button type="button" id="gen-color-stock-btn" class="secondary full" style="margin:4px 0;">Size + အရောင် အလိုက် Stock သတ်မှတ်ရန်</button>
           <div id="color-stock-fields" class="full"></div>
           <input type="number" id="product-stock" placeholder="စုစုပေါင်း လက်ကျန်အရေအတွက် (အပေါ်က Stock ဇယား မသုံးရင်)" class="full">
@@ -1094,17 +1103,14 @@ productForm.addEventListener('submit', async (e)=>{
     tags: selectedTags.join(', '),
     is_gift_card: document.getElementById('product-is-giftcard').checked,
   };
-  if(payload.is_gift_card){
-    // Gift Card Product ရဲ့ Stock ကို Admin ရိုက်ထည့်တဲ့ ဂဏန်းအတိုင်း သိမ်းပေး
-    payload.stock_qty = parseInt(document.getElementById('product-stock').value) || 0;
-    payload.colors = '';
-  } else if(variantStock){
+  if(variantStock){
     payload.variant_stock = variantStock;
     let total = 0;
     Object.values(variantStock).forEach(colorsObj=>{
       Object.values(colorsObj).forEach(q=>{ total += q; });
     });
     payload.stock_qty = total;
+    if(payload.is_gift_card) payload.colors = '';
   } else {
     payload.stock_qty = parseInt(document.getElementById('product-stock').value) || 0;
   }
@@ -1131,6 +1137,45 @@ productForm.addEventListener('submit', async (e)=>{
 });
 
 document.getElementById('product-cancel').addEventListener('click', resetProductForm);
+
+// ---------- GIFT CARD DENOMINATION FIXED CHIPS ----------
+const GIFT_CARD_DENOM_OPTIONS = [10000, 20000, 50000, 100000, 300000, 500000];
+function initGiftCardDenomChips(){
+  const container = document.getElementById('giftcard-denom-chips');
+  container.innerHTML = GIFT_CARD_DENOM_OPTIONS.map(d=>`<button type="button" class="size-chip-btn" data-size="${d}">${d.toLocaleString()}</button>`).join('');
+  container.querySelectorAll('.size-chip-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      btn.classList.toggle('active');
+      syncGiftCardDenomChipsToField();
+      generateVariantStockTable({});
+    });
+  });
+}
+function syncGiftCardDenomChipsToField(){
+  const active = Array.from(document.querySelectorAll('#giftcard-denom-chips .size-chip-btn.active')).map(b=>b.dataset.size);
+  document.getElementById('product-sizes').value = active.join(', ');
+}
+function setActiveGiftCardChipsFromField(){
+  const denoms = document.getElementById('product-sizes').value.split(',').map(s=>s.trim()).filter(Boolean);
+  document.querySelectorAll('#giftcard-denom-chips .size-chip-btn').forEach(btn=>{
+    btn.classList.toggle('active', denoms.includes(btn.dataset.size));
+  });
+}
+function toggleGiftCardFormMode(){
+  const isGift = document.getElementById('product-is-giftcard').checked;
+  document.getElementById('normal-size-area').style.display = isGift ? 'none' : '';
+  document.getElementById('giftcard-denom-area').style.display = isGift ? '' : 'none';
+  document.getElementById('normal-color-area').style.display = isGift ? 'none' : '';
+  if(isGift){
+    document.getElementById('product-colors').value = '';
+    setActiveGiftCardChipsFromField();
+  } else {
+    setActiveSizeChipsFromField();
+  }
+  generateVariantStockTable({});
+}
+document.getElementById('product-is-giftcard').addEventListener('change', toggleGiftCardFormMode);
+initGiftCardDenomChips();
 
 document.getElementById('gen-color-stock-btn').addEventListener('click', ()=>{
   generateVariantStockTable({});
@@ -1187,6 +1232,7 @@ function resetProductForm(){
   document.getElementById('image-preview-area').innerHTML='';
   document.querySelectorAll('.size-chip-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tag-toggle-btn').forEach(b=>b.classList.remove('active'));
+  toggleGiftCardFormMode();
 }
 
 async function loadProducts(){
@@ -1231,7 +1277,7 @@ async function editProduct(p){
   document.getElementById('product-description').value = p.description || '';
   const existingTags = (p.tags||'').split(',').map(t=>t.trim());
   document.querySelectorAll('.tag-toggle-btn').forEach(b=>{ b.classList.toggle('active', existingTags.includes(b.dataset.tag)); });
-  setActiveSizeChipsFromField();
+  toggleGiftCardFormMode();
   generateVariantStockTable(p.variant_stock || {});
 
   // လက်ရှိ ပုံများကို Array ထဲ ထည့် (Preview + ဖျက်နိုင်ရန်)
@@ -1266,7 +1312,15 @@ async function loadInventory(){
   const giftCardProducts = products.filter(p=>p.is_gift_card);
   const totalStockQty = clothingProducts.reduce((s,p)=>s+(p.stock_qty||0),0);
   const inventoryValue = clothingProducts.reduce((s,p)=>s+((p.stock_qty||0)*Number(p.price||0)),0);
-  const giftCardValue = giftCardProducts.reduce((s,p)=>s+((p.stock_qty||0)*Number(p.price||0)),0);
+  const giftCardValue = giftCardProducts.reduce((sum,p)=>{
+    if(p.variant_stock){
+      return sum + Object.entries(p.variant_stock).reduce((s,[denom,colorsObj])=>{
+        const qty = (colorsObj && colorsObj['_']) || 0;
+        return s + (qty * Number(denom));
+      }, 0);
+    }
+    return sum + ((p.stock_qty||0)*Number(p.price||0));
+  }, 0);
   document.getElementById('stat-total-products').textContent = products.length;
   document.getElementById('stat-total-stock-qty').textContent = totalStockQty.toLocaleString();
   document.getElementById('stat-inventory-value').textContent = inventoryValue.toLocaleString()+' ကျပ်';
