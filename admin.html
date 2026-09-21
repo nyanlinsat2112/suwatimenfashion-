@@ -456,8 +456,12 @@
         <div class="display" style="font-size:24px; color:var(--acid);" id="stat-total-stock-qty">-</div>
       </div>
       <div>
-        <div class="hint" style="margin:0;">Inventory Value (Stock × ဈေးနှုန်း)</div>
+        <div class="hint" style="margin:0;">Inventory Value (Stock × ဈေးနှုန်း — အကျီအဝတ်များချည်း)</div>
         <div class="display" style="font-size:24px; color:var(--rust);" id="stat-inventory-value">-</div>
+      </div>
+      <div>
+        <div class="hint" style="margin:0;">🎁 Gift Card Product Value (သပ်သပ်)</div>
+        <div class="display" style="font-size:24px; color:#c98fff;" id="stat-giftcard-value">-</div>
       </div>
     </div>
     <div class="form-card">
@@ -1091,8 +1095,8 @@ productForm.addEventListener('submit', async (e)=>{
     is_gift_card: document.getElementById('product-is-giftcard').checked,
   };
   if(payload.is_gift_card){
-    // Gift Card Product မှာ Stock ဂဏန်း မလိုအပ်ပါ — အမြဲ Available ဖြစ်နေရမည်
-    payload.stock_qty = 999999;
+    // Gift Card Product ရဲ့ Stock ကို Admin ရိုက်ထည့်တဲ့ ဂဏန်းအတိုင်း သိမ်းပေး
+    payload.stock_qty = parseInt(document.getElementById('product-stock').value) || 0;
     payload.colors = '';
   } else if(variantStock){
     payload.variant_stock = variantStock;
@@ -1257,12 +1261,16 @@ async function loadInventory(){
   const { data: products, error: pErr } = await sb.from('products').select('*').order('name');
   const { data: orders } = await sb.from('orders').select('product_name, quantity').neq('order_status','cancelled');
 
-  // Top stats
-  const totalStockQty = products.reduce((s,p)=>s+(p.stock_qty||0),0);
-  const inventoryValue = products.reduce((s,p)=>s+((p.stock_qty||0)*Number(p.price||0)),0);
+  // Top stats — Gift Card Product များကို ပုံမှန် Inventory Value ကနေ ခွဲထုတ်ပြီး သပ်သပ် တွက်ပေး
+  const clothingProducts = products.filter(p=>!p.is_gift_card);
+  const giftCardProducts = products.filter(p=>p.is_gift_card);
+  const totalStockQty = clothingProducts.reduce((s,p)=>s+(p.stock_qty||0),0);
+  const inventoryValue = clothingProducts.reduce((s,p)=>s+((p.stock_qty||0)*Number(p.price||0)),0);
+  const giftCardValue = giftCardProducts.reduce((s,p)=>s+((p.stock_qty||0)*Number(p.price||0)),0);
   document.getElementById('stat-total-products').textContent = products.length;
   document.getElementById('stat-total-stock-qty').textContent = totalStockQty.toLocaleString();
   document.getElementById('stat-inventory-value').textContent = inventoryValue.toLocaleString()+' ကျပ်';
+  document.getElementById('stat-giftcard-value').textContent = giftCardValue.toLocaleString()+' ကျပ်';
 
   const soldMap = {};
   (orders||[]).forEach(o=>{
@@ -2773,7 +2781,7 @@ async function loadSaleHistory(){
     if(!groupsMap[key]) groupsMap[key] = [];
     groupsMap[key].push(o);
   });
-  saleHistoryCache = Object.values(groupsMap).map(rows=>{
+  let items = Object.values(groupsMap).map(rows=>{
     rows.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
     const first = rows[0];
     return {
@@ -2787,8 +2795,27 @@ async function loadSaleHistory(){
       order_status: first.order_status,
       sale_channel: first.sale_channel || 'online',
     };
-  }).sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+  });
 
+  // Gift Card ရောင်းရငွေ (Online ဝယ်ယူထားသမျှ + POS ကနေ ထုတ်ပေးထားသမျှ) ကိုပါ ပေါင်းထည့်
+  const { data: giftCards } = await sb.from('gift_cards').select('*').in('status', ['active','redeemed']);
+  (giftCards||[]).forEach(g=>{
+    items.push({
+      ids: [g.id],
+      rows: [{ id:g.id, product_name: `🎁 Gift Card (${g.code})`, size:null, color:null, quantity:1, total_amount:g.amount, payment_method: g.purchased_by ? 'KBZPay' : 'Cash (POS)' }],
+      customer_name: g.purchaser_name || 'Walk-in Customer',
+      phone: g.phone,
+      created_at: g.created_at,
+      total_amount: Number(g.amount),
+      group_display_id: 'GC-'+g.id,
+      order_status: 'confirmed',
+      sale_channel: g.purchased_by ? 'online' : 'in_store',
+      is_gift_card: true,
+      gift_card_row: g,
+    });
+  });
+
+  saleHistoryCache = items.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
   renderSaleHistory();
 }
 
@@ -2813,14 +2840,18 @@ function renderSaleHistory(){
       <div class="details" style="margin-top:6px; font-weight:700; ${g.order_status==='cancelled'?'text-decoration:line-through; color:var(--grey);':''}">💰 ${g.total_amount.toLocaleString()} ကျပ်</div>
       <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
         <button type="button" class="secondary reprint-btn" data-idx="${idx}">🖨️ Receipt</button>
-        ${g.order_status!=='cancelled' ? `<button type="button" class="secondary refund-btn" data-idx="${idx}" style="color:var(--rust); border-color:var(--rust);">↩️ Refund/Void</button>` : ''}
+        ${!g.is_gift_card && g.order_status!=='cancelled' ? `<button type="button" class="secondary refund-btn" data-idx="${idx}" style="color:var(--rust); border-color:var(--rust);">↩️ Refund/Void</button>` : ''}
       </div>
     </div>`).join('');
 
   list.querySelectorAll('.reprint-btn').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const g = items[parseInt(btn.dataset.idx)];
-      printPosReceipt(g.rows, g.rows[0].payment_method || 'KBZPay', g.group_display_id, null);
+      if(g.is_gift_card){
+        printGiftCardReceipt(g.gift_card_row.code, g.gift_card_row.amount, g.customer_name);
+      } else {
+        printPosReceipt(g.rows, g.rows[0].payment_method || 'KBZPay', g.group_display_id, null);
+      }
     });
   });
 
@@ -3612,13 +3643,14 @@ async function loadGiftCardRequests(){
       <div class="details" style="margin-top:6px; font-weight:700; color:var(--rust);">🎁 ${Number(g.amount).toLocaleString()} ကျပ်</div>
       ${g.payment_screenshot_url ? `<img src="${g.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
       <div style="display:flex; gap:8px; margin-top:10px;">
-        <button type="button" class="acid approve-gift-btn" data-id="${g.id}">✅ Approve</button>
+        <button type="button" class="acid approve-gift-btn" data-id="${g.id}" data-amt="${g.amount}">✅ Approve</button>
         <button type="button" class="secondary reject-gift-btn" data-id="${g.id}" style="color:var(--rust); border-color:var(--rust);">❌ Reject</button>
       </div>
     </div>`).join('');
 
   list.querySelectorAll('.approve-gift-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
+      if(!confirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Gift Card ကို Active လုပ်မှာ သေချာပါသလား?`)) return;
       btn.disabled = true;
       const { data: updated, error } = await sb.from('gift_cards').update({
         status:'active', reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
