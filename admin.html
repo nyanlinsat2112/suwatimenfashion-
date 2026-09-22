@@ -30,6 +30,9 @@
   input,textarea,select{
     background:var(--paper); color:var(--ink); border:2.5px solid var(--concrete); padding:12px; font-family:'Space Mono',monospace; font-size:14px; width:100%;
   }
+  input[type="checkbox"], input[type="radio"]{
+    width:16px; height:16px; padding:0; border-width:2px; flex-shrink:0; accent-color:var(--acid);
+  }
   textarea{font-family:'Noto Sans Myanmar',sans-serif; min-height:90px;}
   button{
     cursor:pointer; border:2.5px solid var(--concrete); background:var(--rust); color:var(--concrete);
@@ -765,7 +768,7 @@
         </div>
 
         <div id="manager-permissions-area" style="display:none; margin-top:14px;">
-          <div class="hint">Manager ကို ဘယ် Tab တွေ ဖွင့်ပေးမလဲ ရွေးပါ (POS/Orders/Inventory အမြဲ ရနိုင်ပါသည်)</div>
+          <div class="hint">ဘယ် Tab တွေ ဖွင့်ပေးမလဲ ရွေးပါ (POS/Orders/Inventory/Messages အမြဲ ရနိုင်ပါသည်)</div>
           <div id="manager-permissions-checkboxes" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;"></div>
         </div>
 
@@ -961,15 +964,14 @@ function applyRolePermissions(){
     if(deliveryBtn) deliveryBtn.style.display = 'none';
     document.querySelector('.tab-btn[data-tab="staff-panel"]').style.display = 'none';
 
-    if(currentAdminRole === 'manager'){
-      // Manager — Owner ကရွေးပေးထားတဲ့ allowed_tabs ကိုသာ ခွင့်ပြု (POS/Orders/Inventory/Messages အမြဲရ)
+    if(currentAdminRole === 'manager' || currentAdminRole === 'staff'){
+      // Manager/Staff — Owner ကရွေးပေးထားတဲ့ allowed_tabs ကိုသာ ခွင့်ပြု (POS/Orders/Inventory/Messages အမြဲရ)
       const allowed = new Set(currentAdminAllowedTabs || []);
       RESTRICTABLE_TABS.forEach(t=>{
         const btn = document.querySelector(`.tab-btn[data-tab="${t.id}"]`);
         if(btn) btn.style.display = allowed.has(t.id) ? '' : 'none';
       });
     } else {
-      // Staff — POS / Orders / Inventory / Messages ကိုပဲ ခွင့်ပြု
       RESTRICTABLE_TABS.forEach(t=>{
         const btn = document.querySelector(`.tab-btn[data-tab="${t.id}"]`);
         if(btn) btn.style.display = 'none';
@@ -2454,9 +2456,9 @@ function renderCustomersList(){
         📍 ${c.address||'-'}
       </div>
       <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-        <button type="button" class="secondary view-orders-btn">Order မှတ်တမ်း ကြည့်ရန်</button>
-        <button type="button" class="secondary edit-name-btn">✏️ Name ပြင်ရန်</button>
-        <button type="button" class="secondary delete-customer-btn" style="color:var(--rust); border-color:var(--rust);">🗑️ List ကနေ ဖျက်ရန်</button>
+        <button type="button" class="secondary view-orders-btn" style="flex:1; min-width:120px;">Order မှတ်တမ်း ကြည့်ရန်</button>
+        <button type="button" class="secondary edit-name-btn" style="flex:1; min-width:120px;">✏️ Name ပြင်ရန်</button>
+        <button type="button" class="secondary delete-customer-btn" style="flex:1; min-width:120px; color:var(--rust); border-color:var(--rust);">🗑️ List ကနေ ဖျက်ရန်</button>
       </div>
       <div class="customer-order-history" id="coh-${idx}">
         ${c.orders.map(o=>`
@@ -2798,7 +2800,7 @@ function updatePosChangeDisplay(){
   if(change < 0){
     changeDisplay.innerHTML = `<span style="color:var(--rust);">ငွေမလုံလောက်ပါ (-${Math.abs(change).toLocaleString()})</span>`;
   } else {
-    changeDisplay.innerHTML = `<span style="color:var(--acid);">အကြွင်း: ${change.toLocaleString()} ကျပ်</span>`;
+    changeDisplay.innerHTML = `<span style="color:var(--acid);">ပြန်အမ်းငွေ: ${change.toLocaleString()} ကျပ်</span>`;
   }
 }
 
@@ -3484,7 +3486,7 @@ document.getElementById('staff-form').addEventListener('submit', async (e)=>{
   const phone = document.getElementById('staff-phone').value.trim() || null;
   const job_position = document.getElementById('staff-job-position').value.trim() || null;
   const address = document.getElementById('staff-address').value.trim() || null;
-  const allowed_tabs = role==='manager'
+  const allowed_tabs = (role==='manager' || role==='staff')
     ? Array.from(document.querySelectorAll('.mgr-perm-checkbox:checked')).map(cb=>cb.value)
     : null;
   if(!email || !uid || !name) return;
@@ -3514,14 +3516,14 @@ function renderManagerPermCheckboxes(checkedTabs){
   checkedTabs = checkedTabs || [];
   const area = document.getElementById('manager-permissions-checkboxes');
   area.innerHTML = RESTRICTABLE_TABS.map(t=>`
-    <label style="display:inline-flex; align-items:center; gap:5px; font-family:'Space Mono',monospace; font-size:12px; border:1.5px solid #3a382f; padding:6px 10px; white-space:nowrap;">
-      <input type="checkbox" class="mgr-perm-checkbox" value="${t.id}" ${checkedTabs.includes(t.id)?'checked':''}> ${t.label}
+    <label style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:12px; line-height:1.4; border:1.5px solid #3a382f; padding:8px 12px; white-space:nowrap;">
+      <input type="checkbox" class="mgr-perm-checkbox" value="${t.id}" ${checkedTabs.includes(t.id)?'checked':''} style="flex-shrink:0; width:15px; height:15px; margin:0;"><span>${t.label}</span>
     </label>`).join('');
 }
 
 document.getElementById('staff-role').addEventListener('change', (e)=>{
   const area = document.getElementById('manager-permissions-area');
-  if(e.target.value === 'manager'){
+  if(e.target.value === 'manager' || e.target.value === 'staff'){
     area.style.display = 'block';
     if(!area.dataset.filled){ renderManagerPermCheckboxes([]); area.dataset.filled = '1'; }
   } else {
@@ -3590,7 +3592,7 @@ async function loadStaffList(){
       document.getElementById('staff-submit-btn').textContent = 'Profile Update လုပ်မည်';
       document.getElementById('staff-cancel-edit-btn').style.display = 'inline-block';
       const permArea = document.getElementById('manager-permissions-area');
-      if(a.role === 'manager'){
+      if(a.role === 'manager' || a.role === 'staff'){
         permArea.style.display = 'block';
         renderManagerPermCheckboxes(a.allowed_tabs || []);
         permArea.dataset.filled = '1';
