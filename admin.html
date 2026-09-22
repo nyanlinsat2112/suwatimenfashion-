@@ -83,7 +83,7 @@
   .form-card h3{font-family:'Anton',sans-serif; font-size:20px; margin-bottom:14px;}
   .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
   .form-grid > *{min-width:0;}
-  input[type="date"]{width:100%; min-width:0;}
+  input[type="date"]{width:100%; min-width:0; max-width:100%; box-sizing:border-box;}
   .form-grid .full{grid-column:1/-1;}
   @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
   .form-actions{display:flex; gap:10px; margin-top:14px;}
@@ -538,10 +538,8 @@
     <div class="form-card">
       <h3>Admin Activity Log</h3>
       <div class="hint">Admin App ထဲက ပြင်ဆင်မှု/ဖျက်ခြင်း/ထည့်ခြင်း အားလုံးကို မှတ်တမ်းတင်ထားပါသည်</div>
-      <div class="form-grid" style="margin-top:10px;">
-        <input type="date" id="activitylog-date-filter">
-        <button type="button" class="secondary" id="activitylog-clear-date-btn">အားလုံး ပြန်ကြည့်ရန်</button>
-      </div>
+      <input type="date" id="activitylog-date-filter" class="full" style="margin-top:10px;">
+      <button type="button" class="secondary" id="activitylog-clear-date-btn" style="width:100%; margin-top:8px;">အားလုံး ပြန်ကြည့်ရန်</button>
       <button type="button" class="secondary" id="activitylog-csv-btn" style="margin-top:8px; width:100%;">📥 ဒီရက်စာ Activity Log ကို CSV ထုတ်မည်</button>
       <div id="activity-log-list"></div>
     </div>
@@ -590,6 +588,10 @@
         <div class="hint" style="margin:0;">အတည်ပြုပြီး ငွေ (Confirmed+)</div>
         <div class="display" style="font-size:26px; color:var(--rust);" id="stat-confirmed-revenue">-</div>
       </div>
+    </div>
+    <div class="form-card">
+      <input type="date" id="orders-date-filter" class="full">
+      <button type="button" class="secondary" id="orders-clear-date-btn" style="width:100%; margin-top:8px;">အားလုံး ပြန်ကြည့်ရန်</button>
     </div>
     <div id="orders-list"></div>
   </div>
@@ -777,6 +779,8 @@
       <h3>🚚 Delivery Queue</h3>
       <div class="hint">ပို့ဆောင်ရန် ကျန်နေသော Order များ — ပို့ပြီးရင် ပုံတင်ပြီး "ပို့ပြီးပါပြီ" သတ်မှတ်ပါ</div>
       <input type="text" id="delivery-search" placeholder="🔍 Order ID / Customer အမည် / ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+      <input type="date" id="delivery-date-filter" class="full" style="margin-top:8px;">
+      <button type="button" class="secondary" id="delivery-clear-date-btn" style="width:100%; margin-top:8px;">အားလုံး ပြန်ကြည့်ရန်</button>
     </div>
     <div id="delivery-queue-list"></div>
     <div id="delivery-action-view" style="display:none;"></div>
@@ -788,6 +792,8 @@
       <h3>📋 Sale History (Online + In-Store)</h3>
       <div class="hint">ရောင်းချမှု မှတ်တမ်း အားလုံး — Online Order နှင့် အပြင်ဆိုင် (Walk-in) Sale နှစ်မျိုးစလုံး</div>
       <input type="text" id="salehistory-search" placeholder="ဖောက်သည်အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+      <input type="date" id="salehistory-date-filter" class="full" style="margin-top:8px;">
+      <button type="button" class="secondary" id="salehistory-clear-date-btn" style="width:100%; margin-top:8px;">အားလုံး ပြန်ကြည့်ရန်</button>
     </div>
     <div id="salehistory-list"></div>
   </div>
@@ -1008,6 +1014,21 @@ async function loadActivityLog(){
 }
 
 document.getElementById('activitylog-date-filter').addEventListener('change', loadActivityLog);
+document.getElementById('orders-date-filter').addEventListener('change', loadOrders);
+document.getElementById('orders-clear-date-btn').addEventListener('click', ()=>{
+  document.getElementById('orders-date-filter').value = '';
+  loadOrders();
+});
+document.getElementById('delivery-date-filter').addEventListener('change', loadDeliveryQueue);
+document.getElementById('delivery-clear-date-btn').addEventListener('click', ()=>{
+  document.getElementById('delivery-date-filter').value = '';
+  loadDeliveryQueue();
+});
+document.getElementById('salehistory-date-filter').addEventListener('change', loadSaleHistory);
+document.getElementById('salehistory-clear-date-btn').addEventListener('click', ()=>{
+  document.getElementById('salehistory-date-filter').value = '';
+  loadSaleHistory();
+});
 document.getElementById('activitylog-clear-date-btn').addEventListener('click', ()=>{
   document.getElementById('activitylog-date-filter').value = '';
   loadActivityLog();
@@ -1866,12 +1887,20 @@ async function deleteCategory(cat){
 }
 async function loadOrders(){
   const list = document.getElementById('orders-list');
-  const { data, error } = await sb.from('orders').select('*').neq('sale_channel','in_store').order('created_at', { ascending:false });
+  const dateVal = document.getElementById('orders-date-filter')?.value;
+  let query = sb.from('orders').select('*').neq('sale_channel','in_store').order('created_at', { ascending:false });
+  if(dateVal){
+    const dayStart = new Date(dateVal+'T00:00:00');
+    const dayEnd = new Date(dateVal+'T23:59:59.999');
+    query = query.gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  }
+  const { data, error } = await query;
   const { data: productsForImg } = await sb.from('products').select('name,image_url');
   const imgMap = {};
   (productsForImg||[]).forEach(p=>{ imgMap[p.name] = p.image_url; });
   list.innerHTML='';
   if(error){ list.innerHTML = '<p class="mono">Error loading orders</p>'; return; }
+  if(dateVal && !data.length){ list.innerHTML = '<p class="hint">ရွေးထားတဲ့ ရက်အတွက် Order မရှိပါ</p>'; return; }
 
   // မှတ်ချက်: ဒီနေရာမှာ "ကြည့်ပြီးသား" လို့ အလိုအလျောက် မှတ်တော့ပါ — Order Status ကို Admin တကယ် ပြောင်းမှသာ Notification ရပ်စေရန် (updateOrderStatus() Function ထဲမှာ viewed_by_admin: true ကို သတ်မှတ်ပါသည်)
 
@@ -3155,7 +3184,16 @@ let saleHistoryCache = [];
 document.getElementById('salehistory-search').addEventListener('input', renderSaleHistory);
 
 async function loadSaleHistory(){
-  const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending:false });
+  const dateVal = document.getElementById('salehistory-date-filter')?.value;
+  let dayStart, dayEnd;
+  if(dateVal){
+    dayStart = new Date(dateVal+'T00:00:00');
+    dayEnd = new Date(dateVal+'T23:59:59.999');
+  }
+
+  let ordersQuery = sb.from('orders').select('*').order('created_at', { ascending:false });
+  if(dateVal) ordersQuery = ordersQuery.gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  const { data, error } = await ordersQuery;
   if(error || !data) return;
 
   const groupsMap = {};
@@ -3181,7 +3219,9 @@ async function loadSaleHistory(){
   });
 
   // Gift Card ရောင်းရငွေ (Online ဝယ်ယူထားသမျှ + POS ကနေ ထုတ်ပေးထားသမျှ) ကိုပါ ပေါင်းထည့်
-  const { data: giftCards } = await sb.from('gift_cards').select('*').in('status', ['active','redeemed']);
+  let giftQuery = sb.from('gift_cards').select('*').in('status', ['active','redeemed']);
+  if(dateVal) giftQuery = giftQuery.gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  const { data: giftCards } = await giftQuery;
   (giftCards||[]).forEach(g=>{
     items.push({
       ids: [g.id],
@@ -3687,10 +3727,17 @@ let deliveryOrdersCache = [];
 let currentDeliveryGroup = null;
 
 async function loadDeliveryQueue(){
-  const { data, error } = await sb.from('orders').select('*')
+  const dateVal = document.getElementById('delivery-date-filter')?.value;
+  let query = sb.from('orders').select('*')
     .in('order_status', ['confirmed','processing','shipped','delivered'])
     .neq('sale_channel', 'in_store')
     .order('created_at', { ascending:false });
+  if(dateVal){
+    const dayStart = new Date(dateVal+'T00:00:00');
+    const dayEnd = new Date(dateVal+'T23:59:59.999');
+    query = query.gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  }
+  const { data, error } = await query;
   const list = document.getElementById('delivery-queue-list');
   if(error || !data){ list.innerHTML = '<p class="hint">Error loading delivery queue</p>'; return; }
 
@@ -3969,9 +4016,16 @@ function showWalletSection(section){
         <h3>📜 Wallet Top-up မှတ်တမ်း အားလုံး</h3>
         <div class="hint">Approve/Reject ဖြစ်ပြီးသား Top-up များ — ဘယ် Admin က လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
         <input type="text" id="topup-search" placeholder="Customer အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
+        <input type="date" id="topup-date-filter" class="full" style="margin-top:8px;">
+        <button type="button" class="secondary" id="topup-clear-date-btn" style="width:100%; margin-top:8px;">အားလုံး ပြန်ကြည့်ရန်</button>
       </div>
       <div id="topup-all-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
     document.getElementById('topup-search').addEventListener('input', renderTopupList);
+    document.getElementById('topup-date-filter').addEventListener('change', loadAllTopups);
+    document.getElementById('topup-clear-date-btn').addEventListener('click', ()=>{
+      document.getElementById('topup-date-filter').value = '';
+      loadAllTopups();
+    });
     loadAllTopups();
   } else if(section === 'giftcard-requests'){
     content.innerHTML = `
@@ -3987,9 +4041,16 @@ function showWalletSection(section){
         <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
         <div class="hint">ဘယ် Admin က Approve/Reject လုပ်ခဲ့တယ်ဆိုတာ ပါဝင်ပါသည်</div>
         <input type="text" id="giftcard-search" placeholder="Code (သို့) ဝယ်ယူသူ အမည်ဖြင့် ရှာပါ...">
+        <input type="date" id="giftcard-date-filter" class="full" style="margin-top:8px;">
+        <button type="button" class="secondary" id="giftcard-clear-date-btn" style="width:100%; margin-top:8px;">အားလုံး ပြန်ကြည့်ရန်</button>
       </div>
       <div id="giftcard-all-list"><p class="hint">Load လုပ်နေသည်...</p></div>`;
     document.getElementById('giftcard-search').addEventListener('input', renderGiftCardList);
+    document.getElementById('giftcard-date-filter').addEventListener('change', loadAllGiftCards);
+    document.getElementById('giftcard-clear-date-btn').addEventListener('click', ()=>{
+      document.getElementById('giftcard-date-filter').value = '';
+      loadAllGiftCards();
+    });
     loadAllGiftCards();
   } else if(section === 'customer-wallets'){
     content.innerHTML = `
@@ -4142,7 +4203,14 @@ async function loadGiftCardRequests(){
 
 let allTopupsCache = [];
 async function loadAllTopups(){
-  const { data, error } = await sb.from('wallet_topups').select('*').order('created_at', { ascending:false });
+  const dateVal = document.getElementById('topup-date-filter')?.value;
+  let query = sb.from('wallet_topups').select('*').order('created_at', { ascending:false });
+  if(dateVal){
+    const dayStart = new Date(dateVal+'T00:00:00');
+    const dayEnd = new Date(dateVal+'T23:59:59.999');
+    query = query.gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  }
+  const { data, error } = await query;
   const list = document.getElementById('topup-all-list');
   if(!list) return;
   if(error || !data){ list.innerHTML = '<p class="hint">Error loading top-up history</p>'; return; }
@@ -4222,7 +4290,14 @@ function renderCustomerWalletsList(){
 }
 
 async function loadAllGiftCards(){
-  const { data, error } = await sb.from('gift_cards').select('*').order('created_at', { ascending:false });
+  const dateVal = document.getElementById('giftcard-date-filter')?.value;
+  let query = sb.from('gift_cards').select('*').order('created_at', { ascending:false });
+  if(dateVal){
+    const dayStart = new Date(dateVal+'T00:00:00');
+    const dayEnd = new Date(dateVal+'T23:59:59.999');
+    query = query.gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  }
+  const { data, error } = await query;
   const list = document.getElementById('giftcard-all-list');
   if(!list) return;
   if(error || !data){ list.innerHTML = '<p class="hint">Error loading gift cards</p>'; return; }
