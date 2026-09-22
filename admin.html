@@ -205,6 +205,12 @@
 }
 .tab-btn.needs-attention{ animation:pulseAttention 3s ease-in-out infinite; border-color:var(--rust); }
 
+@keyframes pulseAttentionBox{
+  0%, 100% { border-color:#3a382f; box-shadow:none; }
+  50% { border-color:var(--rust); box-shadow:0 0 0 3px rgba(193,59,29,0.25); }
+}
+.wallet-nav-box.needs-attention-box{ animation:pulseAttentionBox 1.6s ease-in-out infinite; }
+
 .log-entry{border-bottom:1px solid #3a382f; padding:10px 4px; font-family:'Space Mono',monospace; font-size:12.5px;}
 .log-entry .log-time{color:var(--grey); font-size:11px;}
 .log-entry .log-admin{color:var(--acid);}
@@ -214,6 +220,11 @@
 .msg-thread-item:hover{background:#232219;}
 .msg-thread-item .mt-name{font-weight:700;}
 .unread-dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--rust); margin-right:7px; vertical-align:middle; }
+.mt-unread-count{
+  display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px;
+  background:var(--rust); color:#fff; border-radius:9px; font-size:11px; font-weight:700; font-family:'Space Mono',monospace;
+  vertical-align:middle; margin-left:4px;
+}
 .category-drag-item{ cursor:grab; transition:opacity .15s ease, border-color .15s ease; }
 .category-drag-item.dragging{ opacity:.4; }
 .category-drag-item.drag-over{ border-color:var(--acid); border-width:2px; }
@@ -940,6 +951,17 @@ function applyRolePermissions(){
     document.getElementById('pos-tab-btn').classList.add('active');
     document.getElementById('pos-panel').classList.add('active');
   }
+
+  hideEmptyTabGroups();
+}
+
+// ★ Button အားလုံး ဖျောက်ထားတဲ့ Category Label/Divider (ဥပမာ "📁 ပစ္စည်း စီမံခန့်ခွဲမှု") ကို ဗလာ မကျန်အောင် ပါဖျောက်ပေးရန်
+function hideEmptyTabGroups(){
+  document.querySelectorAll('.tabs-group').forEach(group=>{
+    const buttons = group.querySelectorAll('.tab-btn');
+    const anyVisible = Array.from(buttons).some(b => b.style.display !== 'none');
+    group.style.display = anyVisible ? '' : 'none';
+  });
 }
 
 async function logActivity(action, details){
@@ -1034,6 +1056,9 @@ async function refreshAllAttentionStates(){
         walletBadge.style.display = 'none';
       }
     }
+
+    // Wallet Menu ရဲ့ Top-up/Gift Card Box တစ်ခုချင်းစီကိုလည်း ခုန်စေရန် (Menu ကို ကြည့်နေချိန်တွင်ပါ Update ဆက်ဖြစ်စေရန်)
+    updateWalletPendingBadges();
   }catch(e){
     console.error('refreshAllAttentionStates error:', e);
   }
@@ -3451,16 +3476,16 @@ function renderMessageThreads(){
   let threads = Object.entries(threadsMap).map(([userId, msgs])=>{
     msgs.sort((a,b)=> new Date(a.created_at) - new Date(b.created_at));
     const last = msgs[msgs.length-1];
-    const hasUnread = msgs.some(m => m.sender==='customer' && !m.read_by_admin);
-    return { userId, name: msgs.find(m=>m.customer_name)?.customer_name || 'Unknown', last, msgs, hasUnread };
+    const unreadCount = msgs.filter(m => m.sender==='customer' && !m.read_by_admin).length;
+    return { userId, name: msgs.find(m=>m.customer_name)?.customer_name || 'Unknown', last, msgs, hasUnread: unreadCount>0, unreadCount };
   }).sort((a,b)=> new Date(b.last.created_at) - new Date(a.last.created_at));
 
-  // Messages Tab ပေါ်က Unread Count Badge — Customer ပို့ထားတဲ့ မဖတ်ရသေးသော Message အရေအတွက် (Raw Count)
-  const unreadMessageCount = messagesCache.filter(m=>m.sender==='customer' && !m.read_by_admin).length;
+  // Messages Tab ပေါ်က Unread Count Badge — Unread Message ရှိတဲ့ Customer ဦးရေ (ဥပမာ Customer ၂ ယောက်က ပို့ရင် "2")
+  const unreadCustomerCount = threads.filter(t=>t.hasUnread).length;
   const badge = document.getElementById('messages-unread-badge');
   if(badge){
-    if(unreadMessageCount > 0){
-      badge.textContent = unreadMessageCount > 9 ? '9+' : unreadMessageCount;
+    if(unreadCustomerCount > 0){
+      badge.textContent = unreadCustomerCount > 9 ? '9+' : unreadCustomerCount;
       badge.style.display = 'flex';
     } else {
       badge.style.display = 'none';
@@ -3474,7 +3499,7 @@ function renderMessageThreads(){
   list.innerHTML = threads.map(t=>`
     <div class="msg-thread-item" data-uid="${t.userId}">
       <div>
-        <div class="mt-name">${t.hasUnread?'<span class="unread-dot"></span>':''}${t.name}</div>
+        <div class="mt-name">${t.hasUnread?'<span class="unread-dot"></span>':''}${t.name}${t.unreadCount>0?` <span class="mt-unread-count">${t.unreadCount}</span>`:''}</div>
         <div class="mt-preview">${t.last.sender==='admin'?'You: ':''}${t.last.image_url?'📷 Photo '+(t.last.message||''):t.last.message}</div>
       </div>
       <div class="mt-time">${new Date(t.last.created_at).toLocaleString()}</div>
@@ -3819,6 +3844,12 @@ async function updateWalletPendingBadges(){
   const giftBadge = document.getElementById('giftcard-pending-badge');
   if(topupBadge) topupBadge.textContent = topupCount ? `(${topupCount})` : '';
   if(giftBadge) giftBadge.textContent = giftCount ? `(${giftCount})` : '';
+
+  // Approve/Reject မလုပ်ရသေးမချင်း Box တွေကိုယ်တိုင်လည်း ခုန်နေအောင် (Pulse Animation)
+  const topupBox = topupBadge?.closest('.wallet-nav-box');
+  const giftBox = giftBadge?.closest('.wallet-nav-box');
+  if(topupBox) topupBox.classList.toggle('needs-attention-box', (topupCount||0) > 0);
+  if(giftBox) giftBox.classList.toggle('needs-attention-box', (giftCount||0) > 0);
 }
 
 function showWalletSection(section){
