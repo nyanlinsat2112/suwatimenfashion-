@@ -1500,7 +1500,7 @@ function compressImageForUpload(file, maxWidth=1000, quality=0.7){
 
 async function submitOrder(){
   const fileInput = document.getElementById('co-screenshot');
-  const file = fileInput.files[0];
+  let file = fileInput.files[0];
   const err = document.getElementById('co-error-2');
   const btn = document.getElementById('co-submit-btn');
 
@@ -2311,7 +2311,7 @@ async function openWalletTopup(){
 
 async function submitWalletTopup(){
   const amount = parseFloat(document.getElementById('topup-amount').value);
-  const file = document.getElementById('topup-screenshot').files[0];
+  let file = document.getElementById('topup-screenshot').files[0];
   const err = document.getElementById('topup-error');
   const btn = document.getElementById('topup-submit-btn');
 
@@ -2515,7 +2515,7 @@ async function openGiftCardPurchase(presetAmount){
 
 async function submitGiftCardPurchase(){
   const amount = selectedGiftAmount;
-  const file = document.getElementById('gift-screenshot').files[0];
+  let file = document.getElementById('gift-screenshot').files[0];
   const err = document.getElementById('gift-error');
   const btn = document.getElementById('gift-submit-btn');
 

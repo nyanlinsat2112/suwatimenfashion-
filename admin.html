@@ -1012,6 +1012,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     if(btn.id === 'orders-tab-btn'){
       const dot = document.getElementById('new-order-dot');
       if(dot) dot.remove();
+      loadOrders();
     }
     if(btn.id === 'wallet-tab-btn'){
       backToWalletMenu();
@@ -1033,8 +1034,8 @@ async function refreshAllAttentionStates(){
     const { count: unreadMsgCount } = await sb.from('chat_messages').select('id', { count:'exact', head:true }).eq('sender','customer').eq('read_by_admin', false);
     setTabAttention('messages-tab-btn', (unreadMsgCount||0) > 0);
 
-    // Online Orders — Admin မှ မစစ်ဆေးရသေးသည့် Order ရှိနေသလား
-    const { count: pendingOrderCount } = await sb.from('orders').select('id', { count:'exact', head:true }).eq('order_status','pending_verification').neq('sale_channel','in_store');
+    // Online Orders — Payment Method မရွေး Admin တကယ်ကြည့်ပြီးမရသေးသေးတဲ့ Online Order ရှိနေသလား (Prepaid Card Order များပါ အကျုံးဝင်)
+    const { count: pendingOrderCount } = await sb.from('orders').select('id', { count:'exact', head:true }).eq('viewed_by_admin', false).neq('sale_channel','in_store');
     setTabAttention('orders-tab-btn', (pendingOrderCount||0) > 0);
 
     // Delivery — ပို့ဆောင်ရန် အသင့်ဖြစ်နေသည့် Online Order ရှိနေသလား
@@ -1799,6 +1800,17 @@ async function loadOrders(){
   (productsForImg||[]).forEach(p=>{ imgMap[p.name] = p.image_url; });
   list.innerHTML='';
   if(error){ list.innerHTML = '<p class="mono">Error loading orders</p>'; return; }
+
+  // Admin က Online Orders List ကို တကယ် ဖွင့်ကြည့်ပြီဆိုတာနဲ့ Payment Method မရွေး Order အားလုံးကို "ကြည့်ပြီး" အဖြစ် မှတ်တမ်းတင် (Prepaid Card Order များပါ အပါအဝင်)
+  const unviewedIds = (data||[]).filter(o=>!o.viewed_by_admin).map(o=>o.id);
+  if(unviewedIds.length){
+    await sb.from('orders').update({ viewed_by_admin: true }).in('id', unviewedIds);
+    unviewedIds.forEach(id=>{
+      const o = (data||[]).find(r=>r.id===id);
+      if(o) o.viewed_by_admin = true;
+    });
+    setTabAttention('orders-tab-btn', false);
+  }
 
   // ---- Order rows တွေကို order_group_id အလိုက် စုပေါင်း (group_id မရှိရင် ကိုယ်ပိုင် row ချည်း သီးသန့် group) ----
   const groupsMap = {};

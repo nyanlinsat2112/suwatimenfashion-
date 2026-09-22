@@ -907,3 +907,10 @@ begin
     alter publication supabase_realtime add table subcategories;
   end if;
 end $$;
+
+-- ★ Online Orders Notification Bug Fix — Prepaid Card ဖြင့် ဝယ်ယူတဲ့ Order များက "confirmed" status ချက်ချင်း ရောက်သွားလို့
+-- (KBZPay လို "pending_verification" မှာ မရပ်နေတော့လို့) Admin ဘက်က Notification လွတ်နိုင်ခဲ့ပါတယ်
+-- viewed_by_admin ဆိုတဲ့ Column အသစ်ဖြင့် Payment Method မရွေး Admin တကယ်ကြည့်ပြီးမှသာ Notification ရပ်စေရန်
+alter table orders add column if not exists viewed_by_admin boolean default true;
+update orders set viewed_by_admin = true where viewed_by_admin is null;
+alter table orders alter column viewed_by_admin set default false;
