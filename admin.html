@@ -538,6 +538,11 @@
     <div class="form-card">
       <h3>Admin Activity Log</h3>
       <div class="hint">Admin App ထဲက ပြင်ဆင်မှု/ဖျက်ခြင်း/ထည့်ခြင်း အားလုံးကို မှတ်တမ်းတင်ထားပါသည်</div>
+      <div class="form-grid" style="margin-top:10px;">
+        <input type="date" id="activitylog-date-filter">
+        <button type="button" class="secondary" id="activitylog-clear-date-btn">အားလုံး ပြန်ကြည့်ရန်</button>
+      </div>
+      <button type="button" class="secondary" id="activitylog-csv-btn" style="margin-top:8px; width:100%;">📥 ဒီရက်စာ Activity Log ကို CSV ထုတ်မည်</button>
       <div id="activity-log-list"></div>
     </div>
   </div>
@@ -971,12 +976,29 @@ async function logActivity(action, details){
   }catch(e){ /* logging fail ဖြစ်လည်း main action ကို မထိခိုက်စေရ */ }
 }
 
+let activityLogCache = [];
 async function loadActivityLog(){
   const list = document.getElementById('activity-log-list');
-  const { data, error } = await sb.from('activity_logs').select('*').order('created_at', { ascending:false }).limit(100);
+  const dateVal = document.getElementById('activitylog-date-filter')?.value;
+
+  let query = sb.from('activity_logs').select('*').order('created_at', { ascending:false });
+  if(dateVal){
+    const dayStart = new Date(dateVal+'T00:00:00');
+    const dayEnd = new Date(dateVal+'T23:59:59.999');
+    query = query.gte('created_at', dayStart.toISOString()).lte('created_at', dayEnd.toISOString());
+  } else {
+    query = query.limit(100);
+  }
+
+  const { data, error } = await query;
   if(error){ list.innerHTML = '<p class="hint">Log ကြည့်၍မရပါ</p>'; return; }
-  if(!data.length){ list.innerHTML = '<p class="hint">Activity မှတ်တမ်း မရှိသေးပါ</p>'; return; }
-  list.innerHTML = data.map(l=>`
+  activityLogCache = data || [];
+
+  if(!activityLogCache.length){
+    list.innerHTML = `<p class="hint">${dateVal ? 'ရွေးထားတဲ့ ရက်အတွက် Activity မှတ်တမ်း မရှိပါ' : 'Activity မှတ်တမ်း မရှိသေးပါ'}</p>`;
+    return;
+  }
+  list.innerHTML = activityLogCache.map(l=>`
     <div class="log-entry">
       <span class="log-time">${new Date(l.created_at).toLocaleString()}</span> ·
       <span class="log-admin">${l.admin_email||'unknown'}</span> —
@@ -984,6 +1006,37 @@ async function loadActivityLog(){
       ${l.details ? ': '+l.details : ''}
     </div>`).join('');
 }
+
+document.getElementById('activitylog-date-filter').addEventListener('change', loadActivityLog);
+document.getElementById('activitylog-clear-date-btn').addEventListener('click', ()=>{
+  document.getElementById('activitylog-date-filter').value = '';
+  loadActivityLog();
+});
+
+document.getElementById('activitylog-csv-btn').addEventListener('click', ()=>{
+  if(!activityLogCache.length){ showToast('CSV ထုတ်ဖို့ Data မရှိပါ'); return; }
+  const dateVal = document.getElementById('activitylog-date-filter').value;
+  const headers = ['Date/Time','Admin Email','Action','Details'];
+  const rows = activityLogCache.map(l => [
+    new Date(l.created_at).toLocaleString(),
+    l.admin_email || 'unknown',
+    l.action,
+    (l.details||'').replace(/"/g,'""'),
+  ]);
+  const csvContent = [headers, ...rows]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g,'""')}"`).join(','))
+    .join('\r\n');
+  const blob = new Blob(['\uFEFF'+csvContent], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `activity-log-${dateVal || 'recent'}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('✅ CSV Download ပြီးပါပြီ');
+});
 
 document.getElementById('login-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
