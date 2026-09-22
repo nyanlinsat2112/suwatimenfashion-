@@ -79,11 +79,19 @@
 
   .form-card{
     background:#1f1e1a; border:2.5px solid var(--concrete); padding:20px; margin-bottom:26px;
+    overflow-x:hidden; max-width:100%; box-sizing:border-box;
   }
   .form-card h3{font-family:'Anton',sans-serif; font-size:20px; margin-bottom:14px;}
   .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
   .form-grid > *{min-width:0;}
-  input[type="date"]{width:100%; min-width:0; max-width:100%; box-sizing:border-box;}
+  input[type="date"]{
+    width:100%; min-width:0; max-width:100%; box-sizing:border-box;
+    -webkit-appearance:none; appearance:none; font-size:14px;
+  }
+  /* Safari/iOS ရဲ့ Native Date Picker Shadow DOM အတွင်းပိုင်း Layout Bug ကြောင့် Width ကို လျစ်လျူရှုပြီး
+     Container ကို အတင်းအကျပ် ကျော်ထွက်တတ်တာကို ကာကွယ်ရန် — Overflow ဖြစ်နေရင် ဒီ Wrapper က အလိုအလျောက် ဖြတ်ပစ်ပေးမည် */
+  .date-filter-wrap{ width:100%; max-width:100%; overflow:hidden; }
+  .date-filter-wrap input[type="date"]{ display:block; }
   .form-grid .full{grid-column:1/-1;}
   @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
   .form-actions{display:flex; gap:10px; margin-top:14px;}
