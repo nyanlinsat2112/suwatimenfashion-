@@ -303,10 +303,10 @@
 
   <div class="tabs-main">
     <button class="tab-btn main-tab" data-tab="pos-panel" id="pos-tab-btn"><span class="mt-icon">🏪</span>POS<br>(အပြင်ရောင်း)</button>
-    <button class="tab-btn main-tab" data-tab="orders-panel" id="orders-tab-btn"><span class="mt-icon">🌐</span>Online<br>Orders</button>
+    <button class="tab-btn main-tab" data-tab="orders-panel" id="orders-tab-btn"><span class="mt-icon">🌐</span>Online<br>Orders<span id="orders-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
     <button class="tab-btn main-tab" data-tab="inventory-panel"><span class="mt-icon">📦</span>Inventory</button>
     <button class="tab-btn main-tab" data-tab="messages-panel" id="messages-tab-btn"><span class="mt-icon">💬</span>Messages<span id="messages-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
-    <button class="tab-btn main-tab" data-tab="delivery-panel" id="delivery-tab-btn"><span class="mt-icon">🚚</span>Delivery</button>
+    <button class="tab-btn main-tab" data-tab="delivery-panel" id="delivery-tab-btn"><span class="mt-icon">🚚</span>Delivery<span id="delivery-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
     <button class="tab-btn main-tab" data-tab="wallet-panel" id="wallet-tab-btn"><span class="mt-icon">🎫</span>Prepaid Card<br>System<span id="wallet-pending-badge" class="tab-count-badge" style="display:none;"></span></button>
   </div>
 
@@ -771,6 +771,7 @@
     <div class="form-card">
       <h3>🚚 Delivery Queue</h3>
       <div class="hint">ပို့ဆောင်ရန် ကျန်နေသော Order များ — ပို့ပြီးရင် ပုံတင်ပြီး "ပို့ပြီးပါပြီ" သတ်မှတ်ပါ</div>
+      <input type="text" id="delivery-search" placeholder="🔍 Order ID / Customer အမည် / ဖုန်းနံပါတ်ဖြင့် ရှာပါ...">
     </div>
     <div id="delivery-queue-list"></div>
     <div id="delivery-action-view" style="display:none;"></div>
@@ -1034,13 +1035,31 @@ async function refreshAllAttentionStates(){
     const { count: unreadMsgCount } = await sb.from('chat_messages').select('id', { count:'exact', head:true }).eq('sender','customer').eq('read_by_admin', false);
     setTabAttention('messages-tab-btn', (unreadMsgCount||0) > 0);
 
-    // Online Orders — Payment Method မရွေး Admin တကယ်ကြည့်ပြီးမရသေးသေးတဲ့ Online Order ရှိနေသလား (Prepaid Card Order များပါ အကျုံးဝင်)
+    // Online Orders — Payment Method မရွေး Admin Status မပြောင်းရသေးသည့် Online Order ရှိနေသလား (Prepaid Card Order များပါ အကျုံးဝင်)
     const { count: pendingOrderCount } = await sb.from('orders').select('id', { count:'exact', head:true }).eq('viewed_by_admin', false).neq('sale_channel','in_store');
     setTabAttention('orders-tab-btn', (pendingOrderCount||0) > 0);
+    const ordersBadge = document.getElementById('orders-unread-badge');
+    if(ordersBadge){
+      if((pendingOrderCount||0) > 0){
+        ordersBadge.textContent = pendingOrderCount > 9 ? '9+' : pendingOrderCount;
+        ordersBadge.style.display = 'flex';
+      } else {
+        ordersBadge.style.display = 'none';
+      }
+    }
 
-    // Delivery — ပို့ဆောင်ရန် အသင့်ဖြစ်နေသည့် Online Order ရှိနေသလား
-    const { count: deliveryCount } = await sb.from('orders').select('id', { count:'exact', head:true }).in('order_status',['confirmed','processing','shipped']).neq('sale_channel','in_store');
+    // Delivery — Delivery Staff မမြင်ရသေးသည့် "Confirmed" (ပို့ဆောင်ရန် အသင့်) Order အသစ် ရှိနေသလား
+    const { count: deliveryCount } = await sb.from('orders').select('id', { count:'exact', head:true }).eq('order_status','confirmed').eq('viewed_by_delivery', false).neq('sale_channel','in_store');
     setTabAttention('delivery-tab-btn', (deliveryCount||0) > 0);
+    const deliveryBadge = document.getElementById('delivery-unread-badge');
+    if(deliveryBadge){
+      if((deliveryCount||0) > 0){
+        deliveryBadge.textContent = deliveryCount > 9 ? '9+' : deliveryCount;
+        deliveryBadge.style.display = 'flex';
+      } else {
+        deliveryBadge.style.display = 'none';
+      }
+    }
 
     // Prepaid Card System — Approve/Reject မလုပ်ရသေးသည့် Top-up (သို့) Gift Card ရှိနေသလား
     const { count: topupPending } = await sb.from('wallet_topups').select('id', { count:'exact', head:true }).eq('status','pending');
@@ -1801,16 +1820,7 @@ async function loadOrders(){
   list.innerHTML='';
   if(error){ list.innerHTML = '<p class="mono">Error loading orders</p>'; return; }
 
-  // Admin က Online Orders List ကို တကယ် ဖွင့်ကြည့်ပြီဆိုတာနဲ့ Payment Method မရွေး Order အားလုံးကို "ကြည့်ပြီး" အဖြစ် မှတ်တမ်းတင် (Prepaid Card Order များပါ အပါအဝင်)
-  const unviewedIds = (data||[]).filter(o=>!o.viewed_by_admin).map(o=>o.id);
-  if(unviewedIds.length){
-    await sb.from('orders').update({ viewed_by_admin: true }).in('id', unviewedIds);
-    unviewedIds.forEach(id=>{
-      const o = (data||[]).find(r=>r.id===id);
-      if(o) o.viewed_by_admin = true;
-    });
-    setTabAttention('orders-tab-btn', false);
-  }
+  // မှတ်ချက်: ဒီနေရာမှာ "ကြည့်ပြီးသား" လို့ အလိုအလျောက် မှတ်တော့ပါ — Order Status ကို Admin တကယ် ပြောင်းမှသာ Notification ရပ်စေရန် (updateOrderStatus() Function ထဲမှာ viewed_by_admin: true ကို သတ်မှတ်ပါသည်)
 
   // ---- Order rows တွေကို order_group_id အလိုက် စုပေါင်း (group_id မရှိရင် ကိုယ်ပိုင် row ချည်း သီးသန့် group) ----
   const groupsMap = {};
@@ -1922,7 +1932,8 @@ async function loadOrders(){
         }
       }
 
-      const updatePayload = { order_status: newStatus };
+      const updatePayload = { order_status: newStatus, viewed_by_admin: true };
+      if(newStatus === 'confirmed') updatePayload.viewed_by_delivery = false; // Delivery Queue ထဲ အသစ် ရောက်လာတာမို့ Delivery Tab ကို ခုန်စေရန်
       if(cancellation_reason !== null) updatePayload.cancellation_reason = cancellation_reason || null;
 
       const { error } = await sb.from('orders').update(updatePayload).in('id', g.ids);
@@ -3648,11 +3659,30 @@ async function loadDeliveryQueue(){
     };
   });
 
+  renderDeliveryQueueList();
+}
+
+function renderDeliveryQueueList(){
+  const list = document.getElementById('delivery-queue-list');
+  const q = (document.getElementById('delivery-search')?.value || '').trim().toLowerCase();
+
   if(!deliveryOrdersCache.length){ list.innerHTML = '<p class="hint">ပို့ဆောင်ရန် Order မရှိသေးပါ 🎉</p>'; return; }
+
+  // Original Index ကို ထိန်းသိမ်းထားပြီး Filter လုပ် (Event Handler များမှာ deliveryOrdersCache[idx] မှန်ကန်စွာ ဆက်ရှာနိုင်ရန်)
+  let displayItems = deliveryOrdersCache.map((g, originalIdx)=>({ g, originalIdx }));
+  if(q){
+    displayItems = displayItems.filter(({g})=>
+      g.group_display_id.toLowerCase().includes(q) ||
+      (g.customer_name||'').toLowerCase().includes(q) ||
+      (g.phone||'').toLowerCase().includes(q)
+    );
+  }
+
+  if(!displayItems.length){ list.innerHTML = '<p class="hint">ရှာဖွေမှုနှင့် ကိုက်ညီသော Order မတွေ့ပါ</p>'; return; }
 
   const statusLabels = { confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ', shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပို့ပြီးပါပြီ ✓' };
 
-  list.innerHTML = deliveryOrdersCache.map((g,idx)=>`
+  list.innerHTML = displayItems.map(({g, originalIdx: idx})=>`
     <div class="delivery-card ${g.order_status==='delivered'?'delivered-done':''}">
       <div class="row1">
         <h4>${g.customer_name}</h4>
@@ -3687,7 +3717,7 @@ async function loadDeliveryQueue(){
         openDeliveryAction(idx);
         return;
       }
-      const { error } = await sb.from('orders').update({ order_status:newStatus }).in('id', g.ids);
+      const { error } = await sb.from('orders').update({ order_status:newStatus, viewed_by_admin:true, viewed_by_delivery:true }).in('id', g.ids);
       if(error){ showToast('Error: '+error.message); return; }
       showToast('Status Update ပြီးပါပြီ');
       logActivity('delivery_status_changed', `#${g.group_display_id.slice(0,8).toUpperCase()} → ${newStatus}`);
@@ -3700,6 +3730,8 @@ async function loadDeliveryQueue(){
     btn.addEventListener('click', ()=>openDeliveryAction(parseInt(btn.dataset.idx)));
   });
 }
+
+document.getElementById('delivery-search').addEventListener('input', renderDeliveryQueueList);
 
 function openDeliveryAction(idx){
   currentDeliveryGroup = deliveryOrdersCache[idx];
@@ -3770,6 +3802,7 @@ async function confirmDelivered(){
     delivery_note: note || null,
     delivered_by: currentAdminUserId,
     delivered_at: new Date().toISOString(),
+    viewed_by_admin: true, viewed_by_delivery: true,
   }).in('id', g.ids);
 
   if(error){ showToast('Error: '+error.message); btn.disabled=false; btn.textContent='✅ ပို့ပြီးပါပြီ — မှတ်တမ်းတင်မည်'; return; }

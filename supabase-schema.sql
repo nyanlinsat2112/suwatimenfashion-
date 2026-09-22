@@ -914,3 +914,8 @@ end $$;
 alter table orders add column if not exists viewed_by_admin boolean default true;
 update orders set viewed_by_admin = true where viewed_by_admin is null;
 alter table orders alter column viewed_by_admin set default false;
+
+-- ★ Delivery Tab အတွက်လည်း သီးခြား Tracking — "confirmed" ဖြစ်လာတဲ့ Order အသစ်များကို Delivery Staff မမြင်ရသေးမချင်း ခုန်နေစေရန်
+alter table orders add column if not exists viewed_by_delivery boolean default true;
+update orders set viewed_by_delivery = true where viewed_by_delivery is null;
+alter table orders alter column viewed_by_delivery set default false;
