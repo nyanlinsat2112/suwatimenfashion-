@@ -251,6 +251,7 @@
 .delivery-card .dc-status{font-family:'Space Mono',monospace; font-size:10.5px; padding:2px 8px; border:1.5px solid var(--acid); color:var(--acid); display:inline-block; margin-top:6px;}
 
 .sr-period-btn.active{background:var(--acid); color:var(--ink); border-color:var(--acid);}
+.chart-metric-btn.active{background:var(--acid); color:var(--ink); border-color:var(--acid);}
 
 .customer-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
 .customer-card .row1{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
@@ -610,7 +611,7 @@
       <h3>🧾 Daily Closing Report (တစ်နေ့တာ ငွေရှင်းချက်)</h3>
       <div class="hint">Cash Drawer ချိန်ညှိဖို့ တစ်နေ့တာ ရောင်းချမှု အားလုံး (Online + In-Store) ကို ငွေပေးချေနည်းအလိုက် ခွဲပြပေးပါသည် — ပယ်ဖျက်/Refund လုပ်ထားတာများ မပါဝင်ပါ</div>
       <div style="display:flex; gap:10px; align-items:center; margin:12px 0; flex-wrap:wrap;">
-        <input type="date" id="closing-date-input" style="width:auto;">
+        <input type="date" id="closing-date-input" style="flex:1; min-width:150px; max-width:100%;">
         <button type="button" class="acid" id="closing-report-btn">ငွေရှင်းချက် ကြည့်ရန်</button>
       </div>
       <div id="closing-report-result"></div>
@@ -646,6 +647,14 @@
           <div class="hint" style="margin:0;">🎁 Gift Card ရောင်းရငွေ (ကာလအလိုက်)</div>
           <div class="display" style="font-size:24px; color:#c98fff;" id="sr-total-giftcard">-</div>
         </div>
+      </div>
+
+      <div class="hint" style="margin-bottom:6px;">Graph ကြည့်ချင်တဲ့ အချက်အလက် ရွေးပါ</div>
+      <div id="chart-metric-switcher" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+        <button type="button" class="secondary chart-metric-btn active" data-metric="revenue">ရောင်းရငွေ</button>
+        <button type="button" class="secondary chart-metric-btn" data-metric="items">ရောင်းရသည့် ပစ္စည်း အရေအတွက်</button>
+        <button type="button" class="secondary chart-metric-btn" data-metric="topup">💰 Prepaid Card ငွေဖြည့်ခံရငွေ</button>
+        <button type="button" class="secondary chart-metric-btn" data-metric="giftcard">🎁 Gift Card ရောင်းရငွေ</button>
       </div>
 
       <div style="background:#1f1e1a; padding:16px; border:1.5px solid var(--concrete); margin-bottom:16px;">
@@ -2179,6 +2188,7 @@ function subscribeToWalletRealtime(){
 
 // ---------- SALES REPORT ----------
 let salesChartInstance = null;
+let currentChartMetric = 'revenue';
 let currentSalesPeriod = 'daily';
 let currentSalesBuckets = [];
 
@@ -2232,10 +2242,25 @@ async function loadSalesReport(){
   const buckets = {};
   filtered.forEach(o=>{
     const key = bucketKey(o.created_at, currentSalesPeriod);
-    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0 };
+    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0, topup:0, giftcard:0 };
     buckets[key].revenue += Number(o.total_amount);
     buckets[key].orders += 1;
     buckets[key].items += (o.quantity||0);
+  });
+
+  // Prepaid Card Top-up + Gift Card ရောင်းရငွေ (ဒီကာလအတွက်) — Admin မှ Approve လုပ်ပြီးသားများသာ ရေတွက် — Graph မှာလည်း ကာလအလိုက် ခွဲပြနိုင်ရန် Bucket ချထား
+  const { data: topups } = await sb.from('wallet_topups').select('amount, created_at, status').eq('status','approved');
+  (topups||[]).filter(t => new Date(t.created_at) >= rangeStart).forEach(t=>{
+    const key = bucketKey(t.created_at, currentSalesPeriod);
+    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0, topup:0, giftcard:0 };
+    buckets[key].topup += Number(t.amount);
+  });
+
+  const { data: giftCards } = await sb.from('gift_cards').select('amount, created_at, status').neq('status','pending').neq('status','rejected');
+  (giftCards||[]).filter(g => new Date(g.created_at) >= rangeStart).forEach(g=>{
+    const key = bucketKey(g.created_at, currentSalesPeriod);
+    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0, topup:0, giftcard:0 };
+    buckets[key].giftcard += Number(g.amount);
   });
 
   const sortedKeys = Object.keys(buckets).sort();
@@ -2244,18 +2269,13 @@ async function loadSalesReport(){
   const totalRevenue = currentSalesBuckets.reduce((s,b)=>s+b.revenue,0);
   const totalOrders = currentSalesBuckets.reduce((s,b)=>s+b.orders,0);
   const totalItems = currentSalesBuckets.reduce((s,b)=>s+b.items,0);
+  const topupTotal = currentSalesBuckets.reduce((s,b)=>s+b.topup,0);
+  const giftCardTotal = currentSalesBuckets.reduce((s,b)=>s+b.giftcard,0);
 
   document.getElementById('sr-total-revenue').textContent = totalRevenue.toLocaleString()+' ကျပ်';
   document.getElementById('sr-total-orders').textContent = totalOrders;
   document.getElementById('sr-total-items').textContent = totalItems;
-
-  // Prepaid Card Top-up + Gift Card ရောင်းရငွေ (ဒီကာလအတွက်) — Admin မှ Approve လုပ်ပြီးသားများသာ ရေတွက်
-  const { data: topups } = await sb.from('wallet_topups').select('amount, created_at, status').eq('status','approved');
-  const topupTotal = (topups||[]).filter(t => new Date(t.created_at) >= rangeStart).reduce((s,t)=>s+Number(t.amount),0);
   document.getElementById('sr-total-topup').textContent = topupTotal.toLocaleString()+' ကျပ်';
-
-  const { data: giftCards } = await sb.from('gift_cards').select('amount, created_at, status').neq('status','pending').neq('status','rejected');
-  const giftCardTotal = (giftCards||[]).filter(g => new Date(g.created_at) >= rangeStart).reduce((s,g)=>s+Number(g.amount),0);
   document.getElementById('sr-total-giftcard').textContent = giftCardTotal.toLocaleString()+' ကျပ်';
 
   // Table
@@ -2268,7 +2288,18 @@ async function loadSalesReport(){
     `).join('');
   }
 
-  // Chart
+  renderSalesChart();
+}
+
+const CHART_METRIC_CONFIG = {
+  revenue:  { label:'ရောင်းရငွေ (ကျပ်)',                      color:'#D6FF3F', field:'revenue' },
+  items:    { label:'ရောင်းရသည့် ပစ္စည်း အရေအတွက်',            color:'#C13B1F', field:'items' },
+  topup:    { label:'💰 Prepaid Card ငွေဖြည့်ခံရငွေ (ကျပ်)',   color:'#4da3ff', field:'topup' },
+  giftcard: { label:'🎁 Gift Card ရောင်းရငွေ (ကျပ်)',          color:'#c98fff', field:'giftcard' },
+};
+
+function renderSalesChart(){
+  const cfg = CHART_METRIC_CONFIG[currentChartMetric] || CHART_METRIC_CONFIG.revenue;
   const ctx = document.getElementById('sales-chart').getContext('2d');
   if(salesChartInstance) salesChartInstance.destroy();
   salesChartInstance = new Chart(ctx, {
@@ -2276,9 +2307,9 @@ async function loadSalesReport(){
     data: {
       labels: currentSalesBuckets.map(b=>b.label),
       datasets: [{
-        label: 'ရောင်းရငွေ (ကျပ်)',
-        data: currentSalesBuckets.map(b=>b.revenue),
-        backgroundColor: '#D6FF3F',
+        label: cfg.label,
+        data: currentSalesBuckets.map(b=>b[cfg.field]),
+        backgroundColor: cfg.color,
       }]
     },
     options: {
@@ -2291,6 +2322,15 @@ async function loadSalesReport(){
     }
   });
 }
+
+document.querySelectorAll('.chart-metric-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.chart-metric-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentChartMetric = btn.dataset.metric;
+    renderSalesChart();
+  });
+});
 
 function exportSalesCSV(){
   if(!currentSalesBuckets.length){ showToast('Export လုပ်ရန် Data မရှိပါ'); return; }
