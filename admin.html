@@ -735,6 +735,13 @@
     </div>
 
     <div class="form-card">
+      <h3>🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု (Add-on) ဈေးနှုန်း</h3>
+      <div class="hint">Customer က Order တင်တဲ့အခါ "Gift အဖြစ် ထုပ်ပိုးပေးရန်" ရွေးရင် ပေါင်းထည့်မည့် ဈေး — 0 ထားရင် Option ကို Website မှာ ဖျောက်ထားမည်</div>
+      <input type="number" id="settings-gift-price" min="0" step="100" placeholder="4500">
+      <button type="button" class="acid" id="save-gift-price-btn" style="width:100%; margin-top:8px;">Gift ဈေးနှုန်း သိမ်းမည်</button>
+    </div>
+
+    <div class="form-card">
       <h3>KBZPay QR Code + Payment Instructions</h3>
       <form id="settings-form">
         <div class="form-grid">
@@ -1443,7 +1450,7 @@ let productsListCache = [];
 async function loadProducts(){
   const { data, error } = await sb.from('products').select('*').order('created_at', { ascending:false });
   if(error){ document.getElementById('products-list').innerHTML = '<p class="mono">Error loading products</p>'; return; }
-  productsListCache = data || [];
+  productsListCache = (data || []).slice().sort((a,b)=> (b.pinned?1:0) - (a.pinned?1:0));
   renderProductsList();
 }
 
@@ -1461,15 +1468,23 @@ function renderProductsList(){
     div.innerHTML = `
       <img src="${imgSrc}" style="cursor:zoom-in;" onclick="openLightbox('${imgSrc}')">
       <div class="info">
-        <h4>${p.name} <span class="mono" style="font-size:10px; color:var(--acid);">[${p.category||'Top Wear'}${p.subcategory?' / '+p.subcategory:''}]</span></h4>
+        <h4>${p.pinned?'📌 ':''}${p.name} <span class="mono" style="font-size:10px; color:var(--acid);">[${p.category||'Top Wear'}${p.subcategory?' / '+p.subcategory:''}]</span></h4>
         <p>${Number(p.price).toLocaleString()} ကျပ် · Size: ${p.sizes||'-'} · အရောင်: ${p.colors||'-'} · လက်ကျန်: ${p.stock_qty}</p>
         ${p.tags ? `<p class="mono" style="font-size:10px; color:var(--rust);">🏷️ ${p.tags}</p>` : ''}
         ${(()=>{ const isOut = p.status==='sold_out' || (p.stock_qty||0)<=0; return `<span class="status-badge ${isOut?'sold_out':'available'}">${isOut?'SOLD OUT':'AVAILABLE'}</span>`; })()}
       </div>
-      <div class="actions">
+      <div class="actions" style="flex-wrap:wrap;">
+        <button class="secondary pin-btn" style="${p.pinned?'background:var(--acid); color:var(--ink); border-color:var(--acid);':''}">${p.pinned?'📌 Unpin':'📌 Pin'}</button>
         <button class="secondary edit-btn">ပြင်မည်</button>
         <button class="secondary del-btn">ဖျက်မည်</button>
       </div>`;
+    div.querySelector('.pin-btn').addEventListener('click', async ()=>{
+      const { error } = await sb.from('products').update({ pinned: !p.pinned }).eq('id', p.id);
+      if(error){ showToast('Error: '+error.message+' — supabase-schema.sql ကို Run ရန် လိုအပ်ပါသည်'); return; }
+      logActivity(p.pinned?'product_unpinned':'product_pinned', p.name);
+      showToast(p.pinned ? 'Pin ဖြုတ်ပြီးပါပြီ' : '📌 Website ရဲ့ အပေါ်ဆုံးမှာ Pin လုပ်ပြီးပါပြီ');
+      loadProducts();
+    });
     div.querySelector('.edit-btn').addEventListener('click', ()=>editProduct(p));
     div.querySelector('.del-btn').addEventListener('click', ()=>deleteProduct(p.id, p.name));
     list.appendChild(div);
@@ -2011,6 +2026,9 @@ async function loadOrders(){
         📍 ${g.address}
       </div>
       ${itemsHtml}
+      ${g.rows.some(r=>r.product_name==='🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု') ? `<div style="border:2px dashed var(--rust); padding:8px 10px; margin-top:8px; background:rgba(193,59,31,.10);">
+        <b style="color:#ff8a5c;">🎁 GIFT ထုပ်ပိုးပေးရန်</b>${(g.rows.find(r=>r.gift_message)||{}).gift_message ? `<br><span style="font-family:'Noto Sans Myanmar',sans-serif;">💌 ${String(g.rows.find(r=>r.gift_message).gift_message).replace(/</g,'&lt;')}</span>` : ''}
+      </div>` : ''}
       <div class="details" style="margin-top:8px; font-weight:700;">💰 စုစုပေါင်း: ${g.total_amount.toLocaleString()} ကျပ်</div>
       ${g.payment_screenshot_url ? `<img class="ss-thumb" loading="lazy" src="${g.payment_screenshot_url}" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
       <div>
@@ -2092,6 +2110,7 @@ async function loadOrders(){
 
 async function restoreStockForRows(rows){
   for(const r of rows){
+    if(r.product_name === '🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု') continue; // ဝန်ဆောင်မှုသာ ဖြစ်လို့ Stock မရှိ
     try{
       await sb.rpc('increment_stock', { p_name:r.product_name, p_qty:r.quantity, p_color:r.color||null, p_size:r.size||null });
     }catch(e){ console.error('Stock restore failed', e); }
@@ -2105,12 +2124,22 @@ async function loadSettingsForm(){
   document.getElementById('settings-instructions').value = data.payment_instructions || '';
   document.getElementById('settings-admin-email').value = data.admin_email || '';
   document.getElementById('settings-ticker').value = data.ticker_text || '';
+  document.getElementById('settings-gift-price').value = (data.gift_wrap_price ?? 4500);
   if(data.kbzpay_qr_url){
     const img = document.getElementById('current-qr');
     img.src = data.kbzpay_qr_url;
     img.style.display='block';
   }
 }
+
+document.getElementById('save-gift-price-btn').addEventListener('click', async ()=>{
+  const v = Number(document.getElementById('settings-gift-price').value);
+  if(isNaN(v) || v < 0){ showToast('ဈေးနှုန်း မှန်ကန်စွာ ထည့်ပါ'); return; }
+  const { error } = await sb.from('settings').update({ gift_wrap_price: v }).eq('id', 1);
+  if(error){ showToast('Error: '+error.message+' — supabase-schema.sql ကို Run ရန် လိုအပ်ပါသည်'); return; }
+  logActivity('gift_wrap_price_updated', `${v.toLocaleString()} ကျပ်`);
+  showToast('✅ Gift ဈေးနှုန်း သိမ်းပြီးပါပြီ — Order အသစ်များမှ စတင် သက်ရောက်ပါမည်');
+});
 
 document.getElementById('save-ticker-btn').addEventListener('click', async ()=>{
   const ticker_text = document.getElementById('settings-ticker').value.trim();

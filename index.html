@@ -362,6 +362,13 @@
   .share-btn{flex-shrink:0; background:transparent; border:2px solid var(--ink); color:var(--ink); font-family:'Space Mono',monospace; font-size:12px; font-weight:700; padding:7px 12px; cursor:pointer; white-space:nowrap;}
   .share-btn:hover{background:var(--ink); color:var(--concrete);}
   .detail-thumbs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
+  .pin-badge{position:absolute; bottom:10px; left:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
+  .gift-addon-box{border:2.5px dashed var(--rust); background:rgba(193,59,31,.06); padding:12px; margin:12px 0 4px;}
+  .gift-addon-box label.gift-toggle{display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-weight:700;}
+  .gift-addon-box input[type="checkbox"]{width:20px; height:20px; flex-shrink:0; margin-top:2px; accent-color:var(--rust);}
+  .gift-addon-box .gift-price{color:var(--rust); white-space:nowrap;}
+  .gift-addon-box textarea{margin-top:10px;}
+  .delivery-fee-note{font-size:12px; color:var(--grey); border-left:3px solid var(--acid); padding:6px 10px; margin-top:10px; background:rgba(20,20,18,.04);}
   .detail-thumbs img{width:52px; height:52px; object-fit:cover; border:2px solid var(--ink); cursor:pointer; opacity:.6;}
   .detail-thumbs img.active{opacity:1; border-color:var(--rust);}
   .detail-desc{font-size:14px; line-height:1.8; color:#3a3833; margin-bottom:6px;}
@@ -713,7 +720,8 @@ async function loadProducts(){
     grid.innerHTML = '<p class="empty-note">ပစ္စည်းများ Load မလုပ်နိုင်ပါ</p>';
     return;
   }
-  allProducts = data;
+  // 📌 Pin လုပ်ထားတဲ့ ပစ္စည်းများ အပေါ်ဆုံးမှာ (Pin အချင်းချင်းနဲ့ ကျန်တာတွေက အသစ်ဆုံး အရင်)
+  allProducts = data.slice().sort((a,b)=> (b.pinned?1:0) - (a.pinned?1:0));
   window.__productsLoaded = true;
   renderProductGrid();
   renderFeaturedProducts();
@@ -858,6 +866,7 @@ function renderProductGrid(){
       <div class="swatch" style="cursor:pointer;" onclick="openProductDetail(${idx})">
         <img src="${p.image_url || 'https://placehold.co/400x400/141412/E9E4D8?text=SUWATI'}" alt="${p.name}">
         <div class="tag">${Number(p.price).toLocaleString()} ကျပ်</div>
+        ${p.pinned ? '<div class="pin-badge" title="Pinned">📌</div>' : ''}
         ${renderTagBadges(p.tags)}
         <div class="wishlist-heart ${isInWishlist(p.name)?'active':''}" onclick="event.stopPropagation(); toggleWishlist('${p.name.replace(/'/g,"\\'")}', ${idx})">
           <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
@@ -1330,8 +1339,30 @@ function closeCheckout(){
   document.body.style.overflow='';
 }
 
+// 🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု (Add-on) — ဈေးနှုန်းကို Admin App → Settings မှာ ပြောင်းလို့ရသည်
+const GIFT_ADDON_NAME = '🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု';
+const GIFT_ADDON_DEFAULT_PRICE = 4500;
+async function getGiftAddonPrice(){
+  cachedSettings = null; // ဈေးနှုန်း နောက်ဆုံး Value ကို အမြဲ ယူရန်
+  const s = await getSettings();
+  const v = s && s.gift_wrap_price;
+  return (v === null || v === undefined || v === '') ? GIFT_ADDON_DEFAULT_PRICE : Number(v);
+}
+function buildGiftAddonRow(base){
+  // Order ထဲမှာ ပစ္စည်းလို Line Item တစ်ခုအဖြစ် ထည့် → Receipt/Report/Refund စတာတွေ ဈေးနှုန်း အလိုအလျောက် မှန်
+  return { ...base,
+    id: (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2))),
+    product_name: GIFT_ADDON_NAME, size: null, color: null, quantity: 1,
+    unit_price: currentOrder.giftWrap.fee, total_amount: currentOrder.giftWrap.fee,
+    gift_message: currentOrder.giftWrap.message || null,
+  };
+}
+function toggleGiftAddon(cb){
+  document.getElementById('co-gift-msg-wrap').style.display = cb.checked ? 'block' : 'none';
+}
+
 function openCheckout(items){
-  currentOrder = { items: items.map(i=>({...i})) };
+  currentOrder = { items: items.map(i=>({...i})), giftWrap: null };
   renderCheckoutStep1();
   document.getElementById('checkout-modal').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1350,9 +1381,32 @@ function renderCheckoutStep1(){
       <input type="text" id="co-name" placeholder="အမည် (Full Name)" value="${currentUser?.user_metadata?.full_name || ''}">
       <input type="tel" id="co-phone" placeholder="ဖုန်းနံပါတ်" value="${currentUser?.user_metadata?.phone || ''}">
       <input type="email" id="co-email" placeholder="Email (Gmail)" value="${currentUser?.email || ''}">
-      <textarea id="co-address" placeholder="ပို့ဆောင်ရမည့် လိပ်စာအပြည့်အစုံ" rows="2">${currentUser?.user_metadata?.address || ''}</textarea>
+      <textarea id="co-address" placeholder="ပို့ဆောင်ရမည့် လိပ်စာအပြည့်အစုံ" rows="2">${currentOrder.address || currentUser?.user_metadata?.address || ''}</textarea>
+      <div id="co-gift-area"></div>
+      <div class="delivery-fee-note">🚚 Delivery ခ သည် မြို့နယ်အလိုက် ကွာခြားပြီး <b>ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည်</b> (ဒီ Order စုစုပေါင်းထဲ မပါဝင်ပါ)</div>
       <div class="form-error" id="co-error-1"></div>
       <button type="button" class="submit-order-btn" onclick="goToStep2()">ဆက်သွားမည် →</button>
+    </div>`;
+  renderGiftAddonOption();
+}
+
+async function renderGiftAddonOption(){
+  const area = document.getElementById('co-gift-area');
+  if(!area) return;
+  const fee = await getGiftAddonPrice();
+  if(!(fee > 0)){ area.innerHTML = ''; return; } // Admin က ဈေး 0 ထားရင် Option ကို ဖျောက်
+  const gw = currentOrder.giftWrap;
+  area.innerHTML = `
+    <div class="gift-addon-box">
+      <label class="gift-toggle">
+        <input type="checkbox" id="co-gift-toggle" ${gw?'checked':''} onchange="toggleGiftAddon(this)">
+        <span>🎁 Gift အဖြစ် ထုပ်ပိုးပြီး ပို့ပေးစေချင်ပါသည် <span class="gift-price">(+${fee.toLocaleString()} ကျပ်)</span><br>
+        <span style="font-weight:400; font-size:12px; color:var(--grey);">လက်ဆောင်ထုပ်ပိုးမှု + ဆုတောင်းကတ် ပါဝင်ပါသည်</span></span>
+      </label>
+      <div id="co-gift-msg-wrap" style="display:${gw?'block':'none'};">
+        <textarea id="co-gift-message" rows="3" maxlength="300" placeholder="ကတ်ထဲ ရေးပေးစေချင်တဲ့ စာ (ဥပမာ - Happy Birthday ချစ်သူ 🎂) — လက်ခံသူ အမည်/ပို့ချိန် စတာတွေလည်း ရေးနိုင်ပါသည်">${gw?.message||''}</textarea>
+      </div>
+      <input type="hidden" id="co-gift-fee" value="${fee}">
     </div>`;
 }
 
@@ -1370,7 +1424,12 @@ function goToStep2(){
   currentOrder.phone = phone;
   currentOrder.email = email;
   currentOrder.address = address;
-  currentOrder.total = currentOrder.items.reduce((s,i)=>s+i.price*i.quantity,0);
+  const giftToggle = document.getElementById('co-gift-toggle');
+  currentOrder.giftWrap = (giftToggle && giftToggle.checked) ? {
+    fee: Number(document.getElementById('co-gift-fee').value) || 0,
+    message: (document.getElementById('co-gift-message').value || '').trim(),
+  } : null;
+  currentOrder.total = currentOrder.items.reduce((s,i)=>s+i.price*i.quantity,0) + (currentOrder.giftWrap ? currentOrder.giftWrap.fee : 0);
   renderCheckoutStep2();
 }
 
@@ -1396,7 +1455,9 @@ async function renderCheckoutStep2(){
       ${currentOrder.items.map(i=>`
         <div class="order-summary-line"><span>${i.name}${i.size?' ('+i.size+(i.color?', '+i.color:'')+')':''} x${i.quantity}</span><span>${(i.price*i.quantity).toLocaleString()} ကျပ်</span></div>
       `).join('')}
+      ${currentOrder.giftWrap ? `<div class="order-summary-line"><span>${GIFT_ADDON_NAME}${currentOrder.giftWrap.message?'<br><span style="font-size:11px; color:var(--grey);">💌 '+currentOrder.giftWrap.message.replace(/</g,'&lt;')+'</span>':''}</span><span>${currentOrder.giftWrap.fee.toLocaleString()} ကျပ်</span></div>` : ''}
       <div class="order-summary-line total"><span>စုစုပေါင်း</span><span>${currentOrder.total.toLocaleString()} ကျပ်</span></div>
+      <div class="delivery-fee-note">🚚 Delivery ခ မပါဝင်ပါ — ပစ္စည်းရောက်မှ ပေးချေရပါမည်</div>
     </div>
 
     ${currentUser ? `
@@ -1493,6 +1554,7 @@ async function payWithWallet(){
     unit_price: i.price, total_amount: i.price * i.quantity,
     payment_method: 'Prepaid Card', order_status: 'confirmed', payment_status: 'confirmed', created_at: nowIso,
   }));
+  if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
 
   const { error: orderErr } = await sb.from('orders').insert(rows);
   if(orderErr){
@@ -1644,6 +1706,7 @@ async function submitOrder(){
       payment_status: 'pending',
       created_at: nowIso,
     }));
+    if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
 
     // ★ .select() ကို မသုံးပါ — Insert ပြီးလို့ "ပြန်ဖတ်" ဖို့ ကြိုးစားရင် Guest အတွက် SELECT Policy မရှိလို့ RLS Error တက်တတ်ပါတယ်
     // ID/created_at ကို Client ဘက်ကနေ ကိုယ်တိုင် ထုတ်ပြီး Insert လိုက်တဲ့ Data ကိုပဲ တိုက်ရိုက် ပြသပါမည်
@@ -3185,6 +3248,10 @@ async function renderDetailPrepaidButton(p){
 }
 
 async function detailPayWithPrepaidCard(){
+  // ပို့ဆောင်ရမည့် လိပ်စာ + Gift Option ရွေးနိုင်အောင် Checkout ကနေ ဖြတ်သွားစေ (Step 2 မှာ Prepaid Card ခလုတ် ထင်ထင်ရှားရှား ရှိပါသည်)
+  return detailOrderNow();
+}
+async function _legacyDetailPayWithPrepaidCard(){
   const p = currentDetailProduct;
   const stock = getCurrentVariantStock(p);
   if(stock !== null && stock <= 0){ alert('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }

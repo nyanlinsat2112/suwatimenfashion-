@@ -923,3 +923,12 @@ alter table orders alter column viewed_by_admin set default false;
 alter table orders add column if not exists viewed_by_delivery boolean default true;
 update orders set viewed_by_delivery = true where viewed_by_delivery is null;
 alter table orders alter column viewed_by_delivery set default false;
+
+
+-- ★ Product Pin (Website ရဲ့ အပေါ်ဆုံးမှာ ပြရန်)
+alter table products add column if not exists pinned boolean default false;
+
+-- ★ Gift ထုပ်ပိုး ဝန်ဆောင်မှု (Add-on) — ဈေးနှုန်းကို Admin Settings မှာ ပြောင်းလို့ရ၊ Customer ရေးပေးတဲ့ ကတ်စာ
+alter table settings add column if not exists gift_wrap_price numeric default 4500;
+update settings set gift_wrap_price = 4500 where id = 1 and gift_wrap_price is null;
+alter table orders add column if not exists gift_message text;
