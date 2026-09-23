@@ -634,11 +634,15 @@
 // ★ Share Link (?product=...) ကို Script အစမှာ ချက်ချင်း ဖတ်ထား — နောက်ပိုင်း Code တစ်ခုခု Error တက်လည်း မပျောက်စေရန်
 window.__sharedProductParam = (function(){
   try{
-    const q = new URLSearchParams(location.search);
-    const v = q.get('p') || q.get('product');
-    if(v) return v.trim();
-    const h = location.hash.match(/(?:^#|&)(?:p|product)=([^&]+)/);
-    return h ? decodeURIComponent(h[1]).trim() : null;
+    // Messenger/Viber/Facebook စတဲ့ App တွေက Link နောက်မှာ "/", ".", ")", မမြင်ရတဲ့ Zero-width စာလုံး စတာတွေ ကပ်ထည့်တတ်လို့ သန့်စင်ပြီးမှ ယူ
+    const clean = s => String(s||'').replace(/[\u200B-\u200D\uFEFF\u00A0]/g,'').trim().replace(/[\/.,;:!?)\]'"]+$/,'').trim();
+    const raw = location.search + '&' + location.hash.replace(/^#/,'');
+    const q = new URLSearchParams(raw.replace(/^\?/,''));
+    let v = q.get('p') || q.get('product') || q.get('id');
+    if(!v) return null;
+    v = clean(v);
+    const uuid = v.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    return uuid ? uuid[0].toLowerCase() : (v || null);
   }catch(e){ return null; }
 })();
 // ============ CONFIG — ဒီနေရာကို Supabase project ရဲ့ တန်ဖိုးများနဲ့ အစားထိုးပါ ============
@@ -3324,7 +3328,7 @@ async function openSharedProductIfAny(){
   try{
     const norm = s => String(s||'').trim().toLowerCase();
     const list = Array.isArray(allProducts) ? allProducts : [];
-    let p = list.find(x => String(x.id)===want) || list.find(x => norm(x.name)===norm(want));
+    let p = list.find(x => String(x.id).toLowerCase()===String(want).toLowerCase()) || list.find(x => norm(x.name)===norm(want));
 
     // List ထဲ မတွေ့ရင် Database ကနေ တိုက်ရိုက် ထပ်ရှာ (Filter/Cache ကွာခြားမှုများ ကာကွယ်ရန်)
     if(!p){ try{
@@ -3342,7 +3346,11 @@ async function openSharedProductIfAny(){
     window.__sharedProductParam = null;
     try{ history.replaceState(null, '', location.pathname); }catch(e){}
 
-    if(!p){ showSiteToast('ဒီ Product ကို မတွေ့တော့ပါ (ဖျက်ထား/ဖျောက်ထားနိုင်ပါသည်)'); return; }
+    if(!p){
+      console.warn('[Share Link] Product not found', { want, loaded: list.length, href: location.href });
+      showSiteToast(`ဒီ Product ကို မတွေ့တော့ပါ (ဖျက်ထား/ဖျောက်ထားနိုင်ပါသည်) — Ref: ${String(want).slice(0,40)} · ${list.length}`, 9000);
+      return;
+    }
     if(!list.some(x=>String(x.id)===String(p.id))) allProducts.push(p);
     currentDetailProduct = p;
     detailState = { size:null, color:null, qty:1 };
