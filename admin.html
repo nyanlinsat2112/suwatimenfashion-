@@ -231,6 +231,12 @@
 .msg-thread-item:hover{background:#232219;}
 .msg-thread-item .mt-name{font-weight:700;}
 .unread-dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--rust); margin-right:7px; vertical-align:middle; }
+.new-item-badge{
+  display:inline-block; background:var(--acid); color:var(--ink); font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
+  padding:2px 7px; border-radius:3px; letter-spacing:.05em; margin-left:6px; vertical-align:middle;
+  animation:newBadgeBlink 1.4s ease-in-out infinite;
+}
+@keyframes newBadgeBlink{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
 .mt-unread-count{
   display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px;
   background:var(--rust); color:#fff; border-radius:9px; font-size:11px; font-weight:700; font-family:'Space Mono',monospace;
@@ -722,6 +728,13 @@
   <!-- SETTINGS -->
   <div class="panel" id="settings-panel">
     <div class="form-card">
+      <h3>📢 Header ရဲ့ Ticker (သွားနေတဲ့) စာသား</h3>
+      <div class="hint">Website ရဲ့ အပေါ်ဆုံးမှာ ခဏခဏ ရွေ့သွားနေတဲ့ Text များ — Comma (,) ခြားပြီး ရေးပါ (ဥပမာ "ORDER NOW, DELIVERY AVAILABLE, STREET WEAR")</div>
+      <textarea id="settings-ticker" class="full" placeholder="ORDER NOW, DELIVERY AVAILABLE, STREET WEAR, POLO, ORIGINAL MENSWEAR, JEANS, SUWATI MEN FASHION, GRAB YOURS!!"></textarea>
+      <button type="button" class="acid" id="save-ticker-btn" style="width:100%; margin-top:8px;">Ticker Text သိမ်းမည်</button>
+    </div>
+
+    <div class="form-card">
       <h3>KBZPay QR Code + Payment Instructions</h3>
       <form id="settings-form">
         <div class="form-grid">
@@ -920,6 +933,7 @@ async function checkSession(){
     subscribeToAdminChatRealtime();
     subscribeToOrderRealtime();
     subscribeToWalletRealtime();
+    subscribeToAdminAutoRefresh();
     refreshAllAttentionStates();
     setInterval(refreshAllAttentionStates, 25000); // ၂၅ စက္ကန့်တစ်ခါ Independent Safety-Net Check
   } else {
@@ -1946,6 +1960,7 @@ async function loadOrders(){
       total_amount: rows.reduce((s,r)=>s+Number(r.total_amount),0),
       group_display_id: (first.order_group_id || first.id),
       sale_channel: first.sale_channel || 'online',
+      viewed_by_admin: first.viewed_by_admin,
     };
   }).sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
 
@@ -1988,7 +2003,7 @@ async function loadOrders(){
 
     div.innerHTML = `
       <div class="row1">
-        <h4>${g.customer_name} ${g.rows.length>1 ? `<span class="mono" style="font-size:11px; color:var(--acid);">(${g.rows.length} ပစ္စည်း)</span>` : ''}</h4>
+        <h4>${g.customer_name} ${g.rows.length>1 ? `<span class="mono" style="font-size:11px; color:var(--acid);">(${g.rows.length} ပစ္စည်း)</span>` : ''} ${!g.viewed_by_admin ? '<span class="new-item-badge">🆕 NEW</span>' : ''}</h4>
         <span class="oid">#${g.group_display_id.slice(0,8).toUpperCase()} · ${new Date(g.created_at).toLocaleString()} <span class="channel-badge ${g.sale_channel}">${g.sale_channel==='in_store'?'🏪 In-Store':'🌐 Online'}</span></span>
       </div>
       <div class="details" style="margin-top:6px;">
@@ -2089,12 +2104,21 @@ async function loadSettingsForm(){
   if(error) return;
   document.getElementById('settings-instructions').value = data.payment_instructions || '';
   document.getElementById('settings-admin-email').value = data.admin_email || '';
+  document.getElementById('settings-ticker').value = data.ticker_text || '';
   if(data.kbzpay_qr_url){
     const img = document.getElementById('current-qr');
     img.src = data.kbzpay_qr_url;
     img.style.display='block';
   }
 }
+
+document.getElementById('save-ticker-btn').addEventListener('click', async ()=>{
+  const ticker_text = document.getElementById('settings-ticker').value.trim();
+  const { error } = await sb.from('settings').update({ ticker_text }).eq('id', 1);
+  if(error){ showToast('Error: '+error.message); return; }
+  logActivity('ticker_text_updated', ticker_text.slice(0,60));
+  showToast('✅ Ticker Text သိမ်းပြီးပါပြီ');
+});
 
 document.getElementById('settings-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
@@ -2164,6 +2188,27 @@ function subscribeToOrderRealtime(){
         loadDeliveryQueue();
       }
       refreshAllAttentionStates();
+    })
+    .subscribe();
+}
+
+// ★ Admin App Auto-Refresh — တခြား Admin/Manager တစ်ယောက်က Product/Category/Banner/Post ပြောင်းလဲလိုက်ရင် ဒီနေရာမှာလည်း Silent ပြန်ဆွဲပေးမည် (Refresh နှိပ်ဖို့ မလိုပါ)
+let adminAutoRefreshSubscribed = false;
+function subscribeToAdminAutoRefresh(){
+  if(adminAutoRefreshSubscribed) return;
+  adminAutoRefreshSubscribed = true;
+  sb.channel('admin-auto-refresh')
+    .on('postgres_changes', { event:'*', schema:'public', table:'products' }, ()=>{
+      if(document.getElementById('products-panel')?.classList.contains('active')) loadProducts();
+      loadInventory();
+    })
+    .on('postgres_changes', { event:'*', schema:'public', table:'categories' }, ()=>{ loadCategories(); })
+    .on('postgres_changes', { event:'*', schema:'public', table:'subcategories' }, ()=>{ loadCategories(); })
+    .on('postgres_changes', { event:'*', schema:'public', table:'banners' }, ()=>{
+      if(document.getElementById('banners-panel')?.classList.contains('active')) loadBanners();
+    })
+    .on('postgres_changes', { event:'*', schema:'public', table:'posts' }, ()=>{
+      if(document.getElementById('posts-panel')?.classList.contains('active')) loadPosts();
     })
     .subscribe();
 }
@@ -3806,6 +3851,7 @@ async function loadDeliveryQueue(){
       delivery_note: first.delivery_note, delivery_photo_url: first.delivery_photo_url,
       total_amount: rows.reduce((s,r)=>s+Number(r.total_amount),0),
       group_display_id: (first.order_group_id || first.id),
+      viewed_by_delivery: first.viewed_by_delivery,
     };
   });
 
@@ -3835,7 +3881,7 @@ function renderDeliveryQueueList(){
   list.innerHTML = displayItems.map(({g, originalIdx: idx})=>`
     <div class="delivery-card ${g.order_status==='delivered'?'delivered-done':''}">
       <div class="row1">
-        <h4>${g.customer_name}</h4>
+        <h4>${g.customer_name} ${(!g.viewed_by_delivery && g.order_status==='confirmed') ? '<span class="new-item-badge">🆕 NEW</span>' : ''}</h4>
         <span class="oid">#${g.group_display_id.slice(0,8).toUpperCase()}</span>
       </div>
       <div class="details" style="margin-top:6px;">
@@ -4215,7 +4261,7 @@ async function loadGiftCardRequests(){
       ${g.payment_screenshot_url ? `<img loading="lazy" src="${g.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button type="button" class="acid approve-gift-btn" data-id="${g.id}" data-amt="${g.amount}">✅ Approve</button>
-        <button type="button" class="secondary reject-gift-btn" data-id="${g.id}" style="color:var(--rust); border-color:var(--rust);">❌ Reject</button>
+        <button type="button" class="secondary reject-gift-btn" data-id="${g.id}" data-amt="${g.amount}" style="color:var(--rust); border-color:var(--rust);">❌ Reject</button>
       </div>
     </div>`).join('');
 
@@ -4243,10 +4289,18 @@ async function loadGiftCardRequests(){
         status:'rejected', rejection_reason:reason||null,
         reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
       }).eq('id', btn.dataset.id);
+
+      // Reject လုပ်လိုက်တာမို့ ဝယ်ယူချိန်က Reserve လုပ်ထားခဲ့တဲ့ Denomination Stock ကို ပြန်တိုးပေး (Online Purchase မှသာ Stock Decrement ဖြစ်ခဲ့လို့)
+      const { data: gcProduct } = await sb.from('products').select('name').eq('is_gift_card', true).maybeSingle();
+      if(gcProduct){
+        await sb.rpc('increment_stock', { p_name: gcProduct.name, p_qty: 1, p_color: null, p_size: btn.dataset.amt });
+      }
+
       logActivity('gift_card_rejected', btn.dataset.id);
-      showToast('Gift Card Reject လုပ်ပြီးပါပြီ');
+      showToast('Gift Card Reject လုပ်ပြီးပါပြီ — Stock ပြန်တိုးပေးပြီးပါပြီ');
       refreshAllAttentionStates();
       loadGiftCardRequests();
+      loadInventory();
     });
   });
 }

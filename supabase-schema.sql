@@ -70,6 +70,7 @@ create table if not exists settings (
 );
 insert into settings (id) values (1) on conflict (id) do nothing;
 alter table settings add column if not exists admin_email text;
+alter table settings add column if not exists ticker_text text default 'ORDER NOW, DELIVERY AVAILABLE, STREET WEAR, POLO, ORIGINAL MENSWEAR, JEANS, SUWATI MEN FASHION, GRAB YOURS!!';
 
 -- ၅) Admins table — ဒီထဲက user_id ပါသူတွေကိုပဲ "Admin" အဖြစ် သတ်မှတ်မယ် (Customer login နဲ့ ခွဲခြားဖို့)
 create table if not exists admins (
@@ -905,6 +906,9 @@ begin
   end if;
   if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'subcategories') then
     alter publication supabase_realtime add table subcategories;
+  end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'settings') then
+    alter publication supabase_realtime add table settings;
   end if;
 end $$;
 

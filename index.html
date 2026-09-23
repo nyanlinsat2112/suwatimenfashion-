@@ -447,7 +447,7 @@
 <body>
 
 <div class="ticker">
-  <div class="ticker-track">
+  <div class="ticker-track" id="ticker-track">
     <span>ORDER NOW</span><span class="acc">·</span>
     <span>DELIVERY AVAILABLE</span><span class="acc">·</span>
     <span>STREET WEAR</span><span class="acc">·</span>
@@ -1278,6 +1278,22 @@ async function getSettings(){
   return cachedSettings;
 }
 
+async function renderTicker(){
+  cachedSettings = null; // Admin App ကနေ Ticker Text အသစ် ပြောင်းထားနိုင်လို့ Cache ကို အရင် ရှင်းပစ်
+  const settings = await getSettings();
+  const phrases = (settings?.ticker_text || 'ORDER NOW, DELIVERY AVAILABLE, STREET WEAR, POLO, ORIGINAL MENSWEAR, JEANS, SUWATI MEN FASHION, GRAB YOURS!!')
+    .split(',').map(s=>s.trim()).filter(Boolean);
+  if(!phrases.length) return;
+  const track = document.getElementById('ticker-track');
+  if(!track) return;
+  const spansHtml = phrases.map(p=>`<span>${p}</span><span class="acc">·</span>`).join('');
+  track.innerHTML = spansHtml + spansHtml; // Seamless Loop Effect အတွက် ၂ခါ ထပ်ခါ ထည့်ရသည်
+}
+renderTicker();
+sb.channel('site-ticker-realtime')
+  .on('postgres_changes', { event:'UPDATE', schema:'public', table:'settings' }, ()=>{ renderTicker(); })
+  .subscribe();
+
 function closeCheckout(){
   document.getElementById('checkout-modal').classList.remove('open');
   document.body.style.overflow='';
@@ -1772,7 +1788,14 @@ function buildTransactionReceiptHtml(kind, record){
   :root{ --ink:#141412; --rust:#C13B1F; --acid:#7a9600; --grey:#666; }
   *{box-sizing:border-box;}
   body{ font-family:'Space Mono',monospace; width:320px; margin:20px auto; padding:0; color:var(--ink); background:#fff; }
-  .receipt-box{ border:3px solid var(--ink); padding:18px 16px; }
+  .receipt-box{ border:3px solid var(--ink); padding:18px 16px; position:relative; overflow:hidden; }
+  .voided-watermark{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-28deg);
+    font-family:'Anton',sans-serif; font-size:44px; letter-spacing:.06em; white-space:nowrap;
+    color:rgba(193,59,31,.55); border:6px solid rgba(193,59,31,.55); padding:4px 20px;
+    pointer-events:none; z-index:10;
+  }
+  .rejection-reason-box{ border:2px dashed var(--rust); background:rgba(193,59,31,.06); padding:10px 12px; margin:12px 0; font-size:11.5px; }
   .brand{ text-align:center; }
   .brand .logo{ font-family:'Anton',sans-serif; font-size:30px; letter-spacing:.01em; line-height:1; }
   .brand .logo .dot{ color:var(--rust); }
@@ -1798,6 +1821,7 @@ function buildTransactionReceiptHtml(kind, record){
 </head>
 <body>
   <div class="receipt-box">
+    ${record.status==='rejected' ? '<div class="voided-watermark">REJECTED</div>' : ''}
     <div class="brand">
       <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
       <div class="tagline">FASHION</div>
@@ -1820,6 +1844,7 @@ function buildTransactionReceiptHtml(kind, record){
       <span class="value">${Number(record.amount).toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
     </div>
     <div class="payment-tag">Status: ${statusLabels[record.status]||record.status}</div>
+    ${record.status==='rejected' && record.rejection_reason ? `<div class="rejection-reason-box"><b>ငြင်းပယ်ရသည့် အကြောင်းရင်း:</b><br>${record.rejection_reason}</div>` : ''}
     ${kind==='giftcard' && record.status==='active' ? `<div class="giftcard-code-box"><div class="mono" style="font-size:10px; color:var(--grey); margin-bottom:4px;">GIFT CARD CODE</div><div class="gc-code">${record.code}</div></div>` : ''}
     <hr class="solid">
     <div class="footer">
@@ -2412,6 +2437,17 @@ async function openWalletHistory(){
         <div class="row1"><span>${new Date(t.created_at).toLocaleDateString()}</span><span>${statusLabels[t.status]}</span></div>
         <h5 style="text-decoration:line-through; color:var(--grey);">${Number(t.amount).toLocaleString()} ကျပ်</h5>
         ${t.rejection_reason ? `<div class="mono" style="font-size:11px; color:var(--rust);">${t.rejection_reason}</div>` : ''}
+        <button type="button" class="auth-link" style="display:inline-block; margin-top:6px;" onclick="openTransactionReceipt('topup', walletTopupCache[${topups.indexOf(t)}])">🧾 Receipt ကြည့်ရန်</button>
+      </div>`).join('')}` : '';
+
+  const approvedTopups = (topups||[]).filter(t=>t.status==='approved');
+  const approvedHtml = approvedTopups.length ? `
+    <div class="modal-label">✅ အတည်ပြုပြီးသား Top-up</div>
+    ${approvedTopups.map(t=>`
+      <div class="history-item">
+        <div class="row1"><span>${new Date(t.created_at).toLocaleDateString()}</span><span>${statusLabels[t.status]}</span></div>
+        <h5>${Number(t.amount).toLocaleString()} ကျပ်</h5>
+        <button type="button" class="auth-link" style="display:inline-block; margin-top:6px;" onclick="openTransactionReceipt('topup', walletTopupCache[${topups.indexOf(t)}])">🧾 Receipt ကြည့်ရန်</button>
       </div>`).join('')}` : '';
 
   const txnHtml = (!error && txns && txns.length) ? txns.map(tx=>{
@@ -2432,6 +2468,7 @@ async function openWalletHistory(){
     <h3>📜 Prepaid Card Usage History</h3>
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       ${pendingHtml}
+      ${approvedHtml}
       ${rejectedHtml}
       <div class="modal-label" style="${pendingHtml||rejectedHtml?'':'margin-top:0;'}">📋 Transaction Record အားလုံး</div>
       ${txnHtml}
