@@ -932,3 +932,13 @@ alter table products add column if not exists pinned boolean default false;
 alter table settings add column if not exists gift_wrap_price numeric default 4500;
 update settings set gift_wrap_price = 4500 where id = 1 and gift_wrap_price is null;
 alter table orders add column if not exists gift_message text;
+
+-- ★ Delivery ခ (Zone အလိုက်) — ပစ္စည်းရောက်မှ Delivery သမား ကောက်ယူ (ဆိုင်ရောင်းရငွေ မဟုတ်)
+alter table settings add column if not exists delivery_zones jsonb default '[{"name":"နေပြည်တော်အတွင်း","min":3000,"max":5000},{"name":"အခြားမြို့များ (နေပြည်တော်ပြင်ပ)","min":4500,"max":6000}]'::jsonb;
+alter table settings add column if not exists delivery_note text default 'Royal Express Delivery Service မှ နှုန်းထားများအတိုင်း ကျသင့်ပါမည်';
+update settings set
+  delivery_zones = coalesce(delivery_zones, '[{"name":"နေပြည်တော်အတွင်း","min":3000,"max":5000},{"name":"အခြားမြို့များ (နေပြည်တော်ပြင်ပ)","min":4500,"max":6000}]'::jsonb),
+  delivery_note = coalesce(delivery_note, 'Royal Express Delivery Service မှ နှုန်းထားများအတိုင်း ကျသင့်ပါမည်')
+where id = 1;
+alter table orders add column if not exists delivery_zone text;
+alter table orders add column if not exists delivery_fee_range text;

@@ -368,6 +368,8 @@
   .gift-addon-box input[type="checkbox"]{width:20px; height:20px; flex-shrink:0; margin-top:2px; accent-color:var(--rust);}
   .gift-addon-box .gift-price{color:var(--rust); white-space:nowrap;}
   .gift-addon-box textarea{margin-top:10px;}
+  #co-delivery-zone{width:100%; padding:12px; margin-top:4px; border:2.5px solid var(--ink); background:#fff; color:var(--ink); font-family:'Space Mono',monospace; font-size:13px; font-weight:700; border-radius:0; -webkit-appearance:none; appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%); background-position:calc(100% - 18px) 50%, calc(100% - 12px) 50%; background-size:6px 6px; background-repeat:no-repeat; padding-right:32px;}
   .delivery-fee-note{font-size:12px; color:var(--grey); border-left:3px solid var(--acid); padding:6px 10px; margin-top:10px; background:rgba(20,20,18,.04);}
   .detail-thumbs img{width:52px; height:52px; object-fit:cover; border:2px solid var(--ink); cursor:pointer; opacity:.6;}
   .detail-thumbs img.active{opacity:1; border-color:var(--rust);}
@@ -1357,6 +1359,53 @@ function buildGiftAddonRow(base){
     gift_message: currentOrder.giftWrap.message || null,
   };
 }
+// 🚚 Delivery ခ (Zone အလိုက်) — ပစ္စည်းရောက်မှ Delivery သမားကို ပေးရ (ဆိုင်ရောင်းရငွေ/Order စုစုပေါင်းထဲ မပါ)
+const DEFAULT_DELIVERY_ZONES = [
+  { name:'နေပြည်တော်အတွင်း', min:3000, max:5000 },
+  { name:'အခြားမြို့များ (နေပြည်တော်ပြင်ပ)', min:4500, max:6000 },
+];
+const DEFAULT_DELIVERY_NOTE = 'Royal Express Delivery Service မှ နှုန်းထားများအတိုင်း ကျသင့်ပါမည်';
+function parseDeliveryZones(s){
+  let z = s && s.delivery_zones;
+  if(typeof z === 'string'){ try{ z = JSON.parse(z); }catch(e){ z = null; } }
+  return (Array.isArray(z) && z.length) ? z : DEFAULT_DELIVERY_ZONES;
+}
+function formatFeeRange(z){
+  const a = Number(z.min)||0, b = Number(z.max)||0;
+  return (!b || a===b) ? `${a.toLocaleString()} ကျပ်` : `${a.toLocaleString()} – ${b.toLocaleString()} ကျပ်`;
+}
+async function renderDeliveryZoneOption(){
+  const area = document.getElementById('co-delivery-area');
+  if(!area) return;
+  const s = await getSettings();
+  const zones = parseDeliveryZones(s);
+  const note = (s && s.delivery_note) || DEFAULT_DELIVERY_NOTE;
+  const cur = currentOrder.delivery && currentOrder.delivery.zone;
+  area.innerHTML = `
+    <div class="modal-label" style="margin-top:12px;">🚚 ပို့ဆောင်မည့် နေရာ ရွေးပါ</div>
+    <select id="co-delivery-zone" onchange="updateDeliveryFeeHint()">
+      <option value="">-- နေရာ ရွေးပါ --</option>
+      ${zones.map((z,i)=>`<option value="${i}" ${cur===z.name?'selected':''}>${z.name} — ${formatFeeRange(z)}</option>`).join('')}
+    </select>
+    <div class="delivery-fee-note" id="co-delivery-hint"></div>`;
+  window.__deliveryZones = zones; window.__deliveryNote = note;
+  updateDeliveryFeeHint();
+}
+function updateDeliveryFeeHint(){
+  const sel = document.getElementById('co-delivery-zone'); const hint = document.getElementById('co-delivery-hint');
+  if(!sel || !hint) return;
+  const z = (window.__deliveryZones||[])[sel.value];
+  const e1 = document.getElementById('co-error-1'); if(z && e1 && e1.textContent.includes('Delivery Zone')) e1.textContent = '';
+  const note = window.__deliveryNote || DEFAULT_DELIVERY_NOTE;
+  hint.innerHTML = z
+    ? `🚚 <b>${z.name}</b> — Delivery ခ <b>${formatFeeRange(z)}</b> ကို <b>ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည်</b> (ဒီ Order စုစုပေါင်းထဲ မပါဝင်ပါ)<br><span style="font-size:11px;">${note}</span>`
+    : `🚚 Delivery ခ သည် <b>ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည်</b> (ဒီ Order စုစုပေါင်းထဲ မပါဝင်ပါ) — ${note}`;
+}
+function applyDeliveryInfo(rows){
+  if(!currentOrder.delivery) return;
+  rows.forEach(r=>{ r.delivery_zone = currentOrder.delivery.zone; r.delivery_fee_range = currentOrder.delivery.range; });
+}
+
 function toggleGiftAddon(cb){
   document.getElementById('co-gift-msg-wrap').style.display = cb.checked ? 'block' : 'none';
 }
@@ -1382,11 +1431,12 @@ function renderCheckoutStep1(){
       <input type="tel" id="co-phone" placeholder="ဖုန်းနံပါတ်" value="${currentUser?.user_metadata?.phone || ''}">
       <input type="email" id="co-email" placeholder="Email (Gmail)" value="${currentUser?.email || ''}">
       <textarea id="co-address" placeholder="ပို့ဆောင်ရမည့် လိပ်စာအပြည့်အစုံ" rows="2">${currentOrder.address || currentUser?.user_metadata?.address || ''}</textarea>
+      <div id="co-delivery-area"></div>
       <div id="co-gift-area"></div>
-      <div class="delivery-fee-note">🚚 Delivery ခ သည် မြို့နယ်အလိုက် ကွာခြားပြီး <b>ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည်</b> (ဒီ Order စုစုပေါင်းထဲ မပါဝင်ပါ)</div>
       <div class="form-error" id="co-error-1"></div>
       <button type="button" class="submit-order-btn" onclick="goToStep2()">ဆက်သွားမည် →</button>
     </div>`;
+  renderDeliveryZoneOption();
   renderGiftAddonOption();
 }
 
@@ -1424,6 +1474,10 @@ function goToStep2(){
   currentOrder.phone = phone;
   currentOrder.email = email;
   currentOrder.address = address;
+  const zoneSel = document.getElementById('co-delivery-zone');
+  const zone = zoneSel ? (window.__deliveryZones||[])[zoneSel.value] : null;
+  if(zoneSel && !zone){ err.textContent = 'ပို့ဆောင်မည့် နေရာ (Delivery Zone) ရွေးပေးပါ'; return; }
+  currentOrder.delivery = zone ? { zone: zone.name, range: formatFeeRange(zone) } : null;
   const giftToggle = document.getElementById('co-gift-toggle');
   currentOrder.giftWrap = (giftToggle && giftToggle.checked) ? {
     fee: Number(document.getElementById('co-gift-fee').value) || 0,
@@ -1457,7 +1511,7 @@ async function renderCheckoutStep2(){
       `).join('')}
       ${currentOrder.giftWrap ? `<div class="order-summary-line"><span>${GIFT_ADDON_NAME}${currentOrder.giftWrap.message?'<br><span style="font-size:11px; color:var(--grey);">💌 '+currentOrder.giftWrap.message.replace(/</g,'&lt;')+'</span>':''}</span><span>${currentOrder.giftWrap.fee.toLocaleString()} ကျပ်</span></div>` : ''}
       <div class="order-summary-line total"><span>စုစုပေါင်း</span><span>${currentOrder.total.toLocaleString()} ကျပ်</span></div>
-      <div class="delivery-fee-note">🚚 Delivery ခ မပါဝင်ပါ — ပစ္စည်းရောက်မှ ပေးချေရပါမည်</div>
+      <div class="delivery-fee-note">🚚 ${currentOrder.delivery ? `<b>${currentOrder.delivery.zone}</b> — Delivery ခ <b>${currentOrder.delivery.range}</b> ကို ` : 'Delivery ခ ကို '}ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည် (အထက်ပါ စုစုပေါင်းထဲ မပါဝင်ပါ)</div>
     </div>
 
     ${currentUser ? `
@@ -1554,7 +1608,7 @@ async function payWithWallet(){
     unit_price: i.price, total_amount: i.price * i.quantity,
     payment_method: 'Prepaid Card', order_status: 'confirmed', payment_status: 'confirmed', created_at: nowIso,
   }));
-  if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
+  applyDeliveryInfo(rows); if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
 
   const { error: orderErr } = await sb.from('orders').insert(rows);
   if(orderErr){
@@ -1706,7 +1760,7 @@ async function submitOrder(){
       payment_status: 'pending',
       created_at: nowIso,
     }));
-    if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
+    applyDeliveryInfo(rows); if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
 
     // ★ .select() ကို မသုံးပါ — Insert ပြီးလို့ "ပြန်ဖတ်" ဖို့ ကြိုးစားရင် Guest အတွက် SELECT Policy မရှိလို့ RLS Error တက်တတ်ပါတယ်
     // ID/created_at ကို Client ဘက်ကနေ ကိုယ်တိုင် ထုတ်ပြီး Insert လိုက်တဲ့ Data ကိုပဲ တိုက်ရိုက် ပြသပါမည်
@@ -1836,6 +1890,7 @@ function buildCustomerReceiptHtml(rows){
       <b>Customer</b>&nbsp; ${first.customer_name}<br>
       ${first.phone?`<b>Phone</b>&nbsp; ${first.phone}<br>`:''}
       <b>Address</b>&nbsp; ${first.address}
+      ${first.delivery_zone ? `<br><b>Delivery</b>&nbsp; ${first.delivery_zone} · ${first.delivery_fee_range||''} <span style="font-size:10px;">(ပစ္စည်းရောက်မှ Delivery သမားကို ပေးရန် — စုစုပေါင်းထဲ မပါ)</span>` : ''}
     </div>
     <hr class="dashed">
     <table class="items">
