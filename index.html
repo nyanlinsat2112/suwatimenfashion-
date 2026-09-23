@@ -346,6 +346,15 @@
   #site-toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
   .detail-main-img{width:100%; aspect-ratio:1/1; object-fit:cover; border:3px solid var(--ink); margin-bottom:10px;}
+  .detail-slider-wrap{position:relative; margin-bottom:10px;}
+  .detail-slider{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; border:3px solid var(--ink); aspect-ratio:1/1; touch-action:pan-x pan-y;}
+  .detail-slider::-webkit-scrollbar{display:none;}
+  .detail-slide{flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start; cursor:zoom-in;}
+  .slider-arrow{position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; border:2px solid var(--ink); background:rgba(233,228,216,.9); color:var(--ink); font-size:22px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;}
+  .slider-arrow.prev{left:8px;} .slider-arrow.next{right:8px;}
+  .slider-counter{position:absolute; bottom:8px; right:8px; background:rgba(20,20,18,.75); color:var(--concrete); font-family:'Space Mono',monospace; font-size:11px; padding:3px 8px;}
+  .share-btn{flex-shrink:0; background:transparent; border:2px solid var(--ink); color:var(--ink); font-family:'Space Mono',monospace; font-size:12px; font-weight:700; padding:7px 12px; cursor:pointer; white-space:nowrap;}
+  .share-btn:hover{background:var(--ink); color:var(--concrete);}
   .detail-thumbs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
   .detail-thumbs img{width:52px; height:52px; object-fit:cover; border:2px solid var(--ink); cursor:pointer; opacity:.6;}
   .detail-thumbs img.active{opacity:1; border-color:var(--rust);}
@@ -687,6 +696,7 @@ async function loadProducts(){
   allProducts = data;
   renderProductGrid();
   renderFeaturedProducts();
+  openSharedProductIfAny();
 }
 
 function renderFeaturedProducts(){
@@ -3053,12 +3063,23 @@ function renderProductDetail(p){
 
   box.innerHTML = `
     <button class="modal-close" onclick="closeCheckout()">&times;</button>
-    <img class="detail-main-img" id="detail-main-img" src="${images[0]}" alt="${p.name}" onclick="openSiteLightbox(this.src)">
+    <div class="detail-slider-wrap">
+      <div class="detail-slider" id="detail-slider" onscroll="onDetailSliderScroll()">
+        ${images.map((img,i)=>`<img class="detail-slide" src="${img}" alt="${p.name} ${i+1}" loading="${i===0?'eager':'lazy'}" onclick="openSiteLightbox(this.src)">`).join('')}
+      </div>
+      ${images.length>1 ? `
+        <button type="button" class="slider-arrow prev" onclick="slideDetail(-1)" aria-label="Previous">‹</button>
+        <button type="button" class="slider-arrow next" onclick="slideDetail(1)" aria-label="Next">›</button>
+        <div class="slider-counter" id="slider-counter">1 / ${images.length}</div>` : ''}
+    </div>
     ${images.length>1 ? `<div class="detail-thumbs">
-      ${images.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" onclick="switchDetailImg(this,'${img}')">`).join('')}
+      ${images.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" onclick="goToDetailSlide(${i})">`).join('')}
     </div>` : ''}
 
-    <h3>${p.name}</h3>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+      <h3 style="margin:0;">${p.name}</h3>
+      <button type="button" class="share-btn" onclick="shareProduct('${p.name.replace(/'/g,"\\'")}')">🔗 Share</button>
+    </div>
     <div class="modal-label" style="margin-top:6px;">${p.category||''} · ${Number(p.price).toLocaleString()} ကျပ်</div>
     ${p.description ? `<p class="detail-desc">${p.description}</p>` : ''}
     <div class="modal-label" id="detail-stock-label">${soldOut ? '⚫ Sold Out' : (stock<=5 ? `🔥 ${stock} ခုပဲ ကျန်သည်` : '✅ ရနိုင်သည်')}</div>
@@ -3086,7 +3107,7 @@ function renderProductDetail(p){
 
     <div id="detail-prepaid-btn-area"></div>
     <button type="button" class="order-btn" id="detail-order-btn" ${soldOut?'disabled':''} style="background:var(--rust); color:var(--concrete); border-color:var(--ink); ${soldOut?'opacity:.5;':''}" onclick="detailOrderNow()">Order မှာယူမည် (KBZPay)</button>
-    <button type="button" class="order-btn" id="detail-addcart-btn" ${soldOut?'disabled':''} style="background:var(--acid); color:var(--ink); border-color:var(--ink); margin-top:10px; ${soldOut?'opacity:.5;':''}" onclick="detailAddToCart()">ခြင်းထဲ ထည့်မည် +</button>
+    <button type="button" class="order-btn" id="detail-addcart-btn" ${soldOut?'disabled':''} style="background:transparent; color:var(--ink); border-color:var(--ink); margin-top:10px; ${soldOut?'opacity:.5;':''}" onclick="detailAddToCart()">ခြင်းထဲ ထည့်မည် +</button>
 
     <button type="button" class="detail-wishlist-heart ${isInWishlist(p.name)?'active':''}" id="detail-wishlist-btn" onclick="toggleWishlist('${p.name.replace(/'/g,"\\'")}')">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
@@ -3225,9 +3246,62 @@ function openRelatedProduct(name){
 }
 
 function switchDetailImg(el, src){
-  document.getElementById('detail-main-img').src = src;
-  document.querySelectorAll('.detail-thumbs img').forEach(i=>i.classList.remove('active'));
-  el.classList.add('active');
+  const idx = Array.from(document.querySelectorAll('.detail-thumbs img')).indexOf(el);
+  if(idx >= 0) goToDetailSlide(idx);
+}
+
+// ---------- Product Detail Image Slider (လက်ဖြင့် ပွတ်ဆွဲ / Arrow / Thumbnail) ----------
+function goToDetailSlide(idx){
+  const slider = document.getElementById('detail-slider');
+  if(!slider) return;
+  slider.scrollTo({ left: idx * slider.clientWidth, behavior:'smooth' });
+}
+function slideDetail(dir){
+  const slider = document.getElementById('detail-slider');
+  if(!slider) return;
+  const total = slider.children.length;
+  let idx = Math.round(slider.scrollLeft / slider.clientWidth) + dir;
+  if(idx < 0) idx = total - 1;
+  if(idx >= total) idx = 0;
+  goToDetailSlide(idx);
+}
+function onDetailSliderScroll(){
+  const slider = document.getElementById('detail-slider');
+  if(!slider) return;
+  const idx = Math.round(slider.scrollLeft / slider.clientWidth);
+  document.querySelectorAll('.detail-thumbs img').forEach((img,i)=>img.classList.toggle('active', i===idx));
+  const counter = document.getElementById('slider-counter');
+  if(counter) counter.textContent = `${idx+1} / ${slider.children.length}`;
+}
+
+// ---------- Product Share (Link ကူးယူ / Share Sheet) ----------
+function getProductShareUrl(name){
+  return `${location.origin}${location.pathname}?product=${encodeURIComponent(name)}`;
+}
+async function shareProduct(name){
+  const url = getProductShareUrl(name);
+  const p = (typeof allProducts!=='undefined' ? allProducts : []).find(x=>x.name===name);
+  const text = p ? `${p.name} — ${Number(p.price).toLocaleString()} ကျပ် | SUWATI MEN FASHION` : 'SUWATI MEN FASHION';
+  if(navigator.share){
+    try{ await navigator.share({ title: name, text, url }); return; }catch(e){ if(e.name==='AbortError') return; }
+  }
+  try{
+    await navigator.clipboard.writeText(url);
+    showSiteToast('🔗 Link ကူးယူပြီးပါပြီ — Messenger/Viber မှာ Paste လုပ်ပြီး Share နိုင်ပါပြီ');
+  }catch(e){
+    prompt('ဒီ Link ကို Copy ကူးပါ', url);
+  }
+}
+
+// Share Link (?product=...) နဲ့ ဝင်လာရင် အဲ့ Product Detail ကို အလိုအလျောက် ဖွင့်ပေး
+let pendingSharedProduct = new URLSearchParams(location.search).get('product');
+function openSharedProductIfAny(){
+  if(!pendingSharedProduct) return;
+  const exists = (typeof allProducts!=='undefined' ? allProducts : []).some(p=>p.name===pendingSharedProduct);
+  if(!exists) return;
+  const name = pendingSharedProduct;
+  pendingSharedProduct = null;
+  openProductDetailByName(name);
 }
 
 function setDetailOption(type, value){
