@@ -302,9 +302,9 @@
     position:sticky; top:10px; z-index:50;
     display:flex; align-items:center; justify-content:center;
     width:42px; height:42px; margin:-14px -10px -42px auto;
-    background:var(--rust); color:#fff; border:2.5px solid var(--ink); border-radius:50%;
+    background:var(--rust); color:#fff; border:2.5px solid var(--ink); border-radius:0;
     font-size:26px; line-height:1; font-weight:700; cursor:pointer; font-family:'Space Mono',monospace;
-    box-shadow:0 3px 10px rgba(0,0,0,.35); padding:0;
+    box-shadow:3px 3px 0 var(--ink); padding:0;
   }
   .modal-close:hover{ background:var(--ink); color:var(--acid); }
   .modal-section{margin-top:18px; padding-top:18px; border-top:2px solid #d9d3c4;}
@@ -710,6 +710,7 @@ async function loadProducts(){
     return;
   }
   allProducts = data;
+  window.__productsLoaded = true;
   renderProductGrid();
   renderFeaturedProducts();
   openSharedProductIfAny();
@@ -3315,30 +3316,50 @@ async function shareProduct(name){
 }
 
 // Share Link (?p=ID / ?product=Name) နဲ့ ဝင်လာရင် အဲ့ Product Detail ကို အလိုအလျောက် ဖွင့်ပေး
-function openSharedProductIfAny(){
+async function openSharedProductIfAny(){
   const want = window.__sharedProductParam;
-  if(!want) return false;
-  const list = (typeof allProducts!=='undefined' && Array.isArray(allProducts)) ? allProducts : [];
-  if(!list.length) return false;
-  const norm = s => String(s||'').trim().toLowerCase();
-  const p = list.find(x => String(x.id)===want) || list.find(x => norm(x.name)===norm(want));
-  if(!p){ window.__sharedProductParam = null; showSiteToast('ဒီ Product ကို မတွေ့တော့ပါ (ဖျက်ထား/ဖျောက်ထားနိုင်ပါသည်)'); return false; }
-  window.__sharedProductParam = null;
-  currentDetailProduct = p;
-  detailState = { size:null, color:null, qty:1 };
-  renderProductDetail(p);
-  document.getElementById('checkout-modal').classList.add('open');
-  document.body.style.overflow='hidden';
-  // URL ထဲက ?p= ကို ဖယ်ထား (Refresh လုပ်ရင် ထပ်မပွင့်စေရန်)
-  try{ history.replaceState(null, '', location.pathname); }catch(e){}
-  return true;
+  if(!want || window.__sharedOpening) return;
+  if(!window.__productsLoaded) return; // Product List မ Load ပြီးခင် "မတွေ့ပါ" လို့ အလျင်စလို မဆုံးဖြတ်ရ
+  window.__sharedOpening = true;
+  try{
+    const norm = s => String(s||'').trim().toLowerCase();
+    const list = Array.isArray(allProducts) ? allProducts : [];
+    let p = list.find(x => String(x.id)===want) || list.find(x => norm(x.name)===norm(want));
+
+    // List ထဲ မတွေ့ရင် Database ကနေ တိုက်ရိုက် ထပ်ရှာ (Filter/Cache ကွာခြားမှုများ ကာကွယ်ရန်)
+    if(!p){ try{
+      const looksLikeId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(want) || /^\d+$/.test(want);
+      if(looksLikeId){
+        const { data } = await sb.from('products').select('*').eq('id', want).maybeSingle();
+        p = data || null;
+      }
+      if(!p){
+        const { data } = await sb.from('products').select('*').ilike('name', want.trim()).limit(1);
+        p = (data && data[0]) || null;
+      }
+    }catch(e){ console.error('Shared product lookup failed', e); } }
+
+    window.__sharedProductParam = null;
+    try{ history.replaceState(null, '', location.pathname); }catch(e){}
+
+    if(!p){ showSiteToast('ဒီ Product ကို မတွေ့တော့ပါ (ဖျက်ထား/ဖျောက်ထားနိုင်ပါသည်)'); return; }
+    if(!list.some(x=>String(x.id)===String(p.id))) allProducts.push(p);
+    currentDetailProduct = p;
+    detailState = { size:null, color:null, qty:1 };
+    renderProductDetail(p);
+    document.getElementById('checkout-modal').classList.add('open');
+    document.body.style.overflow='hidden';
+  } finally {
+    window.__sharedOpening = false;
+  }
 }
-// Products Load ပြီးရင် ဖွင့်ပေးမည် — Load နှေးရင်/တခြား Error ကြောင့် Hook မရောက်ရင်လည်း Retry လုပ်ပေးထားသည်
+// Products Load ပြီးရင် ဖွင့်ပေးမည် — Hook မရောက်ရင်လည်း Retry လုပ်ပေးထားသည် (၃၀ စက္ကန့်အထိ)
 if(window.__sharedProductParam){
   let tries = 0;
   const t = setInterval(()=>{
     tries++;
-    if(!window.__sharedProductParam || openSharedProductIfAny() || tries > 40) clearInterval(t);
+    if(!window.__sharedProductParam || tries > 60){ clearInterval(t); return; }
+    openSharedProductIfAny();
   }, 500);
 }
 
