@@ -298,9 +298,15 @@
   }
   .modal-box h3{font-family:'Anton',sans-serif; font-size:24px; margin-bottom:4px;}
   .modal-close{
-    position:absolute; top:10px; right:10px; background:none; border:none; font-size:36px; line-height:1; cursor:pointer; color:var(--ink); font-family:'Space Mono',monospace;
-    width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+    /* Scroll ဆင်းလည်း အမြဲမြင်ရအောင် Sticky + ထင်ရှားတဲ့ အနီရောင် စက်ဝိုင်း */
+    position:sticky; top:10px; z-index:50;
+    display:flex; align-items:center; justify-content:center;
+    width:42px; height:42px; margin:-14px -10px -42px auto;
+    background:var(--rust); color:#fff; border:2.5px solid var(--ink); border-radius:50%;
+    font-size:26px; line-height:1; font-weight:700; cursor:pointer; font-family:'Space Mono',monospace;
+    box-shadow:0 3px 10px rgba(0,0,0,.35); padding:0;
   }
+  .modal-close:hover{ background:var(--ink); color:var(--acid); }
   .modal-section{margin-top:18px; padding-top:18px; border-top:2px solid #d9d3c4;}
   .modal-section:first-of-type{border-top:none; margin-top:14px; padding-top:0;}
   .modal-label{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); letter-spacing:.05em; margin-bottom:8px;}
@@ -625,6 +631,16 @@
 </div>
 
 <script>
+// ★ Share Link (?product=...) ကို Script အစမှာ ချက်ချင်း ဖတ်ထား — နောက်ပိုင်း Code တစ်ခုခု Error တက်လည်း မပျောက်စေရန်
+window.__sharedProductParam = (function(){
+  try{
+    const q = new URLSearchParams(location.search);
+    const v = q.get('p') || q.get('product');
+    if(v) return v.trim();
+    const h = location.hash.match(/(?:^#|&)(?:p|product)=([^&]+)/);
+    return h ? decodeURIComponent(h[1]).trim() : null;
+  }catch(e){ return null; }
+})();
 // ============ CONFIG — ဒီနေရာကို Supabase project ရဲ့ တန်ဖိုးများနဲ့ အစားထိုးပါ ============
 const SUPABASE_URL = "https://gfatvhxougswmzrjpqkp.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmYXR2aHhvdWdzd216cmpwcWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NzQ0NTEsImV4cCI6MjEwNTA1MDQ1MX0.SZDCjKzOyQBZCPXib1EyLEdj9NimYbhvA6PXk-9j42U";
@@ -3033,7 +3049,10 @@ function renderProductDetail(p){
     box.innerHTML = `
       <button class="modal-close" onclick="closeCheckout()">&times;</button>
       <img class="detail-main-img" id="detail-main-img" src="${images[0]}" alt="${p.name}" onclick="openSiteLightbox(this.src)">
-      <h3>${p.name}</h3>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+        <h3 style="margin:0;">${p.name}</h3>
+        <button type="button" class="share-btn" onclick="shareProduct('${p.name.replace(/'/g,"\\'")}')">🔗 Share</button>
+      </div>
       <div class="modal-label" style="margin-top:6px;">🎁 Gift Card</div>
       ${p.description ? `<p class="detail-desc">${p.description}</p>` : ''}
 
@@ -3276,7 +3295,9 @@ function onDetailSliderScroll(){
 
 // ---------- Product Share (Link ကူးယူ / Share Sheet) ----------
 function getProductShareUrl(name){
-  return `${location.origin}${location.pathname}?product=${encodeURIComponent(name)}`;
+  const p = (typeof allProducts!=='undefined' ? allProducts : []).find(x=>x.name===name);
+  const key = p && p.id ? p.id : name;
+  return `${location.origin}/?p=${encodeURIComponent(key)}`;
 }
 async function shareProduct(name){
   const url = getProductShareUrl(name);
@@ -3293,15 +3314,32 @@ async function shareProduct(name){
   }
 }
 
-// Share Link (?product=...) နဲ့ ဝင်လာရင် အဲ့ Product Detail ကို အလိုအလျောက် ဖွင့်ပေး
-let pendingSharedProduct = new URLSearchParams(location.search).get('product');
+// Share Link (?p=ID / ?product=Name) နဲ့ ဝင်လာရင် အဲ့ Product Detail ကို အလိုအလျောက် ဖွင့်ပေး
 function openSharedProductIfAny(){
-  if(!pendingSharedProduct) return;
-  const exists = (typeof allProducts!=='undefined' ? allProducts : []).some(p=>p.name===pendingSharedProduct);
-  if(!exists) return;
-  const name = pendingSharedProduct;
-  pendingSharedProduct = null;
-  openProductDetailByName(name);
+  const want = window.__sharedProductParam;
+  if(!want) return false;
+  const list = (typeof allProducts!=='undefined' && Array.isArray(allProducts)) ? allProducts : [];
+  if(!list.length) return false;
+  const norm = s => String(s||'').trim().toLowerCase();
+  const p = list.find(x => String(x.id)===want) || list.find(x => norm(x.name)===norm(want));
+  if(!p){ window.__sharedProductParam = null; showSiteToast('ဒီ Product ကို မတွေ့တော့ပါ (ဖျက်ထား/ဖျောက်ထားနိုင်ပါသည်)'); return false; }
+  window.__sharedProductParam = null;
+  currentDetailProduct = p;
+  detailState = { size:null, color:null, qty:1 };
+  renderProductDetail(p);
+  document.getElementById('checkout-modal').classList.add('open');
+  document.body.style.overflow='hidden';
+  // URL ထဲက ?p= ကို ဖယ်ထား (Refresh လုပ်ရင် ထပ်မပွင့်စေရန်)
+  try{ history.replaceState(null, '', location.pathname); }catch(e){}
+  return true;
+}
+// Products Load ပြီးရင် ဖွင့်ပေးမည် — Load နှေးရင်/တခြား Error ကြောင့် Hook မရောက်ရင်လည်း Retry လုပ်ပေးထားသည်
+if(window.__sharedProductParam){
+  let tries = 0;
+  const t = setInterval(()=>{
+    tries++;
+    if(!window.__sharedProductParam || openSharedProductIfAny() || tries > 40) clearInterval(t);
+  }, 500);
 }
 
 function setDetailOption(type, value){
