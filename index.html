@@ -1341,6 +1341,15 @@ function closeCheckout(){
   document.body.style.overflow='';
 }
 
+// Database လုံခြုံရေး စစ်ဆေးမှုကနေ ပြန်လာတဲ့ Error ကို Customer နားလည်အောင် ပြောင်း
+function friendlyOrderError(msg){
+  msg = String(msg||'');
+  if(msg.includes('PRICE_MISMATCH')) return 'ပစ္စည်းဈေးနှုန်း ပြောင်းသွားပါသည် — Page ကို Refresh လုပ်ပြီး ပြန်မှာပေးပါ';
+  if(msg.includes('PAYMENT_NOT_VERIFIED') || msg.includes('PAYMENT_ALREADY_REFUNDED')) return 'ငွေပေးချေမှု အတည်မပြုနိုင်ပါ — ထပ်ကြိုးစားပါ';
+  if(msg.includes('row-level security')) return 'Order တင်ခွင့် မရှိပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ';
+  return 'Error: ' + msg;
+}
+
 // 🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု (Add-on) — ဈေးနှုန်းကို Admin App → Settings မှာ ပြောင်းလို့ရသည်
 const GIFT_ADDON_NAME = '🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု';
 const GIFT_ADDON_DEFAULT_PRICE = 4500;
@@ -1613,8 +1622,8 @@ async function payWithWallet(){
   const { error: orderErr } = await sb.from('orders').insert(rows);
   if(orderErr){
     for(const r of reservedItems){ await safeRestoreStockGlobal(r); }
-    await sb.rpc('credit_wallet', { p_user_id: currentUser.id, p_amount: currentOrder.total });
-    showSiteToast('Order Error: ' + orderErr.message);
+    await sb.rpc('refund_failed_purchase', { p_reference: groupId });
+    showSiteToast(friendlyOrderError(orderErr.message) + ' (Prepaid Card ငွေ ပြန်အမ်းပြီးပါပြီ)');
     btn.disabled = false; btn.textContent = 'Wallet ဖြင့် ချက်ချင်း ဝယ်မည်';
     return;
   }
@@ -1790,7 +1799,7 @@ async function submitOrder(){
       console.error('Email function call failed:', err);
     });
   }catch(e){
-    err.textContent = 'Error: ' + e.message;
+    err.textContent = friendlyOrderError(e.message);
     btn.disabled = false;
     btn.textContent = 'Order တင်မည်';
   }
@@ -2284,7 +2293,8 @@ async function renderProfileView(){
   const box = document.getElementById('checkout-modal-content');
   const meta = currentUser.user_metadata || {};
 
-  const { count } = await sb.from('orders').select('id', { count:'exact', head:true }).eq('user_id', currentUser.id);
+  const { data: myOrderRows } = await sb.from('orders').select('id, order_group_id, hidden_by_customer').eq('user_id', currentUser.id);
+  const count = new Set((myOrderRows||[]).filter(o=>!o.hidden_by_customer).map(o=>o.order_group_id||o.id)).size;
 
   const { data: walletData } = await sb.from('wallets').select('*').eq('user_id', currentUser.id).maybeSingle();
   const balance = walletData?.balance || 0;
@@ -2351,7 +2361,8 @@ async function openOrderHistory(){
     renderOrderHistoryList();
   });
 
-  const { data, error } = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
+  const { data: allMine, error } = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
+  const data = (allMine||[]).filter(o=>!o.hidden_by_customer); // Customer ဖျောက်ထားတာများ မပြ (Admin ဘက်မှာတော့ မှတ်တမ်း ဆက်ရှိသည်)
   if(error){ document.getElementById('order-history-list').innerHTML = '<p class="hint">Order History ကြည့်၍မရပါ</p>'; return; }
 
   const groupsMap = {};
@@ -2428,7 +2439,7 @@ async function deleteOrderHistoryItem(idx){
   if(!confirm('ဒီ Order History ကို ဖျက်မှာ သေချာပါသလား? (ပြန်ယူလို့ မရပါ)')) return;
   const rows = orderGroupsForReceipt[idx];
   const ids = rows.map(r=>r.id);
-  const { error } = await sb.from('orders').delete().in('id', ids);
+  const { error } = await sb.rpc('hide_my_orders', { p_ids: ids.map(String) });
   if(error){ showSiteToast('ဖျက်၍ မရပါ — '+error.message); return; }
   showSiteToast('Order History ဖျက်ပြီးပါပြီ');
   openOrderHistory();
@@ -2436,7 +2447,7 @@ async function deleteOrderHistoryItem(idx){
 
 async function deleteAllOrderHistory(){
   if(!confirm('Order History အားလုံးကို ဖျက်မှာ သေချာပါသလား? (ပြန်ယူလို့ မရပါ)')) return;
-  const { error } = await sb.from('orders').delete().eq('user_id', currentUser.id);
+  const { error } = await sb.rpc('hide_my_orders', { p_ids: null });
   if(error){ showSiteToast('ဖျက်၍ မရပါ — '+error.message); return; }
   showSiteToast('Order History အားလုံး ဖျက်ပြီးပါပြီ');
   openOrderHistory();
@@ -2512,7 +2523,7 @@ async function submitWalletTopup(){
     showSiteToast('✅ Top-up တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Wallet ထဲ ဝင်ပါမည်');
     renderProfileView();
   }catch(e){
-    err.textContent = 'Error: ' + e.message;
+    err.textContent = friendlyOrderError(e.message);
     btn.disabled = false; btn.textContent = 'တင်သွင်းမည်';
   }
 }
@@ -2746,7 +2757,7 @@ async function submitGiftCardPurchase(){
     showSiteToast('✅ Gift Card ဝယ်ယူမှု တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Code ရပါမည်');
     renderProfileView();
   }catch(e){
-    err.textContent = 'Error: ' + e.message;
+    err.textContent = friendlyOrderError(e.message);
     btn.disabled = false; btn.textContent = 'ဝယ်ယူမည်';
   }
 }
@@ -3349,7 +3360,7 @@ async function _legacyDetailPayWithPrepaidCard(){
   const { error: orderErr } = await sb.from('orders').insert([row]);
   if(orderErr){
     await safeRestoreStockGlobal({ name:p.name, quantity:detailState.qty, size:detailState.size, color:detailState.color });
-    await sb.rpc('credit_wallet', { p_user_id: currentUser.id, p_amount: totalPrice });
+    await sb.rpc('refund_failed_purchase', { p_reference: groupId });
     showSiteToast('Error: ' + orderErr.message);
     btn.disabled = false; btn.textContent = '🎫 Prepaid Card ဖြင့် ဝယ်မည်';
     return;

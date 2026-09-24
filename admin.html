@@ -727,6 +727,15 @@
 
   <!-- SETTINGS -->
   <div class="panel" id="settings-panel">
+    <div class="form-card" id="backup-card" style="border-color:var(--acid);">
+      <h3>💾 Data Backup (Owner ချည်းသာ)</h3>
+      <div class="hint">Order၊ Customer၊ Product၊ Prepaid Card/Wallet၊ Gift Card၊ Chat၊ Activity Log စတဲ့ Data အားလုံးကို ကိုယ့်စက်ထဲ Download ယူထားနိုင်ပါသည်။ <b>လတိုင်း အနည်းဆုံး တစ်ကြိမ်</b> ထုတ်ပြီး Google Drive စသည့် လုံခြုံတဲ့နေရာမှာ သိမ်းထားပါ။</div>
+      <div class="hint" id="backup-last" style="color:var(--acid);"></div>
+      <button type="button" class="acid" id="backup-excel-btn" style="width:100%; margin-top:8px;">📥 Excel Backup (.xlsx) ထုတ်မည် — ဖတ်ရလွယ်</button>
+      <button type="button" class="secondary" id="backup-json-btn" style="width:100%; margin-top:8px;">📦 Full Backup (.json) ထုတ်မည် — ပြန် Restore လုပ်ရန်</button>
+      <div class="hint" id="backup-progress" style="margin-top:8px;"></div>
+    </div>
+
     <div class="form-card">
       <h3>📢 Header ရဲ့ Ticker (သွားနေတဲ့) စာသား</h3>
       <div class="hint">Website ရဲ့ အပေါ်ဆုံးမှာ ခဏခဏ ရွေ့သွားနေတဲ့ Text များ — Comma (,) ခြားပြီး ရေးပါ (ဥပမာ "ORDER NOW, DELIVERY AVAILABLE, STREET WEAR")</div>
@@ -2133,6 +2142,9 @@ async function loadSettingsForm(){
   document.getElementById('settings-instructions').value = data.payment_instructions || '';
   document.getElementById('settings-admin-email').value = data.admin_email || '';
   document.getElementById('settings-ticker').value = data.ticker_text || '';
+  const backupCard = document.getElementById('backup-card');
+  if(backupCard) backupCard.style.display = currentAdminRole === 'owner' ? '' : 'none';
+  renderLastBackupInfo();
   document.getElementById('settings-gift-price').value = (data.gift_wrap_price ?? 4500);
   let zones = data.delivery_zones;
   if(typeof zones === 'string'){ try{ zones = JSON.parse(zones); }catch(e){ zones = null; } }
@@ -2144,6 +2156,113 @@ async function loadSettingsForm(){
     img.style.display='block';
   }
 }
+
+// ---------- DATA BACKUP (Owner ချည်းသာ) ----------
+const BACKUP_TABLES = ['orders','products','categories','subcategories','wallets','wallet_transactions','wallet_topups','gift_cards','chat_messages','activity_logs','admins','settings','banners','posts','hidden_customers'];
+const BACKUP_LABELS = { orders:'Orders', products:'Products', categories:'Categories', subcategories:'Subcategories', wallets:'Prepaid Cards', wallet_transactions:'Wallet Transactions', wallet_topups:'Wallet Topups', gift_cards:'Gift Cards', chat_messages:'Chat Messages', activity_logs:'Activity Logs', admins:'Staff', settings:'Settings', banners:'Banners', posts:'Posts', hidden_customers:'Hidden Customers' };
+
+function setBackupProgress(t){ const el=document.getElementById('backup-progress'); if(el) el.textContent = t; }
+async function fetchAllRows(table){
+  const size = 1000, all = [];
+  const first = sb.from(table).select('*');
+  if(typeof first.range !== 'function'){ const { data, error } = await first; if(error) throw new Error(error.message); return data||[]; }
+  for(let from=0; ; from+=size){
+    const { data, error } = await sb.from(table).select('*').range(from, from+size-1);
+    if(error) throw new Error(error.message);
+    all.push(...(data||[]));
+    if(!data || data.length < size) break;
+  }
+  return all;
+}
+async function collectBackup(){
+  const out = { _meta: { app:'SUWATI MEN FASHION', exported_at: new Date().toISOString(), exported_by: currentAdminEmail, tables: BACKUP_TABLES } };
+  for(const t of BACKUP_TABLES){
+    setBackupProgress(`⏳ ${BACKUP_LABELS[t]||t} ကို ယူနေသည်...`);
+    try{ out[t] = await fetchAllRows(t); }catch(e){ out[t] = []; out._meta.errors = (out._meta.errors||[]).concat(`${t}: ${e.message}`); }
+  }
+  return out;
+}
+function backupFileStamp(){ const d=new Date(); const z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}_${z(d.getHours())}${z(d.getMinutes())}`; }
+function downloadBlob(blob, filename){
+  const url = URL.createObjectURL(blob); const a = document.createElement('a');
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+function loadScriptOnce(src){
+  return new Promise((res, rej)=>{
+    if(window.XLSX) return res();
+    const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = ()=>rej(new Error('Excel Library Load မရပါ'));
+    document.head.appendChild(s);
+  });
+}
+function backupCellValue(v, key){
+  if(key === 'card_pin' && v) return '****'; // Excel ထဲ PIN မပေါ်စေရန် (JSON Backup မှာတော့ အပြည့်ပါ)
+  if(v === null || v === undefined) return '';
+  if(typeof v === 'object') v = JSON.stringify(v);
+  if(typeof v === 'string' && v.length > 32000) v = v.slice(0, 32000) + '…';
+  return v;
+}
+function markBackupDone(kind, counts){
+  try{ localStorage.setItem('suwati_last_backup', new Date().toISOString()); }catch(e){}
+  logActivity('data_backup', `${kind} — ${counts}`);
+  renderLastBackupInfo();
+}
+function renderLastBackupInfo(){
+  const el = document.getElementById('backup-last'); if(!el) return;
+  let last = null; try{ last = localStorage.getItem('suwati_last_backup'); }catch(e){}
+  if(!last){ el.innerHTML = '⚠️ ဒီစက်ကနေ Backup တစ်ခါမှ မထုတ်ရသေးပါ'; el.style.color = '#ff8a5c'; return; }
+  const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
+  el.innerHTML = `နောက်ဆုံး Backup: ${new Date(last).toLocaleString()} (${days} ရက် အကြာ)${days>=30?' — ⚠️ Backup အသစ် ထုတ်သင့်ပါပြီ':''}`;
+  el.style.color = days>=30 ? '#ff8a5c' : 'var(--acid)';
+}
+async function runBackup(kind){
+  if(currentAdminRole !== 'owner'){ showToast('Owner ချည်းသာ Backup ထုတ်ခွင့်ရှိပါသည်'); return; }
+  const btns = [document.getElementById('backup-excel-btn'), document.getElementById('backup-json-btn')];
+  btns.forEach(b=>b.disabled=true);
+  try{
+    const data = await collectBackup();
+    const counts = BACKUP_TABLES.map(t=>`${BACKUP_LABELS[t]}:${(data[t]||[]).length}`).join(', ');
+    if(kind === 'json'){
+      downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type:'application/json' }), `SUWATI-backup-${backupFileStamp()}.json`);
+    } else {
+      setBackupProgress('⏳ Excel File ပြုလုပ်နေသည်...');
+      try{
+        await loadScriptOnce('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+        const wb = XLSX.utils.book_new();
+        const summary = [['SUWATI MEN FASHION — Data Backup'], ['ထုတ်ယူချိန်', new Date().toLocaleString()], ['ထုတ်ယူသူ', currentAdminEmail||''], [], ['Table','Rows']]
+          .concat(BACKUP_TABLES.map(t=>[BACKUP_LABELS[t]||t, (data[t]||[]).length]));
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), 'Summary');
+        BACKUP_TABLES.forEach(t=>{
+          const rows = (data[t]||[]).map(r=>{ const o={}; Object.keys(r).forEach(k=>{ o[k]=backupCellValue(r[k], k); }); return o; });
+          const ws = rows.length ? XLSX.utils.json_to_sheet(rows) : XLSX.utils.aoa_to_sheet([['(Data မရှိပါ)']]);
+          XLSX.utils.book_append_sheet(wb, ws, (BACKUP_LABELS[t]||t).slice(0,31));
+        });
+        const out = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+        downloadBlob(new Blob([out], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), `SUWATI-backup-${backupFileStamp()}.xlsx`);
+      }catch(e){
+        // Excel Library မရရင် Table တစ်ခုချင်း CSV အဖြစ် ထုတ်ပေး
+        setBackupProgress('Excel မရလို့ CSV File များအဖြစ် ထုတ်ပေးနေသည်...');
+        for(const t of BACKUP_TABLES){
+          const rows = data[t]||[]; if(!rows.length) continue;
+          const keys = Array.from(new Set(rows.flatMap(r=>Object.keys(r))));
+          const csv = [keys.join(',')].concat(rows.map(r=>keys.map(k=>`"${String(backupCellValue(r[k],k)).replace(/"/g,'""')}"`).join(','))).join('\r\n');
+          downloadBlob(new Blob(['\uFEFF'+csv], { type:'text/csv;charset=utf-8;' }), `SUWATI-${t}-${backupFileStamp()}.csv`);
+          await new Promise(r=>setTimeout(r, 300));
+        }
+      }
+    }
+    markBackupDone(kind==='json'?'JSON':'Excel', counts);
+    const errs = (data._meta.errors||[]);
+    setBackupProgress(errs.length ? `⚠️ Backup ပြီးပါပြီ၊ သို့သော် ယူမရတဲ့ Table: ${errs.join(' | ')}` : `✅ Backup ပြီးပါပြီ — ${counts}`);
+    showToast('✅ Data Backup Download ပြီးပါပြီ');
+  }catch(e){
+    setBackupProgress('❌ Backup Error: ' + e.message);
+  }finally{
+    btns.forEach(b=>b.disabled=false);
+  }
+}
+document.getElementById('backup-excel-btn').addEventListener('click', ()=>runBackup('excel'));
+document.getElementById('backup-json-btn').addEventListener('click', ()=>runBackup('json'));
 
 // ---------- DELIVERY ZONES EDITOR ----------
 const DEFAULT_DELIVERY_ZONES_ADMIN = [
