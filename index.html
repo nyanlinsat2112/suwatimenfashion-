@@ -363,12 +363,15 @@
   .share-btn:hover{background:var(--ink); color:var(--concrete);}
   .detail-thumbs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
   .pin-badge{position:absolute; bottom:10px; left:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
+  .qty-control input#detail-qty{width:72px; text-align:center; font-family:'Space Mono',monospace; font-size:16px; font-weight:700; padding:8px 4px; border:2.5px solid var(--ink); background:#fff; -moz-appearance:textfield;}
+  .qty-control input#detail-qty::-webkit-outer-spin-button, .qty-control input#detail-qty::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
   .promo-box{border:2.5px solid var(--ink); padding:12px; margin:12px 0 4px; background:#fff;}
   .promo-apply{background:var(--ink); color:var(--acid); border:2.5px solid var(--ink); font-family:'Space Mono',monospace; font-weight:700; padding:0 16px; cursor:pointer;}
   .promo-applied{font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .promo-remove{background:transparent; border:1.5px solid var(--rust); color:var(--rust); font-size:11px; padding:3px 8px; cursor:pointer; margin-left:auto;}
   .promo-msg{font-size:12px; color:var(--rust); margin-top:6px; min-height:0;}
-  .cashback-banner{background:var(--acid); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); padding:12px 14px; margin:0 0 18px; font-size:13.5px; line-height:1.5;}
+  .cashback-banner{position:sticky; z-index:45; background:var(--acid); color:var(--ink); border-bottom:3px solid var(--ink); padding:9px 16px; font-size:13px; line-height:1.5; text-align:center;}
+  .cashback-banner b{font-family:'Anton',sans-serif; letter-spacing:.03em; font-weight:400; font-size:14px;}
   .cashback-est{border:2px dashed var(--ink); background:rgba(214,255,63,.35); padding:8px 10px; margin-top:10px; font-size:12.5px;}
   .gift-addon-box{border:2.5px dashed var(--rust); background:rgba(193,59,31,.06); padding:12px; margin:12px 0 4px;}
   .gift-addon-box label.gift-toggle{display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-weight:700;}
@@ -1143,7 +1146,7 @@ function renderCartDrawer(){
           <span>${(item.price*item.quantity).toLocaleString()} ကျပ်</span>
         </div>`).join('')}
       <div class="order-summary-line total"><span>စုစုပေါင်း</span><span>${total.toLocaleString()} ကျပ်</span></div>
-      <button type="button" class="submit-order-btn" onclick="openCheckout(cart)">Checkout ဆက်သွားမည် →</button>
+      <button type="button" class="submit-order-btn" onclick="openCheckout(cart, 'cart')">Checkout ဆက်သွားမည် →</button>
     </div>`;
 }
 
@@ -1511,19 +1514,33 @@ async function renderCashbackBanner(){
     const list = await getRunningCashbackCampaigns();
     let el = document.getElementById('cashback-banner');
     if(!list.length){ if(el) el.remove(); return; }
-    const grid = document.getElementById('products-grid'); if(!grid) return;
-    if(!el){ el = document.createElement('div'); el.id = 'cashback-banner'; grid.parentElement.insertBefore(el, grid.parentElement.firstChild); }
+    const header = document.querySelector('header.site');
+    if(!el){
+      el = document.createElement('div'); el.id = 'cashback-banner';
+      if(header) header.insertAdjacentElement('afterend', el);
+      else { const grid = document.getElementById('products-grid'); if(!grid) return; grid.parentElement.insertBefore(el, grid.parentElement.firstChild); }
+    }
     el.className = 'cashback-banner';
+    const setTop = ()=>{ el.style.top = (header ? header.offsetHeight : 0) + 'px'; };
+    setTop(); if(!window.__cbTopBound){ window.__cbTopBound = true; window.addEventListener('resize', ()=>{ const b=document.getElementById('cashback-banner'); if(b) b.style.top=((document.querySelector('header.site')||{}).offsetHeight||0)+'px'; }); }
     el.innerHTML = list.map(c=>`🎉 <b>${c.name}</b> — ${describeCashbackTiers(c)} Cashback${c.ends_at?` <span style="opacity:.8;">(${new Date(c.ends_at).toLocaleDateString()} ထိ)</span>`:''}<br><span style="font-size:11px;">Login ဝင်ပြီး ဝယ်ရင် ပစ္စည်းရောက်ပြီးနောက် Prepaid Card ထဲ အလိုအလျောက် ဝင်ပါမည်</span>`).join('<hr style="border:none;border-top:1px dashed rgba(20,20,18,.3);margin:6px 0;">');
   }catch(e){ console.error('cashback banner', e); }
+}
+
+// Checkout ကနေ ဝင်လာခဲ့တဲ့ နေရာ (Product Detail / ခြင်း) ကို ပြန်သွား
+function checkoutGoBack(){
+  const src = currentOrder && currentOrder.source;
+  if(src === 'detail' && currentDetailProduct){ renderProductDetail(currentDetailProduct); document.getElementById('checkout-modal-content').scrollTop = 0; document.getElementById('checkout-modal').scrollTop = 0; }
+  else if(src === 'cart'){ openCart(); }
+  else { closeCheckout(); }
 }
 
 function toggleGiftAddon(cb){
   document.getElementById('co-gift-msg-wrap').style.display = cb.checked ? 'block' : 'none';
 }
 
-function openCheckout(items){
-  currentOrder = { items: items.map(i=>({...i})), giftWrap: null };
+function openCheckout(items, source){
+  currentOrder = { items: items.map(i=>({...i})), giftWrap: null, source: source || 'close' };
   renderCheckoutStep1();
   document.getElementById('checkout-modal').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1548,6 +1565,7 @@ function renderCheckoutStep1(){
       <div id="co-promo-area"></div>
       <div class="form-error" id="co-error-1"></div>
       <button type="button" class="submit-order-btn" onclick="goToStep2()">ဆက်သွားမည် →</button>
+      <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:8px;" onclick="checkoutGoBack()">← ပြန်သွားမည်</button>
     </div>`;
   renderDeliveryZoneOption();
   renderGiftAddonOption();
@@ -3363,7 +3381,7 @@ function renderProductDetail(p){
 
     <div class="qty-control">
       <button type="button" onclick="setDetailQty(-1)">-</button>
-      <span id="detail-qty">${detailState.qty}</span>
+      <input type="number" id="detail-qty" min="1" step="1" inputmode="numeric" value="${detailState.qty}" onchange="setDetailQtyValue(this.value)" onfocus="this.select()" aria-label="အရေအတွက်">
       <button type="button" onclick="setDetailQty(1)">+</button>
     </div>
 
@@ -3693,8 +3711,20 @@ function updateDetailStockLabel(){
 }
 
 function setDetailQty(delta){
-  detailState.qty = Math.max(1, detailState.qty + delta);
-  document.getElementById('detail-qty').textContent = detailState.qty;
+  setDetailQtyValue((parseInt(document.getElementById('detail-qty')?.value) || detailState.qty) + delta);
+}
+// အရေအတွက်ကို တိုက်ရိုက် ရိုက်ထည့်လို့ရ (ဥပမာ 10) — လက်ကျန် Stock ထက် မကျော်အောင် ညှိပေး
+function setDetailQtyValue(v){
+  let n = parseInt(v);
+  if(!n || n < 1) n = 1;
+  const stock = currentDetailProduct ? getCurrentVariantStock(currentDetailProduct) : null;
+  if(stock !== null && stock !== undefined && stock > 0 && n > stock){
+    n = stock;
+    showSiteToast(`လက်ကျန် ${stock} ခုသာ ရှိပါသည်`);
+  }
+  detailState.qty = n;
+  const el = document.getElementById('detail-qty');
+  if(el) el.value = n;
   if(currentDetailProduct) renderDetailPrepaidButton(currentDetailProduct);
 }
 
@@ -3712,6 +3742,7 @@ function getCurrentVariantStock(p){
 
 function detailAddToCart(){
   const p = currentDetailProduct;
+  const qEl = document.getElementById('detail-qty'); if(qEl) setDetailQtyValue(qEl.value);
   const stock = getCurrentVariantStock(p);
   if(stock !== null && stock <= 0){ alert('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
   addToCart({
@@ -3728,13 +3759,14 @@ function detailAddToCart(){
 
 function detailOrderNow(){
   const p = currentDetailProduct;
+  const qEl = document.getElementById('detail-qty'); if(qEl) setDetailQtyValue(qEl.value);
   const stock = getCurrentVariantStock(p);
   if(stock !== null && stock <= 0){ alert('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
   openCheckout([{
     name: p.name, price: Number(p.price),
     size: detailState.size, color: detailState.color,
     image_url: p.image_url, quantity: detailState.qty,
-  }]);
+  }], 'detail');
 }
 </script>
 </body>
