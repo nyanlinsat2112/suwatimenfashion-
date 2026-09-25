@@ -363,6 +363,13 @@
   .share-btn:hover{background:var(--ink); color:var(--concrete);}
   .detail-thumbs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
   .pin-badge{position:absolute; bottom:10px; left:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
+  .promo-box{border:2.5px solid var(--ink); padding:12px; margin:12px 0 4px; background:#fff;}
+  .promo-apply{background:var(--ink); color:var(--acid); border:2.5px solid var(--ink); font-family:'Space Mono',monospace; font-weight:700; padding:0 16px; cursor:pointer;}
+  .promo-applied{font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .promo-remove{background:transparent; border:1.5px solid var(--rust); color:var(--rust); font-size:11px; padding:3px 8px; cursor:pointer; margin-left:auto;}
+  .promo-msg{font-size:12px; color:var(--rust); margin-top:6px; min-height:0;}
+  .cashback-banner{background:var(--acid); color:var(--ink); border:3px solid var(--ink); box-shadow:4px 4px 0 var(--ink); padding:12px 14px; margin:0 0 18px; font-size:13.5px; line-height:1.5;}
+  .cashback-est{border:2px dashed var(--ink); background:rgba(214,255,63,.35); padding:8px 10px; margin-top:10px; font-size:12.5px;}
   .gift-addon-box{border:2.5px dashed var(--rust); background:rgba(193,59,31,.06); padding:12px; margin:12px 0 4px;}
   .gift-addon-box label.gift-toggle{display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-weight:700;}
   .gift-addon-box input[type="checkbox"]{width:20px; height:20px; flex-shrink:0; margin-top:2px; accent-color:var(--rust);}
@@ -728,6 +735,7 @@ async function loadProducts(){
   renderProductGrid();
   renderFeaturedProducts();
   openSharedProductIfAny();
+  renderCashbackBanner();
 }
 
 function renderFeaturedProducts(){
@@ -1344,6 +1352,8 @@ function closeCheckout(){
 // Database လုံခြုံရေး စစ်ဆေးမှုကနေ ပြန်လာတဲ့ Error ကို Customer နားလည်အောင် ပြောင်း
 function friendlyOrderError(msg){
   msg = String(msg||'');
+  if(msg.includes('PROMO_INVALID')) return '🎟️ Promo Code သုံးလို့ မရတော့ပါ — ' + (msg.split('PROMO_INVALID:')[1]||'').trim() + ' (နောက်ပြန်သွားပြီး Promo ကို ဖြုတ်/ပြန်စစ်ပါ)';
+  if(msg.includes('OUT_OF_STOCK')) return 'တောင်းပန်ပါတယ် — Stock ကုန်သွားပါပြီ (' + msg.split('OUT_OF_STOCK:')[1].trim() + ') — Page ကို Refresh လုပ်ပြီး ပြန်ရွေးပေးပါ';
   if(msg.includes('PRICE_MISMATCH')) return 'ပစ္စည်းဈေးနှုန်း ပြောင်းသွားပါသည် — Page ကို Refresh လုပ်ပြီး ပြန်မှာပေးပါ';
   if(msg.includes('PAYMENT_NOT_VERIFIED') || msg.includes('PAYMENT_ALREADY_REFUNDED')) return 'ငွေပေးချေမှု အတည်မပြုနိုင်ပါ — ထပ်ကြိုးစားပါ';
   if(msg.includes('row-level security')) return 'Order တင်ခွင့် မရှိပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ';
@@ -1415,6 +1425,99 @@ function applyDeliveryInfo(rows){
   rows.forEach(r=>{ r.delivery_zone = currentOrder.delivery.zone; r.delivery_fee_range = currentOrder.delivery.range; });
 }
 
+// 🎟️ Promo Code + 🎉 Cashback — Discount/Cashback ကို Database က နောက်ဆုံး စစ်ပြီး တွက်သည် (Browser တွက်တာက ပြသရန်သာ)
+const PROMO_ROW_NAME = '🏷️ Promo Code';
+function itemsSubtotal(){ return currentOrder.items.reduce((s,i)=>s+i.price*i.quantity,0); }
+async function fillCashbackEstimate(){
+  const el = document.getElementById('co-cashback-line'); if(!el) return;
+  const list = await getRunningCashbackCampaigns();
+  if(!list.length){ el.innerHTML=''; return; }
+  const base = itemsSubtotal() - (currentOrder.promo ? currentOrder.promo.discount : 0);
+  const cb = estimateCashback(list, base);
+  if(cb > 0){
+    el.innerHTML = currentUser
+      ? `<div class="cashback-est">🎉 ဒီ Order အတွက် <b>Cashback ${cb.toLocaleString()} ကျပ်</b> ရပါမည် — ပစ္စည်းရောက်ပြီးနောက် Prepaid Card ထဲ အလိုအလျောက် ဝင်ပါမည်</div>`
+      : `<div class="cashback-est">🎉 Login ဝင်ပြီး ဝယ်ရင် <b>Cashback ${cb.toLocaleString()} ကျပ်</b> ရနိုင်ပါသည် (Guest Order တွေမှာ Cashback မပါပါ)</div>`;
+  } else {
+    const tiers = list.flatMap(c=>Array.isArray(c.tiers)?c.tiers:[]).map(t=>Number(t.min)).filter(m=>m>base).sort((a,b)=>a-b);
+    el.innerHTML = tiers.length ? `<div class="cashback-est">💡 နောက်ထပ် <b>${(tiers[0]-base).toLocaleString()} ကျပ်</b> ဖိုး ထပ်ဝယ်ရင် Cashback ရပါမည်</div>` : '';
+  }
+}
+function renderPromoOption(){
+  const area = document.getElementById('co-promo-area'); if(!area) return;
+  const pr = currentOrder.promo;
+  area.innerHTML = `
+    <div class="promo-box">
+      <div class="modal-label" style="margin:0 0 6px;">🎟️ Promo Code ရှိပါသလား?</div>
+      ${pr ? `
+        <div class="promo-applied">✅ <b>${pr.code}</b> — ${pr.discount.toLocaleString()} ကျပ် လျှော့ပေးပါမည် (${pr.label})
+          <button type="button" class="promo-remove" onclick="removePromo()">ဖြုတ်မည်</button></div>` : `
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="co-promo-input" placeholder="ဥပမာ TIKTOK10" style="text-transform:uppercase; flex:1; min-width:0;">
+          <button type="button" class="promo-apply" id="co-promo-btn" onclick="applyPromo()">Apply</button>
+        </div>`}
+      <div class="promo-msg" id="co-promo-msg"></div>
+    </div>`;
+}
+async function applyPromo(){
+  const input = document.getElementById('co-promo-input'); const msg = document.getElementById('co-promo-msg'); const btn = document.getElementById('co-promo-btn');
+  const code = (input?.value||'').trim().toUpperCase();
+  if(!code){ msg.textContent = 'Promo Code ရိုက်ထည့်ပါ'; return; }
+  btn.disabled = true; btn.textContent = '...';
+  const phone = (document.getElementById('co-phone')?.value||'').trim();
+  const { data, error } = await sb.rpc('check_promo_code', { p_code: code, p_subtotal: itemsSubtotal(), p_phone: phone || null });
+  btn.disabled = false; btn.textContent = 'Apply';
+  if(error){ msg.textContent = 'စစ်ဆေးလို့ မရပါ — ' + error.message; return; }
+  if(!data || !data.ok){ msg.textContent = '❌ ' + ((data && data.message) || 'Promo Code မှားနေပါသည်'); return; }
+  currentOrder.promo = { code: data.code, discount: Number(data.discount)||0, label: data.label };
+  renderPromoOption();
+}
+function removePromo(){ currentOrder.promo = null; renderPromoOption(); }
+function buildPromoRow(base){
+  return { ...base,
+    id: (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2))),
+    product_name: PROMO_ROW_NAME, size: null, color: null, quantity: 1,
+    unit_price: -currentOrder.promo.discount, total_amount: -currentOrder.promo.discount,
+    promo_code: currentOrder.promo.code, gift_message: null,
+  };
+}
+let runningCashbackCache = null, runningCashbackAt = 0;
+async function getRunningCashbackCampaigns(){
+  if(runningCashbackCache && Date.now() - runningCashbackAt < 60000) return runningCashbackCache;
+  const { data } = await sb.from('cashback_campaigns').select('*');
+  const now = Date.now();
+  runningCashbackCache = (data||[]).filter(c=>c.active && new Date(c.starts_at).getTime() <= now && (!c.ends_at || new Date(c.ends_at).getTime() > now));
+  runningCashbackAt = Date.now();
+  return runningCashbackCache;
+}
+function estimateCashback(campaigns, base){
+  let best = 0;
+  (campaigns||[]).forEach(c=>{
+    const tiers = (Array.isArray(c.tiers)?c.tiers:[]).slice().sort((a,b)=>Number(b.min)-Number(a.min));
+    const t = tiers.find(t=> base >= Number(t.min||0));
+    let v = 0;
+    if(t) v = t.type==='fixed' ? Number(t.value) : Math.floor(base*Number(t.value)/100);
+    if(c.max_cashback) v = Math.min(v, Number(c.max_cashback));
+    best = Math.max(best, v);
+  });
+  return best;
+}
+function describeCashbackTiers(c){
+  return (Array.isArray(c.tiers)?c.tiers:[]).slice().sort((a,b)=>Number(a.min)-Number(b.min))
+    .map(t=>`${Number(t.min).toLocaleString()} ကျပ်+ → ${t.type==='fixed'? Number(t.value).toLocaleString()+' ကျပ်' : t.value+'%'}`).join(' · ');
+}
+async function renderCashbackBanner(){
+  try{
+    const list = await getRunningCashbackCampaigns();
+    let el = document.getElementById('cashback-banner');
+    if(!list.length){ if(el) el.remove(); return; }
+    const grid = document.getElementById('products-grid'); if(!grid) return;
+    if(!el){ el = document.createElement('div'); el.id = 'cashback-banner'; grid.parentElement.insertBefore(el, grid.parentElement.firstChild); }
+    el.className = 'cashback-banner';
+    el.innerHTML = list.map(c=>`🎉 <b>${c.name}</b> — ${describeCashbackTiers(c)} Cashback${c.ends_at?` <span style="opacity:.8;">(${new Date(c.ends_at).toLocaleDateString()} ထိ)</span>`:''}<br><span style="font-size:11px;">Login ဝင်ပြီး ဝယ်ရင် ပစ္စည်းရောက်ပြီးနောက် Prepaid Card ထဲ အလိုအလျောက် ဝင်ပါမည်</span>`).join('<hr style="border:none;border-top:1px dashed rgba(20,20,18,.3);margin:6px 0;">');
+  }catch(e){ console.error('cashback banner', e); }
+}
+
 function toggleGiftAddon(cb){
   document.getElementById('co-gift-msg-wrap').style.display = cb.checked ? 'block' : 'none';
 }
@@ -1442,11 +1545,13 @@ function renderCheckoutStep1(){
       <textarea id="co-address" placeholder="ပို့ဆောင်ရမည့် လိပ်စာအပြည့်အစုံ" rows="2">${currentOrder.address || currentUser?.user_metadata?.address || ''}</textarea>
       <div id="co-delivery-area"></div>
       <div id="co-gift-area"></div>
+      <div id="co-promo-area"></div>
       <div class="form-error" id="co-error-1"></div>
       <button type="button" class="submit-order-btn" onclick="goToStep2()">ဆက်သွားမည် →</button>
     </div>`;
   renderDeliveryZoneOption();
   renderGiftAddonOption();
+  renderPromoOption();
 }
 
 async function renderGiftAddonOption(){
@@ -1469,7 +1574,7 @@ async function renderGiftAddonOption(){
     </div>`;
 }
 
-function goToStep2(){
+async function goToStep2(){
   const name = document.getElementById('co-name').value.trim();
   const phone = document.getElementById('co-phone').value.trim();
   const email = document.getElementById('co-email').value.trim();
@@ -1492,8 +1597,10 @@ function goToStep2(){
     fee: Number(document.getElementById('co-gift-fee').value) || 0,
     message: (document.getElementById('co-gift-message').value || '').trim(),
   } : null;
-  currentOrder.total = currentOrder.items.reduce((s,i)=>s+i.price*i.quantity,0) + (currentOrder.giftWrap ? currentOrder.giftWrap.fee : 0);
-  renderCheckoutStep2();
+  if(currentOrder.promo && currentOrder.promo.discount > itemsSubtotal()) currentOrder.promo.discount = itemsSubtotal();
+  currentOrder.total = itemsSubtotal() + (currentOrder.giftWrap ? currentOrder.giftWrap.fee : 0) - (currentOrder.promo ? currentOrder.promo.discount : 0);
+  await renderCheckoutStep2();
+  fillCashbackEstimate();
 }
 
 async function renderCheckoutStep2(){
@@ -1519,7 +1626,9 @@ async function renderCheckoutStep2(){
         <div class="order-summary-line"><span>${i.name}${i.size?' ('+i.size+(i.color?', '+i.color:'')+')':''} x${i.quantity}</span><span>${(i.price*i.quantity).toLocaleString()} ကျပ်</span></div>
       `).join('')}
       ${currentOrder.giftWrap ? `<div class="order-summary-line"><span>${GIFT_ADDON_NAME}${currentOrder.giftWrap.message?'<br><span style="font-size:11px; color:var(--grey);">💌 '+currentOrder.giftWrap.message.replace(/</g,'&lt;')+'</span>':''}</span><span>${currentOrder.giftWrap.fee.toLocaleString()} ကျပ်</span></div>` : ''}
+      ${currentOrder.promo ? `<div class="order-summary-line" style="color:var(--rust);"><span>🎟️ Promo (${currentOrder.promo.code})</span><span>-${currentOrder.promo.discount.toLocaleString()} ကျပ်</span></div>` : ''}
       <div class="order-summary-line total"><span>စုစုပေါင်း</span><span>${currentOrder.total.toLocaleString()} ကျပ်</span></div>
+      <div id="co-cashback-line"></div>
       <div class="delivery-fee-note">🚚 ${currentOrder.delivery ? `<b>${currentOrder.delivery.zone}</b> — Delivery ခ <b>${currentOrder.delivery.range}</b> ကို ` : 'Delivery ခ ကို '}ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည် (အထက်ပါ စုစုပေါင်းထဲ မပါဝင်ပါ)</div>
     </div>
 
@@ -1617,7 +1726,7 @@ async function payWithWallet(){
     unit_price: i.price, total_amount: i.price * i.quantity,
     payment_method: 'Prepaid Card', order_status: 'confirmed', payment_status: 'confirmed', created_at: nowIso,
   }));
-  applyDeliveryInfo(rows); if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
+  applyDeliveryInfo(rows); if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0])); if(currentOrder.promo) rows.push(buildPromoRow(rows[0]));
 
   const { error: orderErr } = await sb.from('orders').insert(rows);
   if(orderErr){
@@ -1769,7 +1878,7 @@ async function submitOrder(){
       payment_status: 'pending',
       created_at: nowIso,
     }));
-    applyDeliveryInfo(rows); if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0]));
+    applyDeliveryInfo(rows); if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0])); if(currentOrder.promo) rows.push(buildPromoRow(rows[0]));
 
     // ★ .select() ကို မသုံးပါ — Insert ပြီးလို့ "ပြန်ဖတ်" ဖို့ ကြိုးစားရင် Guest အတွက် SELECT Policy မရှိလို့ RLS Error တက်တတ်ပါတယ်
     // ID/created_at ကို Client ဘက်ကနေ ကိုယ်တိုင် ထုတ်ပြီး Insert လိုက်တဲ့ Data ကိုပဲ တိုက်ရိုက် ပြသပါမည်
@@ -2296,7 +2405,7 @@ async function renderProfileView(){
   const { data: myOrderRows } = await sb.from('orders').select('id, order_group_id, hidden_by_customer').eq('user_id', currentUser.id);
   const count = new Set((myOrderRows||[]).filter(o=>!o.hidden_by_customer).map(o=>o.order_group_id||o.id)).size;
 
-  const { data: walletData } = await sb.from('wallets').select('*').eq('user_id', currentUser.id).maybeSingle();
+  const { data: walletData } = await sb.from('wallets').select('user_id, balance, card_number, updated_at').eq('user_id', currentUser.id).maybeSingle();
   const balance = walletData?.balance || 0;
 
   box.innerHTML = `
@@ -2575,8 +2684,8 @@ async function openWalletHistory(){
   window.walletTopupCache = topups || [];
 
   const statusLabels = { pending:'⏳ စစ်ဆေးဆဲ', approved:'✅ အတည်ပြုပြီး', rejected:'❌ ငြင်းပယ်ခံရ' };
-  const typeIcons = { topup:'➕', gift_card_redeem:'🎁', refund:'↩️', purchase:'🛍️', pos_purchase:'🏪' };
-  const typeLabels = { topup:'ငွေဖြည့်ခြင်း', gift_card_redeem:'Gift Card သုံးစွဲမှု', refund:'ငွေပြန်အမ်းခြင်း', purchase:'ဝယ်ယူမှု (Website)', pos_purchase:'ဝယ်ယူမှု (ဆိုင်ထဲ)' };
+  const typeIcons = { topup:'➕', gift_card_redeem:'🎁', refund:'↩️', purchase:'🛍️', pos_purchase:'🏪', cashback:'🎉', cashback_reversal:'↩️' };
+  const typeLabels = { topup:'ငွေဖြည့်ခြင်း', gift_card_redeem:'Gift Card သုံးစွဲမှု', refund:'ငွေပြန်အမ်းခြင်း', purchase:'ဝယ်ယူမှု (Website)', pos_purchase:'ဝယ်ယူမှု (ဆိုင်ထဲ)', cashback:'Cashback ရရှိမှု', cashback_reversal:'Cashback ပြန်နုတ်ခြင်း' };
 
   // Pending Top-up Request များ (Admin မစစ်ရသေးသည်များ) ကို အပေါ်ဆုံးမှာ ဆက်ပြ
   const pendingTopups = (topups||[]).filter(t=>t.status==='pending');

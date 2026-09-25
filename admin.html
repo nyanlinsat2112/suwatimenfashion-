@@ -245,6 +245,16 @@
 .category-drag-item{ cursor:grab; transition:opacity .15s ease, border-color .15s ease; }
 .category-drag-item.dragging{ opacity:.4; }
 .category-drag-item.drag-over{ border-color:var(--acid); border-width:2px; }
+input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing:border-box; font-size:13px;}
+.dt-label{display:flex; flex-direction:column; gap:4px; font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); min-width:0;}
+.quick-dur{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+.quick-dur button{padding:7px 12px; font-size:12px;}
+.promo-check{display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-family:'Space Mono',monospace; font-size:12px;}
+.promo-status{display:inline-block; font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; padding:2px 8px; border:1.5px solid; margin-left:6px; vertical-align:middle;}
+.promo-status.running{color:var(--acid); border-color:var(--acid);}
+.promo-status.scheduled{color:#4da3ff; border-color:#4da3ff;}
+.promo-status.paused{color:var(--grey); border-color:var(--grey);}
+.promo-status.expired, .promo-status.usedup{color:var(--rust); border-color:var(--rust);}
 .drag-handle{ font-size:20px; color:var(--grey); cursor:grab; user-select:none; touch-action:none; padding:8px; margin:-8px; }
 .msg-thread-item .mt-preview{font-size:12px; color:var(--grey); margin-top:3px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .msg-thread-item .mt-time{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey);}
@@ -345,6 +355,7 @@
       <button class="tab-btn" data-tab="salehistory-panel" id="salehistory-tab-btn">Sale History</button>
       <button class="tab-btn" data-tab="customers-panel">Customers</button>
       <button class="tab-btn" data-tab="activitylog-panel">Activity Log</button>
+      <button class="tab-btn" data-tab="promo-panel">🎟️ Promo & Cashback</button>
     </div>
   </div>
 
@@ -561,6 +572,66 @@
       <button type="button" class="secondary" id="activitylog-csv-btn" style="margin-top:8px; width:100%;">📥 ဒီရက်စာ Activity Log ကို CSV ထုတ်မည်</button>
       <div id="activity-log-list"></div>
     </div>
+  </div>
+
+  <!-- PROMO & CASHBACK -->
+  <div class="panel" id="promo-panel">
+    <div class="form-card">
+      <h3 id="promo-form-title">🎟️ Promo Code ဖန်တီးရန်</h3>
+      <input type="hidden" id="promo-edit-id">
+      <div class="form-grid">
+        <input type="text" id="promo-code" placeholder="Code (ဥပမာ TIKTOK10)" style="text-transform:uppercase;">
+        <select id="promo-type"><option value="percent">% ဖြင့် လျှော့</option><option value="fixed">ကျပ်ငွေ ဖြင့် လျှော့</option></select>
+        <input type="number" id="promo-value" min="0" placeholder="လျှော့မည့် ပမာဏ (ဥပမာ 10 = 10%)">
+        <input type="number" id="promo-max-discount" min="0" step="500" placeholder="အများဆုံး လျှော့ငွေ (% အတွက် · Optional)">
+        <input type="number" id="promo-min-order" min="0" step="1000" placeholder="အနည်းဆုံး ဝယ်ရမည့် ပမာဏ (Optional)">
+        <input type="number" id="promo-max-uses" min="1" placeholder="စုစုပေါင်း သုံးခွင့် အကြိမ် (အလွတ် = အကန့်အသတ်မဲ့)">
+      </div>
+      <label class="promo-check"><input type="checkbox" id="promo-once" checked> <span>Customer တစ်ယောက် တစ်ကြိမ်သာ သုံးခွင့် (Login အကောင့် / ဖုန်းနံပါတ်ဖြင့် စစ်)</span></label>
+      <div class="hint" style="margin-top:10px;">⏰ သုံးလို့ရမည့် ကာလ — ကာလရောက်ရင် Auto စ၊ ကုန်ရင် Auto ရပ်</div>
+      <div class="quick-dur" data-target="promo">
+        <button type="button" class="secondary" data-days="7">ယခုမှ ၁ ပတ်</button>
+        <button type="button" class="secondary" data-days="30">ယခုမှ ၁ လ</button>
+        <button type="button" class="secondary" data-days="90">ယခုမှ ၃ လ</button>
+        <button type="button" class="secondary" data-days="0">အဆုံးမသတ်</button>
+      </div>
+      <div class="form-grid" style="margin-top:8px;">
+        <label class="dt-label">စတင်ချိန်<input type="datetime-local" id="promo-start"></label>
+        <label class="dt-label">ပြီးဆုံးချိန် (အလွတ် = အဆုံးမသတ်)<input type="datetime-local" id="promo-end"></label>
+      </div>
+      <input type="text" id="promo-note" placeholder="မှတ်ချက် (ဥပမာ TikTok Live 25/9 — Customer မမြင်ရ)" style="margin-top:8px;">
+      <div class="form-actions" style="margin-top:10px;">
+        <button type="button" class="acid" id="promo-save-btn">Promo Code သိမ်းမည်</button>
+        <button type="button" class="secondary" id="promo-cancel-btn" style="display:none;">Cancel</button>
+      </div>
+    </div>
+    <div id="promo-list"><p class="hint">Load လုပ်နေသည်...</p></div>
+
+    <div class="form-card" style="margin-top:26px;">
+      <h3 id="cb-form-title">🎉 Cashback Campaign ဖန်တီးရန်</h3>
+      <div class="hint">ဝယ်ယူမှု ပမာဏ အဆင့်လိုက် Cashback သတ်မှတ်ပါ (ဥပမာ 300,000+ → 3%၊ 500,000+ → 5%)။ Login ဝင်ထားတဲ့ Customer ရဲ့ Online Order <b>Delivered</b> ဖြစ်မှ Prepaid Card ထဲ Auto ဝင်ပြီး Order ပယ်ဖျက်/Refund ရင် Auto ပြန်နုတ်ပါမည်။ Promo လျှော့ပြီးနောက် ပစ္စည်းဖိုး (Gift/Delivery ခ မပါ) ပေါ်မှာ တွက်ပါသည်။</div>
+      <input type="hidden" id="cb-edit-id">
+      <input type="text" id="cb-name" placeholder="Campaign အမည် (ဥပမာ သီတင်းကျွတ် Cashback)" style="margin-top:8px;">
+      <div id="cb-tiers-editor"></div>
+      <button type="button" class="secondary" id="cb-add-tier-btn" style="width:100%; margin-top:6px;">+ အဆင့် ထပ်ထည့်မည်</button>
+      <input type="number" id="cb-max" min="0" step="1000" placeholder="Order တစ်ခုအတွက် အများဆုံး Cashback (Optional)" style="margin-top:8px;">
+      <div class="hint" style="margin-top:10px;">⏰ Campaign ကာလ — ကာလရောက်ရင် Auto စ၊ ကုန်ရင် Auto ရပ်</div>
+      <div class="quick-dur" data-target="cb">
+        <button type="button" class="secondary" data-days="7">ယခုမှ ၁ ပတ်</button>
+        <button type="button" class="secondary" data-days="30">ယခုမှ ၁ လ</button>
+        <button type="button" class="secondary" data-days="90">ယခုမှ ၃ လ</button>
+        <button type="button" class="secondary" data-days="0">အဆုံးမသတ်</button>
+      </div>
+      <div class="form-grid" style="margin-top:8px;">
+        <label class="dt-label">စတင်ချိန်<input type="datetime-local" id="cb-start"></label>
+        <label class="dt-label">ပြီးဆုံးချိန် (အလွတ် = အဆုံးမသတ်)<input type="datetime-local" id="cb-end"></label>
+      </div>
+      <div class="form-actions" style="margin-top:10px;">
+        <button type="button" class="acid" id="cb-save-btn">Campaign သိမ်းမည်</button>
+        <button type="button" class="secondary" id="cb-cancel-btn" style="display:none;">Cancel</button>
+      </div>
+    </div>
+    <div id="cb-list"><p class="hint">Load လုပ်နေသည်...</p></div>
   </div>
 
   <!-- POSTS -->
@@ -978,6 +1049,7 @@ const RESTRICTABLE_TABS = [
   { id:'settings-panel', label:'Settings' },
   { id:'salehistory-panel', label:'Sale History' },
   { id:'wallet-panel', label:'Wallet' },
+  { id:'promo-panel', label:'Promo & Cashback' },
 ];
 
 function applyRolePermissions(){
@@ -1147,6 +1219,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
       if(dot) dot.remove();
       loadOrders();
     }
+    if(btn.dataset.tab === 'promo-panel'){ loadPromoDashboard(); }
     if(btn.id === 'wallet-tab-btn'){
       backToWalletMenu();
     }
@@ -2128,7 +2201,7 @@ async function loadOrders(){
 
 async function restoreStockForRows(rows){
   for(const r of rows){
-    if(r.product_name === '🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု') continue; // ဝန်ဆောင်မှုသာ ဖြစ်လို့ Stock မရှိ
+    if(r.product_name === '🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု' || r.product_name === '🏷️ Promo Code') continue; // ဝန်ဆောင်မှုသာ ဖြစ်လို့ Stock မရှိ
     try{
       await sb.rpc('increment_stock', { p_name:r.product_name, p_qty:r.quantity, p_color:r.color||null, p_size:r.size||null });
     }catch(e){ console.error('Stock restore failed', e); }
@@ -2157,13 +2230,246 @@ async function loadSettingsForm(){
   }
 }
 
+
+// ---------- 🎟️ PROMO CODE + 🎉 CASHBACK DASHBOARD ----------
+function toLocalInput(iso){ if(!iso) return ''; const d=new Date(iso); return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
+function fromLocalInput(v){ return v ? new Date(v).toISOString() : null; }
+function fmtDT(iso){ return iso ? new Date(iso).toLocaleString([], { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '∞'; }
+function campaignStatus(x){
+  const now = Date.now();
+  if(!x.active) return { key:'paused', label:'⏸ ရပ်ထား' };
+  if(new Date(x.starts_at).getTime() > now) return { key:'scheduled', label:'🕒 စရန်စောင့်' };
+  if(x.ends_at && new Date(x.ends_at).getTime() <= now) return { key:'expired', label:'⌛ သက်တမ်းကုန်' };
+  if(x.max_uses && x.used_count >= x.max_uses) return { key:'usedup', label:'✋ သုံးခွင့်ပြည့်' };
+  return { key:'running', label:'● Run နေသည်' };
+}
+document.querySelectorAll('.quick-dur').forEach(box=>{
+  box.querySelectorAll('button').forEach(b=>b.addEventListener('click', ()=>{
+    const pfx = box.dataset.target, days = Number(b.dataset.days);
+    const now = new Date();
+    document.getElementById(pfx+'-start').value = toLocalInput(now.toISOString());
+    document.getElementById(pfx+'-end').value = days ? toLocalInput(new Date(now.getTime()+days*86400000).toISOString()) : '';
+  }));
+});
+
+let promoCache = [], cbCache = [];
+async function loadPromoDashboard(){ await Promise.all([loadPromoCodes(), loadCashbackCampaigns()]); }
+
+async function loadPromoCodes(){
+  const list = document.getElementById('promo-list'); if(!list) return;
+  const { data, error } = await sb.from('promo_codes').select('*').order('created_at', { ascending:false });
+  if(error){ list.innerHTML = `<p class="hint">Promo Code များ ယူမရပါ — ${error.message} (supabase-schema.sql ကို Run ရန် လိုအပ်နိုင်ပါသည်)</p>`; return; }
+  promoCache = data || [];
+  if(!promoCache.length){ list.innerHTML = '<p class="hint">Promo Code မရှိသေးပါ</p>'; return; }
+  list.innerHTML = promoCache.map((p,i)=>{
+    const st = campaignStatus(p);
+    const disc = p.discount_type==='percent' ? `${p.discount_value}% လျှော့${p.max_discount?` (အများဆုံး ${Number(p.max_discount).toLocaleString()} ကျပ်)`:''}` : `${Number(p.discount_value).toLocaleString()} ကျပ် လျှော့`;
+    return `<div class="list-item" style="flex-wrap:wrap;">
+      <div class="info">
+        <h4 style="font-family:'Space Mono',monospace;">${p.code}<span class="promo-status ${st.key}">${st.label}</span></h4>
+        <p>${disc}${Number(p.min_order)>0?` · ${Number(p.min_order).toLocaleString()} ကျပ်+ ဝယ်မှ`:''}${p.once_per_customer?' · တစ်ယောက် တစ်ကြိမ်':''}</p>
+        <p>⏰ ${fmtDT(p.starts_at)} → ${fmtDT(p.ends_at)}</p>
+        <p>👥 သုံးပြီး: <b style="color:var(--acid);">${p.used_count}</b>${p.max_uses?` / ${p.max_uses}`:' (အကန့်အသတ်မဲ့)'}${p.note?` · 📝 ${p.note}`:''}</p>
+      </div>
+      <div class="actions" style="flex-wrap:wrap;">
+        <button class="secondary" onclick="togglePromo(${i})">${p.active?'⏸ ရပ်မည်':'▶ ပြန်ဖွင့်မည်'}</button>
+        <button class="secondary" onclick="showPromoUsers(${i})">📋 သုံးသူများ</button>
+        <button class="secondary" onclick="editPromo(${i})">ပြင်မည်</button>
+        <button class="secondary" style="color:var(--rust); border-color:var(--rust);" onclick="deletePromo(${i})">ဖျက်မည်</button>
+      </div>
+      <div id="promo-users-${i}" style="width:100%;"></div>
+    </div>`;
+  }).join('');
+}
+function resetPromoForm(){
+  ['promo-edit-id','promo-code','promo-value','promo-max-discount','promo-min-order','promo-max-uses','promo-start','promo-end','promo-note'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('promo-type').value='percent'; document.getElementById('promo-once').checked=true;
+  document.getElementById('promo-code').disabled=false;
+  document.getElementById('promo-form-title').textContent='🎟️ Promo Code ဖန်တီးရန်';
+  document.getElementById('promo-cancel-btn').style.display='none';
+}
+function editPromo(i){
+  const p = promoCache[i];
+  document.getElementById('promo-edit-id').value = p.id;
+  document.getElementById('promo-code').value = p.code; document.getElementById('promo-code').disabled = p.used_count>0;
+  document.getElementById('promo-type').value = p.discount_type;
+  document.getElementById('promo-value').value = p.discount_value;
+  document.getElementById('promo-max-discount').value = p.max_discount ?? '';
+  document.getElementById('promo-min-order').value = Number(p.min_order)||'';
+  document.getElementById('promo-max-uses').value = p.max_uses ?? '';
+  document.getElementById('promo-once').checked = !!p.once_per_customer;
+  document.getElementById('promo-start').value = toLocalInput(p.starts_at);
+  document.getElementById('promo-end').value = toLocalInput(p.ends_at);
+  document.getElementById('promo-note').value = p.note || '';
+  document.getElementById('promo-form-title').textContent = '✏️ Promo Code ပြင်ရန် — ' + p.code;
+  document.getElementById('promo-cancel-btn').style.display='';
+  document.getElementById('promo-form-title').scrollIntoView({ behavior:'smooth' });
+}
+document.getElementById('promo-cancel-btn').addEventListener('click', resetPromoForm);
+document.getElementById('promo-save-btn').addEventListener('click', async ()=>{
+  const id = document.getElementById('promo-edit-id').value;
+  const code = document.getElementById('promo-code').value.trim().toUpperCase();
+  const type = document.getElementById('promo-type').value;
+  const value = Number(document.getElementById('promo-value').value);
+  const numOrNull = v => v==='' ? null : Number(v);
+  const payload = {
+    code, discount_type:type, discount_value:value,
+    max_discount: type==='percent' ? numOrNull(document.getElementById('promo-max-discount').value) : null,
+    min_order: Number(document.getElementById('promo-min-order').value)||0,
+    max_uses: numOrNull(document.getElementById('promo-max-uses').value),
+    once_per_customer: document.getElementById('promo-once').checked,
+    starts_at: fromLocalInput(document.getElementById('promo-start').value) || new Date().toISOString(),
+    ends_at: fromLocalInput(document.getElementById('promo-end').value),
+    note: document.getElementById('promo-note').value.trim() || null,
+  };
+  if(!/^[A-Z0-9_-]{3,30}$/.test(code)){ showToast('Code ကို A-Z, 0-9 ဖြင့် ၃–၃၀ လုံး ရေးပါ (Space မပါရ)'); return; }
+  if(!(value>0)){ showToast('လျှော့မည့် ပမာဏ ထည့်ပါ'); return; }
+  if(type==='percent' && value>100){ showToast('% က 100 ထက် မကျော်ရပါ'); return; }
+  if(payload.ends_at && new Date(payload.ends_at) <= new Date(payload.starts_at)){ showToast('ပြီးဆုံးချိန်က စတင်ချိန်နောက်မှ ဖြစ်ရပါမည်'); return; }
+  if(payload.max_uses!==null && !(payload.max_uses>=1)){ showToast('သုံးခွင့် အကြိမ်ရေ မှန်ကန်စွာ ထည့်ပါ'); return; }
+  let error;
+  if(id){ ({ error } = await sb.from('promo_codes').update(payload).eq('id', id)); }
+  else { payload.created_by = currentAdminEmail; ({ error } = await sb.from('promo_codes').insert(payload)); }
+  if(error){ showToast(/duplicate|unique/i.test(error.message) ? 'ဒီ Code ရှိပြီးသား ဖြစ်ပါသည်' : 'Error: '+error.message); return; }
+  logActivity(id?'promo_updated':'promo_created', `${code} — ${type==='percent'?value+'%':value+' ကျပ်'}`);
+  showToast(id ? '✅ Promo Code ပြင်ပြီးပါပြီ' : '✅ Promo Code ဖန်တီးပြီးပါပြီ');
+  resetPromoForm(); loadPromoCodes();
+});
+async function togglePromo(i){
+  const p = promoCache[i];
+  const { error } = await sb.from('promo_codes').update({ active: !p.active }).eq('id', p.id);
+  if(error){ showToast('Error: '+error.message); return; }
+  logActivity(p.active?'promo_paused':'promo_resumed', p.code); loadPromoCodes();
+}
+async function deletePromo(i){
+  const p = promoCache[i];
+  if(!confirm(p.used_count>0 ? `"${p.code}" ကို ${p.used_count} ကြိမ် သုံးပြီးသားပါ — ဖျက်မည့်အစား "ရပ်မည်" ကို သုံးဖို့ အကြံပြုပါသည်။ ဖျက်မှာ သေချာပါသလား?` : `"${p.code}" ကို ဖျက်မှာ သေချာပါသလား?`)) return;
+  const { error } = await sb.from('promo_codes').delete().eq('id', p.id);
+  if(error){ showToast('Error: '+error.message); return; }
+  logActivity('promo_deleted', p.code); loadPromoCodes();
+}
+async function showPromoUsers(i){
+  const p = promoCache[i]; const box = document.getElementById('promo-users-'+i);
+  if(box.innerHTML){ box.innerHTML=''; return; }
+  const { data } = await sb.from('promo_redemptions').select('*').ilike('code', p.code).order('created_at', { ascending:false });
+  box.innerHTML = (data&&data.length) ? `<div style="border-top:1px dashed #3a382f; margin-top:8px; padding-top:6px; font-family:'Space Mono',monospace; font-size:11.5px;">
+    ${data.map(r=>`<div>• ${new Date(r.created_at).toLocaleString()} — ${r.customer_name||'-'} (${r.phone||'-'}) · #${String(r.order_group_id).slice(0,8).toUpperCase()} · -${Number(r.discount_amount).toLocaleString()} ကျပ်</div>`).join('')}</div>`
+    : '<div class="hint" style="margin-top:6px;">သုံးသူ မရှိသေးပါ</div>';
+}
+
+// Cashback tiers editor
+function renderCbTiers(tiers){
+  const box = document.getElementById('cb-tiers-editor');
+  box.innerHTML = '<div class="hint" style="margin:10px 0 0;">ဝယ်ယူမှု ပမာဏ · အမျိုးအစား · Cashback</div>' + tiers.map(t=>`
+    <div class="cb-tier-row" style="display:grid; grid-template-columns:1fr 90px 80px 40px; gap:6px; margin-top:6px; align-items:center;">
+      <input type="number" class="cb-min" min="0" step="10000" value="${t.min ?? ''}" placeholder="ဥပမာ 300000" style="min-width:0;">
+      <select class="cb-type" style="min-width:0; padding:10px 4px;"><option value="percent" ${t.type!=='fixed'?'selected':''}>%</option><option value="fixed" ${t.type==='fixed'?'selected':''}>ကျပ်</option></select>
+      <input type="number" class="cb-value" min="0" value="${t.value ?? ''}" placeholder="3" style="min-width:0;">
+      <button type="button" class="secondary" onclick="this.closest('.cb-tier-row').remove()" style="padding:8px 0; color:var(--rust); border-color:var(--rust);">✕</button>
+    </div>`).join('');
+}
+function readCbTiers(){
+  return Array.from(document.querySelectorAll('#cb-tiers-editor .cb-tier-row')).map(r=>({
+    min: Number(r.querySelector('.cb-min').value)||0, type: r.querySelector('.cb-type').value, value: Number(r.querySelector('.cb-value').value)||0,
+  })).filter(t=>t.value>0).sort((a,b)=>a.min-b.min);
+}
+document.getElementById('cb-add-tier-btn').addEventListener('click', ()=>{
+  const cur = Array.from(document.querySelectorAll('#cb-tiers-editor .cb-tier-row')).map(r=>({ min:r.querySelector('.cb-min').value, type:r.querySelector('.cb-type').value, value:r.querySelector('.cb-value').value }));
+  cur.push({ min:'', type:'percent', value:'' }); renderCbTiers(cur);
+});
+function resetCbForm(){
+  ['cb-edit-id','cb-name','cb-max','cb-start','cb-end'].forEach(id=>document.getElementById(id).value='');
+  renderCbTiers([{ min:300000, type:'percent', value:3 }, { min:500000, type:'percent', value:5 }]);
+  document.getElementById('cb-form-title').textContent='🎉 Cashback Campaign ဖန်တီးရန်';
+  document.getElementById('cb-cancel-btn').style.display='none';
+}
+document.getElementById('cb-cancel-btn').addEventListener('click', resetCbForm);
+async function loadCashbackCampaigns(){
+  const list = document.getElementById('cb-list'); if(!list) return;
+  if(!document.querySelector('#cb-tiers-editor .cb-tier-row') && !document.getElementById('cb-edit-id').value) resetCbForm();
+  const { data, error } = await sb.from('cashback_campaigns').select('*').order('created_at', { ascending:false });
+  if(error){ list.innerHTML = `<p class="hint">Campaign များ ယူမရပါ — ${error.message}</p>`; return; }
+  cbCache = data || [];
+  if(!cbCache.length){ list.innerHTML = '<p class="hint">Cashback Campaign မရှိသေးပါ</p>'; return; }
+  list.innerHTML = cbCache.map((c,i)=>{
+    const st = campaignStatus(c);
+    const tiers = (Array.isArray(c.tiers)?c.tiers:[]).slice().sort((a,b)=>a.min-b.min).map(t=>`${Number(t.min).toLocaleString()}+ → ${t.type==='fixed'?Number(t.value).toLocaleString()+' ကျပ်':t.value+'%'}`).join(' · ');
+    return `<div class="list-item" style="flex-wrap:wrap;">
+      <div class="info">
+        <h4>${c.name}<span class="promo-status ${st.key}">${st.label}</span></h4>
+        <p>🎉 ${tiers||'-'}${c.max_cashback?` · အများဆုံး ${Number(c.max_cashback).toLocaleString()} ကျပ်`:''}</p>
+        <p>⏰ ${fmtDT(c.starts_at)} → ${fmtDT(c.ends_at)}</p>
+      </div>
+      <div class="actions" style="flex-wrap:wrap;">
+        <button class="secondary" onclick="toggleCb(${i})">${c.active?'⏸ ရပ်မည်':'▶ ပြန်ဖွင့်မည်'}</button>
+        <button class="secondary" onclick="editCb(${i})">ပြင်မည်</button>
+        <button class="secondary" style="color:var(--rust); border-color:var(--rust);" onclick="deleteCb(${i})">ဖျက်မည်</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function editCb(i){
+  const c = cbCache[i];
+  document.getElementById('cb-edit-id').value = c.id;
+  document.getElementById('cb-name').value = c.name;
+  document.getElementById('cb-max').value = c.max_cashback ?? '';
+  document.getElementById('cb-start').value = toLocalInput(c.starts_at);
+  document.getElementById('cb-end').value = toLocalInput(c.ends_at);
+  renderCbTiers(Array.isArray(c.tiers)?c.tiers:[]);
+  document.getElementById('cb-form-title').textContent = '✏️ Campaign ပြင်ရန် — ' + c.name;
+  document.getElementById('cb-cancel-btn').style.display='';
+  document.getElementById('cb-form-title').scrollIntoView({ behavior:'smooth' });
+}
+document.getElementById('cb-save-btn').addEventListener('click', async ()=>{
+  const id = document.getElementById('cb-edit-id').value;
+  const tiers = readCbTiers();
+  const payload = {
+    name: document.getElementById('cb-name').value.trim(),
+    tiers,
+    max_cashback: document.getElementById('cb-max').value==='' ? null : Number(document.getElementById('cb-max').value),
+    starts_at: fromLocalInput(document.getElementById('cb-start').value) || new Date().toISOString(),
+    ends_at: fromLocalInput(document.getElementById('cb-end').value),
+  };
+  if(!payload.name){ showToast('Campaign အမည် ထည့်ပါ'); return; }
+  if(!tiers.length){ showToast('Cashback အဆင့် အနည်းဆုံး တစ်ခု ထည့်ပါ'); return; }
+  if(tiers.some(t=>t.type==='percent' && t.value>100)){ showToast('% က 100 ထက် မကျော်ရပါ'); return; }
+  if(payload.ends_at && new Date(payload.ends_at) <= new Date(payload.starts_at)){ showToast('ပြီးဆုံးချိန်က စတင်ချိန်နောက်မှ ဖြစ်ရပါမည်'); return; }
+  let error;
+  if(id){ ({ error } = await sb.from('cashback_campaigns').update(payload).eq('id', id)); }
+  else { payload.created_by = currentAdminEmail; ({ error } = await sb.from('cashback_campaigns').insert(payload)); }
+  if(error){ showToast('Error: '+error.message); return; }
+  logActivity(id?'cashback_updated':'cashback_created', payload.name);
+  showToast(id ? '✅ Campaign ပြင်ပြီးပါပြီ' : '✅ Cashback Campaign ဖန်တီးပြီးပါပြီ');
+  resetCbForm(); loadCashbackCampaigns();
+});
+async function toggleCb(i){
+  const c = cbCache[i];
+  const { error } = await sb.from('cashback_campaigns').update({ active: !c.active }).eq('id', c.id);
+  if(error){ showToast('Error: '+error.message); return; }
+  logActivity(c.active?'cashback_paused':'cashback_resumed', c.name); loadCashbackCampaigns();
+}
+async function deleteCb(i){
+  const c = cbCache[i];
+  if(!confirm(`"${c.name}" ကို ဖျက်မှာ သေချာပါသလား? (ပေးပြီးသား/ပေးရန် Lock ဖြစ်ပြီးသား Cashback များကို မထိခိုက်ပါ)`)) return;
+  const { error } = await sb.from('cashback_campaigns').delete().eq('id', c.id);
+  if(error){ showToast('Error: '+error.message); return; }
+  logActivity('cashback_deleted', c.name); loadCashbackCampaigns();
+}
+
 // ---------- DATA BACKUP (Owner ချည်းသာ) ----------
-const BACKUP_TABLES = ['orders','products','categories','subcategories','wallets','wallet_transactions','wallet_topups','gift_cards','chat_messages','activity_logs','admins','settings','banners','posts','hidden_customers'];
-const BACKUP_LABELS = { orders:'Orders', products:'Products', categories:'Categories', subcategories:'Subcategories', wallets:'Prepaid Cards', wallet_transactions:'Wallet Transactions', wallet_topups:'Wallet Topups', gift_cards:'Gift Cards', chat_messages:'Chat Messages', activity_logs:'Activity Logs', admins:'Staff', settings:'Settings', banners:'Banners', posts:'Posts', hidden_customers:'Hidden Customers' };
+const BACKUP_TABLES = ['orders','products','categories','subcategories','wallets','wallet_transactions','wallet_topups','gift_cards','promo_codes','promo_redemptions','cashback_campaigns','chat_messages','activity_logs','admins','settings','banners','posts','hidden_customers'];
+const BACKUP_LABELS = { orders:'Orders', products:'Products', categories:'Categories', subcategories:'Subcategories', wallets:'Prepaid Cards', wallet_transactions:'Wallet Transactions', wallet_topups:'Wallet Topups', gift_cards:'Gift Cards', chat_messages:'Chat Messages', activity_logs:'Activity Logs', admins:'Staff', settings:'Settings', banners:'Banners', posts:'Posts', hidden_customers:'Hidden Customers', promo_codes:'Promo Codes', promo_redemptions:'Promo Usage', cashback_campaigns:'Cashback Campaigns' };
 
 function setBackupProgress(t){ const el=document.getElementById('backup-progress'); if(el) el.textContent = t; }
 async function fetchAllRows(table){
   const size = 1000, all = [];
+  if(table === 'wallets'){
+    // PIN ကို Table ကနေ ဖတ်ခွင့် ပိတ်ထားလို့ Owner-only Function ကနေ ယူ (မရရင် PIN မပါဘဲ ယူ)
+    try{ const { data, error } = await sb.rpc('export_wallets_full'); if(!error && Array.isArray(data)) return data; }catch(e){}
+    const { data, error } = await sb.from('wallets').select('user_id, balance, card_number, updated_at');
+    if(error) throw new Error(error.message);
+    return data || [];
+  }
   const first = sb.from(table).select('*');
   if(typeof first.range !== 'function'){ const { data, error } = await first; if(error) throw new Error(error.message); return data||[]; }
   for(let from=0; ; from+=size){
@@ -4244,6 +4550,7 @@ const TAB_REFRESH_MAP = {
   'inventory-panel': loadInventory,
   'categories-panel': loadCategories,
   'activitylog-panel': loadActivityLog,
+  'promo-panel': ()=>loadPromoDashboard(),
   'posts-panel': loadPosts,
   'orders-panel': loadOrders,
   'salesreport-panel': loadSalesReport,
@@ -4552,7 +4859,7 @@ let giftCardCache = [];
 let customerWalletsCache = [];
 async function loadCustomerWallets(){
   const list = document.getElementById('customer-wallets-list');
-  const { data: wallets, error } = await sb.from('wallets').select('*').order('balance', { ascending:false });
+  const { data: wallets, error } = await sb.from('wallets').select('user_id, balance, card_number, updated_at').order('balance', { ascending:false });
   if(error || !wallets){ if(list) list.innerHTML = '<p class="hint">Error loading wallets</p>'; return; }
 
   // Customer အမည်/ဖုန်းနံပါတ် ရှာဖို့ Orders + Wallet Top-up မှတ်တမ်းများကနေ Lookup Map ဆောက်
