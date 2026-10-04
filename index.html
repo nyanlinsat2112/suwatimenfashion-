@@ -363,7 +363,7 @@
   .share-btn{flex-shrink:0; background:transparent; border:2px solid var(--ink); color:var(--ink); font-family:'Space Mono',monospace; font-size:12px; font-weight:700; padding:7px 12px; cursor:pointer; white-space:nowrap;}
   .share-btn:hover{background:var(--ink); color:var(--concrete);}
   .detail-thumbs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
-  .pin-badge{position:absolute; bottom:10px; left:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
+  .pin-badge{position:absolute; bottom:10px; right:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
   .qty-control input#detail-qty{width:72px; text-align:center; font-family:'Space Mono',monospace; font-size:16px; font-weight:700; padding:8px 4px; border:2.5px solid var(--ink); background:#fff; -moz-appearance:textfield;}
   .qty-control input#detail-qty::-webkit-outer-spin-button, .qty-control input#detail-qty::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
   .promo-box{border:2.5px solid var(--ink); padding:12px; margin:12px 0 4px; background:#fff;}
@@ -834,6 +834,18 @@ function renderTagBadges(tagsStr){
   return `<div class="product-tag-badge">${tags.map(t=>`<span class="${classMap[t]||''}">${labelMap[t]||t}</span>`).join('')}</div>`;
 }
 
+// Size×အရောင် Stock ရှိရင် အဲ့ဒါတွေကို ပေါင်းတွက် (စုစုပေါင်း Stock ဂဏန်း မကိုက်ညီတာ ကာကွယ်ရန်)
+function productTotalStock(p){
+  const sumObj = o => Object.values(o||{}).reduce((s,v)=>s + Math.max(0, parseInt(v)||0), 0);
+  const vs = p.variant_stock;
+  if(vs && typeof vs === 'object' && Object.keys(vs).length){
+    return Object.values(vs).reduce((s,inner)=> s + (inner && typeof inner === 'object' ? sumObj(inner) : 0), 0);
+  }
+  const cs = p.color_stock;
+  if(cs && typeof cs === 'object' && Object.keys(cs).length) return sumObj(cs);
+  return parseInt(p.stock_qty) || 0;
+}
+
 function renderProductGrid(){
   const grid = document.getElementById('products-grid');
   let data = activeCategory==='all' ? allProducts : allProducts.filter(p=>(p.category||'Top Wear')===activeCategory);
@@ -853,8 +865,8 @@ function renderProductGrid(){
   grid.innerHTML='';
   currentGridProducts = data;
   data.forEach((p, idx)=>{
-    const soldOut = p.status === 'sold_out';
-    const stock = p.stock_qty || 0;
+    const stock = productTotalStock(p);
+    const soldOut = p.status === 'sold_out' || stock <= 0; // Stock 0 ဆိုရင် Admin မပြောင်းရသေးလည်း Auto SOLD OUT ပြ
     const isLowStock = !soldOut && stock > 0 && stock <= 5;
     const sizes = (p.sizes||'').split(',').map(s=>s.trim()).filter(Boolean);
     const colors = (p.colors||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -3306,7 +3318,7 @@ function openProductDetail(idx){
 
 function renderProductDetail(p){
   const box = document.getElementById('checkout-modal-content');
-  const soldOut = p.status === 'sold_out';
+  const soldOut = p.status === 'sold_out' || productTotalStock(p) <= 0;
   const stock = p.stock_qty || 0;
   const images = (p.images ? p.images.split(',').map(s=>s.trim()).filter(Boolean) : []);
   if(!images.length && p.image_url) images.push(p.image_url);
@@ -3670,7 +3682,7 @@ function updateDetailStockLabel(){
   }
 
   // Admin က Sold Out လို့ လက်ဖြင့် သတ်မှတ်ထားရင် Stock ဂဏန်း ဘယ်လိုပဲရှိရှိ ဝယ်လို့ မရစေရ
-  if(p.status === 'sold_out'){
+  if(p.status === 'sold_out' || productTotalStock(p) <= 0){
     if(label) label.innerHTML = '<span style="color:var(--rust); font-weight:700;">ကုန်သွားပါပြီ</span>';
     setButtonsEnabled(false);
     return;
@@ -3686,10 +3698,10 @@ function updateDetailStockLabel(){
       setButtonsEnabled(false);
     } else if(qty <= 5){
       label.innerHTML = `<span style="color:var(--rust); font-weight:700;">🔥 ${labelText} — ${qty} ခုပဲ ကျန်သည်</span>`;
-      setButtonsEnabled(p.status !== 'sold_out');
+      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
     } else {
       label.innerHTML = `✅ ${labelText} — ရနိုင်သည်`;
-      setButtonsEnabled(p.status !== 'sold_out');
+      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
     }
     return;
   }
@@ -3701,16 +3713,16 @@ function updateDetailStockLabel(){
       setButtonsEnabled(false);
     } else if(qty <= 5){
       label.innerHTML = `<span style="color:var(--rust); font-weight:700;">🔥 "${detailState.color}" — ${qty} ခုပဲ ကျန်သည်</span>`;
-      setButtonsEnabled(p.status !== 'sold_out');
+      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
     } else {
       label.innerHTML = `✅ "${detailState.color}" ရနိုင်သည်`;
-      setButtonsEnabled(p.status !== 'sold_out');
+      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
     }
     return;
   }
   // fallback — overall product stock
   const stock = p.stock_qty || 0;
-  const soldOut = p.status === 'sold_out';
+  const soldOut = p.status === 'sold_out' || productTotalStock(p) <= 0;
   if(soldOut){
     label.innerHTML = '<span style="color:var(--rust); font-weight:700;">⚫ Sold Out — ကုန်သွားပြီ</span>';
     setButtonsEnabled(false);
