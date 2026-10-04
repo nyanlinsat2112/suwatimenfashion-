@@ -261,6 +261,18 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .promo-status.scheduled{color:#4da3ff; border-color:#4da3ff;}
 .promo-status.paused{color:var(--grey); border-color:var(--grey);}
 .promo-status.expired, .promo-status.usedup{color:var(--rust); border-color:var(--rust);}
+#pos-numpad{margin-top:10px; border:2px solid #3a382f; padding:10px; background:#1a1916; max-width:460px;}
+#pos-numpad .np-target{font-family:'Space Mono',monospace; font-size:12px; color:var(--grey); margin-bottom:8px;}
+#pos-numpad .np-target b{color:var(--acid);}
+#pos-numpad .np-quick{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;}
+#pos-numpad .np-quick button{padding:10px 4px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; background:transparent; color:var(--acid); border:2px solid var(--acid); cursor:pointer;}
+#pos-numpad .np-quick.disabled button{opacity:.3; pointer-events:none;}
+#pos-numpad .np-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
+#pos-numpad .np-grid button{height:56px; font-family:'Space Mono',monospace; font-size:22px; font-weight:700; background:#2a2924; color:var(--concrete); border:2px solid #3a382f; cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
+#pos-numpad .np-grid button:active, #pos-numpad .np-quick button:active{transform:scale(.96); background:var(--acid); color:var(--ink);}
+#pos-numpad .np-back{color:#ff8a5c !important;}
+#pos-numpad .np-clear{grid-column:span 2; font-size:15px !important; color:#ff8a5c !important;}
+.np-active{outline:3px solid var(--acid) !important; outline-offset:1px;}
 .drag-handle{ font-size:20px; color:var(--grey); cursor:grab; user-select:none; touch-action:none; padding:8px; margin:-8px; }
 .msg-thread-item .mt-preview{font-size:12px; color:var(--grey); margin-top:3px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .msg-thread-item .mt-time{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey);}
@@ -399,7 +411,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
           <option value="percent">% ဖြင့် လျှော့ရန်</option>
           <option value="amount">ကျပ်ပမာဏဖြင့် လျှော့ရန်</option>
         </select>
-        <input type="number" id="pos-discount-value" placeholder="ဥပမာ 10 (%) or 5000 (ကျပ်)" min="0" value="0">
+        <input type="number" id="pos-discount-value" placeholder="ဥပမာ 10 (%) or 5000 (ကျပ်)" min="0" value="0" inputmode="none">
       </div>
 
       <div id="pos-price-breakdown" style="font-family:'Space Mono',monospace; font-size:13px; margin:10px 0; line-height:1.9;"></div>
@@ -421,8 +433,28 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
       </div>
 
       <div id="pos-cash-calculator" class="form-grid">
-        <input type="number" id="pos-tendered-input" placeholder="ဖောက်သည်ပေးငွေ (ကျပ်)" min="0">
+        <input type="number" id="pos-tendered-input" placeholder="ဖောက်သည်ပေးငွေ (ကျပ်)" min="0" inputmode="none" style="font-size:22px; font-weight:700;">
         <div class="display" id="pos-change-display" style="font-size:20px; align-self:center;"></div>
+      </div>
+
+      <!-- 🔢 POS Number Pad -->
+      <div id="pos-numpad">
+        <div class="np-target">ရိုက်နေသည်: <b id="np-target-label">ဖောက်သည်ပေးငွေ</b> <span class="hint" style="margin:0;">(အကွက်ကို နှိပ်ပြီး ပြောင်းနိုင်)</span></div>
+        <div class="np-quick">
+          <button type="button" data-q="exact">အတိအကျ</button>
+          <button type="button" data-q="1000">+1,000</button>
+          <button type="button" data-q="5000">+5,000</button>
+          <button type="button" data-q="10000">+10,000</button>
+          <button type="button" data-q="20000">+20,000</button>
+          <button type="button" data-q="50000">+50,000</button>
+        </div>
+        <div class="np-grid">
+          <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+          <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+          <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+          <button type="button" data-k="00">00</button><button type="button" data-k="0">0</button><button type="button" data-k="back" class="np-back">⌫</button>
+          <button type="button" data-k="C" class="np-clear">C ရှင်းမည်</button><button type="button" data-k="000">000</button>
+        </div>
       </div>
 
       <button type="button" class="acid" style="padding:14px; width:100%; margin-top:10px;" id="pos-complete-sale-btn">✅ အရောင်းပြီးစီးပါပြီ</button>
@@ -3371,6 +3403,41 @@ function updatePosChangeDisplay(){
 document.getElementById('pos-discount-type').addEventListener('change', renderPosCart);
 document.getElementById('pos-discount-value').addEventListener('input', renderPosCart);
 document.getElementById('pos-tendered-input').addEventListener('input', updatePosChangeDisplay);
+
+// ---------- 🔢 POS Number Pad ----------
+let posNumpadTarget = 'pos-tendered-input';
+const POS_NUMPAD_LABELS = { 'pos-tendered-input':'ဖောက်သည်ပေးငွေ', 'pos-discount-value':'Discount' };
+function setPosNumpadTarget(id){
+  posNumpadTarget = id;
+  document.getElementById('np-target-label').textContent = POS_NUMPAD_LABELS[id] || '';
+  Object.keys(POS_NUMPAD_LABELS).forEach(k=>document.getElementById(k)?.classList.toggle('np-active', k===id));
+  document.querySelector('#pos-numpad .np-quick')?.classList.toggle('disabled', id !== 'pos-tendered-input');
+}
+function posNumpadPress(k){
+  const el = document.getElementById(posNumpadTarget); if(!el) return;
+  let v = String(el.value||'').replace(/[^0-9]/g,'');
+  if(k === 'C') v = '';
+  else if(k === 'back') v = v.slice(0,-1);
+  else { v = (v + k).replace(/^0+(?=[0-9])/, ''); if(v.length > 9) return; }
+  if(posNumpadTarget === 'pos-discount-value' && v === '') v = '0';
+  el.value = v;
+  el.dispatchEvent(new Event('input', { bubbles:true }));
+}
+function posNumpadQuick(q){
+  setPosNumpadTarget('pos-tendered-input');
+  const el = document.getElementById('pos-tendered-input');
+  const cur = parseInt(el.value) || 0;
+  el.value = q === 'exact' ? getPosFinalTotal() : cur + parseInt(q);
+  el.dispatchEvent(new Event('input', { bubbles:true }));
+}
+document.querySelectorAll('#pos-numpad .np-grid button').forEach(b=>b.addEventListener('click', ()=>posNumpadPress(b.dataset.k)));
+document.querySelectorAll('#pos-numpad .np-quick button').forEach(b=>b.addEventListener('click', ()=>posNumpadQuick(b.dataset.q)));
+Object.keys(POS_NUMPAD_LABELS).forEach(id=>{
+  const el = document.getElementById(id);
+  if(el){ el.addEventListener('focus', ()=>setPosNumpadTarget(id)); el.addEventListener('click', ()=>setPosNumpadTarget(id)); }
+});
+setPosNumpadTarget('pos-tendered-input');
+
 // ---------- POS GIFT CARD SALE (ဆိုင်ထဲက Customer) ----------
 let posGiftSelectedAmount = null;
 let posGiftCardProductCache = null;
@@ -3474,6 +3541,7 @@ document.getElementById('pos-sell-giftcard-btn').addEventListener('click', async
 document.getElementById('pos-payment-method').addEventListener('change', (e)=>{
   document.getElementById('pos-cash-calculator').style.display = e.target.value === 'Cash' ? 'grid' : 'none';
   document.getElementById('pos-prepaid-card-area').style.display = e.target.value === 'Prepaid Card' ? 'grid' : 'none';
+  setPosNumpadTarget(e.target.value === 'Cash' ? 'pos-tendered-input' : 'pos-discount-value');
 });
 
 function removePosCartItem(idx){
@@ -3576,6 +3644,7 @@ document.getElementById('pos-complete-sale-btn').addEventListener('click', async
   document.getElementById('pos-discount-type').value = 'none';
   document.getElementById('pos-discount-value').value = '0';
   document.getElementById('pos-tendered-input').value = '';
+  setPosNumpadTarget('pos-tendered-input');
   renderPosCart();
   document.getElementById('pos-customer-name').value='';
   document.getElementById('pos-customer-phone').value='';
