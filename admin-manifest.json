@@ -1,0 +1,16 @@
+{
+  "id": "/admin",
+  "name": "SUWATI Admin",
+  "short_name": "SUWATI Admin",
+  "description": "SUWATI MEN FASHION — Admin / POS / Delivery",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#141412",
+  "theme_color": "#141412",
+  "icons": [
+    { "src": "/admin-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/admin-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

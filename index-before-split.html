@@ -2,38 +2,32 @@
 <html lang="my">
 <head>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD/ElEQVR4nO2Wa4hVVRTHf3vvc885c8dznXtnxnTEHphWjkWIUhYRSQoRKUkUTRr2oAf4oQ+BEBgRQRmUiBI9ILVSP4gRk1b2tKRvRWom5WOcwZkxipm5d+6Ze+6595y9+zAPayjmjI4NQevj2RzWj7X+67+WaGjIGSYx5GQm/x/gvw8ghEAI8e8CSClRSgEQxzFxHAOg1Lnv4wlrvMl9f4AoiqitTeO6LkJAWKlSKBQxxpDJeBiTfLITAwgh8H2fW25ezMq772LunNnkslmEgEJ/kTOdXez76FNa936Cbdsk7YxIYkRSSopFn7VPPspz69fhuA4C6MsXAMjW1VGNqggh2LT5dZ59/iUynofW+sIBpBQEQcicK69g/749WJbF6fYOXtywkeMnTgFw3bXNrH/maWbOnEHa81i+4j4+/+JrPG/KmBBjtkAISRiGzG++Btu2SaUstm7fye49rTQ21hPHmsNHfkIIeOSh1bSdbkfHGqmS6TuRBoQQVCpVpBCEYYWbblzEjl27KfT3o6Qim53Kh/v207p3P6VSCduxSdfUTEwLhBBUq1UaGur57OP3yWWzVKtVTpw8xZcHDnL48FF+OX6SM51d+P4AmYyHUoooihJ5RGIR+v4Ay5bexqsvv8CMGZeQSqWQUlIqBfT09HK6vYOvDhxk27u76O3to2aiKjAaoqlpOnfesZTFNyziqrlzaGqaTraujljHWEpx9NjPtDz4GN3dZ7Fte0xPSAwwXM4gKFOpVFBKUp/Lcells1i44HrWrL6fpqbp1Nfn2Lp9B2ufWjcINuSUFwxQLodkMh61tWny+QKpVIowDKlWI3zfp7n5aj7Y/R6NjQ38ePQYy1e2JNJA4inYsmkDixYuAGNYcc8q2tra8TwPpSSu69Dd/SulUgmlJFprjDETA6CUIp8vEARl5s2fR89vv/PmaxvZtOUNOjrOoI0hWzeVh9c8wLRpjTi2ww+HjuD7A2SzE9ACIQRRFOE4Dm+/tZnbl9yKALQ29OXzaK3JZDLUuA7aGL77/hCr1jxOT08vqVRqYkQ47AUpy2JVy70sW7qEWbNmkvGmDC2pAbq6z3Lgm2/Z9s5O+vuLuK6L1vpv9/2fh3NcU6C1pr9YxHUccrks6XQaAZSCMn19fZRKAZ43Bcuy0FqjgbI2DCvBMHiAuPKcNhIDDENIOSiyKIpGjEZKiWVZI2/GGDSQUYLZriIeaoMEygaOB+d0Ma6DxBgzIirLsv7xTQKBNsxOK165vJZADwI4AtrKMU+0DZwfwOiEY4UGStoQDgFoAeGo3yb9Kj7vCiQJCbgChlXoCLBHedNFAxBAoKEt1CMtsAV0Vv66Icc1BRcjJl0Dkw7wB12FsHsHaQV6AAAAAElFTkSuQmCC">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#141412">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="SUWATI">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SUWATI MEN FASHION — Nay Pyi Taw Menswear</title>
 <meta name="description" content="SUWATI MEN FASHION — နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့ အခြေစိုက် Streetwear Menswear ဆိုင်။ Tee, Hoodie, Jacket, Pants, Accessories များ KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်။">
 <meta name="keywords" content="SUWATI, streetwear myanmar, mens fashion myanmar, nay pyi taw clothing, online shopping myanmar, kbzpay shopping">
 <meta name="author" content="SUWATI MEN FASHION">
-<link rel="canonical" href="https://suwatimenfashion.vercel.app/">
+<link rel="canonical" href="https://claude-web-pi.vercel.app/">
 
 <!-- Open Graph (Facebook, Messenger, TikTok, LinkedIn) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="SUWATI MEN FASHION">
 <meta property="og:title" content="SUWATI MEN FASHION — Original Streetwear, Nay Pyi Taw">
 <meta property="og:description" content="Streetwear Menswear ဆိုင် — Tee, Hoodie, Jacket, Pants, Accessories များကို KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်။ Nay Pyi Taw အတွင်း ၁-၂ရက်၊ တခြားမြို့များ ၃-၅ရက်ဖြင့် ပို့ဆောင်ပေးပါသည်။">
-<meta property="og:image" content="https://suwatimenfashion.vercel.app/og-image.png">
+<meta property="og:image" content="https://claude-web-pi.vercel.app/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:url" content="https://suwatimenfashion.vercel.app/">
+<meta property="og:url" content="https://claude-web-pi.vercel.app/">
 <meta property="og:locale" content="my_MM">
 
 <!-- Twitter / X Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="SUWATI MEN FASHION — Original Streetwear, Nay Pyi Taw">
 <meta name="twitter:description" content="Streetwear Menswear ဆိုင် — KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်။">
-<meta name="twitter:image" content="https://suwatimenfashion.vercel.app/og-image.png">
+<meta name="twitter:image" content="https://claude-web-pi.vercel.app/og-image.png">
 
 <!-- Structured Data (Google Rich Results) -->
 <script type="application/ld+json">
@@ -41,7 +35,7 @@
   "@context": "https://schema.org",
   "@type": "ClothingStore",
   "name": "SUWATI MEN FASHION",
-  "image": "https://suwatimenfashion.vercel.app/og-image.png",
+  "image": "https://claude-web-pi.vercel.app/og-image.png",
   "description": "Streetwear Menswear ဆိုင် — Nay Pyi Taw ပုဗ္ဗသီရိမြို့ အခြေစိုက်။ Tee, Hoodie, Jacket, Pants, Accessories များ KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်။",
   "address": {
     "@type": "PostalAddress",
@@ -64,7 +58,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
-/* SUWATI MEN FASHION — Customer Website Styles */
   :root{
     --ink:#141412; --concrete:#E9E4D8; --rust:#C13B1F; --acid:#D6FF3F; --grey:#87806f; --line:#2b2a26; --paper:#f2efe6;
   }
@@ -369,7 +362,7 @@
   .share-btn{flex-shrink:0; background:transparent; border:2px solid var(--ink); color:var(--ink); font-family:'Space Mono',monospace; font-size:12px; font-weight:700; padding:7px 12px; cursor:pointer; white-space:nowrap;}
   .share-btn:hover{background:var(--ink); color:var(--concrete);}
   .detail-thumbs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
-  .pin-badge{position:absolute; bottom:10px; right:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
+  .pin-badge{position:absolute; bottom:10px; left:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
   .qty-control input#detail-qty{width:72px; text-align:center; font-family:'Space Mono',monospace; font-size:16px; font-weight:700; padding:8px 4px; border:2.5px solid var(--ink); background:#fff; -moz-appearance:textfield;}
   .qty-control input#detail-qty::-webkit-outer-spin-button, .qty-control input#detail-qty::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
   .promo-box{border:2.5px solid var(--ink); padding:12px; margin:12px 0 4px; background:#fff;}
@@ -657,8 +650,6 @@
 </div>
 
 <script>
-// SUWATI MEN FASHION — Share-link capture + Supabase config
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ★ Share Link (?product=...) ကို Script အစမှာ ချက်ချင်း ဖတ်ထား — နောက်ပိုင်း Code တစ်ခုခု Error တက်လည်း မပျောက်စေရန်
 window.__sharedProductParam = (function(){
   try{
@@ -677,9 +668,6 @@ window.__sharedProductParam = (function(){
 const SUPABASE_URL = "https://gfatvhxougswmzrjpqkp.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmYXR2aHhvdWdzd216cmpwcWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NzQ0NTEsImV4cCI6MjEwNTA1MDQ1MX0.SZDCjKzOyQBZCPXib1EyLEdj9NimYbhvA6PXk-9j42U";
 // ============================================================================
-
-// SUWATI MEN FASHION — Categories, product grid, banners, posts, ticker
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -840,18 +828,6 @@ function renderTagBadges(tagsStr){
   return `<div class="product-tag-badge">${tags.map(t=>`<span class="${classMap[t]||''}">${labelMap[t]||t}</span>`).join('')}</div>`;
 }
 
-// Size×အရောင် Stock ရှိရင် အဲ့ဒါတွေကို ပေါင်းတွက် (စုစုပေါင်း Stock ဂဏန်း မကိုက်ညီတာ ကာကွယ်ရန်)
-function productTotalStock(p){
-  const sumObj = o => Object.values(o||{}).reduce((s,v)=>s + Math.max(0, parseInt(v)||0), 0);
-  const vs = p.variant_stock;
-  if(vs && typeof vs === 'object' && Object.keys(vs).length){
-    return Object.values(vs).reduce((s,inner)=> s + (inner && typeof inner === 'object' ? sumObj(inner) : 0), 0);
-  }
-  const cs = p.color_stock;
-  if(cs && typeof cs === 'object' && Object.keys(cs).length) return sumObj(cs);
-  return parseInt(p.stock_qty) || 0;
-}
-
 function renderProductGrid(){
   const grid = document.getElementById('products-grid');
   let data = activeCategory==='all' ? allProducts : allProducts.filter(p=>(p.category||'Top Wear')===activeCategory);
@@ -871,8 +847,8 @@ function renderProductGrid(){
   grid.innerHTML='';
   currentGridProducts = data;
   data.forEach((p, idx)=>{
-    const stock = productTotalStock(p);
-    const soldOut = p.status === 'sold_out' || stock <= 0; // Stock 0 ဆိုရင် Admin မပြောင်းရသေးလည်း Auto SOLD OUT ပြ
+    const soldOut = p.status === 'sold_out';
+    const stock = p.stock_qty || 0;
     const isLowStock = !soldOut && stock > 0 && stock <= 5;
     const sizes = (p.sizes||'').split(',').map(s=>s.trim()).filter(Boolean);
     const colors = (p.colors||'').split(',').map(s=>s.trim()).filter(Boolean);
@@ -1043,33 +1019,11 @@ async function loadPosts(){
   });
 }
 
-// ---------- Banners ----------
-async function loadBanners(){
-  const { data, error } = await sb.from('banners').select('*').eq('active', true).order('sort_order');
-  const strip = document.getElementById('banner-strip');
-  if(error || !data || !data.length){ strip.style.display='none'; return; }
-  strip.style.display='flex';
-  strip.innerHTML = data.map(b=>`
-    <div class="banner-card" onclick="handleBannerClick('${(b.link_url||'').replace(/'/g,"\\'")}')">
-      <img src="${b.image_url || 'https://placehold.co/400x200/141412/E9E4D8?text=SUWATI'}" alt="${b.title}">
-      <div class="banner-text">
-        <div class="banner-title">${b.title}</div>
-        ${b.subtitle ? `<div class="banner-subtitle">${b.subtitle}</div>` : ''}
-      </div>
-    </div>`).join('');
-}
+loadCategories();
+loadProducts();
+loadPosts();
+loadBanners();
 
-function handleBannerClick(link){
-  if(!link) return;
-  if(link.startsWith('#')){
-    document.querySelector(link)?.scrollIntoView({behavior:'smooth'});
-  } else {
-    window.open(link, '_blank');
-  }
-}
-
-// SUWATI MEN FASHION — Realtime auto refresh
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= AUTO-REFRESH SYSTEM (Website တစ်ခုလုံး အမြဲ Update ဖြစ်နေရန်) =================
 // Product/Banner/Post/Category ပြောင်းလဲမှုများကို Realtime ဖြင့် ချက်ချင်း သိရှိပြီး Silent Refresh လုပ်ပေးမည်
 // (Cart၊ ဖွင့်ထားတဲ့ Modal၊ Scroll Position စသည်တို့ကို မထိခိုက်စေပါ — Product Grid/Banner/Post ဧရိယာကိုသာ ပြန်ဆွဲပေးမည်)
@@ -1098,9 +1052,32 @@ function initAutoRefreshSystem(){
     }
   });
 }
+initAutoRefreshSystem();
 
-// SUWATI MEN FASHION — Cart
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
+async function loadBanners(){
+  const { data, error } = await sb.from('banners').select('*').eq('active', true).order('sort_order');
+  const strip = document.getElementById('banner-strip');
+  if(error || !data || !data.length){ strip.style.display='none'; return; }
+  strip.style.display='flex';
+  strip.innerHTML = data.map(b=>`
+    <div class="banner-card" onclick="handleBannerClick('${(b.link_url||'').replace(/'/g,"\\'")}')">
+      <img src="${b.image_url || 'https://placehold.co/400x200/141412/E9E4D8?text=SUWATI'}" alt="${b.title}">
+      <div class="banner-text">
+        <div class="banner-title">${b.title}</div>
+        ${b.subtitle ? `<div class="banner-subtitle">${b.subtitle}</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function handleBannerClick(link){
+  if(!link) return;
+  if(link.startsWith('#')){
+    document.querySelector(link)?.scrollIntoView({behavior:'smooth'});
+  } else {
+    window.open(link, '_blank');
+  }
+}
+
 // ================= CART =================
 let cart = JSON.parse(localStorage.getItem('suwati_cart') || '[]');
 
@@ -1173,8 +1150,6 @@ function renderCartDrawer(){
     </div>`;
 }
 
-// SUWATI MEN FASHION — Wishlist
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= WISHLIST (Account Sync + Guest localStorage) =================
 let wishlist = [];
 let pendingWishlistRemovalName = null;
@@ -1345,8 +1320,6 @@ async function removeFromWishlist(i, silent){
   }
 }
 
-// SUWATI MEN FASHION — Checkout, KBZPay/Prepaid payment, gift wrap, delivery zone, promo & cashback, receipts
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= CHECKOUT / KBZPAY PAYMENT =================
 let currentOrder = null; // { items:[...], customer_name, phone, email, address, total }
 let cachedSettings = null;
@@ -1369,6 +1342,10 @@ async function renderTicker(){
   const spansHtml = phrases.map(p=>`<span>${p}</span><span class="acc">·</span>`).join('');
   track.innerHTML = spansHtml + spansHtml; // Seamless Loop Effect အတွက် ၂ခါ ထပ်ခါ ထည့်ရသည်
 }
+renderTicker();
+sb.channel('site-ticker-realtime')
+  .on('postgres_changes', { event:'UPDATE', schema:'public', table:'settings' }, ()=>{ renderTicker(); })
+  .subscribe();
 
 function closeCheckout(){
   document.getElementById('checkout-modal').classList.remove('open');
@@ -2072,50 +2049,13 @@ function buildCustomerReceiptHtml(rows){
 </body></html>`;
 }
 
-// ---------- Receipt Viewer (Page ပေါ်မှာ Popup အဖြစ် ပြ — Home Screen App/PWA မှာ ပြန်ထွက်မရတာ မဖြစ်စေရန်) ----------
-function showReceiptOverlay(html){
-  if(!document.getElementById('receipt-overlay-style')){
-    const st = document.createElement('style'); st.id = 'receipt-overlay-style';
-    st.textContent = `
-      #receipt-overlay{position:fixed; inset:0; z-index:100000; background:rgba(20,20,18,.82); display:flex; flex-direction:column; padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);}
-      #receipt-overlay .ro-bar{display:flex; gap:8px; padding:10px 12px; background:#141412; border-bottom:3px solid #D6FF3F; flex-shrink:0;}
-      #receipt-overlay .ro-bar button{flex:1; padding:12px 8px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; border:2.5px solid #E9E4D8;}
-      #receipt-overlay .ro-close{background:#C13B1F; color:#fff; border-color:#C13B1F !important; flex:0 0 auto !important; padding:12px 16px !important;}
-      #receipt-overlay .ro-print{background:#D6FF3F; color:#141412; border-color:#D6FF3F !important;}
-      #receipt-overlay iframe{flex:1; width:100%; border:none; background:#fff;}`;
-    document.head.appendChild(st);
-  }
-  closeReceiptOverlay(true);
-  const ov = document.createElement('div'); ov.id = 'receipt-overlay';
-  ov.innerHTML = `<div class="ro-bar">
-      <button type="button" class="ro-close" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>
-      <button type="button" class="ro-print" onclick="printReceiptOverlay()">🖨️ Print / PDF</button>
-    </div><iframe id="receipt-overlay-frame" title="Receipt"></iframe>`;
-  document.body.appendChild(ov);
-  document.getElementById('receipt-overlay-frame').srcdoc = html;
-  window.__receiptPrevOverflow = document.body.style.overflow;
-  document.body.style.overflow = 'hidden';
-  try{ history.pushState({ receiptOverlay:true }, ''); }catch(e){}
-}
-function closeReceiptOverlay(silent){
-  const ov = document.getElementById('receipt-overlay');
-  if(!ov) return;
-  ov.remove();
-  document.body.style.overflow = window.__receiptPrevOverflow || '';
-  if(!silent && history.state && history.state.receiptOverlay){ try{ history.back(); }catch(e){} }
-}
-function printReceiptOverlay(){
-  const fr = document.getElementById('receipt-overlay-frame');
-  try{ fr.contentWindow.focus(); fr.contentWindow.print(); }
-  catch(e){ const w = window.open('', '_blank'); if(w){ w.document.open(); w.document.write(fr.srcdoc); w.document.close(); } }
-}
-// Android Back ခလုတ် နှိပ်ရင်လည်း Receipt ပိတ်ရန်
-window.addEventListener('popstate', ()=>{ if(document.getElementById('receipt-overlay')) closeReceiptOverlay(true); });
-document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeReceiptOverlay(); });
-
 function openCustomerReceipt(rows){
   const html = buildCustomerReceiptHtml(rows);
-  showReceiptOverlay(html);
+  const win = window.open('', '_blank', 'width=400,height=700');
+  if(!win){ alert('Popup ပိတ်ခံနေရပါသည် — Browser Settings ထဲက Popup ခွင့်ပြုပေးပါ'); return; }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
 }
 
 function buildTransactionReceiptHtml(kind, record){
@@ -2203,11 +2143,13 @@ function buildTransactionReceiptHtml(kind, record){
 
 function openTransactionReceipt(kind, record){
   const html = buildTransactionReceiptHtml(kind, record);
-  showReceiptOverlay(html);
+  const win = window.open('', '_blank', 'width=400,height=700');
+  if(!win){ alert('Popup ပိတ်ခံနေရပါသည် — Browser Settings ထဲက Popup ခွင့်ပြုပေးပါ'); return; }
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
 }
 
-// SUWATI MEN FASHION — Login / signup / profile / order history
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= CUSTOMER LOGIN / SIGNUP / ORDER HISTORY =================
 let currentUser = null;
 
@@ -2638,8 +2580,6 @@ async function deleteAllOrderHistory(){
   openOrderHistory();
 }
 
-// SUWATI MEN FASHION — Wallet / Prepaid Card
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= WALLET (Prepaid Balance) =================
 async function openWalletTopup(){
   const box = document.getElementById('checkout-modal-content');
@@ -2823,8 +2763,6 @@ async function openWalletHistory(){
     <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="renderProfileView()">← Profile ပြန်သွားရန်</button>`;
 }
 
-// SUWATI MEN FASHION — Gift Card
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= GIFT CARD =================
 const GIFT_CARD_DENOMS = [10000, 20000, 50000, 100000, 300000, 500000];
 let selectedGiftAmount = null;
@@ -3063,8 +3001,10 @@ async function handleProfileSave(){
   renderProfileView();
 }
 
-// SUWATI MEN FASHION — Chat widget
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
+initAuth();
+renderCartBadge();
+renderWishlistBadge();
+
 // ================= CHAT WIDGET (FAQ Bot + Admin Messaging) =================
 const FAQ_RULES = [
   { keys:['ပို့ဆောင်','delivery','ဘယ်နှရက်','ကြာ'], answer:'နေပြည်တော်အတွင်း ၁-၂ရက်၊ တခြားမြို့များ ၃-၅ရက်အတွင်း ပို့ဆောင်ပေးပါတယ်။' },
@@ -3236,8 +3176,6 @@ function subscribeToChatRealtime(){
   updateChatUnreadBadge(); // Login ဝင်ချက်ချင်း ရှိပြီးသား Unread Message ရှိမရှိ စစ်
 }
 
-// SUWATI MEN FASHION — Guest order tracking
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= ORDER TRACKING (Guest — Login မလို) =================
 function openOrderTracking(){
   renderOrderTrackingForm();
@@ -3339,8 +3277,6 @@ function renderOrderTrackingResult(rows){
     <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="${currentUser?'openOrderHistory()':"renderOrderTrackingForm()"}">← ${currentUser?'Order History ပြန်သွားရန်':'နောက်တစ်ခု Track လုပ်မည်'}</button>`;
 }
 
-// SUWATI MEN FASHION — Product detail, image slider, share link
-// (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= PRODUCT DETAIL MODAL =================
 let detailState = { size:null, color:null, qty:1 };
 let currentDetailProduct = null;
@@ -3357,7 +3293,7 @@ function openProductDetail(idx){
 
 function renderProductDetail(p){
   const box = document.getElementById('checkout-modal-content');
-  const soldOut = p.status === 'sold_out' || productTotalStock(p) <= 0;
+  const soldOut = p.status === 'sold_out';
   const stock = p.stock_qty || 0;
   const images = (p.images ? p.images.split(',').map(s=>s.trim()).filter(Boolean) : []);
   if(!images.length && p.image_url) images.push(p.image_url);
@@ -3721,7 +3657,7 @@ function updateDetailStockLabel(){
   }
 
   // Admin က Sold Out လို့ လက်ဖြင့် သတ်မှတ်ထားရင် Stock ဂဏန်း ဘယ်လိုပဲရှိရှိ ဝယ်လို့ မရစေရ
-  if(p.status === 'sold_out' || productTotalStock(p) <= 0){
+  if(p.status === 'sold_out'){
     if(label) label.innerHTML = '<span style="color:var(--rust); font-weight:700;">ကုန်သွားပါပြီ</span>';
     setButtonsEnabled(false);
     return;
@@ -3737,10 +3673,10 @@ function updateDetailStockLabel(){
       setButtonsEnabled(false);
     } else if(qty <= 5){
       label.innerHTML = `<span style="color:var(--rust); font-weight:700;">🔥 ${labelText} — ${qty} ခုပဲ ကျန်သည်</span>`;
-      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
+      setButtonsEnabled(p.status !== 'sold_out');
     } else {
       label.innerHTML = `✅ ${labelText} — ရနိုင်သည်`;
-      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
+      setButtonsEnabled(p.status !== 'sold_out');
     }
     return;
   }
@@ -3752,16 +3688,16 @@ function updateDetailStockLabel(){
       setButtonsEnabled(false);
     } else if(qty <= 5){
       label.innerHTML = `<span style="color:var(--rust); font-weight:700;">🔥 "${detailState.color}" — ${qty} ခုပဲ ကျန်သည်</span>`;
-      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
+      setButtonsEnabled(p.status !== 'sold_out');
     } else {
       label.innerHTML = `✅ "${detailState.color}" ရနိုင်သည်`;
-      setButtonsEnabled(!(p.status === 'sold_out' || productTotalStock(p) <= 0));
+      setButtonsEnabled(p.status !== 'sold_out');
     }
     return;
   }
   // fallback — overall product stock
   const stock = p.stock_qty || 0;
-  const soldOut = p.status === 'sold_out' || productTotalStock(p) <= 0;
+  const soldOut = p.status === 'sold_out';
   if(soldOut){
     label.innerHTML = '<span style="color:var(--rust); font-weight:700;">⚫ Sold Out — ကုန်သွားပြီ</span>';
     setButtonsEnabled(false);
@@ -3832,77 +3768,6 @@ function detailOrderNow(){
     image_url: p.image_url, quantity: detailState.qty,
   }], 'detail');
 }
-
-// SUWATI MEN FASHION — Home Screen App (PWA)
-window.__PWA_APP = { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)=>showSiteToast(m) };
-// ---------- 📲 Home Screen App (PWA) — Install အသိပေးချက် + Service Worker ----------
-(function(){
-  const APP = window.__PWA_APP || { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)=>{ try{ (window.showSiteToast||window.showToast)(m); }catch(e){} } };
-  if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
-    window.addEventListener('load', ()=>{ navigator.serviceWorker.register('/sw.js').catch(e=>console.warn('SW register failed', e)); });
-  }
-  const isStandalone = ()=> window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  const ua = navigator.userAgent || '';
-  const isIOS = /iphone|ipad|ipod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
-  const isInApp = /FBAN|FBAV|FB_IAB|Instagram|Line\/|Messenger|Viber|MicroMessenger|TikTok|musical_ly/i.test(ua);
-  const snoozed = ()=>{ try{ const t = +localStorage.getItem(APP.snoozeKey); return t && Date.now() - t < 7*864e5; }catch(e){ return false; } };
-  const snooze = ()=>{ try{ localStorage.setItem(APP.snoozeKey, String(Date.now())); }catch(e){} };
-  let deferred = null;
-
-  function css(){
-    if(document.getElementById('pwa-install-style')) return;
-    const s = document.createElement('style'); s.id = 'pwa-install-style';
-    s.textContent = `#pwa-install{position:fixed; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom,0px)); z-index:99990; background:#141412; color:#E9E4D8; border:3px solid #D6FF3F; box-shadow:4px 4px 0 #D6FF3F; padding:12px 14px; font-family:'Space Mono',monospace; font-size:12.5px; line-height:1.55; display:flex; gap:10px; align-items:center; max-width:520px; margin:0 auto;}
-      #pwa-install img{width:44px; height:44px; flex-shrink:0;}
-      #pwa-install .pi-text{flex:1; min-width:0;}
-      #pwa-install .pi-text b{color:#D6FF3F;}
-      #pwa-install .pi-btns{display:flex; flex-direction:column; gap:6px; flex-shrink:0;}
-      #pwa-install button{font-family:inherit; font-size:12px; font-weight:700; padding:8px 10px; cursor:pointer; border:2px solid #E9E4D8; background:transparent; color:#E9E4D8;}
-      #pwa-install button.pi-yes{background:#D6FF3F; color:#141412; border-color:#D6FF3F;}`;
-    document.head.appendChild(s);
-  }
-  function hide(){ const b = document.getElementById('pwa-install'); if(b) b.remove(); }
-  function show(kind){
-    if(isStandalone() || snoozed() || document.getElementById('pwa-install')) return;
-    css();
-    const icon = document.querySelector('link[rel="apple-touch-icon"]')?.href || '';
-    const b = document.createElement('div'); b.id = 'pwa-install';
-    b.innerHTML = kind === 'ios'
-      ? `<img src="${icon}" alt=""><div class="pi-text"><b>${APP.name}</b> ကို App အဖြစ် ထည့်ရန် —<br>အောက်ခြေ/အပေါ်က <b>Share ⬆️</b> ခလုတ်နှိပ် → <b>"Add to Home Screen"</b> ကို ရွေးပါ</div><div class="pi-btns"><button type="button" class="pi-no">နားလည်ပြီ</button></div>`
-      : `<img src="${icon}" alt=""><div class="pi-text"><b>${APP.name}</b> App ကို ဖုန်းထဲ ထည့်မလား?<br>Home Screen ကနေ တစ်ချက်နှိပ်ရုံနဲ့ ဖွင့်လို့ရပါမည်</div><div class="pi-btns"><button type="button" class="pi-yes">📲 ထည့်မည်</button><button type="button" class="pi-no">နောက်မှ</button></div>`;
-    document.body.appendChild(b);
-    b.querySelector('.pi-no').onclick = ()=>{ snooze(); hide(); };
-    const yes = b.querySelector('.pi-yes');
-    if(yes) yes.onclick = async ()=>{
-      if(!deferred){ hide(); return; }
-      deferred.prompt();
-      const choice = await deferred.userChoice.catch(()=>null);
-      if(!choice || choice.outcome !== 'accepted') snooze();
-      deferred = null; hide();
-    };
-  }
-  window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferred = e; setTimeout(()=>show('android'), 3000); });
-  window.addEventListener('appinstalled', ()=>{ hide(); APP.toast('✅ ' + APP.name + ' App ထည့်ပြီးပါပြီ — Home Screen မှာ ကြည့်ပါ'); });
-  if(isIOS && !isInApp && !isStandalone()) window.addEventListener('load', ()=>setTimeout(()=>show('ios'), 5000));
-  window.showInstallAppHelp = ()=>{ try{ localStorage.removeItem(APP.snoozeKey); }catch(e){} if(deferred) show('android'); else if(isIOS) show('ios'); else APP.toast('Browser Menu (⋮) → "Install app" / "Add to Home screen" ကို ရွေးပါ'); };
-})();
-
-// SUWATI MEN FASHION — Website စတင်ခြင်း (Boot)
-// ⚠️ ဒီဖိုင်ကို index.html မှာ အောက်ဆုံး (JS ဖိုင်အားလုံးပြီးမှ) Load ရမည် — ဖိုင်အားလုံးထဲက Function တွေ အသင့်ဖြစ်ပြီးမှ Website စ Run ရန်
-loadCategories();
-loadProducts();
-loadPosts();
-loadBanners();
-initAutoRefreshSystem();
-
-renderTicker();
-sb.channel('site-ticker-realtime')
-  .on('postgres_changes', { event:'UPDATE', schema:'public', table:'settings' }, ()=>{ renderTicker(); })
-  .subscribe();
-
-initAuth();
-renderCartBadge();
-renderWishlistBadge();
 </script>
 </body>
 </html>

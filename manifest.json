@@ -1,0 +1,18 @@
+{
+  "id": "/",
+  "name": "SUWATI MEN FASHION",
+  "short_name": "SUWATI",
+  "description": "နေပြည်တော် ပုဗ္ဗသီရိ — အမျိုးသားဖက်ရှင် Online Shop",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E9E4D8",
+  "theme_color": "#141412",
+  "lang": "my",
+  "icons": [
+    { "src": "/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
