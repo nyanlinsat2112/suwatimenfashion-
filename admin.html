@@ -2,6 +2,10 @@
 <html lang="my">
 <head>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD/ElEQVR4nO2Wa4hVVRTHf3vvc885c8dznXtnxnTEHphWjkWIUhYRSQoRKUkUTRr2oAf4oQ+BEBgRQRmUiBI9ILVSP4gRk1b2tKRvRWom5WOcwZkxipm5d+6Ze+6595y9+zAPayjmjI4NQevj2RzWj7X+67+WaGjIGSYx5GQm/x/gvw8ghEAI8e8CSClRSgEQxzFxHAOg1Lnv4wlrvMl9f4AoiqitTeO6LkJAWKlSKBQxxpDJeBiTfLITAwgh8H2fW25ezMq772LunNnkslmEgEJ/kTOdXez76FNa936Cbdsk7YxIYkRSSopFn7VPPspz69fhuA4C6MsXAMjW1VGNqggh2LT5dZ59/iUynofW+sIBpBQEQcicK69g/749WJbF6fYOXtywkeMnTgFw3bXNrH/maWbOnEHa81i+4j4+/+JrPG/KmBBjtkAISRiGzG++Btu2SaUstm7fye49rTQ21hPHmsNHfkIIeOSh1bSdbkfHGqmS6TuRBoQQVCpVpBCEYYWbblzEjl27KfT3o6Qim53Kh/v207p3P6VSCduxSdfUTEwLhBBUq1UaGur57OP3yWWzVKtVTpw8xZcHDnL48FF+OX6SM51d+P4AmYyHUoooihJ5RGIR+v4Ay5bexqsvv8CMGZeQSqWQUlIqBfT09HK6vYOvDhxk27u76O3to2aiKjAaoqlpOnfesZTFNyziqrlzaGqaTraujljHWEpx9NjPtDz4GN3dZ7Fte0xPSAwwXM4gKFOpVFBKUp/Lcells1i44HrWrL6fpqbp1Nfn2Lp9B2ufWjcINuSUFwxQLodkMh61tWny+QKpVIowDKlWI3zfp7n5aj7Y/R6NjQ38ePQYy1e2JNJA4inYsmkDixYuAGNYcc8q2tra8TwPpSSu69Dd/SulUgmlJFprjDETA6CUIp8vEARl5s2fR89vv/PmaxvZtOUNOjrOoI0hWzeVh9c8wLRpjTi2ww+HjuD7A2SzE9ACIQRRFOE4Dm+/tZnbl9yKALQ29OXzaK3JZDLUuA7aGL77/hCr1jxOT08vqVRqYkQ47AUpy2JVy70sW7qEWbNmkvGmDC2pAbq6z3Lgm2/Z9s5O+vuLuK6L1vpv9/2fh3NcU6C1pr9YxHUccrks6XQaAZSCMn19fZRKAZ43Bcuy0FqjgbI2DCvBMHiAuPKcNhIDDENIOSiyKIpGjEZKiWVZI2/GGDSQUYLZriIeaoMEygaOB+d0Ma6DxBgzIirLsv7xTQKBNsxOK165vJZADwI4AtrKMU+0DZwfwOiEY4UGStoQDgFoAeGo3yb9Kj7vCiQJCbgChlXoCLBHedNFAxBAoKEt1CMtsAV0Vv66Icc1BRcjJl0Dkw7wB12FsHsHaQV6AAAAAElFTkSuQmCC">
+<script>
+/* Admin — Light/Dark (Default: Dark) ကို Page မပေါ်ခင် သတ်မှတ် */
+(function(){ try{ var t=localStorage.getItem('suwati_admin_theme'); document.documentElement.setAttribute('data-theme', t==='light'?'light':'dark'); }catch(e){ document.documentElement.setAttribute('data-theme','dark'); } })();
+</script>
 <link rel="manifest" href="/admin-manifest.json">
 <meta name="theme-color" content="#141412">
 <meta name="mobile-web-app-capable" content="yes">
@@ -19,6 +23,8 @@
 <style>
   :root{
     --ink:#141412; --concrete:#E9E4D8; --rust:#C13B1F; --acid:#D6FF3F; --grey:#87806f; --paper:#f2efe6;
+    --s1:#1f1e1a; --s2:#1a1916; --s3:#2a2924; --s4:#232219; --bd:#3a382f;
+    --acid-text:#D6FF3F; --warn-text:#ff8a5c; --info-text:#4da3ff; --muted-text:#c9c4b6;
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--ink); color:var(--concrete); font-family:'Noto Sans Myanmar',sans-serif; min-height:100vh;}
@@ -34,7 +40,7 @@
   #login-screen .dot{color:var(--rust);}
   #login-screen form{display:flex; flex-direction:column; gap:12px; width:100%; max-width:320px;}
   input,textarea,select{
-    background:var(--paper); color:var(--ink); border:2.5px solid var(--concrete); padding:12px; font-family:'Space Mono',monospace; font-size:14px; width:100%;
+    background:var(--paper); color:#141412; border:2.5px solid var(--concrete); padding:12px; font-family:'Space Mono',monospace; font-size:14px; width:100%;
   }
   input[type="checkbox"], input[type="radio"]{
     width:16px; height:16px; padding:0; border-width:2px; flex-shrink:0; accent-color:var(--acid);
@@ -45,7 +51,7 @@
     font-family:'Space Mono',monospace; font-size:14px; padding:12px; letter-spacing:.03em;
   }
   button.secondary{background:transparent;}
-  button.acid{background:var(--acid); color:var(--ink); border-color:var(--acid); font-weight:700;}
+  button.acid{background:var(--acid); color:#141412; border-color:var(--acid); font-weight:700;}
   #login-error{color:var(--rust); font-family:'Space Mono',monospace; font-size:13px; min-height:16px;}
 
   /* ---- DASHBOARD ---- */
@@ -76,7 +82,7 @@
   .tabs-group{ padding:16px 24px 0; }
   .tabs-group-label{
     font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey); text-transform:uppercase;
-    letter-spacing:.1em; margin-bottom:8px; border-bottom:1px solid #3a382f; padding-bottom:6px;
+    letter-spacing:.1em; margin-bottom:8px; border-bottom:1px solid var(--bd); padding-bottom:6px;
   }
   .tabs-group-row{ display:flex; flex-wrap:wrap; gap:8px; }
   .tabs-group-row .tab-btn{ padding:8px 14px; font-size:12.5px; }
@@ -87,7 +93,7 @@
   .panel.active{display:block;}
 
   .form-card{
-    background:#1f1e1a; border:2.5px solid var(--concrete); padding:20px; margin-bottom:26px;
+    background:var(--s1); border:2.5px solid var(--concrete); padding:20px; margin-bottom:26px;
     overflow-x:hidden; max-width:100%; box-sizing:border-box;
   }
   .form-card h3{font-family:'Anton',sans-serif; font-size:20px; margin-bottom:14px;}
@@ -106,7 +112,7 @@
   .form-actions{display:flex; gap:10px; margin-top:14px;}
 
   .list-item{
-    display:flex; gap:14px; align-items:center; border:2px solid #3a382f; padding:12px; margin-bottom:10px; background:#1a1916;
+    display:flex; gap:14px; align-items:center; border:2px solid var(--bd); padding:12px; margin-bottom:10px; background:var(--s2);
   }
   .list-item img{width:64px; height:64px; object-fit:cover; border:2px solid var(--concrete); flex-shrink:0;}
   .list-item .info{flex:1; min-width:0;}
@@ -117,16 +123,16 @@
   .status-badge{
     font-family:'Space Mono',monospace; font-size:11px; padding:3px 8px; border:1.5px solid; display:inline-block; margin-top:4px;
   }
-  .status-badge.available{color:var(--acid); border-color:var(--acid);}
+  .status-badge.available{color:var(--acid-text); border-color:var(--acid);}
   .status-badge.sold_out{color:var(--rust); border-color:var(--rust);}
   #toast{
-    position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--acid); color:var(--ink);
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%); background:var(--acid); color:#141412;
     padding:12px 22px; font-family:'Space Mono',monospace; font-size:13px; display:none; z-index:99;
   }
   .hint{font-family:'Space Mono',monospace; font-size:11.5px; color:var(--grey); margin-top:-6px; margin-bottom:10px;}
 
 #color-stock-fields{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;}
-.color-stock-field{display:flex; align-items:center; gap:6px; background:#1f1e1a; border:1.5px solid var(--concrete); padding:6px 10px;}
+.color-stock-field{display:flex; align-items:center; gap:6px; background:var(--s1); border:1.5px solid var(--concrete); padding:6px 10px;}
 .color-stock-field label{font-family:'Space Mono',monospace; font-size:12px;}
 .color-stock-field input{width:60px; padding:5px; margin:0;}
 
@@ -134,7 +140,7 @@
   font-family:'Space Mono',monospace; font-size:12.5px; padding:7px 14px; border:2px solid var(--concrete);
   background:transparent; color:var(--concrete); cursor:pointer;
 }
-.size-chip-btn.active{background:var(--acid); color:var(--ink); border-color:var(--acid);}
+.size-chip-btn.active{background:var(--acid); color:#141412; border-color:var(--acid);}
 
 .tag-toggle-btn{
   font-family:'Space Mono',monospace; font-size:12.5px; padding:7px 14px; border:2px solid var(--concrete);
@@ -144,7 +150,7 @@
 
 .img-preview-thumb{position:relative; width:64px; height:64px;}
 .img-preview-thumb img{width:100%; height:100%; object-fit:cover; border:2px solid var(--concrete); cursor:zoom-in;}
-.img-preview-thumb .cover-badge{position:absolute; bottom:-2px; left:-2px; background:var(--acid); color:var(--ink); font-size:9px; padding:1px 4px; font-family:'Space Mono',monospace;}
+.img-preview-thumb .cover-badge{position:absolute; bottom:-2px; left:-2px; background:var(--acid); color:#141412; font-size:9px; padding:1px 4px; font-family:'Space Mono',monospace;}
 
 #lightbox-overlay{
   display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:500;
@@ -155,23 +161,23 @@
 
 .variant-stock-table{border-collapse:collapse; width:100%; margin-bottom:10px;}
 .variant-stock-table th, .variant-stock-table td{border:1.5px solid var(--concrete); padding:6px; text-align:center; font-family:'Space Mono',monospace; font-size:12px;}
-.variant-stock-table th{background:#1f1e1a;}
+.variant-stock-table th{background:var(--s1);}
 .variant-stock-table input{width:56px; padding:4px; margin:0; text-align:center;}
 
-.order-card{border:2px solid #3a382f; background:#1a1916; padding:16px; margin-bottom:14px;}
+.order-card{border:2px solid var(--bd); background:var(--s2); padding:16px; margin-bottom:14px;}
 .order-card .row1{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
 .order-card h4{font-family:'Anton',sans-serif; font-size:17px;}
 .order-card .oid{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey);}
-.order-card .details{font-family:'Space Mono',monospace; font-size:12.5px; color:#c9c4b6; margin-top:8px; line-height:1.8;}
+.order-card .details{font-family:'Space Mono',monospace; font-size:12.5px; color:var(--muted-text); margin-top:8px; line-height:1.8;}
 .order-card .ss-thumb{width:70px; height:70px; object-fit:cover; border:2px solid var(--concrete); margin-top:10px; cursor:pointer;}
 .order-card select{width:auto; margin-top:10px; margin-right:8px; display:inline-block;}
 
 .inventory-table-styled{width:100%; border-collapse:collapse; font-family:'Space Mono',monospace; font-size:13.5px; line-height:1.7;}
 .inventory-table-styled thead tr{border-bottom:2px solid var(--concrete);}
 .inventory-table-styled th{padding:12px 14px; text-align:left; font-size:12px; letter-spacing:.04em; color:var(--grey); white-space:nowrap;}
-#inventory-table td{padding:14px; border-bottom:1px solid #3a382f; vertical-align:top;}
-#inventory-table tr:hover td{background:#1f1e1a;}
-#inventory-table tr.low-stock td{color:#ff8a5c;}
+#inventory-table td{padding:14px; border-bottom:1px solid var(--bd); vertical-align:top;}
+#inventory-table tr:hover td{background:var(--s1);}
+#inventory-table tr.low-stock td{color:var(--warn-text);}
 #inventory-table tr.out-stock td{color:#6b665a;}
 .stock-badge{padding:3px 8px; border:1.5px solid; font-size:10.5px; white-space:nowrap; display:inline-block; line-height:1.5;}
 .inventory-table-styled td:last-child{white-space:nowrap;}
@@ -179,19 +185,19 @@
   .inventory-table-styled{font-size:11.5px;}
   .inventory-table-styled th, #inventory-table td{padding:8px 6px;}
 }
-.stock-badge.ok{color:var(--acid); border-color:var(--acid);}
-.stock-badge.low{color:#ff8a5c; border-color:#ff8a5c;}
+.stock-badge.ok{color:var(--acid-text); border-color:var(--acid);}
+.stock-badge.low{color:var(--warn-text); border-color:#ff8a5c;}
 .stock-badge.out{color:var(--rust); border-color:var(--rust);}
 .denom-chip{
   display:inline-block; border:2px solid var(--concrete); padding:10px 16px; font-family:'Space Mono',monospace; font-size:13px; cursor:pointer;
 }
-.denom-chip.active{ background:var(--acid); color:var(--ink); border-color:var(--acid); }
-.giftcard-code-box{ background:#1f1e1a; border:3px dashed var(--acid); padding:16px; text-align:center; margin-top:10px; }
-.giftcard-code-box .gc-code{ font-family:'Space Mono',monospace; font-size:20px; font-weight:700; letter-spacing:2px; color:var(--acid); }
+.denom-chip.active{ background:var(--acid); color:#141412; border-color:var(--acid); }
+.giftcard-code-box{ background:var(--s1); border:3px dashed var(--acid); padding:16px; text-align:center; margin-top:10px; }
+.giftcard-code-box .gc-code{ font-family:'Space Mono',monospace; font-size:20px; font-weight:700; letter-spacing:2px; color:var(--acid-text); }
 .wallet-nav-box:hover{ border-color:var(--acid); }
 .wallet-nav-box:active{ transform:scale(.99); }
 
-.inventory-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
+.inventory-card{border:2px solid var(--bd); background:var(--s2); padding:14px 16px; margin-bottom:10px;}
 .inventory-card .inv-head{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px;}
 .inventory-card .inv-name{font-weight:700; font-size:15px;}
 .inventory-card .inv-meta{font-family:'Space Mono',monospace; font-size:11.5px; color:var(--grey);}
@@ -200,8 +206,8 @@
 .variant-chip{
   font-family:'Space Mono',monospace; font-size:11.5px; padding:5px 9px; border:1.5px solid; white-space:nowrap;
 }
-.variant-chip.stock-good{color:var(--acid); border-color:var(--acid);}
-.variant-chip.stock-low{color:#ff8a5c; border-color:#ff8a5c;}
+.variant-chip.stock-good{color:var(--acid-text); border-color:var(--acid);}
+.variant-chip.stock-low{color:var(--warn-text); border-color:#ff8a5c;}
 .variant-chip.stock-out{color:var(--rust); border-color:var(--rust); opacity:.7;}
 .inventory-card .inv-footer{display:flex; justify-content:space-between; margin-top:10px; font-family:'Space Mono',monospace; font-size:11.5px; color:var(--grey);}
 
@@ -223,22 +229,22 @@
 .tab-btn.needs-attention{ animation:pulseAttention 3s ease-in-out infinite; border-color:var(--rust); }
 
 @keyframes pulseAttentionBox{
-  0%, 100% { border-color:#3a382f; box-shadow:none; }
+  0%, 100% { border-color:var(--bd); box-shadow:none; }
   50% { border-color:var(--rust); box-shadow:0 0 0 3px rgba(193,59,29,0.25); }
 }
 .wallet-nav-box.needs-attention-box{ animation:pulseAttentionBox 1.6s ease-in-out infinite; }
 
-.log-entry{border-bottom:1px solid #3a382f; padding:10px 4px; font-family:'Space Mono',monospace; font-size:12.5px;}
+.log-entry{border-bottom:1px solid var(--bd); padding:10px 4px; font-family:'Space Mono',monospace; font-size:12.5px;}
 .log-entry .log-time{color:var(--grey); font-size:11px;}
-.log-entry .log-admin{color:var(--acid);}
+.log-entry .log-admin{color:var(--acid-text);}
 .log-entry .log-action{color:var(--concrete); font-weight:700;}
 
-.msg-thread-item{display:flex; justify-content:space-between; align-items:center; border:2px solid #3a382f; background:#1a1916; padding:12px 14px; margin-bottom:8px; cursor:pointer;}
-.msg-thread-item:hover{background:#232219;}
+.msg-thread-item{display:flex; justify-content:space-between; align-items:center; border:2px solid var(--bd); background:var(--s2); padding:12px 14px; margin-bottom:8px; cursor:pointer;}
+.msg-thread-item:hover{background:var(--s4);}
 .msg-thread-item .mt-name{font-weight:700;}
 .unread-dot{ display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--rust); margin-right:7px; vertical-align:middle; }
 .new-item-badge{
-  display:inline-block; background:var(--acid); color:var(--ink); font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
+  display:inline-block; background:var(--acid); color:#141412; font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
   padding:2px 7px; border-radius:3px; letter-spacing:.05em; margin-left:6px; vertical-align:middle;
   animation:newBadgeBlink 1.4s ease-in-out infinite;
 }
@@ -257,69 +263,80 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .quick-dur button{padding:7px 12px; font-size:12px;}
 .promo-check{display:flex; align-items:flex-start; gap:8px; margin-top:10px; font-family:'Space Mono',monospace; font-size:12px;}
 .promo-status{display:inline-block; font-family:'Space Mono',monospace; font-size:10.5px; font-weight:700; padding:2px 8px; border:1.5px solid; margin-left:6px; vertical-align:middle;}
-.promo-status.running{color:var(--acid); border-color:var(--acid);}
-.promo-status.scheduled{color:#4da3ff; border-color:#4da3ff;}
+.promo-status.running{color:var(--acid-text); border-color:var(--acid);}
+.promo-status.scheduled{color:var(--info-text); border-color:#4da3ff;}
 .promo-status.paused{color:var(--grey); border-color:var(--grey);}
 .promo-status.expired, .promo-status.usedup{color:var(--rust); border-color:var(--rust);}
-#pos-numpad{margin-top:10px; border:2px solid #3a382f; padding:10px; background:#1a1916; max-width:460px;}
+#pos-numpad{margin-top:10px; border:2px solid var(--bd); padding:10px; background:var(--s2); max-width:460px;}
 #pos-numpad .np-target{font-family:'Space Mono',monospace; font-size:12px; color:var(--grey); margin-bottom:8px;}
-#pos-numpad .np-target b{color:var(--acid);}
+#pos-numpad .np-target b{color:var(--acid-text);}
 #pos-numpad .np-quick{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;}
-#pos-numpad .np-quick button{padding:10px 4px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; background:transparent; color:var(--acid); border:2px solid var(--acid); cursor:pointer;}
+#pos-numpad .np-quick button{padding:10px 4px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; background:transparent; color:var(--acid-text); border:2px solid var(--acid); cursor:pointer;}
 #pos-numpad .np-quick.disabled button{opacity:.3; pointer-events:none;}
 #pos-numpad .np-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
-#pos-numpad .np-grid button{height:56px; font-family:'Space Mono',monospace; font-size:22px; font-weight:700; background:#2a2924; color:var(--concrete); border:2px solid #3a382f; cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
-#pos-numpad .np-grid button:active, #pos-numpad .np-quick button:active{transform:scale(.96); background:var(--acid); color:var(--ink);}
-#pos-numpad .np-back{color:#ff8a5c !important;}
-#pos-numpad .np-clear{grid-column:span 2; font-size:15px !important; color:#ff8a5c !important;}
+#pos-numpad .np-grid button{height:56px; font-family:'Space Mono',monospace; font-size:22px; font-weight:700; background:var(--s3); color:var(--concrete); border:2px solid var(--bd); cursor:pointer; user-select:none; -webkit-user-select:none; touch-action:manipulation;}
+#pos-numpad .np-grid button:active, #pos-numpad .np-quick button:active{transform:scale(.96); background:var(--acid); color:#141412;}
+#pos-numpad .np-back{color:var(--warn-text) !important;}
+#pos-numpad .np-clear{grid-column:span 2; font-size:15px !important; color:var(--warn-text) !important;}
 .np-active{outline:3px solid var(--acid) !important; outline-offset:1px;}
 .drag-handle{ font-size:20px; color:var(--grey); cursor:grab; user-select:none; touch-action:none; padding:8px; margin:-8px; }
 .msg-thread-item .mt-preview{font-size:12px; color:var(--grey); margin-top:3px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .msg-thread-item .mt-time{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey);}
 .msg-thread-item.unread{border-color:var(--acid);}
 .admin-chat-bubble{padding:9px 13px; margin:6px 0; max-width:80%; font-size:13px; border-radius:2px;}
-.admin-chat-bubble.customer{background:#2a2924; border:1.5px solid var(--concrete);}
+.admin-chat-bubble.customer{background:var(--s3); border:1.5px solid var(--concrete);}
 .admin-chat-bubble.admin{background:var(--rust); color:var(--concrete); margin-left:auto;}
-.admin-chat-log{max-height:340px; overflow-y:auto; display:flex; flex-direction:column; margin:12px 0; padding:10px; background:#1a1916; border:1.5px solid #3a382f;}
+.admin-chat-log{max-height:340px; overflow-y:auto; display:flex; flex-direction:column; margin:12px 0; padding:10px; background:var(--s2); border:1.5px solid var(--bd);}
 
-.delivery-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
+.delivery-card{border:2px solid var(--bd); background:var(--s2); padding:14px 16px; margin-bottom:10px;}
 .delivery-card.delivered-done{opacity:.75; border-color:var(--acid);}
-.dc-status.dc-done{border-color:var(--acid); color:var(--acid);}
-.delivery-card .dc-status{font-family:'Space Mono',monospace; font-size:10.5px; padding:2px 8px; border:1.5px solid var(--acid); color:var(--acid); display:inline-block; margin-top:6px;}
+.dc-status.dc-done{border-color:var(--acid); color:var(--acid-text);}
+.delivery-card .dc-status{font-family:'Space Mono',monospace; font-size:10.5px; padding:2px 8px; border:1.5px solid var(--acid); color:var(--acid-text); display:inline-block; margin-top:6px;}
 
-.sr-period-btn.active{background:var(--acid); color:var(--ink); border-color:var(--acid);}
-.chart-metric-btn.active{background:var(--acid); color:var(--ink); border-color:var(--acid);}
+.sr-period-btn.active{background:var(--acid); color:#141412; border-color:var(--acid);}
+.chart-metric-btn.active{background:var(--acid); color:#141412; border-color:var(--acid);}
 
-.customer-card{border:2px solid #3a382f; background:#1a1916; padding:14px 16px; margin-bottom:10px;}
+.customer-card{border:2px solid var(--bd); background:var(--s2); padding:14px 16px; margin-bottom:10px;}
 .customer-card .row1{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;}
 .customer-card h4{font-family:'Anton',sans-serif; font-size:16px;}
-.customer-card .cstats{font-family:'Space Mono',monospace; font-size:12px; color:var(--acid); text-align:right;}
-.customer-card .cdetails{font-family:'Space Mono',monospace; font-size:12.5px; color:#c9c4b6; margin-top:8px; line-height:1.8;}
+.customer-card .cstats{font-family:'Space Mono',monospace; font-size:12px; color:var(--acid-text); text-align:right;}
+.customer-card .cdetails{font-family:'Space Mono',monospace; font-size:12.5px; color:var(--muted-text); margin-top:8px; line-height:1.8;}
 .customer-card .view-orders-btn{margin-top:10px; padding:8px 14px; font-size:12px;}
-.customer-order-history{margin-top:10px; padding-top:10px; border-top:1px solid #3a382f; display:none;}
+.customer-order-history{margin-top:10px; padding-top:10px; border-top:1px solid var(--bd); display:none;}
 .customer-order-history.open{display:block;}
-.customer-order-history .coh-item{font-family:'Space Mono',monospace; font-size:12px; padding:6px 0; border-bottom:1px dashed #3a382f;}
+.customer-order-history .coh-item{font-family:'Space Mono',monospace; font-size:12px; padding:6px 0; border-bottom:1px dashed var(--bd);}
 
-.pos-result-item{display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#1f1e1a; border:1.5px solid var(--concrete); cursor:pointer;}
-.pos-result-item:hover{background:#2a2924;}
+.pos-result-item{display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:var(--s1); border:1.5px solid var(--concrete); cursor:pointer;}
+.pos-result-item:hover{background:var(--s3);}
 .pos-quick-tile{
-  background:#1f1e1a; border:2px solid var(--acid); padding:8px 12px; cursor:pointer; text-align:center; min-width:100px;
+  background:var(--s1); border:2px solid var(--acid); padding:8px 12px; cursor:pointer; text-align:center; min-width:100px;
 }
-.pos-quick-tile:hover{background:var(--acid); color:var(--ink);}
+.pos-quick-tile:hover{background:var(--acid); color:#141412;}
 .pos-quick-tile .pqt-name{font-size:12px; font-weight:700; font-family:'Space Mono',monospace;}
 .pos-quick-tile .pqt-count{font-size:10px; color:var(--grey); margin-top:2px;}
 .pos-quick-tile:hover .pqt-count{color:var(--ink);}
-.pos-selected-box{background:#1f1e1a; border:2px solid var(--acid); padding:14px; margin-top:10px;}
-.pos-cart-item{display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed #3a382f; font-family:'Space Mono',monospace; font-size:13px;}
+.pos-selected-box{background:var(--s1); border:2px solid var(--acid); padding:14px; margin-top:10px;}
+.pos-cart-item{display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed var(--bd); font-family:'Space Mono',monospace; font-size:13px;}
 .channel-badge{font-family:'Space Mono',monospace; font-size:10px; padding:2px 7px; border:1px solid; margin-left:6px;}
-.channel-badge.in_store{color:var(--acid); border-color:var(--acid);}
+.channel-badge.in_store{color:var(--acid-text); border-color:var(--acid);}
 .channel-badge.online{color:#87806f; border-color:#87806f;}
 
 .closing-summary-row{display:flex; gap:20px; flex-wrap:wrap; margin:14px 0;}
-.closing-method-card{background:#1f1e1a; border:1.5px solid var(--concrete); padding:14px 18px; min-width:150px;}
+.closing-method-card{background:var(--s1); border:1.5px solid var(--concrete); padding:14px 18px; min-width:150px;}
 .closing-method-card .cm-label{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey);}
-.closing-method-card .cm-value{font-family:'Anton',sans-serif; font-size:22px; color:var(--acid); margin-top:4px;}
+.closing-method-card .cm-value{font-family:'Anton',sans-serif; font-size:22px; color:var(--acid-text); margin-top:4px;}
 .closing-method-card .cm-count{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); margin-top:2px;}
+
+  /* ================= 🌗 ADMIN LIGHT MODE ================= */
+  html[data-theme="light"]{
+    --ink:#F2EFE6; --concrete:#141412; --grey:#5f5a4e; --paper:#ffffff;
+    --s1:#ffffff; --s2:#ffffff; --s3:#ebe6db; --s4:#f1ece2; --bd:#cdc6b6;
+    --acid-text:#3f6600; --warn-text:#B3341A; --info-text:#1d5fbf; --muted-text:#5c584e;
+    color-scheme:light;
+  }
+  html[data-theme="light"] input, html[data-theme="light"] textarea, html[data-theme="light"] select{ border-color:#141412; }
+  html[data-theme="light"] .form-card{ box-shadow:3px 3px 0 #141412; }
+  #admin-theme-btn{ min-width:44px; }
 </style>
 </head>
 <body>
@@ -342,6 +359,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
     <div class="logo display" id="dashboard-logo">SUWATI<span class="dot">.</span>ADMIN</div>
     <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
       <span id="admin-email-display" class="hint" style="margin:0;"></span>
+      <button id="admin-theme-btn" class="secondary" onclick="toggleAdminTheme()" title="Light / Dark Mode" aria-label="Light / Dark Mode ပြောင်းရန်">🌙</button>
       <button id="refresh-btn" class="secondary" title="လက်ရှိ Tab ကို Refresh လုပ်ရန်">🔄</button>
       <button id="logout-btn" class="secondary">Logout</button>
     </div>
@@ -490,7 +508,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
           <select id="product-category"></select>
           <select id="product-subcategory"><option value="">Sub-Category (Optional)</option></select>
           <input type="number" id="product-price" placeholder="ဈေးနှုန်း (ကျပ်) — Gift Card ဆိုရင် ဒီကွက်ကို လျစ်လျူရှုပါ" required>
-          <label class="full" style="display:flex; align-items:flex-start; gap:8px; font-family:'Space Mono',monospace; font-size:12.5px; border:1.5px solid #3a382f; padding:10px; margin:4px 0;">
+          <label class="full" style="display:flex; align-items:flex-start; gap:8px; font-family:'Space Mono',monospace; font-size:12.5px; border:1.5px solid var(--bd); padding:10px; margin:4px 0;">
             <input type="checkbox" id="product-is-giftcard" style="width:auto; flex-shrink:0; margin-top:2px;">
             <span style="flex:1; min-width:0; word-wrap:break-word;">🎁 ဒါက Gift Card ဖြစ်သည် — ပမာဏ Fix (10,000/20,000/50,000/100,000/300,000/500,000) ကို ရွေးပြီး တစ်ခုချင်းစီအတွက် Stock ခွဲသတ်မှတ်ရမည်၊ KBZPay ဖြင့်သာ ဝယ်ယူခွင့်ပြုမည်</span>
           </label>
@@ -551,7 +569,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
       </div>
       <div>
         <div class="hint" style="margin:0;">စုစုပေါင်း Stock အရေအတွက်</div>
-        <div class="display" style="font-size:24px; color:var(--acid);" id="stat-total-stock-qty">-</div>
+        <div class="display" style="font-size:24px; color:var(--acid-text);" id="stat-total-stock-qty">-</div>
       </div>
       <div>
         <div class="hint" style="margin:0;">Inventory Value (Stock × ဈေးနှုန်း — အကျီအဝတ်များချည်း)</div>
@@ -701,15 +719,15 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
       </div>
       <div>
         <div class="hint" style="margin:0;">အတည်ပြုပြီး Order</div>
-        <div class="display" style="font-size:26px; color:var(--acid);" id="stat-confirmed-orders">-</div>
+        <div class="display" style="font-size:26px; color:var(--acid-text);" id="stat-confirmed-orders">-</div>
       </div>
       <div>
         <div class="hint" style="margin:0;">အတည်မပြုရသေး Order</div>
-        <div class="display" style="font-size:26px; color:#ff8a5c;" id="stat-pending-orders">-</div>
+        <div class="display" style="font-size:26px; color:var(--warn-text);" id="stat-pending-orders">-</div>
       </div>
       <div>
         <div class="hint" style="margin:0;">ရောင်းရငွေ (Order အားလုံး)</div>
-        <div class="display" style="font-size:26px; color:var(--acid);" id="stat-total-revenue">-</div>
+        <div class="display" style="font-size:26px; color:var(--acid-text);" id="stat-total-revenue">-</div>
       </div>
       <div>
         <div class="hint" style="margin:0;">အတည်ပြုပြီး ငွေ (Confirmed+)</div>
@@ -747,7 +765,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
       <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:16px;">
         <div>
           <div class="hint" style="margin:0;">ရောင်းရငွေ (ကာလအလိုက်)</div>
-          <div class="display" style="font-size:24px; color:var(--acid);" id="sr-total-revenue">-</div>
+          <div class="display" style="font-size:24px; color:var(--acid-text);" id="sr-total-revenue">-</div>
         </div>
         <div>
           <div class="hint" style="margin:0;">Order အရေအတွက်</div>
@@ -759,7 +777,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
         </div>
         <div>
           <div class="hint" style="margin:0;">💰 Prepaid Card ငွေဖြည့်ခံရငွေ (ကာလအလိုက်)</div>
-          <div class="display" style="font-size:24px; color:#4da3ff;" id="sr-total-topup">-</div>
+          <div class="display" style="font-size:24px; color:var(--info-text);" id="sr-total-topup">-</div>
         </div>
         <div>
           <div class="hint" style="margin:0;">🎁 Gift Card ရောင်းရငွေ (ကာလအလိုက်)</div>
@@ -775,7 +793,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
         <button type="button" class="secondary chart-metric-btn" data-metric="giftcard">🎁 Gift Card ရောင်းရငွေ</button>
       </div>
 
-      <div style="background:#1f1e1a; padding:16px; border:1.5px solid var(--concrete); margin-bottom:16px;">
+      <div style="background:var(--s1); padding:16px; border:1.5px solid var(--concrete); margin-bottom:16px;">
         <canvas id="sales-chart" height="90"></canvas>
       </div>
 
@@ -801,7 +819,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
         </div>
         <div>
           <div class="hint" style="margin:0;">ပျမ်းမျှ ဝယ်ယူမှု (တစ်ဦးလျှင်)</div>
-          <div class="display" style="font-size:24px; color:var(--acid);" id="stat-avg-spend">-</div>
+          <div class="display" style="font-size:24px; color:var(--acid-text);" id="stat-avg-spend">-</div>
         </div>
       </div>
       <div id="customers-list"></div>
@@ -839,7 +857,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
     <div class="form-card" id="backup-card" style="border-color:var(--acid);">
       <h3>💾 Data Backup (Owner ချည်းသာ)</h3>
       <div class="hint">Order၊ Customer၊ Product၊ Prepaid Card/Wallet၊ Gift Card၊ Chat၊ Activity Log စတဲ့ Data အားလုံးကို ကိုယ့်စက်ထဲ Download ယူထားနိုင်ပါသည်။ <b>လတိုင်း အနည်းဆုံး တစ်ကြိမ်</b> ထုတ်ပြီး Google Drive စသည့် လုံခြုံတဲ့နေရာမှာ သိမ်းထားပါ။</div>
-      <div class="hint" id="backup-last" style="color:var(--acid);"></div>
+      <div class="hint" id="backup-last" style="color:var(--acid-text);"></div>
       <button type="button" class="acid" id="backup-excel-btn" style="width:100%; margin-top:8px;">📥 Excel Backup (.xlsx) ထုတ်မည် — ဖတ်ရလွယ်</button>
       <button type="button" class="secondary" id="backup-json-btn" style="width:100%; margin-top:8px;">📦 Full Backup (.json) ထုတ်မည် — ပြန် Restore လုပ်ရန်</button>
       <div class="hint" id="backup-progress" style="margin-top:8px;"></div>
@@ -1597,13 +1615,13 @@ function renderProductsList(){
     div.innerHTML = `
       <img src="${imgSrc}" style="cursor:zoom-in;" onclick="openLightbox('${imgSrc}')">
       <div class="info">
-        <h4>${p.pinned?'📌 ':''}${p.name} <span class="mono" style="font-size:10px; color:var(--acid);">[${p.category||'Top Wear'}${p.subcategory?' / '+p.subcategory:''}]</span></h4>
+        <h4>${p.pinned?'📌 ':''}${p.name} <span class="mono" style="font-size:10px; color:var(--acid-text);">[${p.category||'Top Wear'}${p.subcategory?' / '+p.subcategory:''}]</span></h4>
         <p>${Number(p.price).toLocaleString()} ကျပ် · Size: ${p.sizes||'-'} · အရောင်: ${p.colors||'-'} · လက်ကျန်: ${p.stock_qty}</p>
         ${p.tags ? `<p class="mono" style="font-size:10px; color:var(--rust);">🏷️ ${p.tags}</p>` : ''}
         ${(()=>{ const isOut = p.status==='sold_out' || (p.stock_qty||0)<=0; return `<span class="status-badge ${isOut?'sold_out':'available'}">${isOut?'SOLD OUT':'AVAILABLE'}</span>`; })()}
       </div>
       <div class="actions" style="flex-wrap:wrap;">
-        <button class="secondary pin-btn" style="${p.pinned?'background:var(--acid); color:var(--ink); border-color:var(--acid);':''}">${p.pinned?'📌 Unpin':'📌 Pin'}</button>
+        <button class="secondary pin-btn" style="${p.pinned?'background:var(--acid); color:#141412; border-color:var(--acid);':''}">${p.pinned?'📌 Unpin':'📌 Pin'}</button>
         <button class="secondary edit-btn">ပြင်မည်</button>
         <button class="secondary del-btn">ဖျက်မည်</button>
       </div>`;
@@ -1991,7 +2009,7 @@ async function loadSubcategories(){
   list.innerHTML = data.map(s=>`
     <div class="list-item">
       <div class="info">
-        <h4>${s.name} <span class="mono" style="font-size:10px; color:var(--acid);">[${s.category_name}]</span></h4>
+        <h4>${s.name} <span class="mono" style="font-size:10px; color:var(--acid-text);">[${s.category_name}]</span></h4>
       </div>
       <div class="actions">
         <button class="secondary del-subcat-btn" data-id="${s.id}" data-category="${s.category_name}">ဖျက်မည်</button>
@@ -2147,7 +2165,7 @@ async function loadOrders(){
 
     div.innerHTML = `
       <div class="row1">
-        <h4>${g.customer_name} ${g.rows.length>1 ? `<span class="mono" style="font-size:11px; color:var(--acid);">(${g.rows.length} ပစ္စည်း)</span>` : ''} ${!g.viewed_by_admin ? '<span class="new-item-badge">🆕 NEW</span>' : ''}</h4>
+        <h4>${g.customer_name} ${g.rows.length>1 ? `<span class="mono" style="font-size:11px; color:var(--acid-text);">(${g.rows.length} ပစ္စည်း)</span>` : ''} ${!g.viewed_by_admin ? '<span class="new-item-badge">🆕 NEW</span>' : ''}</h4>
         <span class="oid">#${g.group_display_id.slice(0,8).toUpperCase()} · ${new Date(g.created_at).toLocaleString()} <span class="channel-badge ${g.sale_channel}">${g.sale_channel==='in_store'?'🏪 In-Store':'🌐 Online'}</span></span>
       </div>
       <div class="details" style="margin-top:6px;">
@@ -2156,7 +2174,7 @@ async function loadOrders(){
       </div>
       ${itemsHtml}
       ${g.rows.some(r=>r.product_name==='🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု') ? `<div style="border:2px dashed var(--rust); padding:8px 10px; margin-top:8px; background:rgba(193,59,31,.10);">
-        <b style="color:#ff8a5c;">🎁 GIFT ထုပ်ပိုးပေးရန်</b>${(g.rows.find(r=>r.gift_message)||{}).gift_message ? `<br><span style="font-family:'Noto Sans Myanmar',sans-serif;">💌 ${String(g.rows.find(r=>r.gift_message).gift_message).replace(/</g,'&lt;')}</span>` : ''}
+        <b style="color:var(--warn-text);">🎁 GIFT ထုပ်ပိုးပေးရန်</b>${(g.rows.find(r=>r.gift_message)||{}).gift_message ? `<br><span style="font-family:'Noto Sans Myanmar',sans-serif;">💌 ${String(g.rows.find(r=>r.gift_message).gift_message).replace(/</g,'&lt;')}</span>` : ''}
       </div>` : ''}
       <div class="details" style="margin-top:8px; font-weight:700;">💰 စုစုပေါင်း: ${g.total_amount.toLocaleString()} ကျပ်</div>
       ${g.payment_screenshot_url ? `<img class="ss-thumb" loading="lazy" src="${g.payment_screenshot_url}" onclick="openLightbox('${g.payment_screenshot_url}')">` : ''}
@@ -2307,7 +2325,7 @@ async function loadPromoCodes(){
         <h4 style="font-family:'Space Mono',monospace;">${p.code}<span class="promo-status ${st.key}">${st.label}</span></h4>
         <p>${disc}${Number(p.min_order)>0?` · ${Number(p.min_order).toLocaleString()} ကျပ်+ ဝယ်မှ`:''}${p.once_per_customer?' · တစ်ယောက် တစ်ကြိမ်':''}</p>
         <p>⏰ ${fmtDT(p.starts_at)} → ${fmtDT(p.ends_at)}</p>
-        <p>👥 သုံးပြီး: <b style="color:var(--acid);">${p.used_count}</b>${p.max_uses?` / ${p.max_uses}`:' (အကန့်အသတ်မဲ့)'}${p.note?` · 📝 ${p.note}`:''}</p>
+        <p>👥 သုံးပြီး: <b style="color:var(--acid-text);">${p.used_count}</b>${p.max_uses?` / ${p.max_uses}`:' (အကန့်အသတ်မဲ့)'}${p.note?` · 📝 ${p.note}`:''}</p>
       </div>
       <div class="actions" style="flex-wrap:wrap;">
         <button class="secondary" onclick="togglePromo(${i})">${p.active?'⏸ ရပ်မည်':'▶ ပြန်ဖွင့်မည်'}</button>
@@ -2390,7 +2408,7 @@ async function showPromoUsers(i){
   const p = promoCache[i]; const box = document.getElementById('promo-users-'+i);
   if(box.innerHTML){ box.innerHTML=''; return; }
   const { data } = await sb.from('promo_redemptions').select('*').ilike('code', p.code).order('created_at', { ascending:false });
-  box.innerHTML = (data&&data.length) ? `<div style="border-top:1px dashed #3a382f; margin-top:8px; padding-top:6px; font-family:'Space Mono',monospace; font-size:11.5px;">
+  box.innerHTML = (data&&data.length) ? `<div style="border-top:1px dashed var(--bd); margin-top:8px; padding-top:6px; font-family:'Space Mono',monospace; font-size:11.5px;">
     ${data.map(r=>`<div>• ${new Date(r.created_at).toLocaleString()} — ${r.customer_name||'-'} (${r.phone||'-'}) · #${String(r.order_group_id).slice(0,8).toUpperCase()} · -${Number(r.discount_amount).toLocaleString()} ကျပ်</div>`).join('')}</div>`
     : '<div class="hint" style="margin-top:6px;">သုံးသူ မရှိသေးပါ</div>';
 }
@@ -2650,7 +2668,7 @@ function deliveryInfoLine(g, forRider){
   const r = (g.rows||[]).find(x=>x.delivery_zone);
   if(!r) return '';
   return forRider
-    ? `🚚 ${r.delivery_zone} · <b style="color:var(--acid);">ကောက်ခံရန် Deli ခ: ${r.delivery_fee_range||'-'}</b> <span style="font-size:10.5px; color:var(--grey);">(Deli သမား ယူရန်)</span><br>`
+    ? `🚚 ${r.delivery_zone} · <b style="color:var(--acid-text);">ကောက်ခံရန် Deli ခ: ${r.delivery_fee_range||'-'}</b> <span style="font-size:10.5px; color:var(--grey);">(Deli သမား ယူရန်)</span><br>`
     : `<br>🚚 ${r.delivery_zone} · Deli ခ ${r.delivery_fee_range||'-'} <span style="font-size:10.5px; color:var(--grey);">(ရောက်မှ ကောက် — ဆိုင်ငွေ မဟုတ်)</span>`;
 }
 
@@ -2914,8 +2932,8 @@ function renderSalesChart(){
       responsive: true,
       plugins: { legend: { labels: { color: '#E9E4D8' } } },
       scales: {
-        x: { ticks: { color: '#E9E4D8' }, grid: { color: '#3a382f' } },
-        y: { ticks: { color: '#E9E4D8' }, grid: { color: '#3a382f' } }
+        x: { ticks: { color: '#E9E4D8' }, grid: { color: 'var(--bd)' } },
+        y: { ticks: { color: '#E9E4D8' }, grid: { color: 'var(--bd)' } }
       }
     }
   });
@@ -3381,7 +3399,7 @@ function renderPosCart(){
   breakdown.innerHTML = `
     <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><span>${subtotal.toLocaleString()} ကျပ်</span></div>
     ${discount > 0 ? `<div style="display:flex; justify-content:space-between; color:var(--rust);"><span>ဈေးလျှော့</span><span>-${discount.toLocaleString()} ကျပ်</span></div>` : ''}
-    <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:var(--acid); border-top:1px solid #3a382f; padding-top:6px; margin-top:4px;"><span>Total</span><span>${final.toLocaleString()} ကျပ်</span></div>
+    <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:var(--acid-text); border-top:1px solid var(--bd); padding-top:6px; margin-top:4px;"><span>Total</span><span>${final.toLocaleString()} ကျပ်</span></div>
   `;
   updatePosChangeDisplay();
 }
@@ -3396,7 +3414,7 @@ function updatePosChangeDisplay(){
   if(change < 0){
     changeDisplay.innerHTML = `<span style="color:var(--rust);">ငွေမလုံလောက်ပါ (-${Math.abs(change).toLocaleString()})</span>`;
   } else {
-    changeDisplay.innerHTML = `<span style="color:var(--acid);">ပြန်အမ်းငွေ: ${change.toLocaleString()} ကျပ်</span>`;
+    changeDisplay.innerHTML = `<span style="color:var(--acid-text);">ပြန်အမ်းငွေ: ${change.toLocaleString()} ကျပ်</span>`;
   }
 }
 
@@ -3852,7 +3870,8 @@ function showReceiptOverlay(html){
       #receipt-overlay .ro-bar button{flex:1; padding:12px 8px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; border:2.5px solid #E9E4D8;}
       #receipt-overlay .ro-close{background:#C13B1F; color:#fff; border-color:#C13B1F !important; flex:0 0 auto !important; padding:12px 16px !important;}
       #receipt-overlay .ro-print{background:#D6FF3F; color:#141412; border-color:#D6FF3F !important;}
-      #receipt-overlay iframe{flex:1; width:100%; border:none; background:#fff;}`;
+      #receipt-overlay iframe{flex:1; width:100%; border:none; background:#fff;}
+      @media screen{ #receipt-print-root{display:none !important;} }`;
     document.head.appendChild(st);
   }
   closeReceiptOverlay(true);
@@ -3862,7 +3881,8 @@ function showReceiptOverlay(html){
       <button type="button" class="ro-print" onclick="printReceiptOverlay()">🖨️ Print / PDF</button>
     </div><iframe id="receipt-overlay-frame" title="Receipt"></iframe>`;
   document.body.appendChild(ov);
-  document.getElementById('receipt-overlay-frame').srcdoc = html;
+  // Receipt ထဲက Print ခလုတ်ကလည်း အပြင် Page ရဲ့ Print Function ကို သုံးစေရန်
+  document.getElementById('receipt-overlay-frame').srcdoc = String(html).replace(/onclick="window\.print\(\)"/g, 'onclick="parent.printReceiptOverlay()"');
   window.__receiptPrevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
   try{ history.pushState({ receiptOverlay:true }, ''); }catch(e){}
@@ -3870,15 +3890,31 @@ function showReceiptOverlay(html){
 function closeReceiptOverlay(silent){
   const ov = document.getElementById('receipt-overlay');
   if(!ov) return;
-  ov.remove();
+  ov.remove(); removeReceiptPrintRoot();
   document.body.style.overflow = window.__receiptPrevOverflow || '';
   if(!silent && history.state && history.state.receiptOverlay){ try{ history.back(); }catch(e){} }
 }
+// iPhone/iPad Safari က Popup (iframe) ထဲက Print ကို နှိပ်ရင် နောက်ကွယ်က Page တစ်ခုလုံးကိုပါ Print ထုတ်တတ်လို့
+// Receipt ကို Page ထဲ ယာယီ ကူးထည့်ပြီး Print ထုတ်ချိန်မှာ Receipt ကလွဲပြီး ကျန်တာအကုန် ဖျောက်ထားသည် (စာမျက်နှာ ၁ ရွက်တည်း)
 function printReceiptOverlay(){
-  const fr = document.getElementById('receipt-overlay-frame');
-  try{ fr.contentWindow.focus(); fr.contentWindow.print(); }
-  catch(e){ const w = window.open('', '_blank'); if(w){ w.document.open(); w.document.write(fr.srcdoc); w.document.close(); } }
+  const fr = document.getElementById('receipt-overlay-frame'); if(!fr) return;
+  const doc = new DOMParser().parseFromString(fr.srcdoc || '', 'text/html');
+  const styles = Array.from(doc.querySelectorAll('style')).map(s=>s.textContent).join('\n');
+  const links = Array.from(doc.querySelectorAll('link[rel="stylesheet"]')).map(l=>l.outerHTML).join('');
+  doc.querySelectorAll('.print-btn, script').forEach(el=>el.remove());
+  removeReceiptPrintRoot();
+  const root = document.createElement('div'); root.id = 'receipt-print-root';
+  root.innerHTML = links + `<style media="print">${styles}
+    html, body{ background:#fff !important; height:auto !important; overflow:visible !important; }
+    body > *:not(#receipt-print-root){ display:none !important; }
+    #receipt-print-root{ display:block !important; }
+    @page{ margin:6mm; }
+  </style>` + doc.body.innerHTML;
+  document.body.appendChild(root);
+  window.addEventListener('afterprint', removeReceiptPrintRoot, { once:true });
+  setTimeout(()=>window.print(), 60);
 }
+function removeReceiptPrintRoot(){ const r = document.getElementById('receipt-print-root'); if(r) r.remove(); }
 // Android Back ခလုတ် နှိပ်ရင်လည်း Receipt ပိတ်ရန်
 window.addEventListener('popstate', ()=>{ if(document.getElementById('receipt-overlay')) closeReceiptOverlay(true); });
 document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeReceiptOverlay(); });
@@ -4092,7 +4128,7 @@ async function loadClosingReport(){
   const extraCardsHtml = `
     <div class="closing-method-card">
       <div class="cm-label">💰 Prepaid Card ငွေဖြည့်ခံရငွေ</div>
-      <div class="cm-value" style="color:#4da3ff;">${topupTotalToday.toLocaleString()} ကျပ်</div>
+      <div class="cm-value" style="color:var(--info-text);">${topupTotalToday.toLocaleString()} ကျပ်</div>
       <div class="cm-count">${(topupsToday||[]).length} Top-up</div>
     </div>
     <div class="closing-method-card">
@@ -4176,7 +4212,7 @@ function renderManagerPermCheckboxes(checkedTabs){
   checkedTabs = checkedTabs || [];
   const area = document.getElementById('manager-permissions-checkboxes');
   area.innerHTML = RESTRICTABLE_TABS.map(t=>`
-    <label style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:12px; line-height:1.4; border:1.5px solid #3a382f; padding:8px 12px; white-space:nowrap;">
+    <label style="display:inline-flex; align-items:center; gap:7px; font-family:'Space Mono',monospace; font-size:12px; line-height:1.4; border:1.5px solid var(--bd); padding:8px 12px; white-space:nowrap;">
       <input type="checkbox" class="mgr-perm-checkbox" value="${t.id}" ${checkedTabs.includes(t.id)?'checked':''} style="flex-shrink:0; width:15px; height:15px; margin:0;"><span>${t.label}</span>
     </label>`).join('');
 }
@@ -4512,7 +4548,7 @@ function renderDeliveryQueueList(){
           <option value="processing" ${g.order_status==='processing'?'selected':''}>ပြင်ဆင်နေဆဲ</option>
           <option value="shipped" ${g.order_status==='shipped'?'selected':''}>ပို့ဆောင်နေဆဲ (ထွက်ခွာပြီ)</option>
           <option value="delivered" ${g.order_status==='delivered'?'selected':''}>ပို့ဆောင်ပြီးပါပြီ</option>
-        </select>` : `<div class="hint" style="margin:0; color:var(--acid);">🔒 ပို့ပြီးသွားပါပြီ — Status ကို ပြန်ပြင်လို့ မရတော့ပါ</div>`}
+        </select>` : `<div class="hint" style="margin:0; color:var(--acid-text);">🔒 ပို့ပြီးသွားပါပြီ — Status ကို ပြန်ပြင်လို့ မရတော့ပါ</div>`}
         <button type="button" class="acid delivery-action-btn" data-idx="${idx}">${g.order_status==='delivered'?'📋 အသေးစိတ် ကြည့်ရန်':'📦 ပို့ပြီးကြောင်း မှတ်တမ်းတင်ရန်'}</button>
       </div>
     </div>`).join('');
@@ -4558,8 +4594,8 @@ function openDeliveryAction(idx){
       <div class="details" style="margin-top:8px;">📍 ${g.address}<br>📞 ${g.phone}<br>${deliveryInfoLine(g, true)}</div>
 
       ${alreadyDelivered ? `
-        <div class="hint" style="margin-top:14px; color:var(--acid);">✅ ပို့ပြီးပါပြီ</div>
-        ${g.delivery_note ? `<div class="details" style="margin-top:8px; padding:10px; background:#1a1916; border:1.5px solid #3a382f;">${g.delivery_note}</div>` : ''}
+        <div class="hint" style="margin-top:14px; color:var(--acid-text);">✅ ပို့ပြီးပါပြီ</div>
+        ${g.delivery_note ? `<div class="details" style="margin-top:8px; padding:10px; background:var(--s2); border:1.5px solid var(--bd);">${g.delivery_note}</div>` : ''}
         ${g.delivery_photo_url ? `<img src="${g.delivery_photo_url}" style="width:100%; margin-top:10px; border:2px solid var(--concrete); cursor:zoom-in;" onclick="openLightbox('${g.delivery_photo_url}')">` : ''}
       ` : `
         <div class="hint" style="margin-top:14px;">ပစ္စည်း ဘယ်နေရာမှာ ထားခဲ့တယ်ဆိုတာ ပုံတင်ပါ (လိုအပ်သည်)</div>
@@ -4794,7 +4830,7 @@ async function loadTopupRequests(){
     <div class="order-card">
       <div class="row1"><h4>${t.customer_name}</h4><span class="oid">${new Date(t.created_at).toLocaleString()}</span></div>
       <div class="details" style="margin-top:6px;">📞 ${t.phone||'-'}</div>
-      <div class="details" style="margin-top:6px; font-weight:700; color:var(--acid);">💰 ${Number(t.amount).toLocaleString()} ကျပ်</div>
+      <div class="details" style="margin-top:6px; font-weight:700; color:var(--acid-text);">💰 ${Number(t.amount).toLocaleString()} ကျပ်</div>
       ${t.payment_screenshot_url ? `<img loading="lazy" src="${t.payment_screenshot_url}" style="width:120px; margin-top:8px; cursor:zoom-in; border:2px solid var(--concrete);" onclick="openLightbox('${t.payment_screenshot_url}')">` : ''}
       <div style="display:flex; gap:8px; margin-top:10px;">
         <button type="button" class="acid approve-topup-btn" data-id="${t.id}" data-uid="${t.user_id}" data-amt="${t.amount}">✅ Approve</button>
@@ -4951,7 +4987,7 @@ function renderTopupList(){
       <div class="info">
         <h4>${t.customer_name} <span class="mono" style="font-size:10px; color:var(--grey);">[${statusLabels[t.status]||t.status}]</span></h4>
         <p class="mono" style="font-size:11px; color:var(--grey);">${Number(t.amount).toLocaleString()} ကျပ် · ${new Date(t.created_at).toLocaleString()}</p>
-        ${t.reviewed_by_email ? `<p class="mono" style="font-size:10.5px; color:var(--acid);">✔️ ${t.status==='rejected'?'Reject':'Approve'} လုပ်သူ: ${t.reviewed_by_email} · ${new Date(t.reviewed_at).toLocaleString()}</p>` : ''}
+        ${t.reviewed_by_email ? `<p class="mono" style="font-size:10.5px; color:var(--acid-text);">✔️ ${t.status==='rejected'?'Reject':'Approve'} လုပ်သူ: ${t.reviewed_by_email} · ${new Date(t.reviewed_at).toLocaleString()}</p>` : ''}
         ${t.status==='rejected' && t.rejection_reason ? `<p class="mono" style="font-size:10.5px; color:var(--rust);">${t.rejection_reason}</p>` : ''}
       </div>
     </div>`).join('');
@@ -5004,7 +5040,7 @@ function renderCustomerWalletsList(){
         <p class="mono" style="font-size:11px; color:var(--grey);">📞 ${w.phone} ${w.card_number ? '· 💳 '+w.card_number : ''}</p>
       </div>
       <div style="text-align:right;">
-        <div class="mono" style="font-size:18px; font-weight:700; color:var(--acid);">${w.balance.toLocaleString()} ကျပ်</div>
+        <div class="mono" style="font-size:18px; font-weight:700; color:var(--acid-text);">${w.balance.toLocaleString()} ကျပ်</div>
       </div>
     </div>`).join('');
 }
@@ -5038,7 +5074,7 @@ function renderGiftCardList(){
       <div class="info">
         <h4>${g.code} <span class="mono" style="font-size:10px; color:var(--grey);">[${statusLabels[g.status]||g.status}]</span></h4>
         <p class="mono" style="font-size:11px; color:var(--grey);">${Number(g.amount).toLocaleString()} ကျပ် · ဝယ်သူ: ${g.purchaser_name||'-'} · ${new Date(g.created_at).toLocaleString()}</p>
-        ${g.reviewed_by_email ? `<p class="mono" style="font-size:10.5px; color:var(--acid);">✔️ ${g.status==='rejected'?'Reject':'Approve'} လုပ်သူ: ${g.reviewed_by_email} · ${new Date(g.reviewed_at).toLocaleString()}</p>` : ''}
+        ${g.reviewed_by_email ? `<p class="mono" style="font-size:10.5px; color:var(--acid-text);">✔️ ${g.status==='rejected'?'Reject':'Approve'} လုပ်သူ: ${g.reviewed_by_email} · ${new Date(g.reviewed_at).toLocaleString()}</p>` : ''}
         ${g.status==='rejected' && g.rejection_reason ? `<p class="mono" style="font-size:10.5px; color:var(--rust);">${g.rejection_reason}</p>` : ''}
       </div>
     </div>`).join('');
@@ -5098,6 +5134,16 @@ window.__PWA_APP = { name:'SUWATI Admin', snoozeKey:'suwati_admin_install_snooze
   if(isIOS && !isInApp && !isStandalone()) window.addEventListener('load', ()=>setTimeout(()=>show('ios'), 5000));
   window.showInstallAppHelp = ()=>{ try{ localStorage.removeItem(APP.snoozeKey); }catch(e){} if(deferred) show('android'); else if(isIOS) show('ios'); else APP.toast('Browser Menu (⋮) → "Install app" / "Add to Home screen" ကို ရွေးပါ'); };
 })();
+
+// ---------- 🌗 Admin Light / Dark Mode ----------
+function syncAdminThemeBtn(){ const b=document.getElementById('admin-theme-btn'); if(b) b.textContent = document.documentElement.getAttribute('data-theme')==='light' ? '🌙' : '☀️'; }
+function toggleAdminTheme(){
+  const t = document.documentElement.getAttribute('data-theme')==='light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  try{ localStorage.setItem('suwati_admin_theme', t); }catch(e){}
+  syncAdminThemeBtn();
+}
+syncAdminThemeBtn();
 </script>
 </body>
 </html>

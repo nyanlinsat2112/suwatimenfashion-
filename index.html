@@ -2,6 +2,10 @@
 <html lang="my">
 <head>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAD/ElEQVR4nO2Wa4hVVRTHf3vvc885c8dznXtnxnTEHphWjkWIUhYRSQoRKUkUTRr2oAf4oQ+BEBgRQRmUiBI9ILVSP4gRk1b2tKRvRWom5WOcwZkxipm5d+6Ze+6595y9+zAPayjmjI4NQevj2RzWj7X+67+WaGjIGSYx5GQm/x/gvw8ghEAI8e8CSClRSgEQxzFxHAOg1Lnv4wlrvMl9f4AoiqitTeO6LkJAWKlSKBQxxpDJeBiTfLITAwgh8H2fW25ezMq772LunNnkslmEgEJ/kTOdXez76FNa936Cbdsk7YxIYkRSSopFn7VPPspz69fhuA4C6MsXAMjW1VGNqggh2LT5dZ59/iUynofW+sIBpBQEQcicK69g/749WJbF6fYOXtywkeMnTgFw3bXNrH/maWbOnEHa81i+4j4+/+JrPG/KmBBjtkAISRiGzG++Btu2SaUstm7fye49rTQ21hPHmsNHfkIIeOSh1bSdbkfHGqmS6TuRBoQQVCpVpBCEYYWbblzEjl27KfT3o6Qim53Kh/v207p3P6VSCduxSdfUTEwLhBBUq1UaGur57OP3yWWzVKtVTpw8xZcHDnL48FF+OX6SM51d+P4AmYyHUoooihJ5RGIR+v4Ay5bexqsvv8CMGZeQSqWQUlIqBfT09HK6vYOvDhxk27u76O3to2aiKjAaoqlpOnfesZTFNyziqrlzaGqaTraujljHWEpx9NjPtDz4GN3dZ7Fte0xPSAwwXM4gKFOpVFBKUp/Lcells1i44HrWrL6fpqbp1Nfn2Lp9B2ufWjcINuSUFwxQLodkMh61tWny+QKpVIowDKlWI3zfp7n5aj7Y/R6NjQ38ePQYy1e2JNJA4inYsmkDixYuAGNYcc8q2tra8TwPpSSu69Dd/SulUgmlJFprjDETA6CUIp8vEARl5s2fR89vv/PmaxvZtOUNOjrOoI0hWzeVh9c8wLRpjTi2ww+HjuD7A2SzE9ACIQRRFOE4Dm+/tZnbl9yKALQ29OXzaK3JZDLUuA7aGL77/hCr1jxOT08vqVRqYkQ47AUpy2JVy70sW7qEWbNmkvGmDC2pAbq6z3Lgm2/Z9s5O+vuLuK6L1vpv9/2fh3NcU6C1pr9YxHUccrks6XQaAZSCMn19fZRKAZ43Bcuy0FqjgbI2DCvBMHiAuPKcNhIDDENIOSiyKIpGjEZKiWVZI2/GGDSQUYLZriIeaoMEygaOB+d0Ma6DxBgzIirLsv7xTQKBNsxOK165vJZADwI4AtrKMU+0DZwfwOiEY4UGStoQDgFoAeGo3yb9Kj7vCiQJCbgChlXoCLBHedNFAxBAoKEt1CMtsAV0Vv66Icc1BRcjJl0Dkw7wB12FsHsHaQV6AAAAAElFTkSuQmCC">
+<script>
+/* Page မပေါ်ခင် Light/Dark ကို ချက်ချင်း သတ်မှတ် (အဖြူရောင် ခဏ မလင်းစေရန်) */
+(function(){ try{ var t=localStorage.getItem('suwati_theme'); if(t!=='light'&&t!=='dark'){ t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'; } document.documentElement.setAttribute('data-theme',t); }catch(e){ document.documentElement.setAttribute('data-theme','light'); } })();
+</script>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#141412">
 <meta name="mobile-web-app-capable" content="yes">
@@ -67,6 +71,7 @@
 /* SUWATI MEN FASHION — Customer Website Styles */
   :root{
     --ink:#141412; --concrete:#E9E4D8; --rust:#C13B1F; --acid:#D6FF3F; --grey:#87806f; --line:#2b2a26; --paper:#f2efe6;
+    --black:#141412; --cream:#E9E4D8; --surface:#ffffff; --ph:var(--ph);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
@@ -148,7 +153,7 @@
   .btn{display:inline-block; font-family:'Space Mono',monospace; font-size:14px; padding:14px 26px; border:3px solid var(--concrete); color:var(--concrete); background:transparent; transition:transform .15s ease;}
   .btn:hover{transform:translate(-2px,-2px);}
   .btn.fill{background:var(--rust); border-color:var(--rust); color:var(--concrete);}
-  .btn.acid{background:var(--acid); border-color:var(--acid); color:var(--ink); font-weight:700;}
+  .btn.acid{background:var(--acid); border-color:var(--acid); color:var(--black); font-weight:700;}
 
   .about{display:grid; grid-template-columns:280px 1fr; gap:40px; padding:64px 24px; border-bottom:3px solid var(--ink); align-items:center;}
   .about .big-year{font-family:'Anton', sans-serif; font-size:clamp(48px,8vw,84px); color:var(--rust); line-height:.9;}
@@ -164,7 +169,7 @@
 
   .card{background:var(--paper); border:3px solid var(--ink); position:relative; transition:transform .2s ease;}
   .card:hover{transform:translateY(-4px);}
-  .card .swatch{aspect-ratio:1/1; border-bottom:3px solid var(--ink); position:relative; overflow:hidden; background:#ddd7c8;}
+  .card .swatch{aspect-ratio:1/1; border-bottom:3px solid var(--ink); position:relative; overflow:hidden; background:var(--ph);}
   .card .swatch img{width:100%; height:100%; object-fit:cover; transition:transform .35s ease;}
   .card:hover .swatch img{transform:scale(1.08);}
   .card .swatch::after{
@@ -195,12 +200,12 @@
   .auth-tabs{display:flex; gap:8px; margin-bottom:16px;}
   .auth-tab{flex:1; padding:9px; border:2px solid var(--ink); background:transparent; font-family:'Space Mono',monospace; font-size:12.5px; cursor:pointer;}
   .auth-tab.active{background:var(--ink); color:var(--concrete);}
-  .history-item{border:2px solid #d9d3c4; padding:12px 14px; margin-bottom:10px;}
+  .history-item{border:2px solid var(--ph); padding:12px 14px; margin-bottom:10px;}
   .history-item .row1{display:flex; justify-content:space-between; font-family:'Space Mono',monospace; font-size:11px; color:var(--grey);}
   .history-item h5{font-family:'Anton',sans-serif; font-size:16px; margin:6px 0 2px;}
   .history-item .status-tag{display:inline-block; margin-top:6px; padding:3px 10px; border:1.5px solid var(--rust); color:var(--rust); font-family:'Space Mono',monospace; font-size:11px;}
-  .wishlist-item{border:2px solid #d9d3c4; padding:12px; margin-bottom:10px;}
-  .profile-row{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #d9d3c4; font-size:14px;}
+  .wishlist-item{border:2px solid var(--ph); padding:12px; margin-bottom:10px;}
+  .profile-row{display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--ph); font-size:14px;}
   .wallet-balance-box{background:var(--ink); color:var(--concrete); padding:16px; text-align:center; border:2.5px solid var(--ink);}
   .wallet-balance-box .wb-label{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey);}
   .wallet-balance-box .wb-amount{font-family:'Anton',sans-serif; font-size:28px; color:var(--acid); margin-top:4px;}
@@ -269,7 +274,7 @@
   .ptag-new{background:#2e86de;}
   .ptag-best{background:var(--rust);}
   .ptag-featured{background:var(--ink); border:1px solid var(--acid); color:var(--acid) !important;}
-  .ptag-sale{background:var(--acid); color:var(--ink) !important;}
+  .ptag-sale{background:var(--acid); color:var(--black) !important;}
   .card-body{padding:16px 18px 20px;}
   .card-body h3{font-family:'Anton',sans-serif; font-size:19px;}
   .card-body .opt-group{margin-top:12px;}
@@ -314,17 +319,17 @@
     box-shadow:3px 3px 0 var(--ink); padding:0;
   }
   .modal-close:hover{ background:var(--ink); color:var(--acid); }
-  .modal-section{margin-top:18px; padding-top:18px; border-top:2px solid #d9d3c4;}
+  .modal-section{margin-top:18px; padding-top:18px; border-top:2px solid var(--ph);}
   .modal-section:first-of-type{border-top:none; margin-top:14px; padding-top:0;}
   .modal-label{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); letter-spacing:.05em; margin-bottom:8px;}
   .modal-box input[type=text], .modal-box input[type=tel], .modal-box input[type=email], .modal-box input[type=number], .modal-box input[type=password], .modal-box input[type=date], .modal-box textarea{
-    width:100%; max-width:100%; min-width:0; padding:12px; border:2.5px solid var(--ink); border-radius:0; background:#fff; font-family:'Space Mono',monospace; font-size:13.5px; margin-bottom:10px; box-sizing:border-box;
+    width:100%; max-width:100%; min-width:0; padding:12px; border:2.5px solid var(--ink); border-radius:0; background:var(--surface); color:var(--ink); font-family:'Space Mono',monospace; font-size:13.5px; margin-bottom:10px; box-sizing:border-box;
   }
   .modal-box input[type=date]{ -webkit-appearance:none; appearance:none; }
   .modal-box label{display:block; font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); letter-spacing:.05em; margin-bottom:5px;}
   .auth-link{display:block; text-align:center; margin-top:12px; font-family:'Space Mono',monospace; font-size:12px; color:var(--rust); text-decoration:underline; cursor:pointer; background:none; border:none;}
   .auth-divider{display:flex; align-items:center; text-align:center; margin:18px 0; color:var(--grey); font-family:'Space Mono',monospace; font-size:11px;}
-  .auth-divider::before, .auth-divider::after{content:""; flex:1; border-bottom:1.5px solid #d9d3c4;}
+  .auth-divider::before, .auth-divider::after{content:""; flex:1; border-bottom:1.5px solid var(--ph);}
   .auth-divider span{padding:0 12px;}
   .google-login-btn{
     display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:12px;
@@ -370,14 +375,14 @@
   .share-btn:hover{background:var(--ink); color:var(--concrete);}
   .detail-thumbs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
   .pin-badge{position:absolute; bottom:10px; right:10px; background:var(--ink); color:#fff; border:2px solid var(--acid); width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:16px; z-index:3;}
-  .qty-control input#detail-qty{width:72px; text-align:center; font-family:'Space Mono',monospace; font-size:16px; font-weight:700; padding:8px 4px; border:2.5px solid var(--ink); background:#fff; -moz-appearance:textfield;}
+  .qty-control input#detail-qty{width:72px; text-align:center; font-family:'Space Mono',monospace; font-size:16px; font-weight:700; padding:8px 4px; border:2.5px solid var(--ink); background:var(--surface); -moz-appearance:textfield;}
   .qty-control input#detail-qty::-webkit-outer-spin-button, .qty-control input#detail-qty::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
-  .promo-box{border:2.5px solid var(--ink); padding:12px; margin:12px 0 4px; background:#fff;}
+  .promo-box{border:2.5px solid var(--ink); padding:12px; margin:12px 0 4px; background:var(--surface);}
   .promo-apply{background:var(--ink); color:var(--acid); border:2.5px solid var(--ink); font-family:'Space Mono',monospace; font-weight:700; padding:0 16px; cursor:pointer;}
   .promo-applied{font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .promo-remove{background:transparent; border:1.5px solid var(--rust); color:var(--rust); font-size:11px; padding:3px 8px; cursor:pointer; margin-left:auto;}
   .promo-msg{font-size:12px; color:var(--rust); margin-top:6px; min-height:0;}
-  .cashback-banner{position:sticky; z-index:45; background:var(--acid); color:var(--ink); border-bottom:3px solid var(--ink); padding:9px 16px; font-size:13px; line-height:1.5; text-align:center;}
+  .cashback-banner{position:sticky; z-index:45; background:var(--acid); color:var(--black); border-bottom:3px solid var(--ink); padding:9px 16px; font-size:13px; line-height:1.5; text-align:center;}
   .cashback-banner b{font-family:'Anton',sans-serif; letter-spacing:.03em; font-weight:400; font-size:14px;}
   .cashback-est{border:2px dashed var(--ink); background:rgba(214,255,63,.35); padding:8px 10px; margin-top:10px; font-size:12.5px;}
   .gift-addon-box{border:2.5px dashed var(--rust); background:rgba(193,59,31,.06); padding:12px; margin:12px 0 4px;}
@@ -385,12 +390,12 @@
   .gift-addon-box input[type="checkbox"]{width:20px; height:20px; flex-shrink:0; margin-top:2px; accent-color:var(--rust);}
   .gift-addon-box .gift-price{color:var(--rust); white-space:nowrap;}
   .gift-addon-box textarea{margin-top:10px;}
-  #co-delivery-zone{width:100%; padding:12px; margin-top:4px; border:2.5px solid var(--ink); background:#fff; color:var(--ink); font-family:'Space Mono',monospace; font-size:13px; font-weight:700; border-radius:0; -webkit-appearance:none; appearance:none;
+  #co-delivery-zone{width:100%; padding:12px; margin-top:4px; border:2.5px solid var(--ink); background:var(--surface); color:var(--ink); font-family:'Space Mono',monospace; font-size:13px; font-weight:700; border-radius:0; -webkit-appearance:none; appearance:none;
     background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%); background-position:calc(100% - 18px) 50%, calc(100% - 12px) 50%; background-size:6px 6px; background-repeat:no-repeat; padding-right:32px;}
   .delivery-fee-note{font-size:12px; color:var(--grey); border-left:3px solid var(--acid); padding:6px 10px; margin-top:10px; background:rgba(20,20,18,.04);}
   .detail-thumbs img{width:52px; height:52px; object-fit:cover; border:2px solid var(--ink); cursor:pointer; opacity:.6;}
   .detail-thumbs img.active{opacity:1; border-color:var(--rust);}
-  .detail-desc{font-size:14px; line-height:1.8; color:#3a3833; margin-bottom:6px;}
+  .detail-desc{font-size:14px; line-height:1.8; color:var(--text2); margin-bottom:6px;}
   .qty-control{display:flex; align-items:center; gap:10px; margin:10px 0;}
   .qty-control button{width:34px; height:34px; border:2px solid var(--ink); background:transparent; font-size:16px; cursor:pointer;}
   .qty-control span{font-family:'Space Mono',monospace; font-size:16px; min-width:24px; text-align:center;}
@@ -415,7 +420,7 @@
   }
   .chat-fab.has-unread{ animation:chatFabPulse 1.8s ease-in-out infinite; }
   .chat-fab .chat-badge{
-    position:absolute; top:-4px; right:-4px; background:var(--acid); color:var(--ink); border-radius:50%;
+    position:absolute; top:-4px; right:-4px; background:var(--acid); color:var(--black); border-radius:50%;
     width:18px; height:18px; display:none; align-items:center; justify-content:center; font-size:10px;
     font-family:'Space Mono',monospace; font-weight:700; border:2px solid var(--concrete);
   }
@@ -434,15 +439,15 @@
   .track-step{ display:flex; align-items:flex-start; gap:12px; position:relative; padding-bottom:20px; }
   .track-step:last-child{ padding-bottom:0; }
   .track-step::before{
-    content:""; position:absolute; left:11px; top:24px; bottom:0; width:2px; background:#d9d3c4;
+    content:""; position:absolute; left:11px; top:24px; bottom:0; width:2px; background:var(--ph);
   }
   .track-step:last-child::before{ display:none; }
   .track-step.done::before{ background:var(--acid); }
   .track-dot{
-    width:24px; height:24px; border-radius:50%; border:2.5px solid #d9d3c4; background:var(--paper);
+    width:24px; height:24px; border-radius:50%; border:2.5px solid var(--ph); background:var(--paper);
     display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:12px; z-index:1;
   }
-  .track-step.done .track-dot{ border-color:var(--acid); background:var(--acid); color:var(--ink); }
+  .track-step.done .track-dot{ border-color:var(--acid); background:var(--acid); color:var(--black); }
   .track-step.current .track-dot{ border-color:var(--rust); background:var(--rust); color:var(--concrete); }
   .track-label{ font-weight:700; font-size:14px; padding-top:2px; }
   .track-step.cancelled .track-dot{ border-color:var(--rust); background:var(--rust); color:var(--concrete); }
@@ -474,7 +479,7 @@
   @media (max-width:760px){ .location-card{grid-template-columns:1fr;} }
   .location-info{padding:30px 28px;}
   .location-info h3{font-family:'Anton',sans-serif; font-size:24px; margin-bottom:10px;}
-  .location-info p{font-size:15px; line-height:1.8; color:#3a3833; margin-bottom:18px;}
+  .location-info p{font-size:15px; line-height:1.8; color:var(--text2); margin-bottom:18px;}
   .location-card iframe{width:100%; height:100%; min-height:280px; border:0; display:block;}
 
   footer{padding:60px 24px 30px; text-align:center;}
@@ -483,30 +488,84 @@
   .contact-row{display:flex; justify-content:center; gap:26px; flex-wrap:wrap; margin:28px 0 20px; font-family:'Space Mono',monospace; font-size:13.5px;}
   .contact-row a{border-bottom:2px solid var(--ink);}
   .fine{color:var(--grey); font-size:12px; font-family:'Space Mono',monospace;}
+
+
+/* =====================================================================
+   🌗 LIGHT / DARK MODE  +  Redesign (Style 1 refined)
+   ===================================================================== */
+html[data-theme="dark"]{
+  --ink:#E9E4D8; --concrete:#141412; --paper:#1E1D1A; --grey:#a39e91; --line:#3a3833;
+  --surface:#1E1D1A; --ph:#2a2924; --text2:#cfc9bb; color-scheme:dark;
+}
+html[data-theme="dark"] body::before{ opacity:.035; mix-blend-mode:screen; }
+/* အမြဲ အနက်ဖြစ်ရမည့် အပိုင်းများ (Light/Dark မရွေး) */
+.ticker{ background:var(--black) !important; color:var(--cream) !important; border-bottom:3px solid var(--black); }
+/* Dark Mode — Ticker ကို ကြမ်းဖြူ Background + အနက်စာ (Header နဲ့ ကြားက အဖြူမျဉ်း မပါ) */
+html[data-theme="dark"] header.site{ border-bottom-color:var(--black); }
+html[data-theme="dark"] .ticker{ background:var(--cream) !important; color:var(--black) !important; border:none !important; }
+html[data-theme="dark"] .ticker-track span.acc{ color:var(--rust); }
+.ticker-track span.acc{ color:var(--acid); }
+.hero{ background:var(--black); color:var(--cream); }
+.hero h1 .out{ -webkit-text-stroke:2px var(--cream); color:var(--black); }
+.stamp{ border-color:var(--cream); }
+.steps-wrap, .post-card{ background:var(--black); color:var(--cream); border-color:var(--black); }
+html[data-theme="dark"] .steps-wrap, html[data-theme="dark"] .post-card{ border:2px solid var(--cream); }
+.banner-card{ background:var(--black); }
+/* အစိမ်းဝါပေါ်က စာ အမြဲ အနက် */
+.card .tag, .cashback-banner, .cashback-banner b{ color:var(--black) !important; }
+.cart-count{ color:#fff !important; }
+html[data-theme="dark"] .card .tag{ border-color:var(--cream); }
+/* Theme ခလုတ် */
+.theme-toggle .ic-sun{ display:none; }
+html[data-theme="dark"] .theme-toggle .ic-sun{ display:block; }
+html[data-theme="dark"] .theme-toggle .ic-moon{ display:none; }
+html[data-theme="dark"] .card{ border-color:var(--ink); }
+html[data-theme="dark"] .modal-box{ border-color:var(--ink); }
+html[data-theme="dark"] input, html[data-theme="dark"] textarea, html[data-theme="dark"] select{ background:var(--surface); color:var(--ink); }
+html[data-theme="dark"] ::placeholder{ color:#8d887c; }
+/* ဖုန်းမှာ Product Card — ၂ ကော်လံ၊ ရိုးရှင်း (Size/အရောင် ရွေးတာ Detail မှာ) */
+.card-quick{ display:none; }
+@media (max-width:560px){
+  .grid{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:12px !important; padding:10px 14px 50px !important; }
+  .card{ border-width:2.5px; }
+  .card .swatch{ border-bottom-width:2.5px; }
+  .card .tag{ top:-8px; right:8px; padding:3px 7px; font-size:11px; border-width:2px; }
+  .card .card-body{ padding:10px 10px 12px !important; }
+  .card .card-body h3{ font-size:16px !important; line-height:1.15; margin-bottom:4px; }
+  .card .opt-group, .card .card-variant-stock, .card .order-btn, .card .msg-link, .card .card-body .hint{ display:none !important; }
+  .card .card-quick{ display:flex; align-items:center; justify-content:space-between; gap:6px; margin-top:4px; }
+  .card .cq-price{ font-family:'Space Mono',monospace; font-size:12.5px; font-weight:700; }
+  .card .cq-add{ width:44px; height:44px; flex-shrink:0; background:var(--acid); color:var(--black); border:2.5px solid var(--ink); font-size:22px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .card .lowstock-tag{ font-size:10px; padding:3px 6px; }
+  .card .soldout{ font-size:22px; }
+}
+
+/* Hero ခလုတ်များ — Hero က အမြဲ အနက်မို့ ခလုတ်စာ/ဘောင် အမြဲ အလင်း */
+.hero .btn{ color:var(--cream); border-color:var(--cream); }
+.hero .btn.acid{ color:var(--black); border-color:var(--acid); }
+.btn.fill{ color:#fff; }
+.hero .btn.fill{ border-color:var(--rust); }
+/* ဖုန်း Header — ☀️/🌙 ခလုတ် ထပ်ပါလာလို့ နေရာချွေတာ (ခြင်းခလုတ် Screen အပြင် မထွက်စေရန်) */
+@media (max-width:560px){
+  header.site .wrap{ padding:0 12px; }
+  header.site .logo{ font-size:22px; }
+  header.site nav > div:last-child{ gap:6px !important; }
+  header.site .cart-btn{ width:38px; height:38px; }
+  header.site .cart-btn svg{ width:18px; height:18px; }
+  header.site .auth-btn{ padding:7px 8px; font-size:11px; }
+}
+@media (max-width:360px){ header.site .logo{ font-size:19px; } }
+
+/* Wishlist ❤️ + Pin — Dark Mode မှာလည်း မြင်ရစေရန် */
+html[data-theme="dark"] .wishlist-heart{ background:rgba(20,20,18,.82) !important; border-color:var(--cream) !important; }
+html[data-theme="dark"] .wishlist-heart svg{ stroke:var(--cream) !important; }
+html[data-theme="dark"] .wishlist-heart.active svg{ stroke:var(--rust) !important; fill:var(--rust) !important; }
+.pin-badge{ background:var(--black) !important; }
+/* ဖုန်းမှာ ဈေးနှုန်းကို အောက်က Row မှာ ပြပြီးသားမို့ Sticker မပြ */
+@media (max-width:560px){ .card .swatch .tag{ display:none; } }
 </style>
 </head>
 <body>
-
-<div class="ticker">
-  <div class="ticker-track" id="ticker-track">
-    <span>ORDER NOW</span><span class="acc">·</span>
-    <span>DELIVERY AVAILABLE</span><span class="acc">·</span>
-    <span>STREET WEAR</span><span class="acc">·</span>
-    <span>POLO</span><span class="acc">·</span>
-    <span>ORIGINAL MENSWEAR</span><span class="acc">·</span>
-    <span>JEANS</span><span class="acc">·</span>
-    <span>SUWATI MEN FASHION</span><span class="acc">·</span>
-    <span>GRAB YOURS!!</span><span class="acc">·</span>
-    <span>ORDER NOW</span><span class="acc">·</span>
-    <span>DELIVERY AVAILABLE</span><span class="acc">·</span>
-    <span>STREET WEAR</span><span class="acc">·</span>
-    <span>POLO</span><span class="acc">·</span>
-    <span>ORIGINAL MENSWEAR</span><span class="acc">·</span>
-    <span>JEANS</span><span class="acc">·</span>
-    <span>SUWATI MEN FASHION</span><span class="acc">·</span>
-    <span>GRAB YOURS!!</span><span class="acc">·</span>
-  </div>
-</div>
 
 <header class="site">
   <nav class="wrap">
@@ -532,6 +591,10 @@
       <a href="#" onclick="openOrderTracking(); return false;">Order Track</a>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
+      <button class="cart-btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Light / Dark Mode ပြောင်းရန်" title="Light / Dark Mode">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
       <button class="auth-btn" id="auth-nav-btn" onclick="openAuthOrHistory()">Login</button>
       <button class="cart-btn" id="wishlist-btn-nav" onclick="openWishlist()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
@@ -544,6 +607,26 @@
     </div>
   </nav>
 </header>
+<div class="ticker">
+  <div class="ticker-track" id="ticker-track">
+    <span>ORDER NOW</span><span class="acc">·</span>
+    <span>DELIVERY AVAILABLE</span><span class="acc">·</span>
+    <span>STREET WEAR</span><span class="acc">·</span>
+    <span>POLO</span><span class="acc">·</span>
+    <span>ORIGINAL MENSWEAR</span><span class="acc">·</span>
+    <span>JEANS</span><span class="acc">·</span>
+    <span>SUWATI MEN FASHION</span><span class="acc">·</span>
+    <span>GRAB YOURS!!</span><span class="acc">·</span>
+    <span>ORDER NOW</span><span class="acc">·</span>
+    <span>DELIVERY AVAILABLE</span><span class="acc">·</span>
+    <span>STREET WEAR</span><span class="acc">·</span>
+    <span>POLO</span><span class="acc">·</span>
+    <span>ORIGINAL MENSWEAR</span><span class="acc">·</span>
+    <span>JEANS</span><span class="acc">·</span>
+    <span>SUWATI MEN FASHION</span><span class="acc">·</span>
+    <span>GRAB YOURS!!</span><span class="acc">·</span>
+  </div>
+</div>
 
 <section class="hero">
   <div class="hero-inner">
@@ -619,7 +702,7 @@
     <div class="location-info">
       <h3>SUWATI MEN FASHION</h3>
       <p>နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့၊ ကျည်တောင်ကန်<br>ဘူတာလမ်း အမှတ်(၁)ရပ်ကွက်</p>
-      <a class="btn fill" style="border-color:var(--ink); color:var(--concrete);" href="https://www.google.com/maps/search/?api=1&query=SUWATI%20MEN%20FASHION%20%E1%80%80%E1%80%BB%E1%80%8A%E1%80%BA%E1%80%90%E1%80%B1%E1%80%AC%E1%80%84%E1%80%BA%E1%80%80%E1%80%94%E1%80%BA%20%E1%80%98%E1%80%B0%E1%80%90%E1%80%AC%E1%80%9C%E1%80%99%E1%80%BA%E1%80%B8%20Pobbathiri%20Nay%20Pyi%20Taw%20Myanmar" target="_blank" rel="noopener">Google Map ဖွင့်ရန်</a>
+      <a class="btn fill" style="border-color:var(--ink); color:#fff;" href="https://www.google.com/maps/search/?api=1&query=SUWATI%20MEN%20FASHION%20%E1%80%80%E1%80%BB%E1%80%8A%E1%80%BA%E1%80%90%E1%80%B1%E1%80%AC%E1%80%84%E1%80%BA%E1%80%80%E1%80%94%E1%80%BA%20%E1%80%98%E1%80%B0%E1%80%90%E1%80%AC%E1%80%9C%E1%80%99%E1%80%BA%E1%80%B8%20Pobbathiri%20Nay%20Pyi%20Taw%20Myanmar" target="_blank" rel="noopener">Google Map ဖွင့်ရန်</a>
     </div>
     <iframe src="https://www.google.com/maps?q=SUWATI+MEN+FASHION+Pobbathiri+Nay+Pyi+Taw+Myanmar&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
   </div>
@@ -891,8 +974,9 @@ function renderProductGrid(){
         </div>
         <div class="card-body">
           <h3 style="cursor:pointer;" onclick="openProductDetail(${idx})">${p.name}</h3>
+          <div class="card-quick"><span class="cq-price">10,000 ကျပ်မှ</span><button type="button" class="cq-add" onclick="openProductDetail(${idx})" aria-label="Gift Card ဝယ်ရန်">+</button></div>
           <div class="hint" style="font-size:12px;">${p.description||'ပမာဏ ရွေးပြီး KBZPay ဖြင့် ဝယ်ယူနိုင်ပါသည်'}</div>
-          <button type="button" class="order-btn" style="background:var(--rust); color:var(--concrete); border-color:var(--ink);" onclick="openProductDetail(${idx})">ပမာဏ ရွေးပြီး ဝယ်ရန်</button>
+          <button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink);" onclick="openProductDetail(${idx})">ပမာဏ ရွေးပြီး ဝယ်ရန်</button>
           <a class="msg-link" href="https://m.me/suwatimenfashion" target="_blank" rel="noopener">မေးစရာရှိရင် Messenger ပို့ပါ</a>
         </div>`;
       grid.appendChild(div);
@@ -913,6 +997,7 @@ function renderProductGrid(){
       </div>
       <div class="card-body">
         <h3 style="cursor:pointer;" onclick="openProductDetail(${idx})">${p.name}</h3>
+        <div class="card-quick"><span class="cq-price">${Number(p.price).toLocaleString()} ကျပ်</span><button type="button" class="cq-add" onclick="openProductDetail(${idx})" aria-label="${p.name} — Size/အရောင် ရွေးပြီး ဝယ်ရန်">+</button></div>
         ${sizes.length ? `
         <div class="opt-group">
           <div class="opt-label">SIZE ရွေးပါ</div>
@@ -1290,7 +1375,7 @@ function openWishlist(){
             </div>
             <div style="display:flex; gap:8px; margin-top:8px;">
               <button type="button" class="order-btn" style="margin-top:0; flex:1; padding:9px;" ${!stillExists?'disabled style="opacity:.5;"':''} onclick="wishlistAddToCart(${i})">ခြင်းထဲ ထည့်မည်</button>
-              <button type="button" class="order-btn" style="margin-top:0; flex:1; padding:9px; background:var(--acid); color:var(--ink); border-color:var(--acid);" ${!stillExists?'disabled style="opacity:.5;"':''} onclick="wishlistBuyNow(${i})">တန်းဝယ်မည်</button>
+              <button type="button" class="order-btn" style="margin-top:0; flex:1; padding:9px; background:var(--acid); color:var(--black); border-color:var(--acid);" ${!stillExists?'disabled style="opacity:.5;"':''} onclick="wishlistBuyNow(${i})">တန်းဝယ်မည်</button>
               <a href="#" onclick="removeFromWishlist(${i}); return false;" style="color:var(--rust); font-family:'Space Mono',monospace; font-size:18px; padding:9px 4px; flex-shrink:0;">✕</a>
             </div>
           </div>`;
@@ -1676,7 +1761,7 @@ async function renderCheckoutStep2(){
     ${currentUser ? `
     <div class="modal-section" style="${canPayWithWallet?'background:#1f2a0a; border:2px solid var(--acid); padding:14px;':''}">
       <div class="modal-label" style="${canPayWithWallet?'color:var(--acid);':''}">💰 PREPAID CARD (WALLET) — လက်ကျန်: ${walletBalance.toLocaleString()} ကျပ်</div>
-      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); font-size:15px; padding:14px;" onclick="payWithWallet()">⚡ Prepaid Card ဖြင့် ချက်ချင်း ဝယ်မည်</button>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည် (သို့) <a href="#" onclick="closeCheckout(); return false;" class="auth-link" style="display:inline; margin:0;">Profile ကနေ ငွေဖြည့်ပါ</a></p>`}
+      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--black); border-color:var(--black); font-size:15px; padding:14px;" onclick="payWithWallet()">⚡ Prepaid Card ဖြင့် ချက်ချင်း ဝယ်မည်</button>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည် (သို့) <a href="#" onclick="closeCheckout(); return false;" class="auth-link" style="display:inline; margin:0;">Profile ကနေ ငွေဖြည့်ပါ</a></p>`}
     </div>` : ''}
 
     <div class="modal-section">
@@ -2082,7 +2167,8 @@ function showReceiptOverlay(html){
       #receipt-overlay .ro-bar button{flex:1; padding:12px 8px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; border:2.5px solid #E9E4D8;}
       #receipt-overlay .ro-close{background:#C13B1F; color:#fff; border-color:#C13B1F !important; flex:0 0 auto !important; padding:12px 16px !important;}
       #receipt-overlay .ro-print{background:#D6FF3F; color:#141412; border-color:#D6FF3F !important;}
-      #receipt-overlay iframe{flex:1; width:100%; border:none; background:#fff;}`;
+      #receipt-overlay iframe{flex:1; width:100%; border:none; background:#fff;}
+      @media screen{ #receipt-print-root{display:none !important;} }`;
     document.head.appendChild(st);
   }
   closeReceiptOverlay(true);
@@ -2092,7 +2178,8 @@ function showReceiptOverlay(html){
       <button type="button" class="ro-print" onclick="printReceiptOverlay()">🖨️ Print / PDF</button>
     </div><iframe id="receipt-overlay-frame" title="Receipt"></iframe>`;
   document.body.appendChild(ov);
-  document.getElementById('receipt-overlay-frame').srcdoc = html;
+  // Receipt ထဲက Print ခလုတ်ကလည်း အပြင် Page ရဲ့ Print Function ကို သုံးစေရန်
+  document.getElementById('receipt-overlay-frame').srcdoc = String(html).replace(/onclick="window\.print\(\)"/g, 'onclick="parent.printReceiptOverlay()"');
   window.__receiptPrevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
   try{ history.pushState({ receiptOverlay:true }, ''); }catch(e){}
@@ -2100,15 +2187,31 @@ function showReceiptOverlay(html){
 function closeReceiptOverlay(silent){
   const ov = document.getElementById('receipt-overlay');
   if(!ov) return;
-  ov.remove();
+  ov.remove(); removeReceiptPrintRoot();
   document.body.style.overflow = window.__receiptPrevOverflow || '';
   if(!silent && history.state && history.state.receiptOverlay){ try{ history.back(); }catch(e){} }
 }
+// iPhone/iPad Safari က Popup (iframe) ထဲက Print ကို နှိပ်ရင် နောက်ကွယ်က Page တစ်ခုလုံးကိုပါ Print ထုတ်တတ်လို့
+// Receipt ကို Page ထဲ ယာယီ ကူးထည့်ပြီး Print ထုတ်ချိန်မှာ Receipt ကလွဲပြီး ကျန်တာအကုန် ဖျောက်ထားသည် (စာမျက်နှာ ၁ ရွက်တည်း)
 function printReceiptOverlay(){
-  const fr = document.getElementById('receipt-overlay-frame');
-  try{ fr.contentWindow.focus(); fr.contentWindow.print(); }
-  catch(e){ const w = window.open('', '_blank'); if(w){ w.document.open(); w.document.write(fr.srcdoc); w.document.close(); } }
+  const fr = document.getElementById('receipt-overlay-frame'); if(!fr) return;
+  const doc = new DOMParser().parseFromString(fr.srcdoc || '', 'text/html');
+  const styles = Array.from(doc.querySelectorAll('style')).map(s=>s.textContent).join('\n');
+  const links = Array.from(doc.querySelectorAll('link[rel="stylesheet"]')).map(l=>l.outerHTML).join('');
+  doc.querySelectorAll('.print-btn, script').forEach(el=>el.remove());
+  removeReceiptPrintRoot();
+  const root = document.createElement('div'); root.id = 'receipt-print-root';
+  root.innerHTML = links + `<style media="print">${styles}
+    html, body{ background:#fff !important; height:auto !important; overflow:visible !important; }
+    body > *:not(#receipt-print-root){ display:none !important; }
+    #receipt-print-root{ display:block !important; }
+    @page{ margin:6mm; }
+  </style>` + doc.body.innerHTML;
+  document.body.appendChild(root);
+  window.addEventListener('afterprint', removeReceiptPrintRoot, { once:true });
+  setTimeout(()=>window.print(), 60);
 }
+function removeReceiptPrintRoot(){ const r = document.getElementById('receipt-print-root'); if(r) r.remove(); }
 // Android Back ခလုတ် နှိပ်ရင်လည်း Receipt ပိတ်ရန်
 window.addEventListener('popstate', ()=>{ if(document.getElementById('receipt-overlay')) closeReceiptOverlay(true); });
 document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeReceiptOverlay(); });
@@ -2504,7 +2607,7 @@ async function renderProfileView(){
         <div class="wb-amount">${balance.toLocaleString()} ကျပ်</div>
       </div>
       <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-        <button type="button" class="order-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openWalletTopup()">➕ ငွေဖြည့်ရန်</button>
+        <button type="button" class="order-btn" style="background:var(--acid); color:var(--black); border-color:var(--black); width:auto; flex:1; margin-top:0;" onclick="openWalletTopup()">➕ ငွေဖြည့်ရန်</button>
         <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openWalletHistory()">📜 Usage History</button>
       </div>
       <button type="button" class="auth-link" style="margin-top:10px;" onclick="openPrepaidCard()">🎫 ကျွန်ုပ်၏ Prepaid Card ကြည့်ရန် (အပြင်ဆိုင်တွင် သုံးရန်)</button>
@@ -2513,7 +2616,7 @@ async function renderProfileView(){
     <div class="modal-section">
       <div class="modal-label">🎁 GIFT CARD</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="order-btn" style="background:var(--rust); color:var(--concrete); border-color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardPurchase()">Gift Card ဝယ်ရန်</button>
+        <button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardPurchase()">Gift Card ဝယ်ရန်</button>
         <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardRedeem()">Code သုံးရန်</button>
       </div>
       <button type="button" class="auth-link" style="margin-top:10px;" onclick="openMyGiftCards()">🎁 ကျွန်ုပ်၏ Gift Card များ ကြည့်ရန်</button>
@@ -2995,7 +3098,7 @@ async function openMyGiftCards(){
       ${g.status==='active' ? `<div class="giftcard-code-box" style="margin-top:8px; padding:10px;"><div class="gc-code" style="font-size:15px;">${g.code}</div></div>` : ''}
       <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
         <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openTransactionReceipt('giftcard', myGiftCardsCache[${i}])">🧾 Receipt</button>
-        ${g.status==='active' ? `<button type="button" class="order-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); width:auto; margin-top:0; padding:9px 16px; font-size:12px;" onclick="useMyGiftCardNow(${i})">🎁 ယခုပဲ သုံးမည်</button>` : ''}
+        ${g.status==='active' ? `<button type="button" class="order-btn" style="background:var(--acid); color:var(--black); border-color:var(--black); width:auto; margin-top:0; padding:9px 16px; font-size:12px;" onclick="useMyGiftCardNow(${i})">🎁 ယခုပဲ သုံးမည်</button>` : ''}
       </div>
     </div>`).join('') : '<p class="hint">Gift Card မရှိသေးပါ</p>';
 
@@ -3393,7 +3496,7 @@ function renderProductDetail(p){
         ${!availableDenoms.length ? '<p class="hint" style="color:var(--rust); margin-top:8px;">ပမာဏ အားလုံး ယာယီ ကုန်သွားပါသည်</p>' : ''}
       </div>
 
-      <button type="button" class="order-btn" id="detail-order-btn" ${!availableDenoms.length?'disabled style="opacity:.5;"':''} style="background:var(--rust); color:var(--concrete); border-color:var(--ink);" onclick="detailBuyGiftCard()">Gift Card မှာယူမည် (KBZPay)</button>
+      <button type="button" class="order-btn" id="detail-order-btn" ${!availableDenoms.length?'disabled style="opacity:.5;"':''} style="background:var(--rust); color:#fff; border-color:var(--ink);" onclick="detailBuyGiftCard()">Gift Card မှာယူမည် (KBZPay)</button>
 
       ${renderRelatedProductsHtml(p)}
     `;
@@ -3450,7 +3553,7 @@ function renderProductDetail(p){
     </div>
 
     <div id="detail-prepaid-btn-area"></div>
-    <button type="button" class="order-btn" id="detail-order-btn" ${soldOut?'disabled':''} style="background:var(--rust); color:var(--concrete); border-color:var(--ink); ${soldOut?'opacity:.5;':''}" onclick="detailOrderNow()">Order မှာယူမည် (KBZPay)</button>
+    <button type="button" class="order-btn" id="detail-order-btn" ${soldOut?'disabled':''} style="background:var(--rust); color:#fff; border-color:var(--ink); ${soldOut?'opacity:.5;':''}" onclick="detailOrderNow()">Order မှာယူမည် (KBZPay)</button>
     <button type="button" class="order-btn" id="detail-addcart-btn" ${soldOut?'disabled':''} style="background:transparent; color:var(--ink); border-color:var(--ink); margin-top:10px; ${soldOut?'opacity:.5;':''}" onclick="detailAddToCart()">ခြင်းထဲ ထည့်မည် +</button>
 
     <button type="button" class="detail-wishlist-heart ${isInWishlist(p.name)?'active':''}" id="detail-wishlist-btn" onclick="toggleWishlist('${p.name.replace(/'/g,"\\'")}')">
@@ -3498,7 +3601,7 @@ async function renderDetailPrepaidButton(p){
   if(!(currentDetailProduct && currentDetailProduct.name===p.name)) return;
 
   if(balance >= Number(p.price)){
-    area.innerHTML = `<button type="button" class="order-btn" id="detail-prepaid-btn" style="background:var(--acid); color:var(--ink); border-color:var(--ink); margin-bottom:10px;" onclick="detailPayWithPrepaidCard()">🎫 Prepaid Card ဖြင့် ဝယ်မည်</button>`;
+    area.innerHTML = `<button type="button" class="order-btn" id="detail-prepaid-btn" style="background:var(--acid); color:var(--black); border-color:var(--black); margin-bottom:10px;" onclick="detailPayWithPrepaidCard()">🎫 Prepaid Card ဖြင့် ဝယ်မည်</button>`;
   } else {
     area.innerHTML = `<div class="hint" style="margin-bottom:10px;">🎫 Prepaid Card လက်ကျန် ${balance.toLocaleString()} ကျပ်ပဲ ရှိလို့ ဒီပစ္စည်းအတွက် မလုံလောက်ပါ — <a href="#" onclick="closeCheckout(); openWalletTopup(); return false;" class="auth-link" style="display:inline; margin:0;">ငွေဖြည့်ရန်</a></div>`;
   }
@@ -3832,6 +3935,25 @@ function detailOrderNow(){
     image_url: p.image_url, quantity: detailState.qty,
   }], 'detail');
 }
+
+// SUWATI MEN FASHION — 🌗 Light / Dark Mode
+function currentTheme(){ return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', '#141412');
+}
+function toggleTheme(){
+  const t = currentTheme() === 'dark' ? 'light' : 'dark';
+  applyTheme(t);
+  try{ localStorage.setItem('suwati_theme', t); }catch(e){}
+}
+// Customer က ကိုယ်တိုင် မရွေးရသေးရင် ဖုန်းရဲ့ Light/Dark Setting ပြောင်းတာကို လိုက်ပြောင်း
+try{
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)=>{
+    if(!localStorage.getItem('suwati_theme')) applyTheme(e.matches ? 'dark' : 'light');
+  });
+}catch(e){}
 
 // SUWATI MEN FASHION — Home Screen App (PWA)
 window.__PWA_APP = { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)=>showSiteToast(m) };
