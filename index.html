@@ -563,6 +563,16 @@ html[data-theme="dark"] .wishlist-heart.active svg{ stroke:var(--rust) !importan
 .pin-badge{ background:var(--black) !important; }
 /* ဖုန်းမှာ ဈေးနှုန်းကို အောက်က Row မှာ ပြပြီးသားမို့ Sticker မပြ */
 @media (max-width:560px){ .card .swatch .tag{ display:none; } }
+
+/* 📍 Checkout လိပ်စာ Dropdown */
+.co-addr-select{ width:100%; padding:12px; margin-top:6px; border:2.5px solid var(--ink); background:var(--surface); color:var(--ink); font-family:'Noto Sans Myanmar','Space Mono',sans-serif; font-size:14px; border-radius:0; -webkit-appearance:none; appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%); background-position:calc(100% - 18px) 50%, calc(100% - 12px) 50%; background-size:6px 6px; background-repeat:no-repeat; padding-right:32px; }
+.co-addr-select:disabled{ opacity:.55; }
+#co-township-other{ margin-top:6px; }
+
+/* Promo "Apply" ခလုတ် — Mode မရွေး အနက်ပေါ် အစိမ်းဝါစာ */
+.promo-apply{ background:var(--black) !important; color:var(--acid) !important; border-color:var(--black) !important; }
+html[data-theme="dark"] .promo-apply{ border-color:var(--cream) !important; }
 </style>
 </head>
 <body>
@@ -1430,6 +1440,27 @@ async function removeFromWishlist(i, silent){
   }
 }
 
+// SUWATI MEN FASHION — မြန်မာနိုင်ငံ တိုင်းဒေသကြီး / ပြည်နယ် နှင့် မြို့နယ်များ (Checkout လိပ်စာ ရွေးရန်)
+// စာရင်းထဲ မပါတဲ့ မြို့နယ်အတွက် "အခြား" ကို ရွေးပြီး ကိုယ်တိုင် ရိုက်ထည့်လို့ရသည်
+const MM_REGIONS = {
+  'နေပြည်တော် ပြည်ထောင်စုနယ်မြေ': ['ပုဗ္ဗသီရိ','ဇမ္ဗူသီရိ','ဒက္ခိဏသီရိ','ဥတ္တရသီရိ','ဇေယျာသီရိ','ပျဉ်းမနား','လယ်ဝေး','တပ်ကုန်း'],
+  'ရန်ကုန်တိုင်းဒေသကြီး': ['အလုံ','ဗဟန်း','ဒဂုံ','ကြည့်မြင်တိုင်','ကမာရွတ်','လသာ','လမ်းမတော်','လှိုင်','မရမ်းကုန်း','ပန်းဘဲတန်း','စမ်းချောင်း','ကျောက်တံတား','ဗိုလ်တထောင်','ပုဇွန်တောင်','ဆိပ်ကမ်း','ဒေါပုံ','မင်္ဂလာတောင်ညွန့်','တာမွေ','သာကေတ','သင်္ဃန်းကျွန်း','ရန်ကင်း','တောင်ဥက္ကလာပ','မြောက်ဥက္ကလာပ','မြောက်ဒဂုံ','တောင်ဒဂုံ','အရှေ့ဒဂုံ','ဒဂုံဆိပ်ကမ်း','အင်းစိန်','မင်္ဂလာဒုံ','ရွှေပြည်သာ','လှိုင်သာယာ','မှော်ဘီ','လှည်းကူး','တိုက်ကြီး','ထန်းတပင်','သန်လျင်','ကျောက်တန်း','သုံးခွ','ခရမ်း','တွံတေး','ကော့မှူး','ကွမ်းခြံကုန်း','ဒလ','ဆိပ်ကြီးခနောင်တို','ကိုကိုးကျွန်း'],
+  'မန္တလေးတိုင်းဒေသကြီး': ['အောင်မြေသာဇံ','ချမ်းအေးသာဇံ','မဟာအောင်မြေ','ချမ်းမြသာစည်','ပြည်ကြီးတံခွန်','အမရပူရ','ပုသိမ်ကြီး','ပြင်ဦးလွင်','မတ္တရာ','စဉ့်ကိုင်','မိုးကုတ်','သပိတ်ကျင်း','ကျောက်ဆည်','မြစ်သား','တံတားဦး','စဉ့်ကူး','မြင်းခြံ','တောင်သာ','နွားထိုးကြီး','ငါန်းဇွန်','ကျောက်ပန်းတောင်း','မိတ္ထီလာ','ဝမ်းတွင်း','သာစည်','မလှိုင်','ရမည်းသင်း','ပျော်ဘွယ်','ညောင်ဦး'],
+  'စစ်ကိုင်းတိုင်းဒေသကြီး': ['စစ်ကိုင်း','မုံရွာ','ရွှေဘို','ကလေး','တမူး','ကသာ','ခန္တီး','ဟုမ္မလင်း','ယင်းမာပင်','မြင်းမူ','မြောင်','ဒီပဲယင်း','ဘုတလင်','ချောင်းဦး','ကန့်ဘလူ','ဝက်လက်','ပင်လည်ဘူး','ဗန်းမောက်','အင်းတော်','ထီးချိုင့်'],
+  'မကွေးတိုင်းဒေသကြီး': ['မကွေး','ပခုက္ကူ','မင်းဘူး','သရက်','ချောက်','ရေနံချောင်း','တောင်တွင်းကြီး','နတ်မောက်','ဂန့်ဂေါ','ဆော','ရေစကြို','မြိုင်','ပွင့်ဖြူ','စလင်း','အောင်လံ','မင်းလှ','ဆင်ပေါင်ဝဲ','တီလင်း'],
+  'ပဲခူးတိုင်းဒေသကြီး': ['ပဲခူး','တောင်ငူ','ပြည်','သာယာဝတီ','ညောင်လေးပင်','ဒိုက်ဦး','ရွှေကျင်','ဝေါ','ကဝ','သနပ်ပင်','အုတ်တွင်း','ဖြူး','ရေတာရှည်','ပေါင်းတည်','ပေါက်ခေါင်း','လက်ပံတန်း','ဇီးကုန်း','နတ်တလင်း','ရွှေတောင်','ပန်းတောင်း','သဲကုန်း','ကြို့ပင်ကောက်'],
+  'ဧရာဝတီတိုင်းဒေသကြီး': ['ပုသိမ်','ဟင်္သာတ','မြောင်းမြ','ဖျာပုံ','မအူပင်','လပွတ္တာ','ပန်းတနော်','ကျိုက်လတ်','ဘိုကလေး','ဒေးဒရဲ','ဝါးခယ်မ','အိမ်မဲ','ဇလွန်','ကြံခင်း','လေးမျက်နှာ','မြန်အောင်','ကျုံပျော်','ငပုတော','ရေကြည်','ကန်ကြီးထောင့်','ငါးသိုင်းချောင်း','သာပေါင်း','ကျောင်းကုန်း','အင်္ဂပူ'],
+  'တနင်္သာရီတိုင်းဒေသကြီး': ['ထားဝယ်','မြိတ်','ကော့သောင်း','ပုလော','ရေဖြူ','လောင်းလုံ','သရက်ချောင်း','ဘုတ်ပြင်း','တနင်္သာရီ','ကျွန်းစု'],
+  'မွန်ပြည်နယ်': ['မော်လမြိုင်','သထုံ','ကျိုက်မရော','မုဒုံ','ချောင်းဆုံ','ပေါင်','ကျိုက်ထို','ဘီးလင်း','ရေး','သံဖြူဇရပ်'],
+  'ကရင်ပြည်နယ်': ['ဘားအံ','မြဝတီ','ကော့ကရိတ်','လှိုင်းဘွဲ့','ဖာပွန်','သံတောင်ကြီး','ကြာအင်းဆိပ်ကြီး'],
+  'ကယားပြည်နယ်': ['လွိုင်ကော်','ဒီးမော့ဆို','ဖရူဆို','ရှားတော','ဘောလခဲ','ဖားဆောင်း','မယ်စဲ့'],
+  'ရှမ်းပြည်နယ်': ['တောင်ကြီး','ကလော','အောင်ပန်း','ညောင်ရွှေ','ရွာငံ','ပင်းတယ','ပင်လောင်း','ဟိုပုံး','ဆီဆိုင်','လွိုင်လင်','နမ့်ဆန်','လားရှိုး','သီပေါ','ကျောက်မဲ','နမ့်ခမ်း','မူဆယ်','ကွတ်ခိုင်','ဟိုပင်','တန့်ယန်း','လောက်ကိုင်','ကွန်လုံ','ကျိုင်းတုံ','တာချီလိတ်','မိုင်းဆတ်','ရပ်စောက်','ဖယ်ခုံ','မိုင်းကိုင်'],
+  'ကချင်ပြည်နယ်': ['မြစ်ကြီးနား','ဗန်းမော်','ပူတာအို','မိုးကောင်း','ဝိုင်းမော်','ဖားကန့်','မိုးညှင်း','ရွှေကူ','မံစီ','မိုးမောက်','ချီဖွေ','ဆော့လော်','တနိုင်း'],
+  'ချင်းပြည်နယ်': ['ဟားခါး','ဖလမ်း','တီးတိန်','တွန်းဇံ','မင်းတပ်','မတူပီ','ကန်ပက်လက်','ပလက်ဝ','ထန်တလန်'],
+  'ရခိုင်ပြည်နယ်': ['စစ်တွေ','ကျောက်ဖြူ','သံတွဲ','ရမ်းဗြဲ','မာန်အောင်','တောင်ကုတ်','ဂွ','မြောက်ဦး','ကျောက်တော်','မင်းပြား','ပုဏ္ဏားကျွန်း','ရသေ့တောင်','ဘူးသီးတောင်','မောင်တော','ပေါက်တော','အမ်း']
+};
+const MM_OTHER = 'အခြား (ကိုယ်တိုင် ရိုက်ထည့်ရန်)';
+
 // SUWATI MEN FASHION — Checkout, KBZPay/Prepaid payment, gift wrap, delivery zone, promo & cashback, receipts
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= CHECKOUT / KBZPAY PAYMENT =================
@@ -1519,6 +1550,7 @@ async function renderDeliveryZoneOption(){
     </select>
     <div class="delivery-fee-note" id="co-delivery-hint"></div>`;
   window.__deliveryZones = zones; window.__deliveryNote = note;
+  if(!cur){ const r = document.getElementById('co-region')?.value; if(r) autoPickDeliveryZone(r); }
   updateDeliveryFeeHint();
 }
 function updateDeliveryFeeHint(){
@@ -1643,6 +1675,51 @@ function checkoutGoBack(){
   else { closeCheckout(); }
 }
 
+// ---------- 📍 လိပ်စာ — တိုင်း/ပြည်နယ် → မြို့နယ် Dropdown ----------
+function initAddressPickers(){
+  const rs = document.getElementById('co-region'); if(!rs || typeof MM_REGIONS === 'undefined') return;
+  let last = {}; try{ last = JSON.parse(localStorage.getItem('suwati_last_address')||'{}'); }catch(e){}
+  const region = currentOrder.region || last.region || '';
+  rs.innerHTML = '<option value="">-- တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပါ --</option>' + Object.keys(MM_REGIONS).map(r=>`<option value="${r}" ${r===region?'selected':''}>${r}</option>`).join('');
+  fillTownships(region, currentOrder.township || (region===last.region ? last.township : ''));
+  const ta = document.getElementById('co-address');
+  if(ta && !ta.value && last.detail && !currentOrder.region) ta.value = last.detail;
+}
+function fillTownships(region, selected){
+  const ts = document.getElementById('co-township'); const other = document.getElementById('co-township-other'); if(!ts) return;
+  const list = MM_REGIONS[region] || [];
+  ts.disabled = !region;
+  const isOther = selected && !list.includes(selected);
+  ts.innerHTML = `<option value="">${region ? '-- မြို့နယ် ရွေးပါ --' : '-- တိုင်း/ပြည်နယ် အရင်ရွေးပါ --'}</option>` + list.map(t=>`<option value="${t}" ${t===selected?'selected':''}>${t}</option>`).join('') + (region ? `<option value="__other" ${isOther?'selected':''}>${MM_OTHER}</option>` : '');
+  other.style.display = isOther ? 'block' : 'none';
+  if(isOther) other.value = selected;
+}
+function onRegionChange(){
+  const region = document.getElementById('co-region').value;
+  fillTownships(region, '');
+  autoPickDeliveryZone(region);
+  const e1 = document.getElementById('co-error-1'); if(e1) e1.textContent = '';
+}
+function onTownshipChange(){
+  const v = document.getElementById('co-township').value; const other = document.getElementById('co-township-other');
+  other.style.display = v === '__other' ? 'block' : 'none';
+  if(v === '__other') other.focus();
+}
+function readAddressPickers(){
+  const region = document.getElementById('co-region')?.value || '';
+  let township = document.getElementById('co-township')?.value || '';
+  if(township === '__other') township = (document.getElementById('co-township-other')?.value || '').trim();
+  return { region, township };
+}
+// နေပြည်တော် ရွေးရင် "နေပြည်တော်အတွင်း" Zone၊ အခြားဆို "နေပြည်တော်ပြင်ပ/အခြားမြို့" Zone ကို အလိုအလျောက် ရွေးပေး
+function autoPickDeliveryZone(region){
+  const sel = document.getElementById('co-delivery-zone'); const zones = window.__deliveryZones || [];
+  if(!sel || !region || !zones.length) return;
+  const isNPT = region.indexOf('နေပြည်တော်') === 0;
+  const idx = zones.findIndex(z=>{ const n = z.name||''; const outside = /ပြင်ပ|အခြား/.test(n); return isNPT ? (n.includes('နေပြည်တော်') && !outside) : outside; });
+  if(idx >= 0){ sel.value = String(idx); updateDeliveryFeeHint(); }
+}
+
 function toggleGiftAddon(cb){
   document.getElementById('co-gift-msg-wrap').style.display = cb.checked ? 'block' : 'none';
 }
@@ -1667,7 +1744,11 @@ function renderCheckoutStep1(){
       <input type="text" id="co-name" placeholder="အမည် (Full Name)" value="${currentUser?.user_metadata?.full_name || ''}">
       <input type="tel" id="co-phone" placeholder="ဖုန်းနံပါတ်" value="${currentUser?.user_metadata?.phone || ''}">
       <input type="email" id="co-email" placeholder="Email (Gmail)" value="${currentUser?.email || ''}">
-      <textarea id="co-address" placeholder="ပို့ဆောင်ရမည့် လိပ်စာအပြည့်အစုံ" rows="2">${currentOrder.address || currentUser?.user_metadata?.address || ''}</textarea>
+      <div class="modal-label" style="margin-top:6px;">📍 ပို့ဆောင်ရမည့် လိပ်စာ</div>
+      <select id="co-region" class="co-addr-select" onchange="onRegionChange()"></select>
+      <select id="co-township" class="co-addr-select" onchange="onTownshipChange()"></select>
+      <input type="text" id="co-township-other" placeholder="မြို့နယ် အမည် ရိုက်ထည့်ပါ" style="display:none;">
+      <textarea id="co-address" placeholder="အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် (ဥပမာ - အမှတ် ၁၂၊ ဘူတာလမ်း၊ ကျည်တောင်ကန် ရပ်ကွက်)" rows="2">${currentOrder.addressDetail || (typeof currentOrder.region==='undefined' ? (currentUser?.user_metadata?.address || '') : '')}</textarea>
       <div id="co-delivery-area"></div>
       <div id="co-gift-area"></div>
       <div id="co-promo-area"></div>
@@ -1675,6 +1756,7 @@ function renderCheckoutStep1(){
       <button type="button" class="submit-order-btn" onclick="goToStep2()">ဆက်သွားမည် →</button>
       <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:8px;" onclick="checkoutGoBack()">← ပြန်သွားမည်</button>
     </div>`;
+  initAddressPickers();
   renderDeliveryZoneOption();
   renderGiftAddonOption();
   renderPromoOption();
@@ -1704,12 +1786,16 @@ async function goToStep2(){
   const name = document.getElementById('co-name').value.trim();
   const phone = document.getElementById('co-phone').value.trim();
   const email = document.getElementById('co-email').value.trim();
-  const address = document.getElementById('co-address').value.trim();
+  const detail = document.getElementById('co-address').value.trim();
   const err = document.getElementById('co-error-1');
-  if(!name || !phone || !address){
-    err.textContent = 'အမည်၊ ဖုန်းနံပါတ်၊ လိပ်စာ ဖြည့်ပေးပါ';
-    return;
-  }
+  const picked = readAddressPickers();
+  if(!name || !phone){ err.textContent = 'အမည်၊ ဖုန်းနံပါတ် ဖြည့်ပေးပါ'; return; }
+  if(!picked.region){ err.textContent = 'တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပေးပါ'; return; }
+  if(!picked.township){ err.textContent = 'မြို့နယ် ရွေးပေးပါ'; return; }
+  if(!detail){ err.textContent = 'အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် ဖြည့်ပေးပါ'; return; }
+  const address = `${detail}၊ ${picked.township}မြို့နယ်၊ ${picked.region}`;
+  currentOrder.region = picked.region; currentOrder.township = picked.township; currentOrder.addressDetail = detail;
+  try{ localStorage.setItem('suwati_last_address', JSON.stringify({ region:picked.region, township:picked.township, detail })); }catch(e){}
   currentOrder.customer_name = name;
   currentOrder.phone = phone;
   currentOrder.email = email;
