@@ -1461,6 +1461,53 @@ const MM_REGIONS = {
 };
 const MM_OTHER = 'အခြား (ကိုယ်တိုင် ရိုက်ထည့်ရန်)';
 
+// ---------- 📍 လိပ်စာ ရွေးစနစ် (Sign Up / Profile မှာ မျှသုံး) — prefix ဥပမာ 'su', 'pf' ----------
+function addrFieldsHtml(prefix){
+  return `<select id="${prefix}-region" class="co-addr-select" onchange="addrRegionChanged('${prefix}')"></select>
+    <select id="${prefix}-township" class="co-addr-select" onchange="addrTownshipChanged('${prefix}')"></select>
+    <input type="text" id="${prefix}-township-other" placeholder="မြို့နယ် အမည် ရိုက်ထည့်ပါ" style="display:none; margin-top:6px;">
+    <textarea id="${prefix}-address" placeholder="အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် (ဥပမာ - အမှတ် ၁၂၊ ဘူတာလမ်း၊ ကျည်တောင်ကန် ရပ်ကွက်)" rows="2" style="margin-top:6px;"></textarea>`;
+}
+function addrInit(prefix, v){
+  v = v || {};
+  const rs = document.getElementById(prefix+'-region'); if(!rs) return;
+  rs.innerHTML = '<option value="">-- တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပါ --</option>' + Object.keys(MM_REGIONS).map(r=>`<option value="${r}" ${r===v.region?'selected':''}>${r}</option>`).join('');
+  addrFillTownships(prefix, v.region || '', v.township || '');
+  const ta = document.getElementById(prefix+'-address'); if(ta) ta.value = v.detail || '';
+}
+function addrFillTownships(prefix, region, selected){
+  const ts = document.getElementById(prefix+'-township'); const other = document.getElementById(prefix+'-township-other'); if(!ts) return;
+  const list = MM_REGIONS[region] || [];
+  const isOther = !!selected && !list.includes(selected);
+  ts.disabled = !region;
+  ts.innerHTML = `<option value="">${region ? '-- မြို့နယ် ရွေးပါ --' : '-- တိုင်း/ပြည်နယ် အရင်ရွေးပါ --'}</option>` + list.map(t=>`<option value="${t}" ${t===selected?'selected':''}>${t}</option>`).join('') + (region ? `<option value="__other" ${isOther?'selected':''}>${MM_OTHER}</option>` : '');
+  if(other){ other.style.display = isOther ? 'block' : 'none'; if(isOther) other.value = selected; }
+}
+function addrRegionChanged(prefix){ addrFillTownships(prefix, document.getElementById(prefix+'-region').value, ''); }
+function addrTownshipChanged(prefix){
+  const v = document.getElementById(prefix+'-township').value; const other = document.getElementById(prefix+'-township-other');
+  other.style.display = v === '__other' ? 'block' : 'none'; if(v === '__other') other.focus();
+}
+// { region, township, detail, error }
+function addrRead(prefix){
+  const region = document.getElementById(prefix+'-region')?.value || '';
+  let township = document.getElementById(prefix+'-township')?.value || '';
+  if(township === '__other') township = (document.getElementById(prefix+'-township-other')?.value || '').trim();
+  const detail = (document.getElementById(prefix+'-address')?.value || '').trim();
+  let error = '';
+  if(!region) error = 'တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပေးပါ';
+  else if(!township) error = 'မြို့နယ် ရွေးပေးပါ';
+  else if(!detail) error = 'အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် ဖြည့်ပေးပါ';
+  return { region, township, detail, error };
+}
+function addrCompose(v){ return `${v.detail}၊ ${v.township}မြို့နယ်၊ ${v.region}`; }
+// User Profile ထဲ သိမ်းထားတဲ့ လိပ်စာ (အရင်က စာသားတစ်ကြောင်းတည်း သိမ်းခဲ့တာဆိုရင် အိမ်အမှတ်အကွက်ထဲ ထည့်ပေး)
+function addrFromMeta(meta){
+  meta = meta || {};
+  if(meta.region) return { region: meta.region, township: meta.township || '', detail: meta.address_detail || '' };
+  return { region:'', township:'', detail: meta.address || '' };
+}
+
 // SUWATI MEN FASHION — Checkout, KBZPay/Prepaid payment, gift wrap, delivery zone, promo & cashback, receipts
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= CHECKOUT / KBZPAY PAYMENT =================
@@ -1679,11 +1726,15 @@ function checkoutGoBack(){
 function initAddressPickers(){
   const rs = document.getElementById('co-region'); if(!rs || typeof MM_REGIONS === 'undefined') return;
   let last = {}; try{ last = JSON.parse(localStorage.getItem('suwati_last_address')||'{}'); }catch(e){}
-  const region = currentOrder.region || last.region || '';
+  // ဦးစားပေး: ဒီ Order မှာ ရွေးပြီးသား → Profile မှာ သိမ်းထားတဲ့ လိပ်စာ → ယခင် Order ရဲ့ လိပ်စာ
+  const prof = currentUser ? addrFromMeta(currentUser.user_metadata) : {};
+  const src = currentOrder.region ? { region:currentOrder.region, township:currentOrder.township, detail:currentOrder.addressDetail }
+            : (prof.region ? prof : (last.region ? last : prof));
+  const region = src.region || '';
   rs.innerHTML = '<option value="">-- တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပါ --</option>' + Object.keys(MM_REGIONS).map(r=>`<option value="${r}" ${r===region?'selected':''}>${r}</option>`).join('');
-  fillTownships(region, currentOrder.township || (region===last.region ? last.township : ''));
+  fillTownships(region, src.township || '');
   const ta = document.getElementById('co-address');
-  if(ta && !ta.value && last.detail && !currentOrder.region) ta.value = last.detail;
+  if(ta && !ta.value && src.detail) ta.value = src.detail;
 }
 function fillTownships(region, selected){
   const ts = document.getElementById('co-township'); const other = document.getElementById('co-township-other'); if(!ts) return;
@@ -1748,7 +1799,7 @@ function renderCheckoutStep1(){
       <select id="co-region" class="co-addr-select" onchange="onRegionChange()"></select>
       <select id="co-township" class="co-addr-select" onchange="onTownshipChange()"></select>
       <input type="text" id="co-township-other" placeholder="မြို့နယ် အမည် ရိုက်ထည့်ပါ" style="display:none;">
-      <textarea id="co-address" placeholder="အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် (ဥပမာ - အမှတ် ၁၂၊ ဘူတာလမ်း၊ ကျည်တောင်ကန် ရပ်ကွက်)" rows="2">${currentOrder.addressDetail || (typeof currentOrder.region==='undefined' ? (currentUser?.user_metadata?.address || '') : '')}</textarea>
+      <textarea id="co-address" placeholder="အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် (ဥပမာ - အမှတ် ၁၂၊ ဘူတာလမ်း၊ ကျည်တောင်ကန် ရပ်ကွက်)" rows="2">${currentOrder.addressDetail || ''}</textarea>
       <div id="co-delivery-area"></div>
       <div id="co-gift-area"></div>
       <div id="co-promo-area"></div>
@@ -2489,8 +2540,8 @@ function renderAuthForm(mode){
         <label>GMAIL</label>
         <input type="email" id="su-email" placeholder="you@gmail.com">
 
-        <label>လိပ်စာ</label>
-        <textarea id="su-address" placeholder="နေရပ်လိပ်စာအပြည့်အစုံ" rows="2"></textarea>
+        <label>📍 နေရပ်လိပ်စာ</label>
+        ${addrFieldsHtml('su')}
 
         <label>PASSWORD</label>
         <input type="password" id="su-password" placeholder="အနည်းဆုံး ၆လုံး">
@@ -2509,6 +2560,7 @@ function renderAuthForm(mode){
           Google ဖြင့် Sign Up
         </button>
       </div>`;
+    addrInit('su', {});
     return;
   }
 
@@ -2567,15 +2619,17 @@ async function handleSignup(){
   const dob = document.getElementById('su-dob').value;
   const phone = document.getElementById('su-phone').value.trim();
   const email = document.getElementById('su-email').value.trim();
-  const address = document.getElementById('su-address').value.trim();
+  const addr = addrRead('su');
+  const address = addr.error ? '' : addrCompose(addr);
   const password = document.getElementById('su-password').value;
   const password2 = document.getElementById('su-password2').value;
   const err = document.getElementById('auth-error');
 
-  if(!name || !phone || !email || !address){
+  if(!name || !phone || !email){
     err.textContent = 'ဘောင်အားလုံး ဖြည့်ပေးပါ';
     return;
   }
+  if(addr.error){ err.textContent = addr.error; return; }
   if(password.length < 6){
     err.textContent = 'Password အနည်းဆုံး ၆လုံး ရှိရပါမည်';
     return;
@@ -2587,7 +2641,7 @@ async function handleSignup(){
 
   const { data, error } = await sb.auth.signUp({
     email, password,
-    options: { data: { full_name:name, dob, phone, address } }
+    options: { data: { full_name:name, dob, phone, address, region:addr.region, township:addr.township, address_detail:addr.detail } }
   });
   if(error){ err.textContent = 'Error: ' + error.message; return; }
 
@@ -3220,12 +3274,13 @@ function renderProfileEdit(){
       <input type="tel" id="pf-phone" value="${meta.phone || ''}">
       <label>မွေးသက္ကရာဇ်</label>
       <input type="date" id="pf-dob" value="${meta.dob || ''}">
-      <label>လိပ်စာ</label>
-      <textarea id="pf-address" rows="2">${meta.address || ''}</textarea>
+      <label>📍 လိပ်စာ</label>
+      ${addrFieldsHtml('pf')}
       <div class="form-error" id="auth-error"></div>
       <button type="button" class="submit-order-btn" onclick="handleProfileSave()">သိမ်းမည်</button>
       <button type="button" class="auth-link" onclick="renderProfileView()">← ပြန်သွားမည်</button>
     </div>`;
+  addrInit('pf', addrFromMeta(meta));
 }
 
 function getCustomerDisplayName(user){
@@ -3238,11 +3293,13 @@ async function handleProfileSave(){
   const nickname = document.getElementById('pf-nickname').value.trim();
   const phone = document.getElementById('pf-phone').value.trim();
   const dob = document.getElementById('pf-dob').value;
-  const address = document.getElementById('pf-address').value.trim();
+  const addr = addrRead('pf');
   const err = document.getElementById('auth-error');
+  if(addr.error){ err.textContent = addr.error; return; }
+  const address = addrCompose(addr);
 
   // full_name ကို ဒီနေရာမှာ လုံးဝ မထည့်ပါ — Account ဖွင့်စဉ်က သတ်မှတ်ထားတဲ့ Value ကိုသာ အမြဲ ဆက်ထားရမည် (ပြောင်းလို့ မရအောင်)
-  const { data, error } = await sb.auth.updateUser({ data: { nickname, phone, dob, address } });
+  const { data, error } = await sb.auth.updateUser({ data: { nickname, phone, dob, address, region:addr.region, township:addr.township, address_detail:addr.detail } });
   if(error){ err.textContent = 'Error: ' + error.message; return; }
   currentUser = data.user;
 
