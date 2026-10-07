@@ -24,7 +24,7 @@
   :root{
     --ink:#141412; --concrete:#E9E4D8; --rust:#C13B1F; --acid:#D6FF3F; --grey:#87806f; --paper:#f2efe6;
     --s1:#1f1e1a; --s2:#1a1916; --s3:#2a2924; --s4:#232219; --bd:#3a382f;
-    --acid-text:#D6FF3F; --warn-text:#ff8a5c; --info-text:#4da3ff; --muted-text:#c9c4b6;
+    --acid-text:#D6FF3F; --warn-text:#ff8a5c; --info-text:#4da3ff; --muted-text:#c9c4b6; --purple-text:#c98fff;
   }
   *{box-sizing:border-box;}
   body{margin:0; background:var(--ink); color:var(--concrete); font-family:'Noto Sans Myanmar',sans-serif; min-height:100vh;}
@@ -267,6 +267,13 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .promo-status.scheduled{color:var(--info-text); border-color:#4da3ff;}
 .promo-status.paused{color:var(--grey); border-color:var(--grey);}
 .promo-status.expired, .promo-status.usedup{color:var(--rust); border-color:var(--rust);}
+#pos-cash-calculator{grid-template-columns:1fr !important; gap:6px !important; max-width:460px; margin-top:10px;}
+.pos-tendered-label{font-family:'Space Mono',monospace; font-size:12px; color:var(--grey);}
+#pos-tendered-input{height:62px; font-size:28px !important; font-weight:700; text-align:right; padding:0 16px; font-family:'Space Mono',monospace; box-sizing:border-box; width:100%;}
+#pos-tendered-input::-webkit-outer-spin-button, #pos-tendered-input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+#pos-tendered-input{-moz-appearance:textfield;}
+#pos-change-display{font-size:20px; padding:10px 14px; border:2px dashed var(--bd); min-height:24px;}
+#pos-change-display:empty{display:none;}
 #pos-numpad{margin-top:10px; border:2px solid var(--bd); padding:10px; background:var(--s2); max-width:460px;}
 #pos-numpad .np-target{font-family:'Space Mono',monospace; font-size:12px; color:var(--grey); margin-bottom:8px;}
 #pos-numpad .np-target b{color:var(--acid-text);}
@@ -328,10 +335,11 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .closing-method-card .cm-count{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); margin-top:2px;}
 
   /* ================= 🌗 ADMIN LIGHT MODE ================= */
+  html{ background:var(--ink); }
   html[data-theme="light"]{
-    --ink:#F2EFE6; --concrete:#141412; --grey:#5f5a4e; --paper:#ffffff;
+    --ink:#E4DED1; --concrete:#141412; --grey:#5f5a4e; --paper:#ffffff;
     --s1:#ffffff; --s2:#ffffff; --s3:#ebe6db; --s4:#f1ece2; --bd:#cdc6b6;
-    --acid-text:#3f6600; --warn-text:#B3341A; --info-text:#1d5fbf; --muted-text:#5c584e;
+    --acid-text:#3f6600; --warn-text:#B3341A; --info-text:#1d5fbf; --muted-text:#5c584e; --purple-text:#6d34b3;
     color-scheme:light;
   }
   html[data-theme="light"] input, html[data-theme="light"] textarea, html[data-theme="light"] select{ border-color:#141412; }
@@ -451,8 +459,9 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
       </div>
 
       <div id="pos-cash-calculator" class="form-grid">
-        <input type="number" id="pos-tendered-input" placeholder="ဖောက်သည်ပေးငွေ (ကျပ်)" min="0" inputmode="none" style="font-size:22px; font-weight:700;">
-        <div class="display" id="pos-change-display" style="font-size:20px; align-self:center;"></div>
+        <label for="pos-tendered-input" class="pos-tendered-label">💵 ဖောက်သည်ပေးငွေ (ကျပ်)</label>
+        <input type="number" id="pos-tendered-input" placeholder="0" min="0" inputmode="none">
+        <div class="display" id="pos-change-display"></div>
       </div>
 
       <!-- 🔢 POS Number Pad -->
@@ -577,7 +586,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
       </div>
       <div>
         <div class="hint" style="margin:0;">🎁 Gift Card Product Value (သပ်သပ်)</div>
-        <div class="display" style="font-size:24px; color:#c98fff;" id="stat-giftcard-value">-</div>
+        <div class="display" style="font-size:24px; color:var(--purple-text);" id="stat-giftcard-value">-</div>
       </div>
     </div>
     <div class="form-card">
@@ -781,7 +790,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
         </div>
         <div>
           <div class="hint" style="margin:0;">🎁 Gift Card ရောင်းရငွေ (ကာလအလိုက်)</div>
-          <div class="display" style="font-size:24px; color:#c98fff;" id="sr-total-giftcard">-</div>
+          <div class="display" style="font-size:24px; color:var(--purple-text);" id="sr-total-giftcard">-</div>
         </div>
       </div>
 
@@ -2572,10 +2581,10 @@ function markBackupDone(kind, counts){
 function renderLastBackupInfo(){
   const el = document.getElementById('backup-last'); if(!el) return;
   let last = null; try{ last = localStorage.getItem('suwati_last_backup'); }catch(e){}
-  if(!last){ el.innerHTML = '⚠️ ဒီစက်ကနေ Backup တစ်ခါမှ မထုတ်ရသေးပါ'; el.style.color = '#ff8a5c'; return; }
+  if(!last){ el.innerHTML = '⚠️ ဒီစက်ကနေ Backup တစ်ခါမှ မထုတ်ရသေးပါ'; el.style.color = 'var(--warn-text)'; return; }
   const days = Math.floor((Date.now() - new Date(last).getTime()) / 86400000);
   el.innerHTML = `နောက်ဆုံး Backup: ${new Date(last).toLocaleString()} (${days} ရက် အကြာ)${days>=30?' — ⚠️ Backup အသစ် ထုတ်သင့်ပါပြီ':''}`;
-  el.style.color = days>=30 ? '#ff8a5c' : 'var(--acid)';
+  el.style.color = days>=30 ? 'var(--warn-text)' : 'var(--acid-text)';
 }
 async function runBackup(kind){
   if(currentAdminRole !== 'owner'){ showToast('Owner ချည်းသာ Backup ထုတ်ခွင့်ရှိပါသည်'); return; }
@@ -3573,9 +3582,20 @@ document.getElementById('pos-complete-sale-btn').addEventListener('click', async
   const paymentMethodCheck = document.getElementById('pos-payment-method').value;
   const finalTotalCheck = getPosFinalTotal();
   const tenderedCheck = parseFloat(document.getElementById('pos-tendered-input').value) || 0;
-  if(paymentMethodCheck === 'Cash' && document.getElementById('pos-tendered-input').value && tenderedCheck < finalTotalCheck){
-    showToast('ဖောက်သည်ပေးငွေ မလုံလောက်ပါ');
-    return;
+  if(paymentMethodCheck === 'Cash'){
+    const tenderedRaw = document.getElementById('pos-tendered-input').value;
+    if(!tenderedRaw){
+      // ဈေးလျှော့ ထည့်ပြီးရင်လည်း ပေးငွေ မရိုက်ရသေးရင် ရောင်းမပြီးစေရ — ပေးငွေ အကွက်ကို ပြောင်းပေး
+      setPosNumpadTarget('pos-tendered-input');
+      document.getElementById('pos-tendered-input').scrollIntoView({ behavior:'smooth', block:'center' });
+      showToast(`💵 ဖောက်သည်ပေးငွေ ရိုက်ထည့်ပါ — ကျသင့်ငွေ ${finalTotalCheck.toLocaleString()} ကျပ်`);
+      return;
+    }
+    if(tenderedCheck < finalTotalCheck){
+      setPosNumpadTarget('pos-tendered-input');
+      showToast(`ဖောက်သည်ပေးငွေ မလုံလောက်ပါ — ကျသင့်ငွေ ${finalTotalCheck.toLocaleString()} ကျပ်`);
+      return;
+    }
   }
 
   // Prepaid Card ဖြင့် ရှင်းရင် Card Number + PIN ကို အရင်စစ်ပြီး ချက်ချင်း နုတ်ယူ
@@ -4133,7 +4153,7 @@ async function loadClosingReport(){
     </div>
     <div class="closing-method-card">
       <div class="cm-label">🎁 Gift Card ရောင်းရငွေ</div>
-      <div class="cm-value" style="color:#c98fff;">${giftCardTotalToday.toLocaleString()} ကျပ်</div>
+      <div class="cm-value" style="color:var(--purple-text);">${giftCardTotalToday.toLocaleString()} ကျပ်</div>
       <div class="cm-count">${(giftCardsToday||[]).length} Gift Card</div>
     </div>`;
 
@@ -4251,7 +4271,7 @@ async function loadStaffList(){
   window.staffListCache = data;
   list.innerHTML = data.map((a,i)=>{
     const roleLabelMap = { owner:'OWNER', delivery:'DELIVERY', manager:'MANAGER', staff:'STAFF' };
-    const roleColorMap = { owner:'var(--acid)', delivery:'#4da3ff', manager:'#c98fff', staff:'var(--rust)' };
+    const roleColorMap = { owner:'var(--acid-text)', delivery:'var(--info-text)', manager:'var(--purple-text)', staff:'var(--warn-text)' };
     const roleLabel = roleLabelMap[a.role] || 'STAFF';
     const roleColor = roleColorMap[a.role] || 'var(--rust)';
     const age = calcAge(a.dob);
