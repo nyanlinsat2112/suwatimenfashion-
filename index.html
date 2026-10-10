@@ -64,7 +64,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
@@ -213,20 +213,40 @@
   .denom-chip.active{background:var(--ink); color:var(--concrete);}
   .giftcard-code-box{background:var(--paper); border:3px dashed var(--rust); padding:16px; text-align:center; margin:10px 0;}
   .giftcard-code-box .gc-code{font-family:'Space Mono',monospace; font-size:20px; font-weight:700; letter-spacing:2px; color:var(--rust);}
-  .prepaid-card{
-    background:linear-gradient(135deg, #1a1916 0%, #141412 60%, #C13B1F 140%);
-    border:3px solid var(--ink); padding:22px 20px; color:var(--concrete); position:relative; overflow:hidden;
-  }
-  .prepaid-card::after{ content:""; position:absolute; top:-40px; right:-40px; width:140px; height:140px; background:rgba(214,255,63,.08); border-radius:50%; }
-  .prepaid-card .pc-brand{ font-family:'Anton',sans-serif; font-size:19px; line-height:1.2; }
-  .prepaid-card .pc-brand .dot{ color:var(--acid); }
-  .prepaid-card .pc-balance-label{ font-family:'Space Mono',monospace; font-size:10px; color:#a39d8c; margin-top:14px; }
-  .prepaid-card .pc-balance{ font-family:'Anton',sans-serif; font-size:26px; color:var(--acid); margin-top:2px; }
-  .prepaid-card .pc-number{ font-family:'Space Mono',monospace; font-size:18px; letter-spacing:3px; margin-top:20px; }
-  .prepaid-card .pc-row{ display:flex; justify-content:space-between; margin-top:14px; }
-  .prepaid-card .pc-field-label{ font-family:'Space Mono',monospace; font-size:9px; color:#a39d8c; letter-spacing:.1em; }
-  .prepaid-card .pc-field-value{ font-family:'Space Mono',monospace; font-size:14px; letter-spacing:2px; margin-top:2px; }
-  .prepaid-card-barcode{ background:#fff; padding:12px 8px 4px; margin-top:16px; text-align:center; }
+  /* ===== Prepaid Card — Black & Green (flip) ===== */
+  .pc-wrap{ width:100%; max-width:520px; margin:0 auto; perspective:1600px; container-type:inline-size; }
+  .pc-inner{ position:relative; width:100%; aspect-ratio:856/540; transform-style:preserve-3d; -webkit-transform-style:preserve-3d; transition:transform .75s cubic-bezier(.2,.8,.2,1); cursor:pointer; }
+  .pc-wrap.flipped .pc-inner{ transform:rotateY(180deg); }
+  .pc-face{ position:absolute; inset:0; border-radius:4.2cqw; overflow:hidden; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+    background-color:#080a08; color:#eef3ee; font-family:'IBM Plex Mono',monospace; box-shadow:0 14px 34px rgba(0,0,0,.35);
+    background-image:linear-gradient(rgba(60,255,122,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(60,255,122,.07) 1px,transparent 1px); background-size:4.2cqw 4.2cqw; }
+  .pc-back{ transform:rotateY(180deg); }
+  .pc-outline{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .pc-stripe{ position:absolute; top:0; right:0; bottom:0; width:15.42cqw; background:#3CFF7A; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .pc-stripe span{ writing-mode:vertical-rl; font-family:'Archivo Black',sans-serif; font-size:4.67cqw; color:#080a08; white-space:nowrap; letter-spacing:.04em; }
+  .pc-title{ position:absolute; left:5.6cqw; top:5cqw; font-family:'Archivo Black',sans-serif; font-size:4.5cqw; line-height:1; color:#3CFF7A; white-space:nowrap; }
+  .pc-title i{ font-style:normal; color:#eef3ee; }
+  .pc-tags{ position:absolute; left:5.6cqw; top:12cqw; display:flex; gap:1.6cqw; align-items:center; font-size:1.5cqw; letter-spacing:.14em; }
+  .pc-badge{ border:.25cqw solid #3CFF7A; color:#3CFF7A; padding:.5cqw 1.2cqw; font-weight:700; }
+  .pc-tags .muted{ color:#8a948a; }
+  .pc-flip-hint{ position:absolute; right:18.5cqw; top:5.6cqw; font-size:1.45cqw; color:#8a948a; letter-spacing:.1em; text-decoration:underline; text-underline-offset:.4cqw; }
+  .pc-bal-label{ position:absolute; left:5.6cqw; top:19.5cqw; font-size:1.45cqw; color:#8a948a; letter-spacing:.16em; }
+  .pc-bal{ position:absolute; left:5.6cqw; top:22cqw; font-family:'Archivo Black',sans-serif; font-size:6.6cqw; line-height:1; color:#3CFF7A; white-space:nowrap; }
+  .pc-bal small{ font-family:'IBM Plex Mono',monospace; font-size:2.2cqw; color:#eef3ee; margin-left:1cqw; font-weight:700; }
+  .pc-divider{ position:absolute; left:5.6cqw; right:20cqw; top:34.6cqw; height:.2cqw; background:#3CFF7A; opacity:.5; }
+  .pc-num{ position:absolute; left:5.6cqw; top:37.2cqw; font-size:4.3cqw; font-weight:700; letter-spacing:.55cqw; color:#eef3ee; white-space:nowrap; }
+  .pc-holder-label{ position:absolute; left:5.6cqw; bottom:11cqw; font-size:1.4cqw; color:#8a948a; letter-spacing:.16em; }
+  .pc-holder{ position:absolute; left:5.6cqw; right:19cqw; bottom:4.6cqw; font-family:'Archivo Black',sans-serif; font-size:4cqw; line-height:1.1; color:#eef3ee; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pc-mag{ position:absolute; left:0; right:0; top:4.44cqw; height:10.05cqw; background:#000; border-bottom:.35cqw solid #3CFF7A; }
+  .pc-pin-label{ position:absolute; left:5.6cqw; top:19cqw; font-family:'Archivo Black',sans-serif; font-size:2.6cqw; color:#3CFF7A; letter-spacing:.04em; }
+  .pc-pin-sub{ position:absolute; left:5.6cqw; top:22.6cqw; font-size:1.35cqw; color:#8a948a; letter-spacing:.08em; }
+  .pc-pin{ position:absolute; left:34cqw; top:17.6cqw; display:flex; gap:1.4cqw; cursor:pointer; }
+  .pc-pin b{ width:5.84cqw; height:6.78cqw; border:.25cqw solid #3CFF7A; display:flex; align-items:center; justify-content:center; font-size:3.5cqw; font-weight:700; color:#eef3ee; }
+  .pc-back .pc-flip-hint{ right:5.6cqw; top:20cqw; }
+  .pc-panel{ position:absolute; left:5.6cqw; right:5.6cqw; bottom:4.6cqw; top:29cqw; background:#3CFF7A; border-radius:1.64cqw; padding:2.2cqw 2.8cqw 1.6cqw; display:flex; flex-direction:column; }
+  .pc-panel svg{ display:block; width:100%; flex:1; min-height:0; }
+  .pc-panel-foot{ display:flex; justify-content:space-between; margin-top:1.2cqw; font-size:2.1cqw; font-weight:700; letter-spacing:.6cqw; color:#080a08; white-space:nowrap; }
+  @media (prefers-reduced-motion: reduce){ .pc-inner{ transition:none; } }
   .profile-label{font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); letter-spacing:.05em;}
   .card .tag{position:absolute; top:-10px; right:14px; background:var(--acid); border:3px solid var(--ink); padding:5px 10px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; transform:rotate(4deg);}
   .card .soldout{position:absolute; inset:0; background:rgba(20,20,18,.7); color:var(--cream); display:flex; align-items:center; justify-content:center; font-family:'Anton',sans-serif; font-size:22px; letter-spacing:.05em;}
@@ -3073,29 +3093,61 @@ async function openPrepaidCard(){
   const area = document.getElementById('prepaid-card-area');
   if(error || !data){ area.innerHTML = '<p class="hint">Card ရယူ၍ မရပါ — '+ (error?.message||'') +'</p>'; return; }
 
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const holder = esc((currentUser.user_metadata?.full_name || currentUser.email || '').toUpperCase());
+  const num = esc(data.card_number);
+  const pin = String(data.card_pin || '');
+  const pinBoxes = (pin.length ? pin : '****').split('').map(() => '<b>•</b>').join('');
+
   area.innerHTML = `
-    <div class="prepaid-card">
-      <div class="pc-brand">SUWATI<span class="dot">.</span>PREPAID CARD</div>
-      <div class="pc-balance-label">လက်ကျန် ငွေပမာဏ</div>
-      <div class="pc-balance">${Number(data.balance||0).toLocaleString()} ကျပ်</div>
-      <div class="pc-number">${data.card_number}</div>
-      <div class="pc-row">
-        <div><div class="pc-field-label">CARDHOLDER</div><div class="pc-field-value" style="font-size:12px; letter-spacing:1px;">${(currentUser.user_metadata?.full_name||currentUser.email).toUpperCase()}</div></div>
-        <div><div class="pc-field-label">SECURITY PIN</div><div class="pc-field-value" id="pc-pin-display" data-pin="${data.card_pin}" data-revealed="false" onclick="togglePinReveal()" style="cursor:pointer;">****</div></div>
+    <div class="pc-wrap" id="pc-wrap">
+      <div class="pc-inner" onclick="flipPrepaidCard()" role="button" tabindex="0" aria-label="Card ကို လှန်ရန်" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipPrepaidCard();}">
+        <div class="pc-face pc-front">
+          <svg class="pc-outline" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true"><text x="24" y="560" font-family="Archivo Black, sans-serif" font-size="210" fill="none" stroke="#3CFF7A" stroke-width="2" opacity=".22">SUWATI</text></svg>
+          <div class="pc-stripe" aria-hidden="true"><span>SUWATI ✕ SUWATI ✕ SUWATI ✕ SUWATI</span></div>
+          <div class="pc-title">SUWATI<i>.</i>PREPAID CARD</div>
+          <div class="pc-tags"><span class="pc-badge">MEN FASHION</span><span class="muted">NAY PYI TAW</span></div>
+          <div class="pc-flip-hint">TAP TO FLIP ↻</div>
+          <div class="pc-bal-label">AVAILABLE BALANCE</div>
+          <div class="pc-bal">${Number(data.balance||0).toLocaleString()}<small>MMK</small></div>
+          <div class="pc-divider"></div>
+          <div class="pc-num">${num}</div>
+          <div class="pc-holder-label">CARDHOLDER NAME</div>
+          <div class="pc-holder">${holder}</div>
+        </div>
+        <div class="pc-face pc-back">
+          <div class="pc-mag"></div>
+          <div class="pc-pin-label">SECURITY PIN</div>
+          <div class="pc-pin-sub">TAP BOXES TO SHOW</div>
+          <div class="pc-pin" id="pc-pin-display" data-pin="${esc(pin)}" data-revealed="false" onclick="event.stopPropagation(); togglePinReveal()">${pinBoxes}</div>
+          <div class="pc-flip-hint">TAP TO FLIP ↻</div>
+          <div class="pc-panel">
+            <svg id="prepaid-barcode-svg"></svg>
+            <div class="pc-panel-foot"><span>${num}</span><span>▲ SCAN</span></div>
+          </div>
+        </div>
       </div>
-      <div class="prepaid-card-barcode"><svg id="prepaid-barcode-svg"></svg></div>
     </div>
-    <p class="hint" style="text-align:center; margin-top:8px;">PIN ကို ကြည့်ချင်ရင် PIN ဂဏန်းပေါ် တို့ပါ</p>`;
+    <p class="hint" style="text-align:center; margin-top:10px;">Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Barcode နှင့် PIN ရှိပါသည်။ PIN ကြည့်ရန် အကွက်များပေါ် တို့ပါ</p>`;
 
   try{
-    JsBarcode('#prepaid-barcode-svg', data.card_number.replace(/\s/g,''), { format:'CODE128', width:2, height:50, displayValue:false, margin:0 });
+    const svg = document.getElementById('prepaid-barcode-svg');
+    JsBarcode(svg, data.card_number.replace(/\s/g,''), { format:'CODE128', width:2, height:100, displayValue:false, margin:0, background:'#3CFF7A', lineColor:'#080a08' });
+    const w = svg.getAttribute('width'), h = svg.getAttribute('height');
+    if(w && h){ svg.setAttribute('viewBox', `0 0 ${parseFloat(w)} ${parseFloat(h)}`); svg.removeAttribute('width'); svg.removeAttribute('height'); svg.setAttribute('preserveAspectRatio','none'); }
   }catch(e){ console.error('Barcode render failed', e); }
+}
+
+function flipPrepaidCard(){
+  document.getElementById('pc-wrap')?.classList.toggle('flipped');
 }
 
 function togglePinReveal(){
   const el = document.getElementById('pc-pin-display');
+  if(!el) return;
   const revealed = el.dataset.revealed === 'true';
-  el.textContent = revealed ? '****' : el.dataset.pin;
+  const pin = el.dataset.pin || '';
+  el.querySelectorAll('b').forEach((b, i) => { b.textContent = revealed ? '•' : (pin[i] || ''); });
   el.dataset.revealed = revealed ? 'false' : 'true';
 }
 
