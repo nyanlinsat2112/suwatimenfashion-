@@ -291,6 +291,13 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 #pos-numpad .np-back{color:var(--warn-text) !important;}
 #pos-numpad .np-clear{grid-column:span 2; font-size:15px !important; color:var(--warn-text) !important;}
 .np-active{outline:3px solid var(--acid) !important; outline-offset:1px;}
+.lowstock-card{border-color:var(--warn-text) !important;}
+.lowstock-card .ls-row{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px dashed var(--bd); font-size:13.5px;}
+.lowstock-card .ls-row b{color:var(--warn-text); white-space:nowrap; font-family:'Space Mono',monospace;}
+.lowstock-card .ls-var{font-family:'Space Mono',monospace; font-size:12px; color:var(--grey);}
+.recon-ok{color:var(--acid-text);} .recon-bad{color:var(--warn-text);}
+.recon-table{width:100%; border-collapse:collapse; font-family:'Space Mono',monospace; font-size:12.5px; margin-top:8px;}
+.recon-table td{padding:7px 4px; border-bottom:1px dashed var(--bd);} .recon-table td:last-child{text-align:right; white-space:nowrap;}
 .drag-handle{ font-size:20px; color:var(--grey); cursor:grab; user-select:none; touch-action:none; padding:8px; margin:-8px; }
 .msg-thread-item .mt-preview{font-size:12px; color:var(--grey); margin-top:3px; max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
 .msg-thread-item .mt-time{font-family:'Space Mono',monospace; font-size:10.5px; color:var(--grey);}
@@ -381,7 +388,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
   <div class="tabs-main">
     <button class="tab-btn main-tab" data-tab="pos-panel" id="pos-tab-btn"><span class="mt-icon">🏪</span>POS<br>(အပြင်ရောင်း)</button>
     <button class="tab-btn main-tab" data-tab="orders-panel" id="orders-tab-btn"><span class="mt-icon">🌐</span>Online<br>Orders<span id="orders-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
-    <button class="tab-btn main-tab" data-tab="inventory-panel"><span class="mt-icon">📦</span>Inventory</button>
+    <button class="tab-btn main-tab" data-tab="inventory-panel" id="inventory-tab-btn"><span class="mt-icon">📦</span>Inventory<span id="lowstock-badge" class="tab-count-badge" style="display:none;"></span></button>
     <button class="tab-btn main-tab" data-tab="messages-panel" id="messages-tab-btn"><span class="mt-icon">💬</span>Messages<span id="messages-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
     <button class="tab-btn main-tab" data-tab="delivery-panel" id="delivery-tab-btn"><span class="mt-icon">🚚</span>Delivery<span id="delivery-unread-badge" class="tab-count-badge" style="display:none;"></span></button>
     <button class="tab-btn main-tab" data-tab="wallet-panel" id="wallet-tab-btn"><span class="mt-icon">🎫</span>Prepaid Card<br>System<span id="wallet-pending-badge" class="tab-count-badge" style="display:none;"></span></button>
@@ -597,6 +604,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
     <div class="form-card">
       <h3>Stock + ဈေးနှုန်း + အရောင် — အကုန်တစ်နေရာတည်း</h3>
       <div class="hint">🟢 = Stock ရှိသည် · 🟠 = ၃ ခုအောက် ကျန်တော့သည် · 🔴 = ကုန်သွားပြီ</div>
+      <div id="lowstock-alert"></div>
       <div id="inventory-cards"></div>
     </div>
   </div>
@@ -894,6 +902,13 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
     </div>
 
     <div class="form-card">
+      <h3>⚠️ Stock နည်း သတိပေးချက်</h3>
+      <div class="hint">Size/အရောင် တစ်ခုခုရဲ့ လက်ကျန် ဒီအရေအတွက် (သို့) အောက် ရောက်ရင် Inventory Tab ခုန်ပြီး သတိပေးမည်</div>
+      <input type="number" id="settings-lowstock" min="1" step="1" placeholder="2">
+      <button type="button" class="acid" id="save-lowstock-btn" style="width:100%; margin-top:8px;">သိမ်းမည်</button>
+    </div>
+
+    <div class="form-card">
       <h3>🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု (Add-on) ဈေးနှုန်း</h3>
       <div class="hint">Customer က Order တင်တဲ့အခါ "Gift အဖြစ် ထုပ်ပိုးပေးရန်" ရွေးရင် ပေါင်းထည့်မည့် ဈေး — 0 ထားရင် Option ကို Website မှာ ဖျောက်ထားမည်</div>
       <input type="number" id="settings-gift-price" min="0" step="100" placeholder="4500">
@@ -1020,6 +1035,11 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
         <div class="hint">Online + POS ရောင်းထားသမျှ Gift Card မှတ်တမ်းများ ကြည့်ရန်</div>
       </div>
 
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('reconcile')" style="cursor:pointer;">
+        <h3>🧮 ငွေစာရင်း ညှိစစ် Report</h3>
+        <div class="hint">Prepaid Card လက်ကျန်များ နှင့် ငွေဖြည့်/သုံးစွဲ မှတ်တမ်းများ ကိုက်ညီမှု စစ်ဆေးရန်</div>
+      </div>
+
       <div class="form-card wallet-nav-box" onclick="showWalletSection('customer-wallets')" style="cursor:pointer;">
         <h3>💳 Customer Wallet Balances</h3>
         <div class="hint">Customer အားလုံးရဲ့ Prepaid Card လက်ကျန် — ပိုက်ဆံအများဆုံးရှိသူ အပေါ်ဆုံးမှာ ပြပါမည်</div>
@@ -1100,6 +1120,7 @@ async function checkSession(){
     subscribeToOrderRealtime();
     subscribeToWalletRealtime();
     subscribeToAdminAutoRefresh();
+    loadLowStockThreshold().then(refreshLowStockBadge);
     refreshAllAttentionStates();
     setInterval(refreshAllAttentionStates, 25000); // ၂၅ စက္ကန့်တစ်ခါ Independent Safety-Net Check
   } else {
@@ -1351,6 +1372,9 @@ async function refreshAllAttentionStates(){
         walletBadge.style.display = 'none';
       }
     }
+
+    // Inventory — Stock နည်းနေသော Size/အရောင် ရှိနေသလား
+    await refreshLowStockBadge();
 
     // Wallet Menu ရဲ့ Top-up/Gift Card Box တစ်ခုချင်းစီကိုလည်း ခုန်စေရန် (Menu ကို ကြည့်နေချိန်တွင်ပါ Update ဆက်ဖြစ်စေရန်)
     updateWalletPendingBadges();
@@ -1692,6 +1716,62 @@ async function deleteProduct(id, name){
 }
 
 // ---------- INVENTORY (Stock + Price + Colors + Sold — တစ်နေရာတည်း) ----------
+
+// ---------- ⚠️ Stock နည်း သတိပေးချက် ----------
+let lowStockThreshold = 2;
+async function loadLowStockThreshold(){
+  try{ const { data } = await sb.from('settings').select('*').eq('id',1).maybeSingle(); if(data && data.low_stock_threshold) lowStockThreshold = Number(data.low_stock_threshold) || 2; }catch(e){}
+}
+// ပြရန် ပစ္စည်း (Gift Card / Website မှာ ဖျောက်ထားတာ မပါ) ရဲ့ Size/အရောင် တစ်ခုချင်း လက်ကျန်
+function computeLowStock(products){
+  const low = [], out = [];
+  (products||[]).forEach(p=>{
+    if(p.is_gift_card || p.visible === false) return;
+    const push = (label, q)=>{ q = parseInt(q)||0; const item = { name:p.name, label, qty:q }; if(q <= 0) out.push(item); else if(q <= lowStockThreshold) low.push(item); };
+    if(p.variant_stock && typeof p.variant_stock === 'object' && Object.keys(p.variant_stock).length){
+      Object.entries(p.variant_stock).forEach(([sz,cols])=>{
+        Object.entries(cols||{}).forEach(([c,q])=>push((sz!=='_'&&c!=='_')?`${sz} / ${c}`:(sz!=='_'?sz:(c!=='_'?c:'')), q));
+      });
+    } else if(p.color_stock && typeof p.color_stock === 'object' && Object.keys(p.color_stock).length){
+      Object.entries(p.color_stock).forEach(([c,q])=>push(c, q));
+    } else {
+      push('', p.stock_qty);
+    }
+  });
+  low.sort((a,b)=>a.qty-b.qty);
+  return { low, out };
+}
+function renderLowStockAlert(products){
+  const box = document.getElementById('lowstock-alert'); if(!box) return;
+  const { low, out } = computeLowStock(products);
+  if(!low.length && !out.length){ box.innerHTML = ''; return; }
+  const row = i => `<div class="ls-row"><span>${i.name}${i.label?` <span class="ls-var">${i.label}</span>`:''}</span><b>${i.qty<=0?'ကုန်':i.qty+' ခု'}</b></div>`;
+  box.innerHTML = `<div class="form-card lowstock-card">
+      <h3>⚠️ Stock နည်းနေသော ပစ္စည်းများ ${low.length?`(${low.length})`:''}</h3>
+      <div class="hint">လက်ကျန် ${lowStockThreshold} ခု (သို့) အောက် — Stock ဖြည့်ရန် စဉ်းစားပါ (Settings မှာ အရေအတွက် ပြောင်းလို့ရ)</div>
+      ${low.length ? low.map(row).join('') : '<div class="hint">မရှိပါ ✅</div>'}
+      ${out.length ? `<details style="margin-top:10px;"><summary class="hint" style="cursor:pointer;">❌ ကုန်သွားပြီ (${out.length}) — နှိပ်ပြီး ကြည့်ရန်</summary>${out.map(row).join('')}</details>` : ''}
+    </div>`;
+}
+async function refreshLowStockBadge(){
+  try{
+    const { data } = await sb.from('products').select('*');
+    const { low } = computeLowStock(data||[]);
+    setTabAttention('inventory-tab-btn', low.length > 0);
+    const b = document.getElementById('lowstock-badge');
+    if(b){ if(low.length){ b.textContent = low.length > 9 ? '9+' : low.length; b.style.display = 'flex'; } else b.style.display = 'none'; }
+    return data;
+  }catch(e){ console.error('low stock', e); }
+}
+document.getElementById('save-lowstock-btn').addEventListener('click', async ()=>{
+  const v = parseInt(document.getElementById('settings-lowstock').value);
+  if(!(v >= 1)){ showToast('၁ နှင့်အထက် ထည့်ပါ'); return; }
+  const { error } = await sb.from('settings').update({ low_stock_threshold: v }).eq('id', 1);
+  if(error){ showToast('Error: '+error.message+' — supabase-schema.sql ကို Run ရန် လိုအပ်ပါသည်'); return; }
+  lowStockThreshold = v; logActivity('low_stock_threshold_updated', String(v));
+  showToast('✅ သိမ်းပြီးပါပြီ'); refreshLowStockBadge();
+});
+
 async function loadInventory(){
   const container = document.getElementById('inventory-cards');
   if(!container) return;
@@ -1713,6 +1793,7 @@ async function loadInventory(){
     return sum + ((p.stock_qty||0)*Number(p.price||0));
   }, 0);
   document.getElementById('stat-total-products').textContent = products.length;
+  renderLowStockAlert(products);
   document.getElementById('stat-total-stock-qty').textContent = totalStockQty.toLocaleString();
   document.getElementById('stat-inventory-value').textContent = inventoryValue.toLocaleString()+' ကျပ်';
   document.getElementById('stat-giftcard-value').textContent = giftCardValue.toLocaleString()+' ကျပ်';
@@ -2255,6 +2336,8 @@ async function loadOrders(){
         }
       }
 
+      sendOrderStatusChat(g, newStatus, cancellation_reason);
+
       // Customer ဆီ status update email — group ထဲက ပစ္စည်းအားလုံးပါတဲ့ email တစ်စောင်တည်း ပို့မယ် (Cancel Reason ပါ ပါမည်)
       fetch(`${SUPABASE_URL}/functions/v1/send-order-email`, {
         method:'POST',
@@ -2268,6 +2351,30 @@ async function loadOrders(){
     });
     list.appendChild(div);
   });
+}
+
+
+// ---------- 💬 Order Status ပြောင်းရင် Customer ရဲ့ Chat ထဲ အလိုအလျောက် စာပို့ ----------
+async function sendOrderStatusChat(g, status, reason){
+  try{
+    const r0 = (g.rows||[])[0] || {};
+    const userId = r0.user_id; if(!userId) return; // Login မဝင်ဘဲ မှာထားတဲ့ Guest Order — Chat မရှိ
+    const ref = '#' + String(g.group_display_id || r0.order_group_id || r0.id || '').slice(0,8).toUpperCase();
+    const items = (g.rows||[]).filter(r=>r.product_name!=='🏷️ Promo Code' && r.product_name!=='🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု')
+      .map(r=>`${r.product_name}${r.size?` (${r.size}${r.color?', '+r.color:''})`:''} x${r.quantity}`).join('၊ ');
+    const zoneRow = (g.rows||[]).find(r=>r.delivery_zone);
+    const cashback = (g.rows||[]).reduce((s,r)=>s+(Number(r.cashback_amount)||0),0);
+    const prepaid = r0.payment_method === 'Prepaid Card' || r0.payment_method === 'Wallet';
+    const msgs = {
+      confirmed: `✅ Order ${ref} ကို အတည်ပြုပြီးပါပြီ။ မကြာမီ ပြင်ဆင်ပြီး ပို့ဆောင်ပေးပါမည်။\n🛍️ ${items}`,
+      processing: `📦 Order ${ref} ကို ပြင်ဆင်ထုပ်ပိုးနေပါပြီ။`,
+      shipped: `🚚 Order ${ref} ပို့ဆောင်ရန် ထွက်ခွာသွားပါပြီ။${zoneRow ? `\nDelivery ခ (${zoneRow.delivery_fee_range||''}) ကို ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေပါ။` : ''}`,
+      delivered: `🎉 Order ${ref} ပို့ဆောင်ပြီးပါပြီ။ SUWATI MEN FASHION ကို အားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်!${cashback>0 ? `\n💰 Cashback ${cashback.toLocaleString()} ကျပ် ကို Prepaid Card ထဲ ထည့်ပေးပြီးပါပြီ။` : ''}`,
+      cancelled: `❌ Order ${ref} ကို ပယ်ဖျက်လိုက်ပါသည်။${reason ? `\nအကြောင်းရင်း: ${reason}` : ''}${prepaid ? `\n↩️ ပေးချေထားသော ငွေကို Prepaid Card ထဲ ပြန်ထည့်ပေးပြီးပါပြီ။` : ''}\nမေးမြန်းလိုတာရှိရင် ဒီ Chat မှာ ပြန်ရေးပေးပါ။`,
+    };
+    const message = msgs[status]; if(!message) return;
+    await sb.from('chat_messages').insert({ user_id:userId, customer_name:r0.customer_name || null, sender:'admin', message, read_by_admin:true, read_by_customer:false });
+  }catch(e){ console.error('status chat failed', e); }
 }
 
 async function restoreStockForRows(rows){
@@ -2290,6 +2397,8 @@ async function loadSettingsForm(){
   if(backupCard) backupCard.style.display = currentAdminRole === 'owner' ? '' : 'none';
   renderLastBackupInfo();
   document.getElementById('settings-gift-price').value = (data.gift_wrap_price ?? 4500);
+  document.getElementById('settings-lowstock').value = (data.low_stock_threshold ?? 2);
+  lowStockThreshold = Number(data.low_stock_threshold ?? 2) || 2;
   let zones = data.delivery_zones;
   if(typeof zones === 'string'){ try{ zones = JSON.parse(zones); }catch(e){ zones = null; } }
   renderDeliveryZonesEditor(Array.isArray(zones) && zones.length ? zones : DEFAULT_DELIVERY_ZONES_ADMIN);
@@ -4105,6 +4214,7 @@ function renderSaleHistory(){
       }
 
       if(g.sale_channel !== 'in_store'){
+        sendOrderStatusChat(g, 'cancelled', cancellation_reason);
         fetch(`${SUPABASE_URL}/functions/v1/send-order-email`, {
           method:'POST',
           headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPABASE_ANON_KEY},
@@ -4623,6 +4733,7 @@ function renderDeliveryQueueList(){
       const { error } = await sb.from('orders').update({ order_status:newStatus, viewed_by_admin:true, viewed_by_delivery:true }).in('id', g.ids);
       if(error){ showToast('Error: '+error.message); return; }
       showToast('Status Update ပြီးပါပြီ');
+      sendOrderStatusChat(g, newStatus);
       logActivity('delivery_status_changed', `#${g.group_display_id.slice(0,8).toUpperCase()} → ${newStatus}`);
       loadDeliveryQueue();
       loadOrders();
@@ -4709,6 +4820,8 @@ async function confirmDelivered(){
   }).in('id', g.ids);
 
   if(error){ showToast('Error: '+error.message); btn.disabled=false; btn.textContent='✅ ပို့ပြီးပါပြီ — မှတ်တမ်းတင်မည်'; return; }
+
+  sendOrderStatusChat(g, 'delivered');
 
   // Customer ဆီ Email အသိပေး
   fetch(`${SUPABASE_URL}/functions/v1/send-order-email`, {
@@ -4801,6 +4914,110 @@ async function updateWalletPendingBadges(){
   if(giftBox) giftBox.classList.toggle('needs-attention-box', (giftCount||0) > 0);
 }
 
+
+// ---------- 🧮 ငွေစာရင်း ညှိစစ် Report ----------
+async function reconFetchAll(table, cols){
+  const all = []; const size = 1000;
+  for(let from=0; ; from+=size){
+    const q = sb.from(table).select(cols);
+    const { data, error } = typeof q.range === 'function' ? await q.range(from, from+size-1) : await q;
+    if(error) throw new Error(table+': '+error.message);
+    all.push(...(data||[]));
+    if(!data || data.length < size || typeof q.range !== 'function') break;
+  }
+  return all;
+}
+async function loadReconciliation(){
+  const area = document.getElementById('recon-area'); if(!area) return;
+  try{
+    const [wallets, txs, topups, gifts, orders] = await Promise.all([
+      reconFetchAll('wallets','user_id, balance'),
+      reconFetchAll('wallet_transactions','user_id, type, amount, reference_id, created_at'),
+      reconFetchAll('wallet_topups','id, user_id, customer_name, phone, amount, status, created_at'),
+      reconFetchAll('gift_cards','code, amount, status'),
+      reconFetchAll('orders','order_group_id, user_id, customer_name, phone, payment_method, created_at'),
+    ]);
+    const fmt = n => `${Math.round(n).toLocaleString()} ကျပ်`;
+    const nameMap = {};
+    [...orders, ...topups].forEach(r=>{ if(r.user_id && r.customer_name) nameMap[r.user_id] = `${r.customer_name}${r.phone?' · '+r.phone:''}`; });
+
+    // ၁) လက်ကျန် စုစုပေါင်း vs မှတ်တမ်း စုစုပေါင်း
+    const totalBal = wallets.reduce((s,w)=>s+(Number(w.balance)||0),0);
+    const totalTx = txs.reduce((s,t)=>s+(Number(t.amount)||0),0);
+    const diff = totalBal - totalTx;
+
+    // ၂) အမျိုးအစားအလိုက်
+    const typeLabels = { topup:'➕ ငွေဖြည့် (Top-up)', gift_card_redeem:'🎁 Gift Card သုံး', cashback:'🎉 Cashback', refund:'↩️ ပြန်အမ်းငွေ', purchase:'🛍️ Website ဝယ်ယူ', pos_purchase:'🏪 ဆိုင်ထဲ ဝယ်ယူ', cashback_reversal:'↩️ Cashback ပြန်နုတ်', credit:'➕ Admin ထည့်ငွေ' };
+    const byType = {}; txs.forEach(t=>{ byType[t.type] = (byType[t.type]||0) + (Number(t.amount)||0); });
+
+    // ၃) Customer တစ်ယောက်ချင်း မကိုက်ညီမှု
+    const txByUser = {}; txs.forEach(t=>{ txByUser[t.user_id] = (txByUser[t.user_id]||0) + (Number(t.amount)||0); });
+    const users = new Set([...wallets.map(w=>w.user_id), ...Object.keys(txByUser)]);
+    const balByUser = {}; wallets.forEach(w=>balByUser[w.user_id] = Number(w.balance)||0);
+    const mismatches = [...users].map(u=>({ u, bal: balByUser[u]||0, tx: txByUser[u]||0 })).filter(x=>Math.abs(x.bal - x.tx) >= 1).sort((a,b)=>Math.abs(b.bal-b.tx)-Math.abs(a.bal-a.tx));
+    const negatives = wallets.filter(w=>(Number(w.balance)||0) < 0);
+
+    // ၄) Approve လုပ်ပြီး Top-up — ငွေ မဝင်တာ ရှိလား
+    const topupTxRefs = new Set(txs.filter(t=>t.type==='topup').map(t=>String(t.reference_id)));
+    const approved = topups.filter(t=>t.status==='approved');
+    const approvedTotal = approved.reduce((s,t)=>s+(Number(t.amount)||0),0);
+    const topupMissing = approved.filter(t=>!topupTxRefs.has(String(t.id)));
+
+    // ၅) သုံးပြီး Gift Card — ငွေ မဝင်တာ ရှိလား
+    const redeemRefs = new Set(txs.filter(t=>t.type==='gift_card_redeem').map(t=>String(t.reference_id).toUpperCase()));
+    const redeemed = gifts.filter(g=>g.status==='redeemed');
+    const redeemedTotal = redeemed.reduce((s,g)=>s+(Number(g.amount)||0),0);
+    const giftMissing = redeemed.filter(g=>!redeemRefs.has(String(g.code).toUpperCase()));
+
+    // ၆) Website မှာ Prepaid ငွေ နုတ်ပြီး Order မဝင် / ပြန်မအမ်းရသေး
+    const orderGroups = new Set(orders.map(o=>String(o.order_group_id)));
+    const refunded = new Set(txs.filter(t=>t.type==='refund').map(t=>String(t.reference_id)));
+    const orphanPurchases = txs.filter(t=>t.type==='purchase' && t.reference_id && !orderGroups.has(String(t.reference_id)) && !refunded.has(String(t.reference_id)));
+
+    const issues = mismatches.length + negatives.length + topupMissing.length + giftMissing.length + orphanPurchases.length + (Math.abs(diff)>=1?1:0);
+    const ok = v => v ? '<span class="recon-ok">✅ ကိုက်ညီ</span>' : '<span class="recon-bad">⚠️ မကိုက်ညီ</span>';
+    const who = u => nameMap[u] || ('User '+String(u).slice(0,8));
+
+    area.innerHTML = `
+      <div class="form-card" style="border-color:${issues?'var(--warn-text)':'var(--acid-text)'};">
+        <h3>🧮 ငွေစာရင်း ညှိစစ် Report</h3>
+        <div class="hint">စစ်ဆေးချိန်: ${new Date().toLocaleString()} · <a href="#" onclick="loadReconciliation(); return false;">↻ ပြန်စစ်မည်</a></div>
+        <div class="display" style="font-size:22px; margin-top:8px;" class="${issues?'recon-bad':'recon-ok'}">${issues ? `<span class="recon-bad">⚠️ စစ်ဆေးရန် ${issues} ခု တွေ့ပါသည်</span>` : '<span class="recon-ok">✅ ငွေစာရင်း အားလုံး ကိုက်ညီပါသည်</span>'}</div>
+        <table class="recon-table">
+          <tr><td>Prepaid Card လက်ကျန် စုစုပေါင်း</td><td><b>${fmt(totalBal)}</b></td></tr>
+          <tr><td>မှတ်တမ်းအရ ရှိသင့်သော ငွေ</td><td><b>${fmt(totalTx)}</b></td></tr>
+          <tr><td>ကွာခြားချက်</td><td>${fmt(diff)} ${ok(Math.abs(diff)<1)}</td></tr>
+        </table>
+      </div>
+
+      <div class="form-card">
+        <h3>📊 အမျိုးအစားအလိုက် (စုစုပေါင်း)</h3>
+        <table class="recon-table">${Object.keys(byType).sort().map(k=>`<tr><td>${typeLabels[k]||k}</td><td style="color:${byType[k]<0?'var(--warn-text)':'var(--acid-text)'};">${byType[k]>0?'+':''}${fmt(byType[k])}</td></tr>`).join('') || '<tr><td>မှတ်တမ်း မရှိသေးပါ</td><td></td></tr>'}</table>
+      </div>
+
+      <div class="form-card">
+        <h3>🔍 အသေးစိတ် စစ်ဆေးချက်</h3>
+        <table class="recon-table">
+          <tr><td>Approve လုပ်ပြီး Top-up (${approved.length}) — ${fmt(approvedTotal)}<br><span class="hint" style="margin:0;">Top-up မှတ်တမ်း ${fmt(byType.topup||0)}</span></td><td>${ok(!topupMissing.length)}</td></tr>
+          <tr><td>သုံးပြီး Gift Card (${redeemed.length}) — ${fmt(redeemedTotal)}<br><span class="hint" style="margin:0;">Gift Card သုံး မှတ်တမ်း ${fmt(byType.gift_card_redeem||0)}</span></td><td>${ok(!giftMissing.length)}</td></tr>
+          <tr><td>ငွေနုတ်ပြီး Order မဝင်သေး</td><td>${ok(!orphanPurchases.length)}</td></tr>
+          <tr><td>အနုတ် လက်ကျန်</td><td>${ok(!negatives.length)}</td></tr>
+          <tr><td>Customer တစ်ယောက်ချင်း လက်ကျန်</td><td>${ok(!mismatches.length)}</td></tr>
+        </table>
+      </div>
+
+      ${topupMissing.length ? `<div class="form-card"><h3 class="recon-bad">⚠️ Approve လုပ်ပြီး ငွေ မဝင်သေးသော Top-up</h3><table class="recon-table">${topupMissing.map(t=>`<tr><td>${t.customer_name||who(t.user_id)}<br><span class="hint" style="margin:0;">${new Date(t.created_at).toLocaleString()}</span></td><td>${fmt(t.amount)}</td></tr>`).join('')}</table></div>` : ''}
+      ${giftMissing.length ? `<div class="form-card"><h3 class="recon-bad">⚠️ သုံးပြီးဖြစ်သော်လည်း ငွေ မဝင်သေးသော Gift Card</h3><table class="recon-table">${giftMissing.map(g=>`<tr><td style="font-family:'Space Mono',monospace;">${g.code}</td><td>${fmt(g.amount)}</td></tr>`).join('')}</table></div>` : ''}
+      ${orphanPurchases.length ? `<div class="form-card"><h3 class="recon-bad">⚠️ Prepaid ငွေနုတ်ပြီး Order မဝင်/ပြန်မအမ်းရသေး</h3><div class="hint">Customer နှင့် ဆက်သွယ်ပြီး Order ပြန်တင်ပေး (သို့) ငွေပြန်ထည့်ပေးပါ</div><table class="recon-table">${orphanPurchases.map(t=>`<tr><td>${who(t.user_id)}<br><span class="hint" style="margin:0;">${new Date(t.created_at).toLocaleString()} · #${String(t.reference_id).slice(0,8).toUpperCase()}</span></td><td>${fmt(-t.amount)}</td></tr>`).join('')}</table></div>` : ''}
+      ${mismatches.length ? `<div class="form-card"><h3 class="recon-bad">⚠️ လက်ကျန် မကိုက်ညီသော Customer</h3><div class="hint">Card လက်ကျန် နှင့် မှတ်တမ်းအရ ရှိသင့်ငွေ ကွာနေသည် — Usage History စစ်ပါ</div><table class="recon-table">${mismatches.map(m=>`<tr><td>${who(m.u)}<br><span class="hint" style="margin:0;">လက်ကျန် ${fmt(m.bal)} · မှတ်တမ်း ${fmt(m.tx)}</span></td><td class="recon-bad">${m.bal-m.tx>0?'+':''}${fmt(m.bal-m.tx)}</td></tr>`).join('')}</table></div>` : ''}
+      ${negatives.length ? `<div class="form-card"><h3 class="recon-bad">⚠️ အနုတ် လက်ကျန်</h3><table class="recon-table">${negatives.map(w=>`<tr><td>${who(w.user_id)}</td><td class="recon-bad">${fmt(w.balance)}</td></tr>`).join('')}</table></div>` : ''}
+      <p class="hint">💡 ဒီ Feature မထည့်ခင်က ပြုလုပ်ခဲ့တဲ့ စမ်းသပ် ငွေဖြည့်မှုများကြောင့် မကိုက်ညီတာ ပြနိုင်ပါသည် — စမ်းသပ် Data ရှင်းပြီးနောက်မှ စတင် ယုံကြည်စွာ အသုံးပြုပါ</p>`;
+    logActivity('wallet_reconcile_viewed', issues ? `${issues} issue(s)` : 'OK');
+  }catch(e){
+    area.innerHTML = `<div class="form-card"><h3>🧮 ငွေစာရင်း ညှိစစ် Report</h3><p class="hint recon-bad">Error: ${e.message}</p></div>`;
+  }
+}
+
 function showWalletSection(section){
   document.getElementById('wallet-menu').style.display = 'none';
   document.getElementById('wallet-section-detail').style.display = 'block';
@@ -4856,6 +5073,9 @@ function showWalletSection(section){
       loadAllGiftCards();
     });
     loadAllGiftCards();
+  } else if(section === 'reconcile'){
+    content.innerHTML = `<div id="recon-area"><div class="form-card"><h3>🧮 ငွေစာရင်း ညှိစစ် Report</h3><p class="hint">တွက်ချက်နေသည်...</p></div></div>`;
+    loadReconciliation();
   } else if(section === 'customer-wallets'){
     content.innerHTML = `
       <div class="form-card">
