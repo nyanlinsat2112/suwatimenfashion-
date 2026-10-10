@@ -3097,13 +3097,13 @@ async function openPrepaidCard(){
   const holder = esc((currentUser.user_metadata?.full_name || currentUser.email || '').toUpperCase());
   const num = esc(data.card_number);
   const pin = String(data.card_pin || '');
-  const pinBoxes = (pin.length ? pin : '****').split('').map(() => '<b>•</b>').join('');
+  const pinBoxes = (pin.length ? pin : '****').split('').map(() => '<b>*</b>').join('');
 
   area.innerHTML = `
     <div class="pc-wrap" id="pc-wrap">
       <div class="pc-inner" onclick="flipPrepaidCard()" role="button" tabindex="0" aria-label="Card ကို လှန်ရန်" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipPrepaidCard();}">
         <div class="pc-face pc-front">
-          <svg class="pc-outline" viewBox="0 0 856 540" preserveAspectRatio="none" aria-hidden="true"><text x="24" y="560" font-family="Archivo Black, sans-serif" font-size="210" fill="none" stroke="#3CFF7A" stroke-width="2" opacity=".22">SUWATI</text></svg>
+          <svg class="pc-outline" viewBox="0 0 856 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><text x="28" y="522" textLength="668" lengthAdjust="spacingAndGlyphs" font-family="Archivo Black, sans-serif" font-size="216" fill="none" stroke="#3CFF7A" stroke-width="2" opacity=".28">SUWATI</text></svg>
           <div class="pc-stripe" aria-hidden="true"><span>SUWATI ✕ SUWATI ✕ SUWATI ✕ SUWATI</span></div>
           <div class="pc-title">SUWATI<i>.</i>PREPAID CARD</div>
           <div class="pc-tags"><span class="pc-badge">MEN FASHION</span><span class="muted">NAY PYI TAW</span></div>
@@ -3147,7 +3147,7 @@ function togglePinReveal(){
   if(!el) return;
   const revealed = el.dataset.revealed === 'true';
   const pin = el.dataset.pin || '';
-  el.querySelectorAll('b').forEach((b, i) => { b.textContent = revealed ? '•' : (pin[i] || ''); });
+  el.querySelectorAll('b').forEach((b, i) => { b.textContent = revealed ? '*' : (pin[i] || ''); });
   el.dataset.revealed = revealed ? 'false' : 'true';
 }
 
