@@ -357,6 +357,72 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
   html[data-theme="light"] input, html[data-theme="light"] textarea, html[data-theme="light"] select{ border-color:#141412; }
   html[data-theme="light"] .form-card{ box-shadow:3px 3px 0 #141412; }
   #admin-theme-btn{ min-width:44px; }
+
+  /* =====================================================================
+     ✨ ADMIN MOTION — ခလုတ်ဖိနှိမ့်၊ Tab ပြောင်းရင် ပေါ်လာ၊ Toast ခုန် (Reduce Motion ဖွင့်ထားရင် ပိတ်)
+     ===================================================================== */
+  :root{ --ease-out:cubic-bezier(.2,.8,.2,1); --ease-pop:cubic-bezier(.34,1.56,.64,1); }
+  button{ transition:transform .14s var(--ease-out), box-shadow .14s var(--ease-out), background-color .2s ease, color .2s ease, border-color .2s ease; -webkit-tap-highlight-color:transparent; }
+  @media (hover:hover) and (pointer:fine){
+    button:not(:disabled):not(.tab-btn):hover{ transform:translate(-2px,-2px); box-shadow:2px 2px 0 var(--concrete); }
+    .tab-btn:not(.active):hover{ transform:translateY(-2px); }
+  }
+  button:not(:disabled):active{ transform:translate(1px,1px) scale(.96) !important; box-shadow:none !important; transition-duration:.05s; }
+  .tab-btn.main-tab:active{ transform:scale(.94) !important; }
+  .tab-btn.active{ animation:tabPop .3s var(--ease-pop); }
+  @keyframes tabPop{ 0%{ transform:scale(.94); } 60%{ transform:scale(1.04); } 100%{ transform:scale(1); } }
+  .tab-btn.main-tab .mt-icon{ display:inline-block; transition:transform .3s var(--ease-pop); }
+  .tab-btn.main-tab.active .mt-icon{ transform:scale(1.18) rotate(-6deg); }
+
+  /* Tab ပြောင်းရင် Panel အောက်ကနေ ပေါ်လာ */
+  .panel.active{ animation:panelIn .35s var(--ease-out); }
+  @keyframes panelIn{ from{ opacity:0; transform:translateY(16px); } }
+  .panel.active > .form-card:nth-child(1){ animation:cardRise .4s var(--ease-out) .03s backwards; }
+  .panel.active > .form-card:nth-child(2){ animation:cardRise .4s var(--ease-out) .09s backwards; }
+  .panel.active > .form-card:nth-child(3){ animation:cardRise .4s var(--ease-out) .15s backwards; }
+  .panel.active > .form-card:nth-child(4){ animation:cardRise .4s var(--ease-out) .21s backwards; }
+  @keyframes cardRise{ from{ opacity:0; transform:translateY(20px); } }
+  .wallet-nav-box{ transition:transform .18s var(--ease-out), box-shadow .18s var(--ease-out), border-color .2s ease; }
+  .wallet-nav-box:active{ transform:scale(.98); }
+  @media (hover:hover) and (pointer:fine){ .wallet-nav-box:hover{ transform:translate(-3px,-3px); box-shadow:4px 4px 0 var(--acid); } }
+
+  /* Toast — အောက်ကနေ ခုန်တက် */
+  #toast{ animation:toastIn .4s var(--ease-pop); box-shadow:3px 3px 0 #141412; border:2px solid #141412; }
+  @keyframes toastIn{ from{ opacity:0; transform:translate(-50%, 24px) scale(.9); } to{ transform:translate(-50%, 0); } }
+
+  /* ဓာတ်ပုံ ချဲ့ကြည့်ခြင်း / Receipt */
+  #lightbox-overlay.open{ animation:fadeIn .2s ease; }
+  #lightbox-overlay.open img{ animation:zoomIn .3s var(--ease-out); }
+  @keyframes fadeIn{ from{ opacity:0; } }
+  @keyframes zoomIn{ from{ opacity:0; transform:scale(.9); } }
+  #receipt-overlay{ animation:fadeIn .2s ease; }
+  #receipt-overlay iframe{ animation:cardRise .35s var(--ease-out); }
+
+  /* Login စာမျက်နှာ */
+  #login-screen > *{ animation:cardRise .5s var(--ease-out) backwards; }
+  #login-screen > *:nth-child(2){ animation-delay:.08s; } #login-screen > *:nth-child(3){ animation-delay:.16s; } #login-screen > *:nth-child(4){ animation-delay:.24s; }
+
+  /* POS — ခြင်းထဲ ပစ္စည်းဝင်ရင် ခုန်၊ Number Pad နှိပ်ရင် လင်း */
+  .pos-flash{ animation:posFlash .5s var(--ease-pop); }
+  @keyframes posFlash{ 0%{ transform:scale(1); } 35%{ transform:scale(1.03); box-shadow:0 0 0 3px var(--acid); } 100%{ transform:scale(1); } }
+  #pos-numpad .np-grid button:active, #pos-numpad .np-quick button:active{ transform:scale(.9) !important; }
+  #pos-tendered-input.bump{ animation:numBump .18s ease; }
+  @keyframes numBump{ 50%{ transform:scale(1.02); } }
+  .pos-sale-done{ animation:saleDone .9s var(--ease-pop); }
+  @keyframes saleDone{ 0%{ transform:scale(1); } 25%{ transform:scale(1.04); background:var(--acid); color:#141412; } 100%{ transform:scale(1); } }
+
+  /* Light/Dark ပြောင်းရင် အရောင် ညင်သာ + ခလုတ်လှည့် */
+  html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color .35s ease, border-color .35s ease !important; }
+  #admin-theme-btn.spin{ animation:themeSpin .5s var(--ease-pop); }
+  @keyframes themeSpin{ from{ transform:rotate(-180deg) scale(.6); } }
+
+  /* NEW / Low stock — ပထမဆုံး ပေါ်ချိန် ခုန် */
+  .tab-count-badge{ animation:badgePop .45s var(--ease-pop); }
+  @keyframes badgePop{ 0%{ transform:scale(0); } 70%{ transform:scale(1.3); } 100%{ transform:scale(1); } }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; animation-delay:0s !important; transition-duration:.01ms !important; }
+  }
 </style>
 </head>
 <body>
@@ -1067,8 +1133,10 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 function showToast(msg){
   const t = document.getElementById('toast');
   t.textContent = msg;
+  t.style.display = 'none'; void t.offsetWidth; // Animation ကို အစကနေ ပြန်စ
   t.style.display = 'block';
-  setTimeout(()=> t.style.display='none', 2200);
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> t.style.display='none', 2400);
 }
 
 // ---------- AUTH ----------
@@ -3501,6 +3569,7 @@ function addPosCartItem(){
   posSelectedProduct = null; posSelectedSize = null; posSelectedColor = null;
   document.getElementById('pos-selected-product-area').innerHTML = '';
   renderPosCart();
+  posFlash(document.getElementById('pos-cart-list') || document.getElementById('pos-cart-items') || document.getElementById('pos-totals'));
 }
 
 function getPosSubtotal(){
@@ -3587,7 +3656,9 @@ function posNumpadPress(k){
   if(posNumpadTarget === 'pos-discount-value' && v === '') v = '0';
   el.value = v;
   el.dispatchEvent(new Event('input', { bubbles:true }));
+  el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
 }
+function posFlash(el){ if(!el) return; el.classList.remove('pos-flash'); void el.offsetWidth; el.classList.add('pos-flash'); }
 function posNumpadQuick(q){
   setPosNumpadTarget('pos-tendered-input');
   const el = document.getElementById('pos-tendered-input');
@@ -3822,6 +3893,7 @@ document.getElementById('pos-complete-sale-btn').addEventListener('click', async
   logActivity('pos_sale_completed', `${customerName} — ${finalTotal.toLocaleString()} ကျပ် (${paymentMethod})${totalDiscount>0?' [Discount: '+totalDiscount.toLocaleString()+']':''}`);
   printPosReceipt(rows, paymentMethod, groupId, receiptWindow, { tendered, change, discount: totalDiscount });
   showToast('✅ အရောင်း မှတ်တမ်းတင်ပြီးပါပြီ');
+  { const b=document.getElementById('pos-complete-sale-btn'); if(b){ b.classList.remove('pos-sale-done'); void b.offsetWidth; b.classList.add('pos-sale-done'); } }
 
   posCart = [];
   document.getElementById('pos-discount-type').value = 'none';
@@ -5414,6 +5486,8 @@ window.__PWA_APP = { name:'SUWATI Admin', snoozeKey:'suwati_admin_install_snooze
 // ---------- 🌗 Admin Light / Dark Mode ----------
 function syncAdminThemeBtn(){ const b=document.getElementById('admin-theme-btn'); if(b) b.textContent = document.documentElement.getAttribute('data-theme')==='light' ? '🌙' : '☀️'; }
 function toggleAdminTheme(){
+  const root = document.documentElement; root.classList.add('theme-fade'); setTimeout(()=>root.classList.remove('theme-fade'), 420);
+  const tb = document.getElementById('admin-theme-btn'); if(tb){ tb.classList.remove('spin'); void tb.offsetWidth; tb.classList.add('spin'); }
   const t = document.documentElement.getAttribute('data-theme')==='light' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', t);
   try{ localStorage.setItem('suwati_admin_theme', t); }catch(e){}

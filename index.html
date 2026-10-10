@@ -573,6 +573,108 @@ html[data-theme="dark"] .wishlist-heart.active svg{ stroke:var(--rust) !importan
 /* Promo "Apply" ခလုတ် — Mode မရွေး အနက်ပေါ် အစိမ်းဝါစာ */
 .promo-apply{ background:var(--black) !important; color:var(--acid) !important; border-color:var(--black) !important; }
 html[data-theme="dark"] .promo-apply{ border-color:var(--cream) !important; }
+
+/* =====================================================================
+   ✨ MOTION — Streetwear ပုံစံ Animation များ (ဖုန်းရဲ့ "Reduce Motion" ဖွင့်ထားရင် အလိုအလျောက် ပိတ်)
+   ===================================================================== */
+:root{ --ease-out:cubic-bezier(.2,.8,.2,1); --ease-pop:cubic-bezier(.34,1.56,.64,1); }
+
+/* 1) ခလုတ်များ — Hover လုပ်ရင် ကြွတက်ပြီး အရိပ်ပေါ်၊ နှိပ်ရင် အောက်သို့ ဖိနှိမ့် */
+.btn, .submit-order-btn, .order-btn, .cq-add, .promo-apply, .share-btn, .auth-btn, .co-press{
+  transition:transform .16s var(--ease-out), box-shadow .16s var(--ease-out), background-color .2s ease, color .2s ease, border-color .2s ease !important;
+}
+@media (hover:hover) and (pointer:fine){
+  .btn:hover, .submit-order-btn:not(:disabled):hover, .order-btn:not(:disabled):hover, .promo-apply:hover, .share-btn:hover{
+    transform:translate(-3px,-3px); box-shadow:3px 3px 0 var(--ink);
+  }
+  .hero .btn:hover{ box-shadow:3px 3px 0 var(--cream); }
+  .cq-add:hover{ transform:translate(-2px,-2px); box-shadow:2px 2px 0 var(--ink); }
+}
+.btn:active, .submit-order-btn:not(:disabled):active, .order-btn:not(:disabled):active, .cq-add:active, .promo-apply:active, .share-btn:active, .auth-btn:active{
+  transform:translate(1px,1px) scale(.97) !important; box-shadow:0 0 0 transparent !important; transition-duration:.06s !important;
+}
+.cart-btn:active, .chat-fab:active, .modal-close:active{ transform:scale(.88) !important; }
+
+/* Chip (Size/အရောင်) ရွေးရင် ခုန် */
+.chip{ transition:background-color .18s ease, color .18s ease, transform .18s var(--ease-pop); }
+.chip:active{ transform:scale(.92); }
+.chip.active{ animation:chipPop .28s var(--ease-pop); }
+@keyframes chipPop{ 0%{transform:scale(.9);} 60%{transform:scale(1.08);} 100%{transform:scale(1);} }
+
+/* 2) Hero — Page ဖွင့်ချိန် အဆင့်လိုက် ပေါ်လာ */
+.hero .stamp{ animation:heroStamp .7s var(--ease-pop) .1s backwards; }
+.hero h1{ animation:heroRise .8s var(--ease-out) .25s backwards; }
+.hero .hero-tagline{ animation:heroRise .7s var(--ease-out) .4s backwards; }
+.hero .hero-sub{ animation:heroRise .7s var(--ease-out) .5s backwards; }
+.hero .hero-ctas > *{ animation:heroRise .6s var(--ease-out) backwards; }
+.hero .hero-ctas > *:nth-child(1){ animation-delay:.6s; }
+.hero .hero-ctas > *:nth-child(2){ animation-delay:.7s; }
+.hero .hero-ctas > *:nth-child(3){ animation-delay:.8s; }
+@keyframes heroRise{ from{ opacity:0; transform:translateY(26px); } }
+@keyframes heroStamp{ from{ opacity:0; transform:rotate(-14deg) scale(1.6); } }
+
+/* 3) Product Card — Scroll ဆင်းရင် အောက်ကနေ တစ်ခုချင်း ပေါ်လာ */
+.card.reveal-wait{ opacity:0; }
+.card.reveal-in{ animation:cardIn .55s var(--ease-out) backwards; }
+@keyframes cardIn{ from{ opacity:0; transform:translateY(34px) scale(.97); } }
+.card{ transition:transform .25s var(--ease-out), box-shadow .25s var(--ease-out); }
+@media (hover:hover) and (pointer:fine){ .card:hover{ transform:translate(-4px,-4px); box-shadow:6px 6px 0 var(--ink); } }
+.card:active{ transform:scale(.985); }
+
+/* Product Load နေစဉ် Skeleton (တောက်ပြောင်လှိုင်း) */
+.sk-card{ border:3px solid var(--ink); background:var(--paper); }
+.sk-card .sk-img{ aspect-ratio:1/1; border-bottom:3px solid var(--ink); }
+.sk-card .sk-line{ height:12px; margin:12px; }
+.sk-card .sk-line.short{ width:45%; }
+.sk-img, .sk-line{ background:linear-gradient(90deg, var(--ph) 0%, var(--paper) 50%, var(--ph) 100%); background-size:200% 100%; animation:shimmer 1.2s linear infinite; }
+@keyframes shimmer{ from{ background-position:200% 0; } to{ background-position:-200% 0; } }
+
+/* 4) ခြင်းထဲထည့်ရင် — ခြင်းခလုတ် ခုန် + Badge ပေါက် */
+.cart-btn.cart-bump{ animation:cartBump .5s var(--ease-pop); }
+@keyframes cartBump{ 0%{transform:scale(1);} 30%{transform:scale(1.25) rotate(-8deg);} 60%{transform:scale(.95) rotate(4deg);} 100%{transform:scale(1);} }
+.cart-count.pop{ animation:badgePop .45s var(--ease-pop); }
+@keyframes badgePop{ 0%{transform:scale(0);} 70%{transform:scale(1.35);} 100%{transform:scale(1);} }
+.fly-dot{ position:fixed; z-index:9999; width:18px; height:18px; border-radius:50%; background:var(--acid); border:2.5px solid var(--black); pointer-events:none;
+  transition:transform .65s cubic-bezier(.5,-0.35,.6,1), opacity .65s ease; }
+
+/* Wishlist ❤️ နှိပ်ရင် ခုန် */
+.wishlist-heart.heart-pop svg{ animation:heartPop .45s var(--ease-pop); }
+@keyframes heartPop{ 0%{transform:scale(1);} 35%{transform:scale(1.45);} 100%{transform:scale(1);} }
+
+/* 5) Popup — နောက်ခံ မှိန်လာပြီး Box အောက်ကနေ ပွင့်တက် */
+.modal-overlay.open{ animation:fadeIn .22s ease; }
+.modal-overlay.open .modal-box{ animation:modalUp .38s var(--ease-out); }
+@keyframes fadeIn{ from{ opacity:0; } }
+@keyframes modalUp{ from{ opacity:0; transform:translateY(40px) scale(.98); } }
+.modal-overlay.closing{ animation:fadeOut .18s ease forwards; }
+.modal-overlay.closing .modal-box{ animation:modalDown .18s ease forwards; }
+@keyframes fadeOut{ to{ opacity:0; } }
+@keyframes modalDown{ to{ opacity:0; transform:translateY(24px); } }
+#receipt-overlay{ animation:fadeIn .22s ease; }
+#receipt-overlay iframe{ animation:modalUp .35s var(--ease-out); }
+
+/* Toast — ခုန်ပြီး ပေါ်လာ */
+#site-toast{ transition:opacity .3s ease, transform .4s var(--ease-pop) !important; }
+
+/* 6) Light/Dark ခလုတ် — လှည့်ပြောင်း */
+.theme-toggle svg{ transition:transform .5s var(--ease-pop); }
+.theme-toggle.spin svg{ transform:rotate(360deg); }
+html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color .35s ease, border-color .35s ease !important; }
+
+/* Section ခေါင်းစဉ်များ — Scroll ရောက်ရင် ဘေးကနေ ဝင်လာ */
+.section-title.reveal-wait{ opacity:0; }
+.section-title.reveal-in{ animation:titleIn .6s var(--ease-out) backwards; }
+@keyframes titleIn{ from{ opacity:0; transform:translateX(-30px); } }
+
+/* SOLD OUT Stamp — ဖိနှိပ်တံဆိပ်လို */
+.card .soldout{ animation:stampIn .5s var(--ease-pop) backwards; }
+@keyframes stampIn{ from{ opacity:0; transform:scale(1.5); } }
+
+/* ဖုန်းရဲ့ "Reduce Motion" Setting ဖွင့်ထားသူများအတွက် Animation အားလုံး ပိတ် */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; animation-delay:0s !important; transition-duration:.01ms !important; }
+  .card.reveal-wait, .section-title.reveal-wait{ opacity:1 !important; }
+}
 </style>
 </head>
 <body>
@@ -4152,8 +4254,119 @@ window.__PWA_APP = { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)
   window.showInstallAppHelp = ()=>{ try{ localStorage.removeItem(APP.snoozeKey); }catch(e){} if(deferred) show('android'); else if(isIOS) show('ios'); else APP.toast('Browser Menu (⋮) → "Install app" / "Add to Home screen" ကို ရွေးပါ'); };
 })();
 
+// SUWATI MEN FASHION — ✨ Animation များ (Scroll ပေါ်လာခြင်း၊ ခြင်းထဲထည့်ခြင်း၊ Popup ပိတ်ခြင်း စသည်)
+(function(){
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---- 1) Scroll ရောက်မှ Card / ခေါင်းစဉ် တစ်ခုချင်း ပေါ်လာ (Product တစ်ခုကို တစ်ခါပဲ Animate — Auto Refresh တိုင်း ထပ်မလှုပ်) ----
+  const seen = new Set();
+  const io = ('IntersectionObserver' in window) ? new IntersectionObserver((entries)=>{
+    let i = 0;
+    entries.forEach(en=>{
+      if(!en.isIntersecting) return;
+      const el = en.target; io.unobserve(el);
+      el.style.animationDelay = (Math.min(i++, 6) * 70) + 'ms';
+      el.classList.remove('reveal-wait'); el.classList.add('reveal-in');
+      el.addEventListener('animationend', ()=>{ el.classList.remove('reveal-in'); el.style.animationDelay=''; }, { once:true });
+    });
+  }, { rootMargin:'0px 0px -8% 0px', threshold:0.08 }) : null;
+
+  function prepReveal(root){
+    if(reduce || !io) return;
+    (root || document).querySelectorAll('.card, .section-title').forEach(el=>{
+      if(el.dataset.revealed) return;
+      const key = el.classList.contains('card') ? ('c:' + (el.querySelector('h3')?.textContent || '')) : null;
+      el.dataset.revealed = '1';
+      if(key && seen.has(key)) return;
+      if(key) seen.add(key);
+      el.classList.add('reveal-wait'); io.observe(el);
+    });
+  }
+  window.prepReveal = prepReveal;
+  document.addEventListener('DOMContentLoaded', ()=>{
+    prepReveal();
+    const grid = document.getElementById('products-grid');
+    if(grid) new MutationObserver(()=>prepReveal(grid)).observe(grid, { childList:true });
+  });
+
+  // ---- 2) Product Load နေစဉ် Skeleton ----
+  window.showProductSkeleton = function(){
+    const grid = document.getElementById('products-grid');
+    if(!grid || grid.querySelector('.card')) return;
+    grid.innerHTML = Array.from({length:6}).map(()=>'<div class="sk-card" aria-hidden="true"><div class="sk-img"></div><div class="sk-line"></div><div class="sk-line short"></div></div>').join('');
+  };
+
+  // ---- 3) ခြင်းထဲထည့်ရင် — အစက်လေး ခြင်းဆီ ပျံသွား + ခြင်း ခုန် + Badge ပေါက် ----
+  let lastCount = null;
+  let lastTap = null;
+  document.addEventListener('pointerdown', e=>{ lastTap = { x:e.clientX, y:e.clientY, t:Date.now() }; }, true);
+  function flyToCart(){
+    const cartBtn = document.getElementById('cart-btn'); if(!cartBtn || reduce) return;
+    const r = cartBtn.getBoundingClientRect();
+    const from = (lastTap && Date.now() - lastTap.t < 1500) ? lastTap : { x: innerWidth/2, y: innerHeight/2 };
+    const dot = document.createElement('div'); dot.className = 'fly-dot';
+    dot.style.left = (from.x - 9) + 'px'; dot.style.top = (from.y - 9) + 'px';
+    document.body.appendChild(dot);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      dot.style.transform = `translate(${r.left + r.width/2 - from.x}px, ${r.top + r.height/2 - from.y}px) scale(.4)`;
+      dot.style.opacity = '.3';
+    }));
+    setTimeout(()=>dot.remove(), 700);
+  }
+  function bumpCart(){
+    const btn = document.getElementById('cart-btn'); const badge = document.getElementById('cart-count-badge');
+    [btn, badge].forEach((el,i)=>{ if(!el) return; const c = i ? 'pop' : 'cart-bump'; el.classList.remove(c); void el.offsetWidth; el.classList.add(c); });
+  }
+  if(typeof window.renderCartBadge === 'function'){
+    const orig = window.renderCartBadge;
+    window.renderCartBadge = function(){
+      orig.apply(this, arguments);
+      try{
+        const count = (window.cart || cart || []).reduce((s,i)=>s+(i.quantity||0),0);
+        if(lastCount !== null && count > lastCount){ flyToCart(); setTimeout(bumpCart, reduce ? 0 : 560); }
+        lastCount = count;
+      }catch(e){}
+    };
+  }
+
+  // ---- 4) Wishlist ❤️ ခုန် ----
+  document.addEventListener('click', e=>{
+    const h = e.target.closest && e.target.closest('.wishlist-heart'); if(!h) return;
+    h.classList.remove('heart-pop'); void h.offsetWidth; h.classList.add('heart-pop');
+  }, true);
+
+  // ---- 5) Popup ပိတ်ရင် ညင်ညင်သာသာ ပျောက် ----
+  if(typeof window.closeCheckout === 'function' && !reduce){
+    const origClose = window.closeCheckout;
+    window.closeCheckout = function(){
+      const ov = document.getElementById('checkout-modal');
+      if(!ov || !ov.classList.contains('open') || ov.classList.contains('closing')) return origClose.apply(this, arguments);
+      const args = arguments, self = this;
+      const box = document.getElementById('checkout-modal-content');
+      // ပိတ်ပြီး ချက်ချင်း နောက် Popup တစ်ခု ဖွင့်တာ (ဥပမာ Login) ဆိုရင် အသစ်ကို မပိတ်မိစေရန်
+      let reopened = false;
+      const mo = new MutationObserver(()=>{ reopened = true; ov.classList.remove('closing'); });
+      if(box) mo.observe(box, { childList:true });
+      ov.classList.add('closing');
+      setTimeout(()=>{ mo.disconnect(); ov.classList.remove('closing'); if(!reopened) origClose.apply(self, args); }, 170);
+    };
+  }
+
+  // ---- 6) Light/Dark ပြောင်းရင် ခလုတ်လှည့် + အရောင် ညင်သာစွာ ပြောင်း ----
+  if(typeof window.toggleTheme === 'function'){
+    const origToggle = window.toggleTheme;
+    window.toggleTheme = function(){
+      const root = document.documentElement; const b = document.getElementById('theme-toggle');
+      if(!reduce){ root.classList.add('theme-fade'); setTimeout(()=>root.classList.remove('theme-fade'), 420); }
+      if(b){ b.classList.toggle('spin'); }
+      return origToggle.apply(this, arguments);
+    };
+  }
+})();
+
 // SUWATI MEN FASHION — Website စတင်ခြင်း (Boot)
 // ⚠️ ဒီဖိုင်ကို index.html မှာ အောက်ဆုံး (JS ဖိုင်အားလုံးပြီးမှ) Load ရမည် — ဖိုင်အားလုံးထဲက Function တွေ အသင့်ဖြစ်ပြီးမှ Website စ Run ရန်
+if(window.showProductSkeleton) showProductSkeleton();
 loadCategories();
 loadProducts();
 loadPosts();
