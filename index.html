@@ -1008,6 +1008,51 @@ html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color
 @keyframes fxPop{ from{ opacity:0; transform:scale(.4); } }
 @keyframes fxDot{ 0%,60%,100%{ transform:translateY(0); opacity:.35; } 30%{ transform:translateY(-5px); opacity:1; } }
 @media (prefers-reduced-motion: reduce){ .fx-cart-in *, .fx-swipe-out, .fx-bump, .fx-flash, .fx-added::after, .chat-bubble.fx-pop, .fx-typing i{ animation:none !important; } }
+
+/* ===== 🔒 Prepaid Card Security ===== */
+.pc-stage .pc-face::after{ content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; opacity:0; transition:opacity .35s ease;
+  background:repeating-linear-gradient(135deg, rgba(233,228,216,.07) 0 10px, transparent 10px 20px), rgba(20,20,18,.55); }
+.pc-stage.is-frozen .pc-face::after{ opacity:1; }
+.pc-frozen-badge{ position:absolute; left:50%; top:46%; transform:translate(-50%,-50%) rotate(-4deg); z-index:20; pointer-events:none;
+  background:#E9E4D8; color:#141412; border:2.5px solid #141412; box-shadow:4px 4px 0 #141412; font:800 14px 'Noto Sans Myanmar','IBM Plex Mono',sans-serif; padding:7px 14px; white-space:nowrap;
+  animation:pcFrozenIn .45s var(--ease-pop, ease) both; }
+@keyframes pcFrozenIn{ from{ transform:translate(-50%,-50%) rotate(-4deg) scale(.4); opacity:0; } }
+.pc-sec{ margin-top:16px; border:2px solid var(--ink); background:var(--surface); padding:14px; text-align:left; }
+.pc-sec-head{ font-weight:800; font-size:15px; margin-bottom:10px; }
+.pc-sec-alert{ background:#fff1ec; color:#7a1d0a; border:2px solid var(--rust); padding:10px 12px; font-size:13px; line-height:1.6; margin-bottom:10px; }
+html[data-theme="dark"] .pc-sec-alert{ background:#2a1611; color:#ffc9b8; }
+.pc-sec-row{ display:flex; gap:12px; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--grey); }
+.pc-sec-txt b{ display:block; font-size:14px; }
+.pc-sec-txt span{ display:block; font-size:12px; color:var(--text2); line-height:1.55; margin-top:2px; }
+.pc-switch{ flex:0 0 auto; width:54px; height:30px; border-radius:30px; border:2px solid var(--ink); background:var(--ph); position:relative; cursor:pointer; padding:0; transition:background .25s; }
+.pc-switch span{ position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:var(--ink); transition:transform .3s var(--ease-pop, ease); }
+.pc-switch.on{ background:#5aa9ff; }
+.pc-switch.on span{ transform:translateX(24px); background:#fff; box-shadow:0 0 0 2px #141412; }
+.pc-switch:disabled{ opacity:.45; cursor:not-allowed; }
+.pc-sec-pin{ margin-top:10px; }
+.pc-sec-pin summary{ cursor:pointer; font-weight:700; font-size:14px; padding:6px 0; }
+.pc-sec-form{ display:grid; gap:10px; margin-top:8px; animation:fxUp .35s ease both; }
+.pc-sec-form label{ display:grid; gap:4px; font-size:13px; font-weight:600; }
+.pc-sec-form label small{ font-weight:400; color:var(--grey); }
+.pc-sec-form input{ font:700 20px 'IBM Plex Mono',monospace; letter-spacing:10px; text-align:center; padding:10px; border:2px solid var(--ink); background:var(--paper); color:var(--ink); }
+.pc-sec-err{ min-height:18px; color:var(--rust); font-size:13px; font-weight:600; }
+.pc-sec-err.shake{ animation:fxShake .4s ease; }
+@media (prefers-reduced-motion: reduce){ .pc-frozen-badge, .pc-sec-form, .pc-sec-err.shake{ animation:none !important; } }
+
+/* ===== 🔔 Restock alert + Notification ===== */
+.restock-btn{ display:block; width:100%; margin-top:8px; padding:10px 12px; border:2px dashed var(--ink); background:var(--acid); color:#141412; font:700 13px 'Noto Sans Myanmar',sans-serif; cursor:pointer; transition:background .2s, transform .15s; }
+.restock-btn:active{ transform:scale(.97); }
+.restock-btn.on{ background:transparent; color:var(--ink); border-style:solid; }
+.restock-btn.big{ padding:13px; font-size:14px; margin:6px 0 10px; }
+.restock-btn:disabled{ opacity:.6; }
+.restock-btn.fx-ring{ animation:raRing .7s ease; }
+@keyframes raRing{ 0%,100%{ transform:rotate(0); } 15%{ transform:rotate(-3deg); } 30%{ transform:rotate(3deg); } 45%{ transform:rotate(-2deg); } 60%{ transform:rotate(2deg); } }
+.notify-row{ display:flex; gap:12px; align-items:center; justify-content:space-between; }
+.notify-txt{ font-size:13px; line-height:1.6; color:var(--text2); }
+.notify-alerts{ margin-top:6px; }
+.ra-chip{ display:inline-flex; align-items:center; gap:6px; border:2px solid var(--ink); padding:3px 4px 3px 10px; margin:0 6px 6px 0; font-size:12.5px; font-weight:600; }
+.ra-x{ border:none; background:var(--ink); color:var(--concrete); width:22px; height:22px; cursor:pointer; font-size:12px; line-height:1; }
+@media (prefers-reduced-motion: reduce){ .restock-btn.fx-ring{ animation:none; } }
 </style>
 </head>
 <body>
@@ -1509,6 +1554,7 @@ function renderProductGrid(){
           </div>
         </div>` : ''}
         <div class="card-variant-stock" style="font-family:'Space Mono',monospace; font-size:11.5px; margin-top:6px;"></div>
+        ${soldOut ? restockBtnHTML(p.name) : ''}
         <button type="button" class="order-btn" data-name="${p.name}">Order မှာယူမည် (KBZPay)</button>
         <button type="button" class="order-btn addcart-btn" style="background:transparent; color:var(--ink); margin-top:8px;">ခြင်းထဲ ထည့်မည် +</button>
         <a class="msg-link" href="https://m.me/suwatimenfashion" target="_blank" rel="noopener">မေးစရာရှိရင် Messenger ပို့ပါ</a>
@@ -3613,7 +3659,10 @@ async function openPrepaidCard(){
       </div>
       <div class="pp-shine"></div>
     </div></div>
-    <p class="hint pc-hint-in" style="text-align:center; margin-top:10px;">Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Barcode နှင့် PIN ရှိပါသည်။ PIN ကြည့်ရန် အကွက်များပေါ် တို့ပါ</p>`;
+    <p class="hint pc-hint-in" style="text-align:center; margin-top:10px;">Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Barcode နှင့် PIN ရှိပါသည်။ PIN ကြည့်ရန် အကွက်များပေါ် တို့ပါ</p>
+    <div class="pc-sec" id="pc-sec"></div>`;
+  window.__pcState = { frozen: !!data.card_frozen, reason: data.frozen_reason || null };
+  renderCardSecurity();
 
   // 💰 လက်ကျန်ငွေ 0 ကနေ တက်လာ (Card တက်လာချိန်နဲ့ တပြိုင်နက်)
   try{
@@ -3715,6 +3764,72 @@ async function openWalletHistory(){
       ${txnHtml}
     </div>
     <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="renderProfileView()">← Profile ပြန်သွားရန်</button>`;
+}
+
+
+// ---------- 🔒 Card လုံခြုံရေး — ယာယီပိတ်/ဖွင့် + PIN ပြောင်း ----------
+function renderCardSecurity(){
+  const box = document.getElementById('pc-sec'); if(!box) return;
+  const st = window.__pcState || { frozen:false, reason:null };
+  const locked = st.frozen && st.reason === 'pin_lock';
+  document.querySelector('.pc-stage')?.classList.toggle('is-frozen', !!st.frozen);
+  let badge = document.querySelector('.pc-stage .pc-frozen-badge');
+  if(st.frozen && !badge){ badge = document.createElement('div'); badge.className = 'pc-frozen-badge'; document.querySelector('.pc-stage')?.appendChild(badge); }
+  if(badge){ if(st.frozen) badge.textContent = locked ? '🔒 PIN မှားလို့ ပိတ်ထားသည်' : '❄️ ယာယီ ပိတ်ထားသည်'; else badge.remove(); }
+  const pinIn = (id, ph) => `<input id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="${ph}">`;
+  box.innerHTML = `
+    <div class="pc-sec-head">🔒 Card လုံခြုံရေး</div>
+    ${locked ? `<div class="pc-sec-alert">⚠️ ဆိုင်မှာ PIN မှား ၅ ကြိမ် ရိုက်ခဲ့လို့ Card ကို ပိတ်ထားပါတယ်။ ကိုယ်တိုင် မဟုတ်ရင် အောက်မှာ PIN အသစ် ပြောင်းပါ — ပြောင်းတာနဲ့ ပြန်ဖွင့်ပါမည်။</div>` : ''}
+    <div class="pc-sec-row">
+      <div class="pc-sec-txt"><b>Card ယာယီ ပိတ်ရန်</b><span>Card ပျောက်ရင် (သို့) PIN ပေါက်သွားရင် ပိတ်ထားပါ — ဆိုင်ထဲမှာ Card Number + PIN နဲ့ သုံးလို့ မရတော့ပါ</span></div>
+      <button type="button" class="pc-switch${st.frozen?' on':''}" role="switch" aria-checked="${st.frozen}" aria-label="Card ယာယီ ပိတ်ရန်" ${locked?'disabled':''} onclick="toggleCardFrozen(this)"><span></span></button>
+    </div>
+    <details class="pc-sec-pin" ${locked?'open':''}>
+      <summary>🔑 PIN ပြောင်းရန်</summary>
+      <div class="pc-sec-form">
+        <label>PIN အဟောင်း <small>(Card နောက်ကျောမှာ ကြည့်လို့ရ)</small>${pinIn('pc-pin-old','••••')}</label>
+        <label>PIN အသစ် (ဂဏန်း ၄ လုံး)${pinIn('pc-pin-new','••••')}</label>
+        <label>PIN အသစ် ထပ်ရိုက်ပါ${pinIn('pc-pin-new2','••••')}</label>
+        <div class="pc-sec-err" id="pc-pin-err" role="alert"></div>
+        <button type="button" class="submit-order-btn" id="pc-pin-save" onclick="saveCardPin()">PIN ပြောင်းမည်</button>
+      </div>
+    </details>`;
+}
+
+async function toggleCardFrozen(btn){
+  const st = window.__pcState || {}; const want = !st.frozen;
+  if(want){
+    const ok = await siteConfirm('ဒီ Card ကို ယာယီ ပိတ်မလား?\nပိတ်ထားစဉ် ဆိုင်ထဲမှာ Card Number + PIN နဲ့ ငွေရှင်းလို့ မရပါ။ နောက်မှ ဒီနေရာကနေ ပြန်ဖွင့်လို့ရပါတယ်။', { title:'Card ပိတ်မည်', ok:'❄️ ပိတ်မည်', icon:'🔒' });
+    if(!ok) return;
+  }
+  btn.disabled = true;
+  const { data, error } = await sb.rpc('set_card_frozen', { p_frozen: want });
+  btn.disabled = false;
+  if(error || !data?.ok){ showSiteToast('⚠️ ' + (error?.message || data?.message || 'မအောင်မြင်ပါ')); return; }
+  window.__pcState = { frozen: want, reason: want ? 'customer' : null };
+  renderCardSecurity();
+  showSiteToast(want ? '❄️ Card ကို ယာယီ ပိတ်လိုက်ပါပြီ' : '✅ Card ပြန်ဖွင့်ပြီးပါပြီ');
+}
+
+async function saveCardPin(){
+  const v = id => (document.getElementById(id)?.value || '').trim();
+  const oldP = v('pc-pin-old'), n1 = v('pc-pin-new'), n2 = v('pc-pin-new2');
+  const err = document.getElementById('pc-pin-err');
+  const fail = m => { if(err){ err.textContent = m; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); } };
+  if(!/^\d{4}$/.test(oldP)) return fail('PIN အဟောင်း ဂဏန်း ၄ လုံး ထည့်ပါ');
+  if(!/^\d{4}$/.test(n1)) return fail('PIN အသစ်က ဂဏန်း ၄ လုံး ဖြစ်ရပါမည်');
+  if(n1 !== n2) return fail('PIN အသစ် နှစ်ခု မတူပါ');
+  const btn = document.getElementById('pc-pin-save'); if(btn){ btn.disabled = true; btn.textContent = 'ပြောင်းနေသည်...'; }
+  const { data, error } = await sb.rpc('change_card_pin', { p_old: oldP, p_new: n1 });
+  if(btn){ btn.disabled = false; btn.textContent = 'PIN ပြောင်းမည်'; }
+  if(error || !data?.ok) return fail(error?.message || data?.message || 'မအောင်မြင်ပါ');
+  // Card နောက်ကျောက PIN ကို Update
+  const pd = document.getElementById('pc-pin-display');
+  if(pd){ pd.dataset.pin = n1; pd.dataset.revealed = 'false'; pd.querySelectorAll('b').forEach(b => b.textContent = '*'); }
+  const st = window.__pcState || {};
+  if(st.reason === 'pin_lock') window.__pcState = { frozen:false, reason:null };
+  renderCardSecurity();
+  showSiteToast(st.reason === 'pin_lock' ? '✅ PIN ပြောင်းပြီး Card ပြန်ဖွင့်ပါပြီ' : '✅ PIN ပြောင်းပြီးပါပြီ');
 }
 
 // SUWATI MEN FASHION — ③ ငွေ နောက်မှ လွှဲ (Pay Later) + ⑤ Top-up Bonus (Customer ဘက်)
@@ -4656,6 +4771,7 @@ function renderProductDetail(p){
       <button type="button" onclick="setDetailQty(1)">+</button>
     </div>
 
+    ${soldOut ? restockBtnHTML(p.name, true) : ''}
     <div id="detail-prepaid-btn-area"></div>
     <button type="button" class="order-btn" id="detail-order-btn" ${soldOut?'disabled':''} style="background:var(--rust); color:#fff; border-color:var(--ink); ${soldOut?'opacity:.5;':''}" onclick="detailOrderNow()">Order မှာယူမည် (KBZPay)</button>
     <button type="button" class="order-btn" id="detail-addcart-btn" ${soldOut?'disabled':''} style="background:transparent; color:var(--ink); border-color:var(--ink); margin-top:10px; ${soldOut?'opacity:.5;':''}" onclick="detailAddToCart()">ခြင်းထဲ ထည့်မည် +</button>
@@ -5112,6 +5228,243 @@ window.__PWA_APP = { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)
   if(isIOS && !isInApp && !isStandalone()) window.addEventListener('load', ()=>setTimeout(()=>show('ios'), 5000));
   window.showInstallAppHelp = ()=>{ try{ localStorage.removeItem(APP.snoozeKey); }catch(e){} if(deferred) show('android'); else if(isIOS) show('ios'); else APP.toast('Browser Menu (⋮) → "Install app" / "Add to Home screen" ကို ရွေးပါ'); };
 })();
+
+// =====================================================================
+// 🔔 Notify — ⑪ Stock ပြန်ရောက်ရင် အသိပေး + ⑩ ဖုန်း Notification (Web Push)
+// =====================================================================
+const VAPID_PUBLIC_KEY = 'BHmiPgtonZtvliQ7skU3dj50TnhRoLf9XggD_O-4GSjyZX9n7wQWY8HNoniYv7DEoVnE4FcxNhVGItrmGUlBPmk';
+
+// ---------- ⑪ Stock Alert ----------
+let __raSet = null, __raUid = null, __raLoading = null;
+function resetRestockAlerts(){ __raSet = null; __raUid = null; __raLoading = null; }
+async function loadRestockAlerts(){
+  if(!currentUser) return new Set();
+  if(__raSet && __raUid === currentUser.id) return __raSet;
+  if(__raLoading) return __raLoading;
+  const uid = currentUser.id;
+  __raLoading = (async () => {
+    try{
+      const { data, error } = await sb.from('stock_alerts').select('product_name, notified_at').eq('user_id', uid);
+      __raSet = new Set(error ? [] : (data||[]).filter(r => !r.notified_at).map(r => r.product_name));
+    }catch(e){ __raSet = new Set(); }
+    __raUid = uid; __raLoading = null;
+    return __raSet;
+  })();
+  return __raLoading;
+}
+function restockBtnHTML(name, big){
+  return `<button type="button" class="restock-btn${big?' big':''}" data-ra="${encodeURIComponent(name)}" onclick="event.stopPropagation(); toggleRestockAlert(this)">🔔 ပြန်ရောက်ရင် အသိပေးမည်</button>`;
+}
+function paintRestockBtn(b, on){
+  b.classList.toggle('on', on);
+  b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  b.textContent = on ? '✅ ပြန်ရောက်ရင် အသိပေးပါမည်' : '🔔 ပြန်ရောက်ရင် အသိပေးမည်';
+}
+async function refreshRestockButtons(){
+  const btns = document.querySelectorAll('.restock-btn'); if(!btns.length) return;
+  const set = await loadRestockAlerts();
+  btns.forEach(b => paintRestockBtn(b, set.has(decodeURIComponent(b.dataset.ra||''))));
+}
+async function toggleRestockAlert(btn){
+  const name = decodeURIComponent(btn.dataset.ra || ''); if(!name) return;
+  if(!currentUser){
+    const ok = await siteConfirm('Stock ပြန်ရောက်ရင် အသိပေးဖို့ Login ဝင်ထားဖို့ လိုပါတယ်။ Login ဝင်မလား?', { title:'🔔 ပြန်ရောက်ရင် အသိပေးမည်', ok:'Login ဝင်မည်', icon:'🔔' });
+    if(ok) openAuthModal('login');
+    return;
+  }
+  const set = await loadRestockAlerts();
+  const on = set.has(name);
+  document.querySelectorAll(`.restock-btn[data-ra="${CSS.escape(btn.dataset.ra)}"]`).forEach(b => b.disabled = true);
+  let err = null;
+  if(on){
+    ({ error: err } = await sb.from('stock_alerts').delete().eq('user_id', currentUser.id).eq('product_name', name));
+    if(!err) set.delete(name);
+  }else{
+    // အရင်က အသိပေးပြီးသား Row ရှိရင် ဖျက်ပြီး အသစ်ပြန်ထည့် (ထပ်ကုန်သွားတဲ့အခါ ထပ်စာရင်းသွင်းလို့ရအောင်)
+    await sb.from('stock_alerts').delete().eq('user_id', currentUser.id).eq('product_name', name);
+    ({ error: err } = await sb.from('stock_alerts').insert({ user_id: currentUser.id, product_name: name }));
+    if(!err) set.add(name);
+  }
+  document.querySelectorAll(`.restock-btn[data-ra="${CSS.escape(btn.dataset.ra)}"]`).forEach(b => { b.disabled = false; paintRestockBtn(b, set.has(name)); });
+  if(err){ showSiteToast('⚠️ မအောင်မြင်ပါ — ' + err.message); return; }
+  btn.classList.remove('fx-ring'); void btn.offsetWidth; if(!on) btn.classList.add('fx-ring');
+  if(on){ showSiteToast('🔕 အသိပေးမှု ဖျက်လိုက်ပါပြီ'); return; }
+  showSiteToast(`🔔 "${name}" ပြန်ရောက်တာနဲ့ Chat ${(await pushState())==='on'?'+ ဖုန်း Notification ':''}ဖြင့် အသိပေးပါမည်`);
+  offerPushOnce('restock');
+}
+// Product Card / Detail အသစ်ပေါ်လာတိုင်း ခလုတ် State ပြန်ဆေး
+(function(){
+  let t = null;
+  try{
+    new MutationObserver(muts => {
+      if(t) return;
+      for(const m of muts){ for(const n of m.addedNodes){ if(n.nodeType === 1 && (n.matches?.('.restock-btn') || n.querySelector?.('.restock-btn'))){ t = setTimeout(() => { t = null; refreshRestockButtons(); }, 50); return; } } }
+    }).observe(document.body, { childList:true, subtree:true });
+  }catch(e){}
+})();
+// Login/Logout ပြောင်းရင် ပြန်ယူ
+if(typeof updateAuthUI === 'function'){
+  const _uaui = updateAuthUI;
+  updateAuthUI = function(){ const r = _uaui.apply(this, arguments); if((currentUser?.id||null) !== __raUid){ resetRestockAlerts(); refreshRestockButtons(); } return r; };
+}
+
+// ---------- ⑩ Web Push ----------
+function pushSupported(){ return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && location.protocol.indexOf('http') === 0; }
+function isIOSDevice(){ return /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); }
+function isStandaloneApp(){ return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; }
+function urlB64ToUint8Array(b64){
+  const pad = '='.repeat((4 - b64.length % 4) % 4);
+  const raw = atob((b64 + pad).replace(/-/g, '+').replace(/_/g, '/'));
+  return Uint8Array.from(raw, c => c.charCodeAt(0));
+}
+async function getSWReg(){
+  let reg = await navigator.serviceWorker.getRegistration();
+  if(!reg) reg = await navigator.serviceWorker.register('/sw.js');
+  return await Promise.race([navigator.serviceWorker.ready, new Promise(r => setTimeout(() => r(reg), 4000))]);
+}
+// 'unsupported' | 'ios-install' | 'denied' | 'on' | 'off'
+async function pushState(){
+  if(isIOSDevice() && !isStandaloneApp() && !('PushManager' in window)) return 'ios-install';
+  if(!pushSupported()) return isIOSDevice() && !isStandaloneApp() ? 'ios-install' : 'unsupported';
+  if(Notification.permission === 'denied') return 'denied';
+  try{
+    const reg = await navigator.serviceWorker.getRegistration();
+    const sub = reg && await reg.pushManager.getSubscription();
+    return (sub && Notification.permission === 'granted') ? 'on' : 'off';
+  }catch(e){ return 'off'; }
+}
+async function savePushSub(sub){
+  const j = sub.toJSON();
+  return await sb.from('push_subscriptions').upsert({
+    user_id: currentUser.id, endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth,
+    user_agent: navigator.userAgent.slice(0, 200), last_used_at: new Date().toISOString()
+  }, { onConflict: 'endpoint' });
+}
+async function enablePush(){
+  if(!currentUser){ openAuthModal('login'); return false; }
+  const st = await pushState();
+  if(st === 'ios-install'){ siteAlert('iPhone မှာ Notification ရဖို့ —\n1) Safari › Share (⬆️) › "Add to Home Screen" နှိပ်ပါ\n2) Home Screen က SUWATI App ကနေ ဖွင့်ပြီး Login ဝင်ပါ\n3) Profile › 🔔 Notification ဖွင့်ပါ\n(iOS 16.4 နှင့်အထက် လိုပါသည်)', { title:'📲 Home Screen App လိုပါသည်', icon:'📲' }); return false; }
+  if(st === 'unsupported'){ showSiteToast('⚠️ ဒီ Browser က Notification မရပါ'); return false; }
+  if(st === 'denied'){ siteAlert('Notification ကို ပိတ်ထားပါတယ်။ ဖုန်း Settings › Notifications (သို့) Browser Site Settings မှာ SUWATI ကို Allow ပေးပြီးမှ ပြန်ဖွင့်ပါ။', { title:'🔕 ခွင့်ပြုချက် ပိတ်ထားသည်', icon:'🔕' }); return false; }
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm !== 'granted'){ showSiteToast('🔕 Notification ခွင့်မပြုခဲ့ပါ'); return false; }
+    const reg = await getSWReg();
+    const opts = { userVisibleOnly: true, applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY) };
+    let sub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe(opts);
+    let { error } = await savePushSub(sub);
+    if(error){
+      // အရင် Account တစ်ခုရဲ့ Subscription ဖြစ်နေရင် — အသစ်ပြန်ယူ
+      try{ await sub.unsubscribe(); }catch(e){}
+      sub = await reg.pushManager.subscribe(opts);
+      ({ error } = await savePushSub(sub));
+    }
+    if(error){ showSiteToast('⚠️ သိမ်းမရပါ — ' + error.message); return false; }
+    try{ localStorage.setItem('suwati_push_asked', '1'); }catch(e){}
+    showSiteToast('🔔 Notification ဖွင့်ပြီးပါပြီ — Order အခြေအနေ ပြောင်းတိုင်း ဖုန်းကို အသိပေးပါမည်');
+    return true;
+  }catch(e){
+    console.warn('push subscribe failed', e);
+    showSiteToast('⚠️ Notification ဖွင့်မရပါ — ' + (e.message || e));
+    return false;
+  }
+}
+async function disablePush(silent){
+  try{
+    const reg = await navigator.serviceWorker.getRegistration();
+    const sub = reg && await reg.pushManager.getSubscription();
+    if(sub){
+      if(currentUser) await sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+      await sub.unsubscribe();
+    }
+    if(!silent) showSiteToast('🔕 Notification ပိတ်လိုက်ပါပြီ');
+  }catch(e){ if(!silent) showSiteToast('⚠️ ' + (e.message || e)); }
+}
+// Logout လုပ်ရင် ဒီဖုန်းကို Notification မပို့တော့ (တခြားသူ Login ဝင်ရင် သူ့ Order Notification မရောက်စေရ)
+if(typeof handleLogout === 'function'){
+  const _hlo = handleLogout;
+  handleLogout = async function(){ try{ if(pushSupported()) await disablePush(true); }catch(e){} return _hlo.apply(this, arguments); };
+}
+
+// ---------- Profile ထဲက 🔔 Notification Section ----------
+async function renderPushSection(){
+  const sec = document.getElementById('notify-section'); if(!sec || !currentUser) return;
+  const st = await pushState();
+  const set = await loadRestockAlerts();
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const msg = {
+    on: '✅ ဒီဖုန်းကို Order အခြေအနေ၊ Admin စာ၊ Stock ပြန်ရောက်ကြောင်း အသိပေးနေပါသည်',
+    off: 'Order အတည်ပြု/ပို့ဆောင်/ရောက်ရှိ ဖြစ်တိုင်း ဖုန်းကို ချက်ချင်း အသိပေးမည်',
+    'ios-install': '📲 iPhone မှာ Home Screen App (Add to Home Screen) ကနေ ဖွင့်မှ Notification ရပါမည်',
+    denied: '🔕 ဖုန်း Settings မှာ Notification ကို ပိတ်ထားပါသည်',
+    unsupported: 'ဒီ Browser က Notification မရပါ'
+  }[st];
+  sec.innerHTML = `
+    <div class="modal-label">🔔 NOTIFICATION</div>
+    <div class="notify-row">
+      <div class="notify-txt">${msg}</div>
+      ${st === 'unsupported' ? '' : `<button type="button" class="pc-switch${st==='on'?' on':''}" role="switch" aria-checked="${st==='on'}" aria-label="ဖုန်း Notification" onclick="togglePushFromProfile(this)"><span></span></button>`}
+    </div>
+    ${set.size ? `<div class="notify-alerts"><div class="hint" style="margin:8px 0 6px;">⏳ ပြန်ရောက်ရင် အသိပေးရန် စောင့်နေသော ပစ္စည်း (${set.size})</div>
+      ${Array.from(set).map(n => `<span class="ra-chip">${esc(n)} <button type="button" class="ra-x" data-ra="${encodeURIComponent(n)}" aria-label="ဖျက်ရန်" onclick="event.stopPropagation(); toggleRestockAlert(this).then(renderPushSection)">✕</button></span>`).join('')}</div>` : ''}`;
+}
+async function togglePushFromProfile(btn){
+  btn.disabled = true;
+  const st = await pushState();
+  if(st === 'on') await disablePush(); else await enablePush();
+  btn.disabled = false;
+  renderPushSection();
+}
+if(typeof renderProfileView === 'function'){
+  const _rpv = renderProfileView;
+  renderProfileView = async function(){
+    const r = await _rpv.apply(this, arguments);
+    try{
+      const box = document.getElementById('checkout-modal-content');
+      if(box && !document.getElementById('notify-section')){
+        const logout = Array.from(box.querySelectorAll('button')).find(b => /handleLogout/.test(b.getAttribute('onclick')||''));
+        const sec = document.createElement('div'); sec.className = 'modal-section'; sec.id = 'notify-section';
+        if(logout) box.insertBefore(sec, logout); else box.appendChild(sec);
+        renderPushSection();
+      }
+    }catch(e){}
+    return r;
+  };
+}
+
+// Order တင်ပြီးတိုင်း / Stock Alert ထည့်ပြီးတိုင်း Notification ဖွင့်ဖို့ တစ်ခါတည်း ကမ်းလှမ်း
+async function offerPushOnce(where){
+  try{
+    if(!currentUser || localStorage.getItem('suwati_push_asked')) return;
+    const st = await pushState(); if(st !== 'off' && st !== 'ios-install') return;
+    localStorage.setItem('suwati_push_asked', '1');
+    const ok = await siteConfirm(where === 'restock'
+      ? 'ပစ္စည်း ပြန်ရောက်တာနဲ့ ဖုန်းကို ချက်ချင်း Notification ပို့ပေးရမလား?'
+      : 'Order အတည်ပြု / ပို့ဆောင်နေ / ရောက်ရှိ ဖြစ်တိုင်း ဖုန်းကို Notification ပို့ပေးရမလား?',
+      { title:'🔔 ဖုန်း Notification', ok:'🔔 ဖွင့်မည်', cancel:'နောက်မှ', icon:'🔔' });
+    if(ok) await enablePush();
+  }catch(e){}
+}
+if(typeof renderCheckoutSuccess === 'function'){
+  const _rcs = renderCheckoutSuccess;
+  renderCheckoutSuccess = function(){ const r = _rcs.apply(this, arguments); setTimeout(() => offerPushOnce('order'), 2600); return r; };
+}
+
+// Notification ကို နှိပ်ပြီး ဝင်လာရင် Chat ဖွင့်ပေး (?open=chat / ?open=orders)
+function handlePushOpen(url){
+  let p; try{ p = new URL(url || location.href, location.origin).searchParams.get('open'); }catch(e){ return; }
+  if(!p) return;
+  try{ const u = new URL(location.href); u.searchParams.delete('open'); history.replaceState(null, '', u.pathname + (u.search||'') + u.hash); }catch(e){}
+  let n = 0;
+  const go = () => {
+    if(!currentUser && n++ < 25){ setTimeout(go, 200); return; }
+    if(p === 'chat' && typeof openChatWidget === 'function') openChatWidget();
+    else if(p === 'orders' && currentUser && typeof openOrderHistory === 'function'){ document.getElementById('checkout-modal')?.classList.add('open'); openOrderHistory(); }
+  };
+  setTimeout(go, 400);
+}
+window.addEventListener('load', () => handlePushOpen());
+try{ navigator.serviceWorker?.addEventListener('message', e => { if(e.data?.type === 'suwati-push-open') handlePushOpen(e.data.url); }); }catch(e){}
 
 // SUWATI MEN FASHION — ✨ Animation များ (Scroll ပေါ်လာခြင်း၊ ခြင်းထဲထည့်ခြင်း၊ Popup ပိတ်ခြင်း စသည်)
 (function(){
