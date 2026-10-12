@@ -4183,7 +4183,6 @@ function buildReceiptHtmlDoc(rows, paymentMethod, groupId, extra){
       <div class="sub">SUWATI MEN FASHION · @swtmenfashion517</div>
     </div>
   </div>
-  <script>window.onload = function(){ window.print(); };<\/script>
 </body></html>`;
 }
 
@@ -4265,12 +4264,12 @@ function showReceiptOverlay(html){
       #receipt-overlay .ro-bar button{flex:1; padding:12px 8px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; border:2.5px solid #E9E4D8;}
       #receipt-overlay .ro-close{background:#C13B1F; color:#fff; border-color:#C13B1F !important; flex:0 0 auto !important; padding:12px 16px !important;}
       #receipt-overlay .ro-print{background:#D6FF3F; color:#141412; border-color:#D6FF3F !important;}
-      #receipt-overlay iframe{flex:1; width:100%; border:none; background:#fff;}
+      #receipt-overlay iframe{flex:1; width:100%; border:none; background:transparent;}
       #receipt-overlay .ro-paper{flex:1; display:flex; overflow:hidden; position:relative;}
       #receipt-overlay .ro-slot{height:14px; flex-shrink:0; background:#2a2924; border-bottom:3px solid #141412; position:relative; overflow:hidden;}
       #receipt-overlay .ro-slot i{position:absolute; top:0; bottom:0; width:30%; background:linear-gradient(90deg, transparent, rgba(214,255,63,.7), transparent); animation:roScan .7s linear 3;}
       #receipt-overlay.ro-printing iframe{animation:roPrint 1.5s steps(16, end) both !important;}
-      @keyframes roPrint{ from{ transform:translateY(-100%); } to{ transform:translateY(0); } }
+      @keyframes roPrint{ from{ transform:translateY(-92%); } to{ transform:translateY(0); } }
       @keyframes roScan{ from{ left:-30%; } to{ left:100%; } }
       @media (prefers-reduced-motion: reduce){ #receipt-overlay.ro-printing iframe, #receipt-overlay .ro-slot i{ animation:none !important; } }
       @media screen{ #receipt-print-root{display:none !important;} }`;
@@ -4287,7 +4286,11 @@ function showReceiptOverlay(html){
     </div>${printing ? '<div class="ro-slot"><i></i></div>' : ''}<div class="ro-paper"><iframe id="receipt-overlay-frame" title="Receipt"></iframe></div>`;
   document.body.appendChild(ov);
   // Receipt ထဲက Print ခလုတ်ကလည်း အပြင် Page ရဲ့ Print Function ကို သုံးစေရန်
-  document.getElementById('receipt-overlay-frame').srcdoc = String(html).replace(/onclick="window\.print\(\)"/g, 'onclick="parent.printReceiptOverlay()"');
+  document.getElementById('receipt-overlay-frame').srcdoc = String(html)
+    .replace(/<script>[^<]*window\.print\(\)[^<]*<\\?\/script>/g, '')   // iframe ထဲက Auto Print ကို ဖြုတ် (iPhone မှာ Page တစ်ခုလုံး Print ထွက်တတ်လို့)
+    .replace(/onclick="window\.print\(\)"/g, 'onclick="parent.printReceiptOverlay()"')
+    // Receipt စက္ကူ (အဖြူ) သာ မြင်ရအောင် — နောက်ခံ ဖောက်ထွင်း (Printer ထဲက စက္ကူထွက်လာသလို မြင်ရ)
+    .replace('</head>', '<style>html,body{background:transparent !important;} .receipt-box{background:#fff; box-shadow:0 10px 30px rgba(0,0,0,.35);}</style></head>');
   window.__receiptPrevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
   try{ history.pushState({ receiptOverlay:true }, ''); }catch(e){}
