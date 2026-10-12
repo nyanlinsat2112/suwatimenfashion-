@@ -695,6 +695,19 @@ html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color
   *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; animation-delay:0s !important; transition-duration:.01ms !important; }
   .card.reveal-wait, .section-title.reveal-wait{ opacity:1 !important; }
 }
+
+/* ===== 💳 Payment Upgrade — ခွဲချေ / ငွေနောက်မှလွှဲ / Top-up Bonus ===== */
+.split-pay-opt{ display:flex; gap:10px; align-items:flex-start; padding:12px; border:2px dashed var(--ink); background:var(--surface); cursor:pointer; font-size:13px; line-height:1.6; }
+.split-pay-opt input{ width:20px; height:20px; margin:2px 0 0; flex-shrink:0; accent-color:var(--rust); }
+.paylater-or{ display:flex; align-items:center; gap:10px; margin:14px 0 10px; font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); letter-spacing:.1em; }
+.paylater-or::before, .paylater-or::after{ content:""; flex:1; border-top:1.5px dashed var(--line); }
+.submit-order-btn.paylater-btn{ background:var(--surface); color:var(--ink); border:2px solid var(--ink); }
+.paylater-box{ margin-top:8px; padding:10px 12px; border:2px solid var(--rust); background:rgba(193,59,31,.08); font-size:13px; line-height:1.6; }
+.paylater-due-box{ margin:12px 0; padding:12px; border:3px solid var(--ink); background:var(--acid); color:#141412; font-size:13px; line-height:1.7; }
+.topup-bonus-info{ margin-top:10px; padding:10px 12px; background:#141412; color:#E9E4D8; border-left:6px solid var(--acid); font-size:12.5px; line-height:1.7; }
+.topup-bonus-info .tbi-title{ font-family:'Space Mono',monospace; font-weight:700; color:var(--acid); letter-spacing:.1em; font-size:11px; }
+.topup-bonus-preview{ margin-top:8px; font-size:13px; color:var(--rust); font-weight:700; }
+.topup-bonus-preview:empty{ display:none; }
 </style>
 </head>
 <body>
@@ -1667,6 +1680,9 @@ function friendlyOrderError(msg){
   if(msg.includes('OUT_OF_STOCK')) return 'တောင်းပန်ပါတယ် — Stock ကုန်သွားပါပြီ (' + msg.split('OUT_OF_STOCK:')[1].trim() + ') — Page ကို Refresh လုပ်ပြီး ပြန်ရွေးပေးပါ';
   if(msg.includes('PRICE_MISMATCH')) return 'ပစ္စည်းဈေးနှုန်း ပြောင်းသွားပါသည် — Page ကို Refresh လုပ်ပြီး ပြန်မှာပေးပါ';
   if(msg.includes('PAYMENT_NOT_VERIFIED') || msg.includes('PAYMENT_ALREADY_REFUNDED')) return 'ငွေပေးချေမှု အတည်မပြုနိုင်ပါ — ထပ်ကြိုးစားပါ';
+  if(msg.includes('PAY_LATER_LIMIT')) return '⏰ ငွေမလွှဲရသေးတဲ့ Order ၂ ခု ရှိနေပါသည် — အရင် Order တွေကို ငွေလွှဲ (သို့) ပယ်ဖျက်ပြီးမှ "ငွေ နောက်မှ လွှဲမည်" ကို ထပ်သုံးနိုင်ပါသည်';
+  if(msg.includes('PAY_LATER_DISABLED')) return '"ငွေ နောက်မှ လွှဲမည်" ကို ယာယီ ပိတ်ထားပါသည် — Screenshot တင်ပြီး Order တင်ပေးပါ';
+  if(msg.includes('SPLIT_PAYMENT_INVALID') || msg.includes('MIXED_PAYMENT_STATUS')) return 'ငွေပေးချေမှု ပုံစံ မမှန်ကန်ပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ';
   if(msg.includes('row-level security')) return 'Order တင်ခွင့် မရှိပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ';
   return 'Error: ' + msg;
 }
@@ -2000,6 +2016,12 @@ async function renderCheckoutStep2(){
     walletBalance = w?.balance || 0;
   }
   const canPayWithWallet = currentUser && walletBalance >= currentOrder.total;
+  // ⑦ ခွဲချေ — Prepaid လက်ကျန် မလုံလောက်ရင် ရှိသလောက် သုံးပြီး ကျန်ငွေကို KBZPay ဖြင့်
+  const walletPartAvail = (currentUser && !canPayWithWallet) ? Math.floor(Math.min(walletBalance, currentOrder.total - 1)) : 0;
+  currentOrder.walletPartAvail = walletPartAvail > 0 ? walletPartAvail : 0;
+  // ③ ငွေ နောက်မှ လွှဲ
+  const payLaterOn = !!currentUser && settings?.pay_later_enabled !== false;
+  const payLaterHours = Math.max(1, parseInt(settings?.unpaid_cancel_hours) || 24);
 
   box.innerHTML = `
     <button class="modal-close" onclick="closeCheckout()">&times;</button>
@@ -2020,11 +2042,15 @@ async function renderCheckoutStep2(){
     ${currentUser ? `
     <div class="modal-section" style="${canPayWithWallet?'background:#1f2a0a; border:2px solid var(--acid); padding:14px;':''}">
       <div class="modal-label" style="${canPayWithWallet?'color:var(--acid);':''}">💰 PREPAID CARD (WALLET) — လက်ကျန်: ${walletBalance.toLocaleString()} ကျပ်</div>
-      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--black); border-color:var(--black); font-size:15px; padding:14px;" onclick="payWithWallet()">⚡ Prepaid Card ဖြင့် ချက်ချင်း ဝယ်မည်</button>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည် (သို့) <a href="#" onclick="closeCheckout(); return false;" class="auth-link" style="display:inline; margin:0;">Profile ကနေ ငွေဖြည့်ပါ</a></p>`}
+      ${canPayWithWallet ? `<button type="button" class="submit-order-btn" id="pay-wallet-btn" style="background:var(--acid); color:var(--black); border-color:var(--black); font-size:15px; padding:14px;" onclick="payWithWallet()">⚡ Prepaid Card ဖြင့် ချက်ချင်း ဝယ်မည်</button>` : (currentOrder.walletPartAvail > 0 ? `
+        <label class="split-pay-opt" for="co-use-wallet">
+          <input type="checkbox" id="co-use-wallet" onchange="updateSplitPayUI()">
+          <span>🔀 <b>ခွဲပေးမည်</b> — Prepaid ထဲက <b>${currentOrder.walletPartAvail.toLocaleString()} ကျပ်</b> ကို အရင်သုံးပြီး ကျန်ငွေ <b>${(currentOrder.total - currentOrder.walletPartAvail).toLocaleString()} ကျပ်</b> ကိုသာ KBZPay ဖြင့် ပေးမည်</span>
+        </label>` : `<p class="hint">Wallet ငွေ မလုံလောက်ပါ — KBZPay ဖြင့် ဆက်ပေးချေနိုင်ပါသည် (သို့) <a href="#" onclick="closeCheckout(); return false;" class="auth-link" style="display:inline; margin:0;">Profile ကနေ ငွေဖြည့်ပါ</a></p>`)}
     </div>` : ''}
 
     <div class="modal-section">
-      <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန်</div>
+      <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန် — <span id="co-kbz-amount" style="color:var(--rust);">${currentOrder.total.toLocaleString()} ကျပ်</span></div>
       <div class="qr-box">
         ${qrUrl ? `<img src="${qrUrl}" alt="KBZPay QR">` : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
         <div class="qr-note">${instructions}</div>
@@ -2039,6 +2065,10 @@ async function renderCheckoutStep2(){
       </div>
       <div class="form-error" id="co-error-2"></div>
       <button type="button" class="submit-order-btn" id="co-submit-btn" onclick="submitOrder()">Order တင်မည်</button>
+      ${payLaterOn ? `
+      <div class="paylater-or"><span>သို့မဟုတ်</span></div>
+      <button type="button" class="submit-order-btn paylater-btn" id="co-paylater-btn" onclick="submitOrder({ payLater:true })">⏰ Order အရင်တင်ပြီး ငွေ နောက်မှ လွှဲမည်</button>
+      <p class="hint" style="margin-top:6px;">ပစ္စည်းကို <b>${payLaterHours} နာရီ</b> သိမ်းထားပေးပါမည် — အဲ့ဒီအတွင်း Profile › Order History ကနေ Screenshot တင်ပေးပါ။ မတင်ရင် Order အလိုအလျောက် ပယ်ဖျက်ပါမည်။</p>` : (!currentUser ? `<p class="hint" style="margin-top:8px;">💡 Login ဝင်ထားရင် "ငွေ နောက်မှ လွှဲမည်" ကို ရွေးလို့ ရပါသည်</p>` : '')}
       <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:8px;" onclick="renderCheckoutStep1()">← ပြန်သွားမည်</button>
     </div>`;
 
@@ -2050,6 +2080,17 @@ async function renderCheckoutStep2(){
       preview.style.display='block';
     }
   });
+}
+
+function getCheckoutWalletPart(){
+  const cb = document.getElementById('co-use-wallet');
+  if(!cb || !cb.checked || !currentUser) return 0;
+  return Math.max(0, Math.floor(Math.min(currentOrder.walletPartAvail || 0, currentOrder.total - 1)));
+}
+function updateSplitPayUI(){
+  const part = getCheckoutWalletPart();
+  const el = document.getElementById('co-kbz-amount');
+  if(el) el.innerHTML = (currentOrder.total - part).toLocaleString() + ' ကျပ်' + (part ? ` <span style="color:var(--grey); font-weight:400;">(Prepaid ${part.toLocaleString()} ကျပ် နုတ်ပြီး)</span>` : '');
 }
 
 async function getActualVariantStock(productName, size, color){
@@ -2164,24 +2205,34 @@ function compressImageForUpload(file, maxWidth=1000, quality=0.7){
   });
 }
 
-async function submitOrder(){
+async function submitOrder(opts){
+  const payLater = !!(opts && opts.payLater) && !!currentUser;
   const fileInput = document.getElementById('co-screenshot');
-  let file = fileInput.files[0];
+  let file = payLater ? null : fileInput.files[0];
   const err = document.getElementById('co-error-2');
-  const btn = document.getElementById('co-submit-btn');
+  const btn = document.getElementById(payLater ? 'co-paylater-btn' : 'co-submit-btn');
+  const otherBtn = document.getElementById(payLater ? 'co-submit-btn' : 'co-paylater-btn');
+  const btnLabel = btn.textContent;
+  const walletPart = getCheckoutWalletPart();
 
-  if(!file){
-    err.textContent = 'ငွေပေးချေပြီးကြောင်း Screenshot တင်ရန် လိုအပ်ပါသည်';
-    return;
-  }
-  if(!['image/jpeg','image/jpg','image/png'].includes(file.type)){
-    err.textContent = 'JPG, JPEG, PNG ပုံဖိုင်သာ တင်ပေးပါ';
+  if(!payLater){
+    if(!file){
+      err.textContent = 'ငွေပေးချေပြီးကြောင်း Screenshot တင်ရန် လိုအပ်ပါသည်' + (currentUser ? ' (သို့) "ငွေ နောက်မှ လွှဲမည်" ကို ရွေးပါ' : '');
+      return;
+    }
+    if(!['image/jpeg','image/jpg','image/png'].includes(file.type)){
+      err.textContent = 'JPG, JPEG, PNG ပုံဖိုင်သာ တင်ပေးပါ';
+      return;
+    }
+  } else if(!confirm(`Order ကို အရင်တင်ပြီး ${(currentOrder.total - walletPart).toLocaleString()} ကျပ်ကို နောက်မှ လွှဲမှာ သေချာပါသလား?`)){
     return;
   }
 
   btn.disabled = true;
+  if(otherBtn) otherBtn.disabled = true;
   btn.textContent = 'တင်နေသည်...';
   err.textContent = '';
+  const resetBtns = ()=>{ btn.disabled = false; btn.textContent = btnLabel; if(otherBtn) otherBtn.disabled = false; };
 
   async function safeRestoreStock(item){
     try{
@@ -2190,12 +2241,15 @@ async function submitOrder(){
   }
 
   try{
-    file = await compressImageForUpload(file);
-    const ext = file.name.split('.').pop();
-    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error: upErr } = await sb.storage.from('payment-screenshots').upload(path, file);
-    if(upErr) throw upErr;
-    const { data: urlData } = sb.storage.from('payment-screenshots').getPublicUrl(path);
+    let urlData = null;
+    if(file){
+      file = await compressImageForUpload(file);
+      const ext = file.name.split('.').pop();
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+      const { error: upErr } = await sb.storage.from('payment-screenshots').upload(path, file);
+      if(upErr) throw upErr;
+      urlData = sb.storage.from('payment-screenshots').getPublicUrl(path).data;
+    }
 
     // ★ Order မတင်ခင် Stock ကို အရင် Reserve လုပ် (Check-and-Decrement) — Stock လုံလောက်မှုကို သေချာစေရန်
     const reservedItems = [];
@@ -2227,6 +2281,7 @@ async function submitOrder(){
         }).filter(c => c.quantity > 0);
         saveCart();
 
+        resetBtns();
         if(currentOrder.items.length === 0){
           closeCheckout();
           showSiteToast('Order ထဲက ပစ္စည်းအားလုံး Stock ကုန်သွားလို့ Order ပယ်ဖျက်လိုက်ပါပြီ');
@@ -2243,6 +2298,20 @@ async function submitOrder(){
 
     // ပစ္စည်း တစ်ခုချင်းစီအတွက် order row တစ်ခုစီ ဖန်တီး (customer + screenshot + group id တူညီစွာ share)
     const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
+
+    // ⑦ ခွဲချေ — Prepaid ထဲက တစ်စိတ်ကို အရင် နုတ်ယူ (Order မဝင်ရင် ပြန်အမ်းမည်)
+    if(walletPart > 0){
+      const { data: debitOk, error: debitErr } = await sb.rpc('debit_wallet', {
+        p_amount: walletPart, p_type: 'purchase', p_description: `Website Order (ခွဲချေ) — #${groupId.slice(0,8).toUpperCase()}`, p_reference: groupId,
+      });
+      if(debitErr || debitOk !== true){
+        for(const r of reservedItems){ await safeRestoreStock(r); }
+        err.textContent = 'Prepaid Card လက်ကျန် မလုံလောက်တော့ပါ — စာမျက်နှာ ပြန်ဖွင့်ပြီး ထပ်စမ်းပါ';
+        resetBtns();
+        return;
+      }
+    }
+
     const nowIso = new Date().toISOString();
     const rows = currentOrder.items.map(i=>({
       id: (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2))),
@@ -2258,12 +2327,16 @@ async function submitOrder(){
       quantity: i.quantity,
       unit_price: i.price,
       total_amount: i.price * i.quantity,
-      payment_screenshot_url: urlData.publicUrl,
-      order_status: 'pending_verification',
-      payment_status: 'pending',
+      payment_screenshot_url: urlData ? urlData.publicUrl : null,
+      order_status: payLater ? 'awaiting_payment' : 'pending_verification',
+      payment_status: payLater ? 'unpaid' : 'pending',
       created_at: nowIso,
     }));
     applyDeliveryInfo(rows); if(currentOrder.giftWrap) rows.push(buildGiftAddonRow(rows[0])); if(currentOrder.promo) rows.push(buildPromoRow(rows[0]));
+    rows.forEach((r, idx)=>{
+      r.wallet_paid = idx === 0 ? walletPart : 0;
+      if(walletPart > 0) r.payment_method = 'Prepaid Card + KBZPay';
+    });
 
     // ★ .select() ကို မသုံးပါ — Insert ပြီးလို့ "ပြန်ဖတ်" ဖို့ ကြိုးစားရင် Guest အတွက် SELECT Policy မရှိလို့ RLS Error တက်တတ်ပါတယ်
     // ID/created_at ကို Client ဘက်ကနေ ကိုယ်တိုင် ထုတ်ပြီး Insert လိုက်တဲ့ Data ကိုပဲ တိုက်ရိုက် ပြသပါမည်
@@ -2273,12 +2346,13 @@ async function submitOrder(){
       for(const r of reservedItems){
         await safeRestoreStock(r);
       }
+      if(walletPart > 0){ try{ await sb.rpc('refund_failed_purchase', { p_reference: groupId }); }catch(e){} }
       throw orderErr;
     }
 
     cart = [];
     saveCart();
-    renderCheckoutSuccess(rows);
+    renderCheckoutSuccess(rows, { payLater, walletPart });
     loadProducts(); // Stock/Sold-out status ချက်ချင်း Update ဖြစ်အောင် ပစ္စည်းစာရင်း ပြန် Load
 
     // Email receipt ပို့ခြင်း — fail ဖြစ်ရင်တောင် Order success ကိုမထိခိုက်စေရန် catch ထားသည်
@@ -2293,21 +2367,25 @@ async function submitOrder(){
       console.error('Email function call failed:', err);
     });
   }catch(e){
-    err.textContent = friendlyOrderError(e.message);
-    btn.disabled = false;
-    btn.textContent = 'Order တင်မည်';
+    err.textContent = friendlyOrderError(e.message) + (walletPart > 0 ? ' (Prepaid ငွေ ပြန်အမ်းပြီးပါပြီ)' : '');
+    resetBtns();
   }
 }
 
-function renderCheckoutSuccess(orderRows){
+function renderCheckoutSuccess(orderRows, info){
   const box = document.getElementById('checkout-modal-content');
   const name = currentOrder?.customer_name || '';
   const orderId = orderRows[0].id;
+  const total = orderRows.reduce((s,r)=>s+Number(r.total_amount),0);
+  const due = total - ((info && info.walletPart) || 0);
+  const hours = Math.max(1, parseInt(cachedSettings?.unpaid_cancel_hours) || 24);
   box.innerHTML = `
     <button class="modal-close" onclick="closeCheckout()">&times;</button>
     <div class="success-box">
       <div class="big-check">✓</div>
       <h3 class="display">Order တင်ပြီးပါပြီ</h3>
+      ${info && info.payLater ? `<div class="paylater-due-box">⏰ <b>${hours} နာရီအတွင်း</b> KBZPay ဖြင့် <b>${due.toLocaleString()} ကျပ်</b> လွှဲပြီး<br><b>Profile › Order History</b> မှာ Screenshot တင်ပေးပါ<br><span style="font-size:11px;">မတင်ရင် Order အလိုအလျောက် ပယ်ဖျက်ပါမည်</span></div>` : ''}
+      ${info && info.walletPart ? `<p style="font-size:12px;">🔀 Prepaid Card ထဲက ${info.walletPart.toLocaleString()} ကျပ် နုတ်ယူပြီးပါပြီ</p>` : ''}
       <p>ကျေးဇူးတင်ပါတယ်, ${name}<br>ခဏစောင့်ဆိုင်းပေးပါ — ပြန်လည်ဆက်သွယ်ပေးပါမယ်။</p>
       <div class="order-id">Order ID: ${orderId.slice(0,8).toUpperCase()}</div>
       <button type="button" class="submit-order-btn" style="margin-top:16px;" id="view-receipt-btn">🧾 Receipt ကြည့်ရန်</button>
@@ -2319,9 +2397,10 @@ function buildCustomerReceiptHtml(rows){
   const total = rows.reduce((s,r)=>s+Number(r.total_amount),0);
   const first = rows[0];
   const statusLabels = {
-    pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
+    awaiting_payment:'ငွေလွှဲရန် စောင့်ဆဲ', pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
     shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး', cancelled:'ပယ်ဖျက်'
   };
+  const walletPaid = rows.reduce((s,r)=>s+(Number(r.wallet_paid)||0),0);
   const isVoided = first.order_status === 'cancelled';
   const itemsHtml = rows.map(r=>`
     <tr>
@@ -2404,6 +2483,7 @@ function buildCustomerReceiptHtml(rows){
       <span class="label">TOTAL</span>
       <span class="value">${total.toLocaleString()}<span style="font-size:12px;"> ကျပ်</span></span>
     </div>
+    ${walletPaid > 0 ? `<div class="meta" style="margin-bottom:4px;">🎫 Prepaid Card&nbsp; ${walletPaid.toLocaleString()} ကျပ်<br>📱 KBZPay&nbsp; ${(total - walletPaid).toLocaleString()} ကျပ်</div>` : ''}
     <div class="payment-tag">${first.payment_method==='Prepaid Card'||first.payment_method==='Wallet' ? 'SUWATI.PREPAID CARD' : (first.payment_method||'KBZPay')} — ${statusLabels[first.order_status]||first.order_status}</div>
     ${isVoided && first.cancellation_reason ? `<div style="margin-top:10px; padding:8px 10px; border:1.5px dashed #333; font-size:11.5px;"><b>Cancel Reason:</b> ${first.cancellation_reason}</div>` : ''}
     <hr class="solid">
@@ -2911,6 +2991,7 @@ async function openOrderHistory(){
     renderOrderHistoryList();
   });
 
+  await runExpiredUnpaidCleanup(); // ③ သက်တမ်းကုန် "ငွေလွှဲရန် စောင့်ဆဲ" Order များ Auto Cancel
   const { data: allMine, error } = await sb.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false });
   const data = (allMine||[]).filter(o=>!o.hidden_by_customer); // Customer ဖျောက်ထားတာများ မပြ (Admin ဘက်မှာတော့ မှတ်တမ်း ဆက်ရှိသည်)
   if(error){ document.getElementById('order-history-list').innerHTML = '<p class="hint">Order History ကြည့်၍မရပါ</p>'; return; }
@@ -2943,7 +3024,7 @@ function renderOrderHistoryList(){
   if(!listEl) return;
 
   const statusLabels = {
-    pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
+    awaiting_payment:'⏰ ငွေလွှဲရန် စောင့်ဆဲ', pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
     shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး', cancelled:'ပယ်ဖျက်',
   };
   const giftStatusLabels = { pending:'⏳ စစ်ဆေးဆဲ', active:'✅ အသုံးပြုနိုင်ပြီ', redeemed:'☑️ အသုံးပြုပြီးသား', rejected:'❌ ငြင်းပယ်ခံရ' };
@@ -2972,6 +3053,7 @@ function renderOrderHistoryList(){
       <h5>${itemsLine}</h5>
       <div>${total.toLocaleString()} ကျပ်</div>
       <span class="status-tag">${statusTag}</span>
+      ${!first.is_gift_card ? payLaterBoxHtml(rows, idx) : ''}
       <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
         ${first.is_gift_card ? `
           <button type="button" class="auth-link" style="display:inline-block; margin:0;" onclick="openTransactionReceipt('giftcard', orderGroupsForReceipt[${idx}][0].gift_card_row)">🧾 Receipt ကြည့်ရန်</button>
@@ -3017,7 +3099,9 @@ async function openWalletTopup(){
     <h3>💰 Wallet ငွေဖြည့်ရန်</h3>
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       <label>ဖြည့်လိုသော ပမာဏ (ကျပ်)</label>
-      <input type="number" id="topup-amount" placeholder="ဥပမာ 50000" min="1000">
+      <input type="number" id="topup-amount" placeholder="ဥပမာ 50000" min="1000" oninput="updateTopupBonusPreview()">
+      ${topupBonusInfoHtml(settings)}
+      <div id="topup-bonus-preview" class="topup-bonus-preview"></div>
     </div>
     <div class="modal-section">
       <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန်</div>
@@ -3072,7 +3156,8 @@ async function submitWalletTopup(){
     });
     if(error) throw error;
 
-    showSiteToast('✅ Top-up တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Wallet ထဲ ဝင်ပါမည်');
+    const bonus = calcTopupBonus(cachedSettings, amount);
+    showSiteToast('✅ Top-up တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Wallet ထဲ ဝင်ပါမည်' + (bonus ? ` (Bonus ${bonus.toLocaleString()} ကျပ် ပါ ထပ်ရပါမည်)` : ''));
     renderProfileView();
   }catch(e){
     err.textContent = friendlyOrderError(e.message);
@@ -3159,8 +3244,8 @@ async function openWalletHistory(){
   window.walletTopupCache = topups || [];
 
   const statusLabels = { pending:'⏳ စစ်ဆေးဆဲ', approved:'✅ အတည်ပြုပြီး', rejected:'❌ ငြင်းပယ်ခံရ' };
-  const typeIcons = { topup:'➕', gift_card_redeem:'🎁', refund:'↩️', purchase:'🛍️', pos_purchase:'🏪', cashback:'🎉', cashback_reversal:'↩️' };
-  const typeLabels = { topup:'ငွေဖြည့်ခြင်း', gift_card_redeem:'Gift Card သုံးစွဲမှု', refund:'ငွေပြန်အမ်းခြင်း', purchase:'ဝယ်ယူမှု (Website)', pos_purchase:'ဝယ်ယူမှု (ဆိုင်ထဲ)', cashback:'Cashback ရရှိမှု', cashback_reversal:'Cashback ပြန်နုတ်ခြင်း' };
+  const typeIcons = { topup_bonus:'🎁', topup:'➕', gift_card_redeem:'🎁', refund:'↩️', purchase:'🛍️', pos_purchase:'🏪', cashback:'🎉', cashback_reversal:'↩️' };
+  const typeLabels = { topup_bonus:'Top-up Bonus', topup:'ငွေဖြည့်ခြင်း', gift_card_redeem:'Gift Card သုံးစွဲမှု', refund:'ငွေပြန်အမ်းခြင်း', purchase:'ဝယ်ယူမှု (Website)', pos_purchase:'ဝယ်ယူမှု (ဆိုင်ထဲ)', cashback:'Cashback ရရှိမှု', cashback_reversal:'Cashback ပြန်နုတ်ခြင်း' };
 
   // Pending Top-up Request များ (Admin မစစ်ရသေးသည်များ) ကို အပေါ်ဆုံးမှာ ဆက်ပြ
   const pendingTopups = (topups||[]).filter(t=>t.status==='pending');
@@ -3190,7 +3275,7 @@ async function openWalletHistory(){
     ${approvedTopups.map(t=>`
       <div class="history-item">
         <div class="row1"><span>${new Date(t.created_at).toLocaleDateString()}</span><span>${statusLabels[t.status]}</span></div>
-        <h5>${Number(t.amount).toLocaleString()} ကျပ်</h5>
+        <h5>${Number(t.amount).toLocaleString()} ကျပ်${Number(t.bonus_amount)>0 ? ` <span style="color:var(--rust); font-size:12px;">+ 🎁 Bonus ${Number(t.bonus_amount).toLocaleString()}</span>` : ''}</h5>
         <button type="button" class="auth-link" style="display:inline-block; margin-top:6px;" onclick="openTransactionReceipt('topup', walletTopupCache[${topups.indexOf(t)}])">🧾 Receipt ကြည့်ရန်</button>
       </div>`).join('')}` : '';
 
@@ -3218,6 +3303,161 @@ async function openWalletHistory(){
       ${txnHtml}
     </div>
     <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="renderProfileView()">← Profile ပြန်သွားရန်</button>`;
+}
+
+// SUWATI MEN FASHION — ③ ငွေ နောက်မှ လွှဲ (Pay Later) + ⑤ Top-up Bonus (Customer ဘက်)
+// (boot.js မတိုင်ခင် Load ရမည်)
+
+// ---------- ③ Pay Later ----------
+async function runExpiredUnpaidCleanup(){
+  try{ await sb.rpc('cancel_expired_unpaid_orders'); }catch(e){ /* Database Update မလုပ်ရသေးရင် ကျော် */ }
+}
+
+function payLaterTimeLeft(due){
+  const ms = new Date(due) - Date.now();
+  if(!(ms > 0)) return 'အချိန်ကုန်သွားပါပြီ';
+  const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000);
+  return (h ? h + ' နာရီ ' : '') + m + ' မိနစ်';
+}
+
+function payLaterInfo(rows){
+  const total = rows.reduce((s,r)=>s+Number(r.total_amount||0),0);
+  const walletPaid = rows.reduce((s,r)=>s+(Number(r.wallet_paid)||0),0);
+  const dues = rows.map(r=>r.payment_due_at).filter(Boolean).map(d=>new Date(d).getTime());
+  return { total, walletPaid, toPay: total - walletPaid, due: dues.length ? new Date(Math.min(...dues)) : null };
+}
+
+function payLaterBoxHtml(rows, idx){
+  const first = rows[0];
+  if(!first || first.order_status !== 'awaiting_payment') return '';
+  const info = payLaterInfo(rows);
+  return `
+    <div class="paylater-box">
+      <div>⏰ ငွေလွှဲရန် ကျန်ချိန်: <b>${info.due ? payLaterTimeLeft(info.due) : '-'}</b></div>
+      ${info.due ? `<div class="mono" style="font-size:11px;">${info.due.toLocaleString()} မတိုင်ခင်</div>` : ''}
+      <div style="margin-top:4px;">လွှဲရမည့်ငွေ: <b>${info.toPay.toLocaleString()} ကျပ်</b>${info.walletPaid ? ` <span style="font-size:11px;">(Prepaid ${info.walletPaid.toLocaleString()} ကျပ် ပေးပြီး)</span>` : ''}</div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+        <button type="button" class="order-btn" style="background:var(--acid); color:#141412; border-color:#141412; width:auto; flex:1; margin-top:0;" onclick="openPayLaterUpload(${idx})">💸 ငွေလွှဲ Screenshot တင်မည်</button>
+        <button type="button" class="order-btn" style="background:transparent; color:var(--rust); border-color:var(--rust); width:auto; flex:1; margin-top:0;" onclick="cancelMyUnpaidOrder(${idx})">✕ Order ပယ်ဖျက်မည်</button>
+      </div>
+    </div>`;
+}
+
+async function openPayLaterUpload(idx){
+  const rows = (window.orderGroupsForReceipt||[])[idx]; if(!rows) return;
+  const info = payLaterInfo(rows);
+  const settings = await getSettings();
+  const qrUrl = settings && settings.kbzpay_qr_url;
+  const instructions = (settings && settings.payment_instructions) || 'KBZPay QR Code ကို Scan လုပ်ပြီး ငွေပေးချေမှု ပြုလုပ်ပါ။';
+  const box = document.getElementById('checkout-modal-content');
+  box.innerHTML = `
+    <button class="modal-close" onclick="closeCheckout()">&times;</button>
+    <h3>💸 ငွေလွှဲ Screenshot တင်ရန်</h3>
+    <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
+      <div class="order-summary-line"><span>Order</span><span>#${String(rows[0].order_group_id||rows[0].id).slice(0,8).toUpperCase()}</span></div>
+      ${info.walletPaid ? `<div class="order-summary-line"><span>Prepaid Card ဖြင့် ပေးပြီး</span><span>${info.walletPaid.toLocaleString()} ကျပ်</span></div>` : ''}
+      <div class="order-summary-line total"><span>လွှဲရမည့်ငွေ</span><span>${info.toPay.toLocaleString()} ကျပ်</span></div>
+      ${info.due ? `<p class="hint">⏰ ကျန်ချိန် ${payLaterTimeLeft(info.due)} — ${info.due.toLocaleString()} မတိုင်ခင်</p>` : ''}
+    </div>
+    <div class="modal-section">
+      <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန်</div>
+      <div class="qr-box">
+        ${qrUrl ? `<img src="${qrUrl}" alt="KBZPay QR">` : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
+        <div class="qr-note">${instructions}</div>
+      </div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-label">PAYMENT SCREENSHOT တင်ပါ</div>
+      <div class="upload-box">
+        <input type="file" id="pl-screenshot" accept="image/jpeg,image/jpg,image/png">
+        <img id="pl-preview" class="upload-preview" style="display:none;">
+      </div>
+      <div class="form-error" id="pl-error"></div>
+      <button type="button" class="submit-order-btn" id="pl-submit-btn" onclick="submitPayLaterProof(${idx})">Screenshot တင်မည်</button>
+      <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:8px;" onclick="openOrderHistory()">← Order History ပြန်သွားရန်</button>
+    </div>`;
+  document.getElementById('pl-screenshot').addEventListener('change', (e)=>{
+    const f = e.target.files[0]; const pv = document.getElementById('pl-preview');
+    if(f){ pv.src = URL.createObjectURL(f); pv.style.display = 'block'; }
+  });
+}
+
+async function submitPayLaterProof(idx){
+  const rows = (window.orderGroupsForReceipt||[])[idx]; if(!rows) return;
+  let file = document.getElementById('pl-screenshot').files[0];
+  const err = document.getElementById('pl-error');
+  const btn = document.getElementById('pl-submit-btn');
+  if(!file){ err.textContent = 'Screenshot ရွေးပါ'; return; }
+  if(!['image/jpeg','image/jpg','image/png'].includes(file.type)){ err.textContent = 'JPG, JPEG, PNG ပုံဖိုင်သာ တင်ပေးပါ'; return; }
+  btn.disabled = true; btn.textContent = 'တင်နေသည်...'; err.textContent = '';
+  try{
+    file = await compressImageForUpload(file);
+    const ext = file.name.split('.').pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error: upErr } = await sb.storage.from('payment-screenshots').upload(path, file);
+    if(upErr) throw upErr;
+    const { data: urlData } = sb.storage.from('payment-screenshots').getPublicUrl(path);
+    const { data: res, error } = await sb.rpc('attach_payment_proof', { p_group: rows[0].order_group_id, p_url: urlData.publicUrl });
+    if(error) throw error;
+    if(!res || !res.ok){ err.textContent = (res && res.message) || 'တင်၍ မရပါ'; btn.disabled = false; btn.textContent = 'Screenshot တင်မည်'; return; }
+    showSiteToast('✅ Screenshot တင်ပြီးပါပြီ — Admin စစ်ဆေးပြီးရင် အတည်ပြုပေးပါမည်');
+    openOrderHistory();
+  }catch(e){
+    err.textContent = 'Error: ' + (e.message || e);
+    btn.disabled = false; btn.textContent = 'Screenshot တင်မည်';
+  }
+}
+
+async function cancelMyUnpaidOrder(idx){
+  const rows = (window.orderGroupsForReceipt||[])[idx]; if(!rows) return;
+  const info = payLaterInfo(rows);
+  if(!confirm('ဒီ Order ကို ပယ်ဖျက်မှာ သေချာပါသလား?' + (info.walletPaid ? `\nPrepaid Card ထဲ ${info.walletPaid.toLocaleString()} ကျပ် ပြန်ထည့်ပေးပါမည်` : ''))) return;
+  const { data: ok, error } = await sb.rpc('cancel_my_unpaid_order', { p_group: rows[0].order_group_id });
+  if(error || !ok){ showSiteToast('ပယ်ဖျက်၍ မရပါ' + (error ? ' — ' + error.message : ' (Admin အတည်ပြုနေပြီ ဖြစ်နိုင်ပါသည်)')); openOrderHistory(); return; }
+  showSiteToast('Order ပယ်ဖျက်ပြီးပါပြီ' + (info.walletPaid ? ' — Prepaid ငွေ ပြန်ထည့်ပြီးပါပြီ' : ''));
+  openOrderHistory();
+  try{ loadProducts(); }catch(e){}
+}
+
+// ---------- ⑤ Top-up Bonus ----------
+function topupBonusConfig(settings){
+  const c = settings && settings.topup_bonus;
+  if(!c || !c.enabled || !Array.isArray(c.tiers) || !c.tiers.length) return null;
+  const now = Date.now();
+  if(c.starts_at && new Date(c.starts_at).getTime() > now) return null;
+  if(c.ends_at && new Date(c.ends_at).getTime() < now) return null;
+  return c;
+}
+function calcTopupBonus(settings, amount){
+  const c = topupBonusConfig(settings); if(!c || !(amount > 0)) return 0;
+  let best = 0, bestMin = -1;
+  c.tiers.forEach(t=>{
+    const min = Number(t.min)||0, v = Number(t.value)||0;
+    if(amount >= min && min > bestMin){
+      bestMin = min;
+      best = t.type === 'percent' ? Math.floor(amount * Math.min(Math.max(v,0),100) / 100) : Math.max(v,0);
+    }
+  });
+  return best;
+}
+function describeTopupTier(t){
+  return `${Number(t.min).toLocaleString()} ကျပ်နှင့်အထက် → ${t.type==='percent' ? Number(t.value)+'%' : Number(t.value).toLocaleString()+' ကျပ်'} Bonus`;
+}
+function topupBonusInfoHtml(settings){
+  const c = topupBonusConfig(settings); if(!c) return '';
+  const tiers = [...c.tiers].sort((a,b)=>Number(a.min)-Number(b.min));
+  return `
+    <div class="topup-bonus-info">
+      <div class="tbi-title">🎁 TOP-UP BONUS</div>
+      ${tiers.map(t=>`<div>• ${describeTopupTier(t)}</div>`).join('')}
+      ${c.ends_at ? `<div class="mono" style="font-size:11px; margin-top:4px;">${new Date(c.ends_at).toLocaleDateString()} အထိသာ</div>` : ''}
+    </div>`;
+}
+function updateTopupBonusPreview(){
+  const el = document.getElementById('topup-bonus-preview'); if(!el) return;
+  const amt = parseFloat(document.getElementById('topup-amount')?.value) || 0;
+  const b = calcTopupBonus(cachedSettings, amt);
+  el.innerHTML = b ? `🎉 Bonus <b>${b.toLocaleString()} ကျပ်</b> ထပ်ရမည် — Card ထဲ စုစုပေါင်း <b>${(amt+b).toLocaleString()} ကျပ်</b> ဝင်ပါမည်` : '';
 }
 
 // SUWATI MEN FASHION — Gift Card
@@ -3688,12 +3928,12 @@ function renderOrderTrackingResult(rows){
   const total = rows.reduce((s,r)=>s+Number(r.total_amount),0);
   const status = first.order_status;
 
-  const steps = ['pending_verification','confirmed','processing','shipped','delivered'];
+  const steps = (status === 'awaiting_payment' ? ['awaiting_payment'] : []).concat(['pending_verification','confirmed','processing','shipped','delivered']);
   const stepLabels = {
-    pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
+    awaiting_payment:'ငွေလွှဲရန် စောင့်ဆဲ', pending_verification:'ငွေချေမှု စစ်ဆေးဆဲ', confirmed:'အတည်ပြုပြီး', processing:'ပြင်ဆင်နေဆဲ',
     shipped:'ပို့ဆောင်နေဆဲ', delivered:'ပေးအပ်ပြီး'
   };
-  const stepIcons = { pending_verification:'⏳', confirmed:'✓', processing:'📦', shipped:'🚚', delivered:'🏠' };
+  const stepIcons = { awaiting_payment:'⏰', pending_verification:'⏳', confirmed:'✓', processing:'📦', shipped:'🚚', delivered:'🏠' };
 
   let timelineHtml = '';
   if(status === 'cancelled'){
