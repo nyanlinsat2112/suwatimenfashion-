@@ -782,9 +782,161 @@ html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color
   .pc-wrap.pc-enter, .pc-wrap.pc-enter .pc-inner, .pc-wrap.pc-enter .pp-shine::after, .pc-hint-in{ animation:none !important; }
   .pc-glow{ animation:none; opacity:1; }
 }
+
+/* ===== SUWATI.PAY — Confirm အဆင့် (ငွေမချေခင်) ===== */
+.pp-confirm{ margin-top:16px; transition:opacity .25s ease, transform .3s ease, max-height .35s ease; max-height:320px; overflow:hidden; }
+.pp-anim:not(.confirming) .pp-confirm{ opacity:0; transform:translateY(10px); max-height:0; margin-top:0; pointer-events:none; }
+.pp-anim.confirming .pp-status{ display:none; }
+.pp-anim.paying .pp-status{ animation:pcFade .35s ease backwards; }
+.pp-line{ display:flex; justify-content:space-between; gap:10px; padding:7px 2px; border-bottom:1px dashed #3a3833; font-size:13px; }
+.pp-line span{ color:#a39e91; } .pp-line b{ font-family:'Space Mono',monospace; font-size:13.5px; }
+.pp-after b{ color:#D6FF3F; }
+.pp-pay-btn{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin-top:16px; padding:16px; border:none; border-radius:14px;
+  background:#D6FF3F; color:#141412; font-family:'Noto Sans Myanmar',sans-serif; font-weight:800; font-size:16px; cursor:pointer;
+  box-shadow:0 0 0 0 rgba(214,255,63,.55); animation:ppPulse 1.8s ease-out 1s infinite; transition:transform .12s ease; }
+.pp-pay-btn:active{ transform:scale(.97); }
+.pp-pay-ic{ font-size:18px; }
+.pp-cancel-btn{ display:block; width:100%; margin-top:8px; padding:12px; background:transparent; border:none; color:#a39e91; font-family:'Noto Sans Myanmar',sans-serif; font-size:14px; cursor:pointer; }
+.pp-anim.confirming .pp-card .pc-inner{ animation:ppFloat 2.6s ease-in-out 1s infinite; }
+.pp-anim .pp-bal{ font-size:5.6cqw; top:22.5cqw; }
+@keyframes ppPulse{ 0%{ box-shadow:0 0 0 0 rgba(214,255,63,.5); } 70%{ box-shadow:0 0 0 12px rgba(214,255,63,0); } 100%{ box-shadow:0 0 0 0 rgba(214,255,63,0); } }
+
+/* ===== 💬 SUWATI Dialog (confirm/alert အစား) ===== */
+.sd-wrap{ position:fixed; inset:0; z-index:10060; display:flex; align-items:center; justify-content:center; padding:20px; }
+.sd-backdrop{ position:absolute; inset:0; background:rgba(10,10,9,.55); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px); opacity:0; transition:opacity .25s ease; }
+.sd-card{ position:relative; width:100%; max-width:340px; background:#141412; color:#E9E4D8; border:2px solid #E9E4D8; border-top:6px solid #D6FF3F;
+  padding:26px 20px 18px; text-align:center; box-shadow:8px 8px 0 #D6FF3F; transform:translateY(40px) scale(.9) rotate(-1.5deg); opacity:0;
+  transition:transform .45s cubic-bezier(.2,1.4,.35,1), opacity .2s ease; }
+.sd-danger .sd-card{ border-top-color:#D9502F; box-shadow:8px 8px 0 #D9502F; }
+.sd-wrap.show .sd-backdrop{ opacity:1; } .sd-wrap.show .sd-card{ transform:none; opacity:1; }
+.sd-wrap.hide .sd-backdrop{ opacity:0; } .sd-wrap.hide .sd-card{ transform:translateY(24px) scale(.95); opacity:0; transition:transform .22s ease-in, opacity .22s ease-in; }
+.sd-icon{ width:54px; height:54px; margin:-54px auto 12px; border-radius:50%; background:#D6FF3F; color:#141412; display:flex; align-items:center; justify-content:center;
+  font-family:'Archivo Black','Anton',sans-serif; font-size:26px; border:3px solid #141412; box-shadow:0 0 0 2px #E9E4D8; }
+.sd-danger .sd-icon{ background:#D9502F; color:#fff; }
+.sd-wrap.show .sd-icon span{ display:inline-block; animation:sdBounce .7s cubic-bezier(.3,1.8,.5,1) .15s backwards; }
+.sd-title{ font-family:'Archivo Black','Anton',sans-serif; font-size:18px; letter-spacing:.02em; margin-bottom:6px; }
+.sd-msg{ font-size:15px; line-height:1.75; }
+.sd-detail{ margin-top:10px; padding:8px 10px; background:#1E1D1A; border:1px dashed #3a3833; font-family:'Space Mono',monospace; font-size:12.5px; color:#cfc9bb; text-align:left; }
+.sd-actions{ display:flex; gap:10px; margin-top:18px; }
+.sd-btn{ flex:1; padding:13px 10px; font-family:'Noto Sans Myanmar',sans-serif; font-weight:700; font-size:14.5px; cursor:pointer; border:2px solid #E9E4D8; transition:transform .1s ease; }
+.sd-btn:active{ transform:translate(2px,2px); }
+.sd-cancel{ background:transparent; color:#E9E4D8; }
+.sd-ok{ background:#D6FF3F; color:#141412; border-color:#D6FF3F; }
+.sd-danger .sd-ok{ background:#D9502F; border-color:#D9502F; color:#fff; }
+.sd-btn:focus-visible, .pp-pay-btn:focus-visible{ outline:3px solid #fff; outline-offset:2px; }
+@keyframes sdBounce{ 0%{ transform:scale(0) rotate(-30deg); } 100%{ transform:scale(1) rotate(0); } }
+@media (prefers-reduced-motion: reduce){
+  .sd-card{ transform:none !important; transition:opacity .15s ease !important; }
+  .sd-wrap.show .sd-icon span, .pp-pay-btn, .pp-anim.confirming .pp-card .pc-inner{ animation:none !important; }
+}
+
+/* ======================= ✨ FX — Animation အပို ======================= */
+/* ⑧ ခါ + အနီ */
+.fx-shake{ animation:fxShake .45s cubic-bezier(.36,.07,.19,.97); }
+.fx-invalid{ outline:2.5px solid var(--rust) !important; outline-offset:1px; background-color:rgba(193,59,31,.08) !important; }
+@keyframes fxShake{ 10%,90%{ transform:translateX(-1px); } 20%,80%{ transform:translateX(3px); } 30%,50%,70%{ transform:translateX(-6px); } 40%,60%{ transform:translateX(6px); } }
+
+/* ① Order တင်ပြီး */
+.success-box{ position:relative; }
+.fx-success .big-check{ width:84px; height:84px; margin:0 auto; color:var(--rust); }
+.fx-success .big-check svg{ width:100%; height:100%; overflow:visible; }
+.fx-success .big-check circle{ fill:none; stroke:var(--acid); stroke-width:4; stroke-dasharray:190; stroke-dashoffset:190; animation:fxDraw .6s ease forwards; }
+.fx-success .big-check path{ fill:none; stroke:var(--rust); stroke-width:6; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:60; stroke-dashoffset:60; animation:fxDraw .4s ease .45s forwards; }
+.fx-success h3{ animation:fxUp .5s cubic-bezier(.2,1.3,.4,1) .35s backwards; }
+.fx-success p, .fx-success .paylater-due-box{ animation:fxUp .5s ease .5s backwards; }
+.fx-success .order-id{ animation:fxStamp .55s cubic-bezier(.3,1.6,.5,1) .75s backwards; }
+.fx-success .submit-order-btn{ animation:fxUp .45s ease .95s backwards; }
+.fx-confetti{ position:absolute; left:50%; top:60px; width:0; height:0; pointer-events:none; z-index:5; }
+.fx-confetti i{ position:absolute; width:8px; height:8px; left:-4px; top:-4px; opacity:0; animation:fxBurst 1.6s cubic-bezier(.15,.6,.35,1) var(--d) forwards; }
+@keyframes fxBurst{ 0%{ opacity:1; transform:translate(0,0) rotate(0); } 70%{ opacity:1; } 100%{ opacity:0; transform:translate(var(--x), calc(var(--y) + 160px)) rotate(var(--r)); } }
+@keyframes fxDraw{ to{ stroke-dashoffset:0; } }
+@keyframes fxUp{ from{ opacity:0; transform:translateY(14px); } }
+@keyframes fxStamp{ 0%{ opacity:0; transform:scale(2.2) rotate(-8deg); } 100%{ opacity:1; transform:scale(1) rotate(-2deg); } }
+
+/* ② Order Track */
+.fx-track .track-step{ animation:fxStepIn .45s ease calc(var(--i,0) * .16s) backwards; }
+.fx-track .track-step.done::before, .fx-track .track-step.current::before{ transform-origin:top; animation:fxLine .4s ease calc(var(--i,0) * .16s + .2s) backwards; }
+.fx-track .track-step.done .track-dot{ animation:fxDotPop .4s cubic-bezier(.3,1.7,.5,1) calc(var(--i,0) * .16s + .1s) backwards; }
+.fx-track .track-step.current .track-dot{ animation:fxDotPop .4s cubic-bezier(.3,1.7,.5,1) calc(var(--i,0) * .16s + .1s) backwards, fxPulse 1.8s ease-out 1.2s infinite; }
+.fx-truck{ display:inline-block; margin-left:8px; animation:fxDrive 1.6s ease-in-out 1s infinite; }
+@keyframes fxStepIn{ from{ opacity:0; transform:translateX(-14px); } }
+@keyframes fxLine{ from{ transform:scaleY(0); } }
+@keyframes fxDotPop{ from{ transform:scale(0); } }
+@keyframes fxPulse{ 0%{ box-shadow:0 0 0 0 rgba(193,59,31,.55); } 80%,100%{ box-shadow:0 0 0 10px rgba(193,59,31,0); } }
+@keyframes fxDrive{ 0%,100%{ transform:translateX(0) rotate(0); } 25%{ transform:translateX(8px) rotate(-3deg); } 50%{ transform:translateX(16px) rotate(0); } 75%{ transform:translateX(8px) rotate(2deg); } }
+
+/* ③ Gift Card ဘူးပွင့် */
+.fx-gift{ position:fixed; inset:0; z-index:10070; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.fx-gift-bg{ position:absolute; inset:0; background:rgba(10,10,9,.72); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); opacity:0; transition:opacity .3s; }
+.fx-gift.show .fx-gift-bg{ opacity:1; } .fx-gift.hide{ opacity:0; transition:opacity .3s; }
+.fx-gift-stage{ position:relative; width:260px; height:330px; text-align:center; color:#E9E4D8; }
+.fx-gift-box{ position:absolute; left:50%; top:70px; width:110px; height:96px; margin-left:-55px; animation:fxBoxIn .5s cubic-bezier(.2,1.5,.4,1) backwards, fxBoxShake .4s ease .5s; }
+.fx-gift-body{ position:absolute; left:6px; right:6px; bottom:0; height:70px; background:#C13B1F; border:3px solid #141412; }
+.fx-gift-lid{ position:absolute; left:0; right:0; top:8px; height:22px; background:#D6FF3F; border:3px solid #141412; z-index:2; animation:fxLid .6s cubic-bezier(.3,1.4,.5,1) .85s forwards; }
+.fx-gift-ribbon{ position:absolute; left:50%; top:8px; bottom:0; width:14px; margin-left:-7px; background:#D6FF3F; border-left:3px solid #141412; border-right:3px solid #141412; z-index:1; }
+.fx-gift-amt{ position:absolute; left:0; right:0; top:90px; font-family:'Archivo Black','Anton',sans-serif; font-size:34px; color:#D6FF3F; opacity:0; animation:fxAmt 1.5s cubic-bezier(.3,1,.4,1) 1s forwards; }
+.fx-gift-amt small{ font-family:'Noto Sans Myanmar',sans-serif; font-size:14px; color:#E9E4D8; margin-left:4px; }
+.fx-gift-card{ position:absolute; left:50%; top:200px; width:170px; height:104px; margin-left:-85px; border-radius:12px; background:#141412; border:2px solid #D6FF3F; box-shadow:0 10px 30px rgba(0,0,0,.4);
+  display:flex; flex-direction:column; justify-content:center; font-family:'Archivo Black','Anton',sans-serif; color:#D6FF3F; font-size:14px; animation:fxCardIn .5s cubic-bezier(.2,1.4,.4,1) .3s backwards, fxCardGulp .4s ease 2.15s; }
+.fx-gift-card i{ font-style:normal; color:#E9E4D8; } .fx-gift-card b{ font-size:22px; color:#E9E4D8; font-weight:400; }
+.fx-gift-text{ position:absolute; left:-20px; right:-20px; bottom:0; font-weight:700; font-size:15px; animation:fxUp .5s ease 1.6s backwards; }
+@keyframes fxBoxIn{ from{ transform:scale(0) rotate(-20deg); } }
+@keyframes fxBoxShake{ 25%{ transform:rotate(-8deg); } 75%{ transform:rotate(8deg); } }
+@keyframes fxLid{ to{ transform:translate(30px,-70px) rotate(35deg); opacity:0; } }
+@keyframes fxAmt{ 0%{ opacity:0; transform:translateY(20px) scale(.5); } 35%{ opacity:1; transform:translateY(-40px) scale(1.15); } 70%{ opacity:1; transform:translateY(-40px) scale(1); } 100%{ opacity:0; transform:translateY(130px) scale(.4); } }
+@keyframes fxCardIn{ from{ opacity:0; transform:translateY(60px); } }
+@keyframes fxCardGulp{ 50%{ transform:scale(1.12); box-shadow:0 0 0 8px rgba(214,255,63,.35); } }
+
+/* ④ Profile — ငွေတိုး */
+.wallet-balance-box{ position:relative; overflow:hidden; }
+.fx-bal-up{ animation:fxGlow 1.4s ease .9s 2; }
+.fx-plus{ position:absolute; right:12px; top:8px; font-family:'Archivo Black','Anton',sans-serif; color:#D6FF3F; font-size:15px; animation:fxPlus 2.4s ease forwards; }
+.fx-coin{ position:absolute; top:-20px; width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 35%, #f6ffb0, #D6FF3F 55%, #8fae12); border:2px solid #141412; animation:fxCoin .9s cubic-bezier(.5,0,.75,0) var(--d) forwards; }
+@keyframes fxPlus{ 0%{ opacity:0; transform:translateY(10px); } 15%,70%{ opacity:1; transform:translateY(0); } 100%{ opacity:0; transform:translateY(-16px); } }
+@keyframes fxCoin{ 0%{ transform:translateY(0) rotateY(0); opacity:1; } 85%{ opacity:1; } 100%{ transform:translateY(70px) rotateY(540deg); opacity:0; } }
+@keyframes fxGlow{ 50%{ box-shadow:inset 0 0 0 3px #D6FF3F, 0 0 18px rgba(214,255,63,.45); } }
+
+/* ⑤ Promo */
+.promo-price{ margin-top:6px; font-family:'Space Mono',monospace; font-size:14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.promo-price s{ color:var(--grey); text-decoration-thickness:2px; text-decoration-color:var(--rust); }
+.promo-price b{ color:var(--ink); font-size:16px; }
+.promo-applied{ position:relative; }
+.fx-promo-in{ animation:fxUp .4s cubic-bezier(.2,1.3,.4,1); }
+.fx-promo-in .promo-price s{ animation:fxStrike .5s ease .3s backwards; }
+.fx-promo-in .promo-arrow{ display:inline-block; animation:fxUp .3s ease .6s backwards; }
+.fx-promo-in .promo-price b{ display:inline-block; animation:fxStamp .5s cubic-bezier(.3,1.6,.5,1) .75s backwards; }
+@keyframes fxStrike{ from{ text-decoration-color:transparent; } }
+
+/* ⑦ Checkout အဆင့် ရွှေ့ */
+.fx-slide-left{ animation:fxInRight .38s cubic-bezier(.2,.9,.3,1); }
+.fx-slide-right{ animation:fxInLeft .38s cubic-bezier(.2,.9,.3,1); }
+@keyframes fxInRight{ from{ opacity:0; transform:translateX(40px); } }
+@keyframes fxInLeft{ from{ opacity:0; transform:translateX(-40px); } }
+
+/* ⑪ SUWATI Loader */
+#fx-loader{ position:fixed; inset:0; z-index:10100; background:#141412; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; transition:opacity .5s ease, transform .6s cubic-bezier(.7,0,.3,1); }
+#fx-loader.out{ opacity:0; transform:translateY(-30px); pointer-events:none; }
+.fxl-word{ font-family:'Anton',sans-serif; font-size:64px; letter-spacing:.02em; color:#E9E4D8; display:flex; line-height:1; }
+.fxl-word span{ display:inline-block; animation:fxLetter .5s cubic-bezier(.2,1.5,.4,1) backwards; }
+.fxl-word span:nth-child(1){ animation-delay:.05s; } .fxl-word span:nth-child(2){ animation-delay:.12s; } .fxl-word span:nth-child(3){ animation-delay:.19s; }
+.fxl-word span:nth-child(4){ animation-delay:.26s; } .fxl-word span:nth-child(5){ animation-delay:.33s; } .fxl-word span:nth-child(6){ animation-delay:.40s; }
+.fxl-word .fxl-dot{ color:#C13B1F; animation-delay:.55s; }
+.fxl-sub{ font-family:'Space Mono',monospace; font-size:12px; letter-spacing:.4em; color:#D6FF3F; animation:fxUp .5s ease .6s backwards; }
+.fxl-bar{ width:140px; height:3px; background:#2a2924; overflow:hidden; margin-top:8px; }
+.fxl-bar i{ display:block; height:100%; width:40%; background:#D6FF3F; animation:fxBar 1s ease-in-out infinite; }
+@keyframes fxLetter{ from{ opacity:0; transform:translateY(40px) rotate(8deg); } }
+@keyframes fxBar{ 0%{ transform:translateX(-100%); } 100%{ transform:translateX(250%); } }
+
+@media (prefers-reduced-motion: reduce){
+  .fx-shake, .fx-success *, .fx-track *, .fx-truck, .fx-gift *, .fx-bal-up, .fx-plus, .fx-coin, .fx-promo-in, .fx-promo-in *, .fx-slide-left, .fx-slide-right, #fx-loader *{ animation:none !important; }
+  .fx-success .big-check circle, .fx-success .big-check path{ stroke-dashoffset:0; }
+  .fx-gift-lid{ display:none; } .fx-gift-amt{ opacity:1; top:20px; } .fx-coin{ display:none; }
+}
 </style>
 </head>
 <body>
+<div id="fx-loader" aria-hidden="true"><div class="fxl-word"><span>S</span><span>U</span><span>W</span><span>A</span><span>T</span><span>I</span><span class="fxl-dot">.</span></div><div class="fxl-sub">MEN FASHION</div><div class="fxl-bar"><i></i></div></div>
+<script>window.__fxLoaderAt=Date.now();try{if(sessionStorage.getItem('suwati_loader_seen')){var _l=document.getElementById('fx-loader');_l&&_l.remove();}else{sessionStorage.setItem('suwati_loader_seen','1');}}catch(e){}</script>
 
 <header class="site">
   <nav class="wrap">
@@ -979,6 +1131,55 @@ window.__sharedProductParam = (function(){
 const SUPABASE_URL = "https://gfatvhxougswmzrjpqkp.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmYXR2aHhvdWdzd216cmpwcWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NzQ0NTEsImV4cCI6MjEwNTA1MDQ1MX0.SZDCjKzOyQBZCPXib1EyLEdj9NimYbhvA6PXk-9j42U";
 // ============================================================================
+
+// SUWATI MEN FASHION — 💬 Browser ရဲ့ confirm()/alert() အစား Brand ဒီဇိုင်း Dialog (Animation ပါ)
+// await siteConfirm('စာ', { title, ok, cancel, danger, icon }) → true/false
+// await siteAlert('စာ', { title, icon })
+
+function _siteDialog(message, o){
+  o = o || {};
+  return new Promise(resolve=>{
+    document.getElementById('site-dialog')?.remove();
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const el = document.createElement('div');
+    el.id = 'site-dialog'; el.className = 'sd-wrap' + (o.danger ? ' sd-danger' : '');
+    el.setAttribute('role', 'alertdialog'); el.setAttribute('aria-modal', 'true');
+    el.innerHTML = `
+      <div class="sd-backdrop"></div>
+      <div class="sd-card" role="document">
+        <div class="sd-icon"><span>${o.icon || (o.danger ? '!' : '?')}</span></div>
+        ${o.title ? `<div class="sd-title">${esc(o.title)}</div>` : ''}
+        <div class="sd-msg">${esc(message).replace(/\n/g,'<br>')}</div>
+        ${o.detail ? `<div class="sd-detail">${o.detail}</div>` : ''}
+        <div class="sd-actions">
+          ${o.alertOnly ? '' : `<button type="button" class="sd-btn sd-cancel">${esc(o.cancel || 'မလုပ်တော့ပါ')}</button>`}
+          <button type="button" class="sd-btn sd-ok">${esc(o.ok || (o.alertOnly ? 'OK' : 'သေချာပါတယ်'))}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    const prevFocus = document.activeElement;
+    void el.offsetWidth; el.classList.add('show');
+    let done = false;
+    const close = (val)=>{
+      if(done) return; done = true;
+      el.classList.remove('show'); el.classList.add('hide');
+      document.removeEventListener('keydown', onKey, true);
+      setTimeout(()=>{ el.remove(); try{ prevFocus && prevFocus.focus && prevFocus.focus({ preventScroll:true }); }catch(e){} }, 260);
+      resolve(val);
+    };
+    const onKey = (e)=>{
+      if(e.key === 'Escape'){ e.preventDefault(); close(o.alertOnly ? true : false); }
+      else if(e.key === 'Enter'){ e.preventDefault(); close(true); }
+    };
+    document.addEventListener('keydown', onKey, true);
+    el.querySelector('.sd-ok').addEventListener('click', ()=>close(true));
+    el.querySelector('.sd-cancel')?.addEventListener('click', ()=>close(false));
+    el.querySelector('.sd-backdrop').addEventListener('click', ()=>close(o.alertOnly ? true : false));
+    setTimeout(()=>{ try{ el.querySelector('.sd-ok').focus({ preventScroll:true }); }catch(e){} }, 60);
+  });
+}
+function siteConfirm(message, o){ return _siteDialog(message, o); }
+function siteAlert(message, o){ return _siteDialog(message, { ...(o||{}), alertOnly:true, icon:(o&&o.icon)||'i' }); }
 
 // SUWATI MEN FASHION — Categories, product grid, banners, posts, ticker
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
@@ -1425,7 +1626,7 @@ function addToCart(item){
   if(existing){ existing.quantity += 1; }
   else{ cart.push(item); }
   saveCart();
-  alert(`"${item.name}" ကို ခြင်းထဲ ထည့်ပြီးပါပြီ`);
+  showSiteToast(`🛒 "${item.name}" ကို ခြင်းထဲ ထည့်ပြီးပါပြီ`);
 }
 
 function removeFromCart(idx){
@@ -1853,6 +2054,7 @@ function renderPromoOption(){
       <div class="modal-label" style="margin:0 0 6px;">🎟️ Promo Code ရှိပါသလား?</div>
       ${pr ? `
         <div class="promo-applied">✅ <b>${pr.code}</b> — ${pr.discount.toLocaleString()} ကျပ် လျှော့ပေးပါမည် (${pr.label})
+          <div class="promo-price"><s>${itemsSubtotal().toLocaleString()}</s><span class="promo-arrow">→</span><b>${Math.max(0, itemsSubtotal() - pr.discount).toLocaleString()} ကျပ်</b></div>
           <button type="button" class="promo-remove" onclick="removePromo()">ဖြုတ်မည်</button></div>` : `
         <div style="display:flex; gap:8px;">
           <input type="text" id="co-promo-input" placeholder="ဥပမာ TIKTOK10" style="text-transform:uppercase; flex:1; min-width:0;">
@@ -1873,6 +2075,7 @@ async function applyPromo(){
   if(!data || !data.ok){ msg.textContent = '❌ ' + ((data && data.message) || 'Promo Code မှားနေပါသည်'); return; }
   currentOrder.promo = { code: data.code, discount: Number(data.discount)||0, label: data.label };
   renderPromoOption();
+  const ap = document.querySelector('#co-promo-area .promo-applied'); if(ap){ ap.classList.add('fx-promo-in'); try{ if(window.fxConfetti) fxConfetti(ap, 18); }catch(e){} }
 }
 function removePromo(){ currentOrder.promo = null; renderPromoOption(); }
 function buildPromoRow(base){
@@ -2184,10 +2387,11 @@ async function getActualVariantStock(productName, size, color){
 }
 
 async function payWithWallet(){
-  if(!confirm(`Prepaid Card ဖြင့် ${currentOrder.total.toLocaleString()} ကျပ် ဝယ်မှာ သေချာပါသလား?`)) return;
+  // 🎫 SUWATI.PAY — Card လေး အောက်ကနေ တက်လာပြီး အတည်ပြုခိုင်း (Apple Pay ပုံစံ)
+  const payAnim = await prepaidPayAnim.confirm(currentOrder.total);
+  if(!payAnim) return;
   const btn = document.getElementById('pay-wallet-btn');
   btn.disabled = true; btn.textContent = 'လုပ်ဆောင်နေသည်...';
-  const payAnim = prepaidPayAnim.start(currentOrder.total);   // 🎫 Card လေး တက်လာ
 
   // Stock ကို အရင် Reserve
   const reservedItems = [];
@@ -2306,7 +2510,7 @@ async function submitOrder(opts){
       err.textContent = 'JPG, JPEG, PNG ပုံဖိုင်သာ တင်ပေးပါ';
       return;
     }
-  } else if(!confirm(`Order ကို အရင်တင်ပြီး ${(currentOrder.total - walletPart).toLocaleString()} ကျပ်ကို နောက်မှ လွှဲမှာ သေချာပါသလား?`)){
+  } else if(!(await siteConfirm(`Order ကို အရင်တင်ပြီး ${(currentOrder.total - walletPart).toLocaleString()} ကျပ်ကို နောက်မှ လွှဲမှာ သေချာပါသလား?`, { title:'ငွေ နောက်မှ လွှဲမည်', icon:'⏰', ok:'Order တင်မည်', cancel:'မတင်တော့ပါ' }))){
     return;
   }
 
@@ -3155,7 +3359,7 @@ function renderOrderHistoryList(){
 }
 
 async function deleteOrderHistoryItem(idx){
-  if(!confirm('ဒီ Order History ကို ဖျက်မှာ သေချာပါသလား? (ပြန်ယူလို့ မရပါ)')) return;
+  if(!(await siteConfirm('ဒီ Order History ကို ဖျက်မှာ သေချာပါသလား?\n(ပြန်ယူလို့ မရပါ)', { title:'ဖျက်မည်', icon:'🗑', danger:true, ok:'ဖျက်မည်' }))) return;
   const rows = orderGroupsForReceipt[idx];
   const ids = rows.map(r=>r.id);
   const { error } = await sb.rpc('hide_my_orders', { p_ids: ids.map(String) });
@@ -3165,7 +3369,7 @@ async function deleteOrderHistoryItem(idx){
 }
 
 async function deleteAllOrderHistory(){
-  if(!confirm('Order History အားလုံးကို ဖျက်မှာ သေချာပါသလား? (ပြန်ယူလို့ မရပါ)')) return;
+  if(!(await siteConfirm('Order History အားလုံးကို ဖျက်မှာ သေချာပါသလား?\n(ပြန်ယူလို့ မရပါ)', { title:'အားလုံး ဖျက်မည်', icon:'🗑', danger:true, ok:'အားလုံး ဖျက်မည်' }))) return;
   const { error } = await sb.rpc('hide_my_orders', { p_ids: null });
   if(error){ showSiteToast('ဖျက်၍ မရပါ — '+error.message); return; }
   showSiteToast('Order History အားလုံး ဖျက်ပြီးပါပြီ');
@@ -3511,7 +3715,7 @@ async function submitPayLaterProof(idx){
 async function cancelMyUnpaidOrder(idx){
   const rows = (window.orderGroupsForReceipt||[])[idx]; if(!rows) return;
   const info = payLaterInfo(rows);
-  if(!confirm('ဒီ Order ကို ပယ်ဖျက်မှာ သေချာပါသလား?' + (info.walletPaid ? `\nPrepaid Card ထဲ ${info.walletPaid.toLocaleString()} ကျပ် ပြန်ထည့်ပေးပါမည်` : ''))) return;
+  if(!(await siteConfirm('ဒီ Order ကို ပယ်ဖျက်မှာ သေချာပါသလား?' + (info.walletPaid ? `\nPrepaid Card ထဲ ${info.walletPaid.toLocaleString()} ကျပ် ပြန်ထည့်ပေးပါမည်` : ''), { title:'Order ပယ်ဖျက်မည်', icon:'✕', danger:true, ok:'ပယ်ဖျက်မည်', cancel:'မဖျက်တော့ပါ' }))) return;
   const { data: ok, error } = await sb.rpc('cancel_my_unpaid_order', { p_group: rows[0].order_group_id });
   if(error || !ok){ showSiteToast('ပယ်ဖျက်၍ မရပါ' + (error ? ' — ' + error.message : ' (Admin အတည်ပြုနေပြီ ဖြစ်နိုင်ပါသည်)')); openOrderHistory(); return; }
   showSiteToast('Order ပယ်ဖျက်ပြီးပါပြီ' + (info.walletPaid ? ' — Prepaid ငွေ ပြန်ထည့်ပြီးပါပြီ' : ''));
@@ -3560,15 +3764,17 @@ function updateTopupBonusPreview(){
   el.innerHTML = b ? `🎉 Bonus <b>${b.toLocaleString()} ကျပ်</b> ထပ်ရမည် — Card ထဲ စုစုပေါင်း <b>${(amt+b).toLocaleString()} ကျပ်</b> ဝင်ပါမည်` : '';
 }
 
-// SUWATI MEN FASHION — 🎫 Prepaid Card ငွေချေ Animation (Apple Pay ပုံစံ — Card လေး အောက်ကနေ တက်လာ)
-// အသုံးပြုပုံ: const a = prepaidPayAnim.start(18000); ... await a.success(remaining) / await a.fail()
+// SUWATI MEN FASHION — 🎫 Prepaid Card ငွေချေ (Apple Pay ပုံစံ — Card လေး အောက်ကနေ တက်လာ)
+// const pay = await prepaidPayAnim.confirm(18000)  → null (ပယ်) / controller
+// controller.success(remaining) / controller.fail(msg)
+// const pay = prepaidPayAnim.start(18000)          → Confirm မပါဘဲ ချက်ချင်း "ငွေချေနေသည်"
 
 const prepaidPayAnim = (function(){
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  function cardHtml(number, holder){
+  function cardHtml(holder){
     return `
       <div class="pc-wrap pp-card" aria-hidden="true">
         <div class="pc-inner">
@@ -3577,8 +3783,10 @@ const prepaidPayAnim = (function(){
             <div class="pc-stripe"><span>SUWATI ✕ SUWATI ✕ SUWATI ✕ SUWATI</span></div>
             <div class="pc-title">SUWATI<i>.</i>PREPAID CARD</div>
             <div class="pc-tags"><span class="pc-badge">MEN FASHION</span><span class="muted">NAY PYI TAW</span></div>
+            <div class="pc-bal-label">AVAILABLE BALANCE</div>
+            <div class="pc-bal pp-bal">—<small>MMK</small></div>
             <div class="pc-divider"></div>
-            <div class="pc-num">${esc(number)}</div>
+            <div class="pc-num">•••• •••• •••• ••••</div>
             <div class="pc-holder-label">CARDHOLDER NAME</div>
             <div class="pc-holder">${esc(holder)}</div>
           </div>
@@ -3587,19 +3795,26 @@ const prepaidPayAnim = (function(){
       </div>`;
   }
 
-  function start(amount){
+  function mount(amount, confirming){
     document.getElementById('pp-anim')?.remove();
     const cu = (typeof currentUser !== 'undefined') ? currentUser : null;
     const holder = (cu && (cu.user_metadata?.full_name || cu.email) || '').toUpperCase();
     const el = document.createElement('div');
-    el.id = 'pp-anim'; el.className = 'pp-anim';
-    el.setAttribute('role','status'); el.setAttribute('aria-live','polite');
+    el.id = 'pp-anim'; el.className = 'pp-anim' + (confirming ? ' confirming' : '');
+    el.setAttribute('role','dialog'); el.setAttribute('aria-modal','true'); el.setAttribute('aria-live','polite');
     el.innerHTML = `
       <div class="pp-backdrop"></div>
       <div class="pp-sheet">
         <div class="pp-grip"></div>
         <div class="pp-head"><span class="pp-brand">SUWATI<i>.</i>PAY</span><span class="pp-amt">${Number(amount||0).toLocaleString()} <small>ကျပ်</small></span></div>
-        ${cardHtml('•••• •••• •••• ••••', holder)}
+        ${cardHtml(holder)}
+        <div class="pp-confirm">
+          <div class="pp-line"><span>ငွေချေမည့် Card</span><b>SUWATI Prepaid</b></div>
+          <div class="pp-line"><span>ကျသင့်ငွေ</span><b>${Number(amount||0).toLocaleString()} ကျပ်</b></div>
+          <div class="pp-line pp-after"><span>ချေပြီးနောက် လက်ကျန်</span><b class="pp-after-v">…</b></div>
+          <button type="button" class="pp-pay-btn"><span class="pp-pay-ic">⚡</span> ငွေချေမည်</button>
+          <button type="button" class="pp-cancel-btn">မချေတော့ပါ</button>
+        </div>
         <div class="pp-status">
           <div class="pp-ring"><svg viewBox="0 0 52 52"><circle class="pp-ring-bg" cx="26" cy="26" r="23"/><circle class="pp-ring-spin" cx="26" cy="26" r="23"/><path class="pp-check" d="M15 27 l8 8 l15 -17"/><path class="pp-x" d="M18 18 L34 34 M34 18 L18 34"/></svg></div>
           <div class="pp-text">Prepaid Card ဖြင့် ငွေချေနေသည်...</div>
@@ -3609,36 +3824,73 @@ const prepaidPayAnim = (function(){
     document.body.appendChild(el);
     void el.offsetWidth;
     el.classList.add('show');
-    // Card နံပါတ်အစစ် (နောက်ဆုံး ၄ လုံး) ကို ဖြည့်
+
+    // Card နံပါတ် (နောက်ဆုံး ၄ လုံး) + လက်ကျန်ငွေ အစစ် ဖြည့်
     try{
       if(cu){
-        sb.from('wallets').select('card_number').eq('user_id', cu.id).maybeSingle().then(({ data })=>{
+        sb.from('wallets').select('card_number, balance').eq('user_id', cu.id).maybeSingle().then(({ data })=>{
+          if(!data) return;
           const n = el.querySelector('.pc-num');
-          if(n && data && data.card_number){ const d = String(data.card_number).replace(/\s/g,''); n.textContent = '•••• •••• •••• ' + d.slice(-4); }
+          if(n && data.card_number){ const d = String(data.card_number).replace(/\s/g,''); n.textContent = '•••• •••• •••• ' + d.slice(-4); }
+          const bal = Number(data.balance)||0;
+          const b = el.querySelector('.pp-bal'); if(b) b.innerHTML = `${bal.toLocaleString()}<small>MMK</small>`;
+          const a = el.querySelector('.pp-after-v'); if(a) a.textContent = `${Math.max(0, bal - Number(amount||0)).toLocaleString()} ကျပ်`;
         }).catch(()=>{});
       }
     }catch(e){}
+    return el;
+  }
 
+  function controller(el){
     const started = Date.now();
     async function finish(ok, sub){
-      const minShow = reduced() ? 300 : 1100;               // Card တက်လာတာ အနည်းဆုံး မြင်ရစေရန်
+      const minShow = reduced() ? 300 : 1000;
       const left = minShow - (Date.now() - started); if(left > 0) await wait(left);
       el.classList.add(ok ? 'done' : 'failed');
       el.querySelector('.pp-text').textContent = ok ? 'ငွေချေပြီးပါပြီ' : 'ငွေချေ၍ မရပါ';
       if(sub) el.querySelector('.pp-sub').textContent = sub;
+      if(ok){ const b = el.querySelector('.pp-bal'); if(b && sub && /\d/.test(sub)){ const v = sub.replace(/[^\d]/g,''); b.innerHTML = `${Number(v).toLocaleString()}<small>MMK</small>`; } }
       try{ if(navigator.vibrate) navigator.vibrate(ok ? 30 : [40,60,40]); }catch(e){}
       await wait(ok ? (reduced() ? 700 : 1500) : 1300);
       el.classList.remove('show'); el.classList.add('hide');
       await wait(reduced() ? 150 : 420);
       el.remove();
     }
-    el.addEventListener('click', ()=>{ if(el.classList.contains('done') || el.classList.contains('failed')){ el.remove(); } });
+    el.addEventListener('click', (e)=>{ if((el.classList.contains('done') || el.classList.contains('failed')) && e.target.closest('.pp-backdrop')) el.remove(); });
     return {
       success: (remaining) => finish(true, (remaining !== undefined && remaining !== null) ? `Card လက်ကျန်: ${Number(remaining).toLocaleString()} ကျပ်` : ''),
       fail: (msg) => finish(false, msg || ''),
     };
   }
-  return { start };
+
+  function start(amount){ return controller(mount(amount, false)); }
+
+  function confirm(amount){
+    const el = mount(amount, true);
+    return new Promise(resolve=>{
+      let settled = false;
+      const close = async ()=>{
+        if(settled) return; settled = true;
+        document.removeEventListener('keydown', onKey, true);
+        el.classList.remove('show'); el.classList.add('hide');
+        await wait(reduced() ? 150 : 420); el.remove(); resolve(null);
+      };
+      const pay = ()=>{
+        if(settled) return; settled = true;
+        document.removeEventListener('keydown', onKey, true);
+        el.classList.remove('confirming'); el.classList.add('paying');
+        try{ if(navigator.vibrate) navigator.vibrate(15); }catch(e){}
+        resolve(controller(el));
+      };
+      const onKey = (e)=>{ if(e.key === 'Escape'){ e.preventDefault(); close(); } else if(e.key === 'Enter'){ e.preventDefault(); pay(); } };
+      document.addEventListener('keydown', onKey, true);
+      el.querySelector('.pp-pay-btn').addEventListener('click', pay);
+      el.querySelector('.pp-cancel-btn').addEventListener('click', close);
+      el.querySelector('.pp-backdrop').addEventListener('click', close);
+      setTimeout(()=>{ try{ el.querySelector('.pp-pay-btn').focus({ preventScroll:true }); }catch(e){} }, 400);
+    });
+  }
+  return { start, confirm };
 })();
 
 // SUWATI MEN FASHION — Gift Card
@@ -3796,7 +4048,8 @@ async function submitRedeemGiftCard(){
   if(error || !data){ err.textContent = 'Error: ' + (error?.message || 'မသိသော Error'); return; }
   if(!data.success){ err.textContent = data.message; return; }
 
-  showSiteToast(`🎉 Gift Card အောင်မြင်ပါသည်! ${Number(data.amount).toLocaleString()} ကျပ် Wallet ထဲ ဝင်ပါပြီ`);
+  if(typeof fxGiftRedeem === 'function') await fxGiftRedeem(data.amount);
+  else showSiteToast(`🎉 Gift Card အောင်မြင်ပါသည်! ${Number(data.amount).toLocaleString()} ကျပ် Wallet ထဲ ဝင်ပါပြီ`);
   renderProfileView();
 }
 
@@ -3826,11 +4079,12 @@ async function openMyGiftCards(){
 
 async function useMyGiftCardNow(idx){
   const g = window.myGiftCardsCache[idx];
-  if(!confirm(`ဒီ Gift Card (${Number(g.amount).toLocaleString()} ကျပ်) ကို ယခုပဲ Wallet ထဲ ထည့်သုံးမှာ သေချာပါသလား?`)) return;
+  if(!(await siteConfirm(`ဒီ Gift Card (${Number(g.amount).toLocaleString()} ကျပ်) ကို ယခုပဲ Wallet ထဲ ထည့်သုံးမှာ သေချာပါသလား?`, { title:'Gift Card သုံးမည်', icon:'🎁', ok:'Wallet ထဲ ထည့်မည်' }))) return;
   const { data, error } = await sb.rpc('redeem_gift_card', { p_code: g.code });
   if(error || !data){ showSiteToast('Error: ' + (error?.message || 'မသိသော Error')); return; }
   if(!data.success){ showSiteToast(data.message); return; }
-  showSiteToast(`🎉 ${Number(data.amount).toLocaleString()} ကျပ် Wallet ထဲ ဝင်ပါပြီ`);
+  if(typeof fxGiftRedeem === 'function') await fxGiftRedeem(data.amount);
+  else showSiteToast(`🎉 ${Number(data.amount).toLocaleString()} ကျပ် Wallet ထဲ ဝင်ပါပြီ`);
   renderProfileView();
 }
 
@@ -4332,10 +4586,10 @@ async function detailPayWithPrepaidCard(){
 async function _legacyDetailPayWithPrepaidCard(){
   const p = currentDetailProduct;
   const stock = getCurrentVariantStock(p);
-  if(stock !== null && stock <= 0){ alert('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
+  if(stock !== null && stock <= 0){ siteAlert('ဒီ Size/အရောင် ရွေးချယ်မှု ကုန်သွားပါပြီ', { title:'SOLD OUT', icon:'!' }); return; }
 
   const totalConfirm = Number(p.price) * detailState.qty;
-  if(!confirm(`Prepaid Card ဖြင့် "${p.name}" — ${totalConfirm.toLocaleString()} ကျပ် ဝယ်မှာ သေချာပါသလား?`)) return;
+  if(!(await siteConfirm(`Prepaid Card ဖြင့် "${p.name}" — ${totalConfirm.toLocaleString()} ကျပ် ဝယ်မှာ သေချာပါသလား?`))) return;
 
   const btn = document.getElementById('detail-prepaid-btn');
   btn.disabled = true; btn.textContent = 'လုပ်ဆောင်နေသည်...';
@@ -4629,7 +4883,7 @@ function detailAddToCart(){
   const p = currentDetailProduct;
   const qEl = document.getElementById('detail-qty'); if(qEl) setDetailQtyValue(qEl.value);
   const stock = getCurrentVariantStock(p);
-  if(stock !== null && stock <= 0){ alert('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
+  if(stock !== null && stock <= 0){ siteAlert('ဒီ Size/အရောင် ရွေးချယ်မှု ကုန်သွားပါပြီ', { title:'SOLD OUT', icon:'!' }); return; }
   addToCart({
     name: p.name, price: Number(p.price),
     size: detailState.size, color: detailState.color,
@@ -4646,7 +4900,7 @@ function detailOrderNow(){
   const p = currentDetailProduct;
   const qEl = document.getElementById('detail-qty'); if(qEl) setDetailQtyValue(qEl.value);
   const stock = getCurrentVariantStock(p);
-  if(stock !== null && stock <= 0){ alert('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
+  if(stock !== null && stock <= 0){ siteAlert('ဒီ Size/အရောင် ရွေးချယ်မှု ကုန်သွားပါပြီ', { title:'SOLD OUT', icon:'!' }); return; }
   openCheckout([{
     name: p.name, price: Number(p.price),
     size: detailState.size, color: detailState.color,
@@ -4834,6 +5088,235 @@ window.__PWA_APP = { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)
       if(b){ b.classList.toggle('spin'); }
       return origToggle.apply(this, arguments);
     };
+  }
+})();
+
+// SUWATI MEN FASHION — ✨ Animation အပို (motion.js နောက်၊ boot.js မတိုင်ခင် Load)
+// ① Order တင်ပြီး: ✓ ဆွဲ + Confetti + Order ID တံဆိပ်  ② Order Track: အဆင့်လိုက် + 🚚
+// ③ Gift Card သုံး: ဘူးပွင့်ပြီး ငွေ Card ထဲ ဝင်  ④ Profile: ငွေတိုးရင် +ငွေ + ဒင်္ဂါး
+// ⑤ Promo: ဈေးဟောင်း ဖြတ် / မှားရင် ခါ  ⑦ Checkout အဆင့် ၁↔၂ ဘေးတိုက် ရွှေ့
+// ⑧ Form မှားရင် ခါ + အကွက် အနီ  ⑪ Website ဖွင့်ချိန် SUWATI Loader
+(function(){
+  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const $ = (s, r) => (r || document).querySelector(s);
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  window.fxReduce = reduce;
+
+  function restart(el, cls){ if(!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+  window.fxShake = el => restart(el, 'fx-shake');
+
+  // ---------- ① Confetti ----------
+  function confetti(host, n){
+    if(reduce || !host) return;
+    const box = document.createElement('div'); box.className = 'fx-confetti';
+    const colors = ['#D6FF3F', '#C13B1F', '#E9E4D8', '#141412', '#D6FF3F'];
+    for(let i = 0; i < (n || 46); i++){
+      const s = document.createElement('i');
+      const ang = (Math.random() * 140 + 200) * Math.PI / 180;       // အပေါ်ဘက် ပန်းကန်ပုံ
+      const dist = 90 + Math.random() * 170;
+      s.style.setProperty('--x', Math.cos(ang) * dist + 'px');
+      s.style.setProperty('--y', Math.sin(ang) * dist + 'px');
+      s.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+      s.style.setProperty('--d', (Math.random() * .25) + 's');
+      s.style.background = colors[i % colors.length];
+      if(i % 3 === 0) s.style.borderRadius = '50%';
+      if(i % 4 === 1){ s.style.width = '4px'; s.style.height = '12px'; }
+      box.appendChild(s);
+    }
+    host.appendChild(box);
+    setTimeout(() => box.remove(), 2600);
+  }
+  window.fxConfetti = confetti;
+
+  if(typeof window.renderCheckoutSuccess === 'function'){
+    const orig = window.renderCheckoutSuccess;
+    window.renderCheckoutSuccess = function(){
+      const r = orig.apply(this, arguments);
+      try{
+        const box = $('#checkout-modal-content .success-box');
+        if(box){
+          box.classList.add('fx-success');
+          const ck = box.querySelector('.big-check');
+          if(ck) ck.innerHTML = '<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><path d="M18 33 l9 9 l19 -21"/></svg>';
+          confetti(box, 50);
+          try{ if(navigator.vibrate) navigator.vibrate([20, 40, 20]); }catch(e){}
+        }
+      }catch(e){}
+      return r;
+    };
+  }
+
+  // ---------- ② Order Track ----------
+  if(typeof window.renderOrderTrackingResult === 'function'){
+    const orig = window.renderOrderTrackingResult;
+    window.renderOrderTrackingResult = function(rows){
+      const r = orig.apply(this, arguments);
+      try{
+        const tl = $('#checkout-modal-content .track-timeline');
+        if(tl){
+          tl.classList.add('fx-track');
+          tl.querySelectorAll('.track-step').forEach((s, i) => s.style.setProperty('--i', i));
+          const cur = tl.querySelector('.track-step.current');
+          const status = rows && rows[0] && rows[0].order_status;
+          if(cur && status === 'shipped'){
+            const truck = document.createElement('span');
+            truck.className = 'fx-truck'; truck.textContent = '🚚'; truck.setAttribute('aria-hidden', 'true');
+            cur.querySelector('.track-label')?.appendChild(truck);
+          }
+          if(status === 'delivered'){ const last = tl.querySelector('.track-step:last-child'); if(last) setTimeout(() => confetti(last, 26), 900); }
+        }
+      }catch(e){}
+      return r;
+    };
+  }
+
+  // ---------- ③ Gift Card သုံးပြီး — ဘူးပွင့် → ငွေ Card ထဲ ဝင် ----------
+  window.fxGiftRedeem = async function(amount){
+    const el = document.createElement('div');
+    el.className = 'fx-gift'; el.setAttribute('role', 'status');
+    el.innerHTML = `
+      <div class="fx-gift-bg"></div>
+      <div class="fx-gift-stage">
+        <div class="fx-gift-box"><div class="fx-gift-lid"></div><div class="fx-gift-body"></div><div class="fx-gift-ribbon"></div></div>
+        <div class="fx-gift-amt">+${Number(amount||0).toLocaleString()}<small>ကျပ်</small></div>
+        <div class="fx-gift-card"><span>SUWATI<i>.</i>PREPAID</span><b>CARD</b></div>
+        <div class="fx-gift-text">🎉 Gift Card ငွေ Prepaid Card ထဲ ဝင်ပါပြီ</div>
+      </div>`;
+    document.body.appendChild(el);
+    void el.offsetWidth; el.classList.add('show');
+    if(!reduce) setTimeout(() => confetti(el.querySelector('.fx-gift-stage'), 36), 650);
+    try{ if(navigator.vibrate) navigator.vibrate([20, 60, 30]); }catch(e){}
+    let closed = false;
+    const close = async () => { if(closed) return; closed = true; el.classList.add('hide'); await wait(350); el.remove(); };
+    el.addEventListener('click', close);
+    await wait(reduce ? 1200 : 2700);
+    await close();
+  };
+
+  // ---------- ④ Profile — လက်ကျန်ငွေ တိုးလာရင် ----------
+  if(typeof window.renderProfileView === 'function'){
+    const orig = window.renderProfileView;
+    window.renderProfileView = async function(){
+      const r = await orig.apply(this, arguments);
+      try{
+        const amtEl = $('#checkout-modal-content .wallet-balance-box .wb-amount');
+        const uid = (typeof currentUser !== 'undefined' && currentUser) ? currentUser.id : null;
+        if(amtEl && uid){
+          const now = Number(String(amtEl.textContent).replace(/[^\d]/g, '')) || 0;
+          const key = 'suwati_seen_bal_' + uid;
+          let prev = null; try{ const v = localStorage.getItem(key); prev = v === null ? null : Number(v); }catch(e){}
+          try{ localStorage.setItem(key, String(now)); }catch(e){}
+          if(prev !== null && now > prev){
+            const diff = now - prev, box = amtEl.closest('.wallet-balance-box');
+            box.classList.add('fx-bal-up');
+            const plus = document.createElement('div'); plus.className = 'fx-plus'; plus.textContent = '+' + diff.toLocaleString() + ' ကျပ်';
+            box.appendChild(plus);
+            if(!reduce){
+              for(let i = 0; i < 9; i++){
+                const c = document.createElement('span'); c.className = 'fx-coin';
+                c.style.left = (12 + Math.random() * 76) + '%';
+                c.style.setProperty('--d', (i * .09) + 's');
+                box.appendChild(c);
+              }
+              const t0 = performance.now() + 250, dur = 1000;
+              const tick = (t) => { const k = Math.min(1, Math.max(0, (t - t0) / dur)); const e = 1 - Math.pow(1 - k, 3);
+                amtEl.textContent = Math.round(prev + diff * e).toLocaleString() + ' ကျပ်'; if(k < 1) requestAnimationFrame(tick); };
+              requestAnimationFrame(tick);
+            }
+            setTimeout(() => { box.querySelectorAll('.fx-coin, .fx-plus').forEach(x => x.remove()); box.classList.remove('fx-bal-up'); }, 3200);
+          }
+        }
+      }catch(e){}
+      return r;
+    };
+  }
+
+  // ---------- ⑦ Checkout အဆင့် ၁ ↔ ၂ ဘေးတိုက် ရွှေ့ ----------
+  let coStep = 0;
+  function slide(dir){
+    if(reduce) return;
+    const c = $('#checkout-modal-content'); if(!c) return;
+    c.classList.remove('fx-slide-left', 'fx-slide-right'); void c.offsetWidth;
+    c.classList.add(dir === 'left' ? 'fx-slide-left' : 'fx-slide-right');
+    setTimeout(() => c.classList.remove('fx-slide-left', 'fx-slide-right'), 500);
+  }
+  if(typeof window.renderCheckoutStep1 === 'function'){
+    const o1 = window.renderCheckoutStep1;
+    window.renderCheckoutStep1 = function(){ const back = coStep === 2; const r = o1.apply(this, arguments); coStep = 1; if(back) slide('right'); return r; };
+  }
+  if(typeof window.renderCheckoutStep2 === 'function'){
+    const o2 = window.renderCheckoutStep2;
+    window.renderCheckoutStep2 = async function(){ const fwd = coStep === 1; const r = await o2.apply(this, arguments); coStep = 2; if(fwd) slide('left'); return r; };
+  }
+  if(typeof window.closeCheckout === 'function'){
+    const oc = window.closeCheckout;
+    window.closeCheckout = function(){ coStep = 0; return oc.apply(this, arguments); };
+  }
+
+  // ---------- ⑧ Form မှားရင် ခါ + ဖြည့်ရမည့် အကွက် အနီ ----------
+  const FIELD_HINTS = {
+    'co-error-1': ['#co-name', '#co-phone', '#co-region', '#co-township', '#co-address'],
+    'auth-error': ['#auth-modal input', '#checkout-modal-content input'],
+    'co-error-2': ['#co-screenshot'],
+    'topup-error': ['#topup-amount', '#topup-screenshot'],
+    'pl-error': ['#pl-screenshot'],
+    'redeem-error': ['#redeem-code-input'],
+  };
+  function markInvalid(errEl){
+    fxShake(errEl);
+    const sels = FIELD_HINTS[errEl.id];
+    let target = null;
+    if(sels){
+      for(const sel of sels){
+        const els = document.querySelectorAll(sel);
+        for(const f of els){
+          if(f.offsetParent === null) continue;
+          const empty = f.type === 'file' ? !(f.files && f.files.length) : !String(f.value || '').trim();
+          if(empty){ target = f; break; }
+        }
+        if(target) break;
+      }
+    }
+    if(!target && errEl.id === 'co-promo-msg') target = document.getElementById('co-promo-input');
+    if(target){
+      const vis = target.type === 'file' ? (target.closest('.upload-box') || target) : target;
+      vis.classList.add('fx-invalid'); fxShake(vis);
+      const clear = () => { vis.classList.remove('fx-invalid'); target.removeEventListener('input', clear); target.removeEventListener('change', clear); };
+      target.addEventListener('input', clear); target.addEventListener('change', clear);
+      try{ vis.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); }catch(e){}
+    }
+  }
+  const lastErr = new WeakMap();
+  const obs = new MutationObserver(muts => {
+    const seen = new Set();
+    muts.forEach(m => {
+      let n = m.target.nodeType === 3 ? m.target.parentElement : m.target;
+      const el = n && n.closest && n.closest('.form-error, .promo-msg');
+      if(el && !seen.has(el)){ seen.add(el); const t = el.textContent.trim(); if(t && t !== lastErr.get(el)){ markInvalid(el); } lastErr.set(el, t); }
+    });
+  });
+  function startObs(){ obs.observe(document.body, { childList: true, subtree: true, characterData: true }); }
+  if(document.body) startObs(); else document.addEventListener('DOMContentLoaded', startObs);
+  // တူညီတဲ့ Error ကို ထပ်နှိပ်ရင်လည်း ခါစေရန် — ခလုတ်နှိပ်တိုင်း မှတ်ထားတာ ရှင်း
+  document.addEventListener('click', e => {
+    if(e.target.closest('.submit-order-btn, .promo-apply, button')){
+      document.querySelectorAll('.form-error, .promo-msg').forEach(el => lastErr.delete(el));
+    }
+  }, true);
+
+  // ---------- ⑪ SUWATI Loader ပိတ် ----------
+  const loader = document.getElementById('fx-loader');
+  if(loader){
+    const shownAt = window.__fxLoaderAt || Date.now();
+    let done = false;
+    const hide = () => {
+      if(done) return; done = true;
+      const left = Math.max(0, (reduce ? 200 : 1100) - (Date.now() - shownAt));
+      setTimeout(() => { loader.classList.add('out'); setTimeout(() => loader.remove(), 650); }, left);
+    };
+    window.fxHideLoader = hide;
+    if(document.readyState === 'complete') hide(); else window.addEventListener('load', hide);
+    setTimeout(hide, 3500);   // အင်တာနက် နှေးရင်လည်း ၃.၅ စက္ကန့်ထက် မစောင့်စေ
   }
 })();
 

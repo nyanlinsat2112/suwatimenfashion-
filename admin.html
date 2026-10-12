@@ -444,6 +444,24 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 @media (max-width:420px){ .denom-row{grid-template-columns:84px minmax(0,1fr) 80px;} }
 .cash-close-table td[colspan]{white-space:normal !important; text-align:left !important;}
 #payment-settings-card .hint{margin-top:8px;}
+
+/* ===== ✨ Admin FX — Order အသစ် ===== */
+#admin-sound-btn{ min-width:44px; }
+#fx-order-banner{ position:fixed; left:50%; top:12px; z-index:10000; width:min(460px, calc(100% - 24px)); transform:translate(-50%, -140%);
+  display:flex; align-items:center; gap:12px; padding:12px 14px; background:#D6FF3F; color:#141412; border:3px solid #141412; box-shadow:6px 6px 0 #141412;
+  transition:transform .5s cubic-bezier(.2,1.4,.4,1); cursor:pointer; }
+#fx-order-banner.show{ transform:translate(-50%, 0); }
+.fob-bell{ font-size:26px; display:inline-block; transform-origin:50% 0; animation:fobRing 1s ease .3s 3; }
+.fob-txt{ flex:1; min-width:0; display:flex; flex-direction:column; }
+.fob-txt b{ font-family:'Anton',sans-serif; font-weight:400; font-size:17px; letter-spacing:.04em; }
+.fob-txt span{ font-family:'Space Mono',monospace; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fob-go{ background:#141412; color:#D6FF3F; border:none; padding:10px 12px; font-weight:700; cursor:pointer; white-space:nowrap; }
+@keyframes fobRing{ 0%,100%{ transform:rotate(0); } 15%{ transform:rotate(18deg); } 30%{ transform:rotate(-16deg); } 45%{ transform:rotate(12deg); } 60%{ transform:rotate(-8deg); } 75%{ transform:rotate(4deg); } }
+.order-card.fx-new-card{ animation:fxCardDrop .55s cubic-bezier(.2,1.3,.4,1) calc(var(--i,0) * .08s) backwards, fxCardFlash 1.1s ease .5s 3; }
+@keyframes fxCardDrop{ from{ opacity:0; transform:translateY(-24px) scale(.97); } }
+@keyframes fxCardFlash{ 0%,100%{ box-shadow:0 0 0 0 rgba(214,255,63,0); } 40%{ box-shadow:0 0 0 4px #D6FF3F, 0 0 24px rgba(214,255,63,.5); } }
+@media (prefers-reduced-motion: reduce){ #fx-order-banner{ transition:none; } .fob-bell, .order-card.fx-new-card{ animation:none !important; } }
+@media (max-width:560px){ #admin-email-display{ flex-basis:100%; } }
 </style>
 </head>
 <body>
@@ -2994,6 +3012,7 @@ function subscribeToOrderRealtime(){
       if(payload.new.sale_channel === 'in_store') { loadOrders(); loadInventory(); return; } // In-store Sale ဖြစ်ရင် Notification မလို
       playNotificationSound();
       showToast('🔔 Order အသစ် ဝင်လာပါပြီ!');
+      try{ fxAdminNewOrder(payload.new); }catch(e){}
       refreshAllAttentionStates();
 
       loadOrders();
@@ -3011,7 +3030,12 @@ function subscribeToOrderRealtime(){
         loadOrders();
         loadDeliveryQueue();
       }
-      // Order တစ်ခု "အတည်ပြုပြီး" ဖြစ်လာလို့ ပို့ဆောင်ဖို့ အသင့်ဖြစ်လာရင် Delivery Tab ကို သတိပေး
+      // ③ Customer က ငွေနောက်မှလွှဲ Order အတွက် Screenshot တင်လိုက်ရင် သတိပေး
+      if(payload.new.order_status === 'pending_verification' && payload.old && payload.old.order_status === 'awaiting_payment'){
+        try{ fxAdminPaymentProof(payload.new); }catch(e){}
+        loadOrders();
+      }
+            // Order တစ်ခု "အတည်ပြုပြီး" ဖြစ်လာလို့ ပို့ဆောင်ဖို့ အသင့်ဖြစ်လာရင် Delivery Tab ကို သတိပေး
       if(payload.new.order_status === 'confirmed' && payload.old.order_status !== 'confirmed' && payload.new.sale_channel !== 'in_store'){
         loadDeliveryQueue();
       }
@@ -5800,6 +5824,91 @@ function loadPaymentSettings(data){
     logActivity('payment_settings_updated', `PayLater:${payload.pay_later_enabled?'ON':'OFF'} ${hours}h · Bonus:${enabled?'ON':'OFF'} (${tiers.length} tier)`);
     showToast('✅ ငွေပေးချေမှု Settings သိမ်းပြီးပါပြီ');
   });
+})();
+
+// ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
+(function(){
+  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const SOUND_KEY = 'suwati_admin_sound';
+  const soundOn = () => { try{ return localStorage.getItem(SOUND_KEY) !== 'off'; }catch(e){ return true; } };
+
+  // 🔔/🔕 ခလုတ် (Light/Dark ခလုတ်ဘေးမှာ)
+  const themeBtn = document.getElementById('admin-theme-btn');
+  if(themeBtn && !document.getElementById('admin-sound-btn')){
+    const b = document.createElement('button');
+    b.id = 'admin-sound-btn'; b.className = 'secondary'; b.type = 'button';
+    const sync = () => { b.textContent = soundOn() ? '🔔' : '🔕'; b.title = soundOn() ? 'Order အသစ် အသံ — ဖွင့်ထား' : 'Order အသစ် အသံ — ပိတ်ထား'; b.setAttribute('aria-label', b.title); };
+    b.addEventListener('click', () => {
+      try{ localStorage.setItem(SOUND_KEY, soundOn() ? 'off' : 'on'); }catch(e){}
+      sync(); showToast(soundOn() ? '🔔 Order အသစ် အသံ ဖွင့်ပြီး' : '🔕 Order အသစ် အသံ ပိတ်ပြီး');
+      if(soundOn()) chime();
+    });
+    sync();
+    themeBtn.parentNode.insertBefore(b, themeBtn);
+  }
+
+  // အသံ — iPhone မှာ ပထမဆုံး နှိပ်ချိန်မှာ AudioContext ကို ဖွင့်ထားမှ နောက်မှ မြည်နိုင်
+  let ctx = null;
+  function getCtx(){ try{ if(!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)(); if(ctx.state === 'suspended') ctx.resume(); }catch(e){} return ctx; }
+  document.addEventListener('pointerdown', getCtx, { once:true, capture:true });
+  function chime(){
+    const c = getCtx(); if(!c) return;
+    [[1046.5, 0], [1318.5, .12], [1568, .24]].forEach(([f, t])=>{
+      const o = c.createOscillator(), g = c.createGain();
+      o.type = 'triangle'; o.frequency.value = f; o.connect(g); g.connect(c.destination);
+      const s = c.currentTime + t;
+      g.gain.setValueAtTime(0.0001, s); g.gain.exponentialRampToValueAtTime(0.22, s + .02); g.gain.exponentialRampToValueAtTime(0.0001, s + .45);
+      o.start(s); o.stop(s + .5);
+    });
+  }
+  window.playNotificationSound = function(){ if(soundOn()) chime(); };
+
+  // Order အသစ် Banner (Group တစ်ခုကို တစ်ကြိမ်သာ)
+  const bannered = new Set();
+  window.fxAdminNewOrder = function(row){
+    const gid = String(row.order_group_id || row.id || '');
+    if(bannered.has(gid)) return; bannered.add(gid);
+    document.getElementById('fx-order-banner')?.remove();
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const el = document.createElement('div');
+    el.id = 'fx-order-banner'; el.setAttribute('role', 'alert');
+    el.innerHTML = `
+      <span class="fob-bell">🔔</span>
+      <div class="fob-txt"><b>${row.order_status === 'awaiting_payment' ? 'ORDER အသစ် (ငွေနောက်မှလွှဲ)' : 'ORDER အသစ်'}</b>
+        <span>${esc(row.customer_name || 'Customer')} · ${esc(row.product_name || '')} · #${esc(gid.slice(0,8).toUpperCase())}</span></div>
+      <button type="button" class="fob-go">ကြည့်မည်</button>`;
+    document.body.appendChild(el);
+    void el.offsetWidth; el.classList.add('show');
+    const close = () => { el.classList.remove('show'); setTimeout(() => el.remove(), 400); };
+    el.querySelector('.fob-go').addEventListener('click', (e) => { e.stopPropagation(); document.getElementById('orders-tab-btn')?.click(); close(); });
+    el.addEventListener('click', close);
+    setTimeout(close, 7000);
+  };
+  window.fxAdminPaymentProof = function(row){
+    const gid = String(row.order_group_id || row.id || '');
+    const key = 'proof-' + gid; if(bannered.has(key)) return; bannered.add(key);
+    window.playNotificationSound();
+    showToast(`💸 ${row.customer_name || 'Customer'} — ငွေလွှဲ Screenshot ဝင်လာပါပြီ (#${gid.slice(0,8).toUpperCase()})`);
+  };
+
+  // Online Orders စာရင်းထဲ အသစ်ရောက်လာတဲ့ Card များ ဖျတ်ခနဲ လင်း
+  let seenCards = null;
+  if(typeof window.loadOrders === 'function'){
+    const orig = window.loadOrders;
+    window.loadOrders = async function(){
+      const r = await orig.apply(this, arguments);
+      try{
+        const cards = [...document.querySelectorAll('#orders-list .order-card')];
+        const idOf = c => (c.querySelector('.oid')?.textContent || '').match(/#([0-9A-F]{8})/i)?.[1] || '';
+        if(seenCards === null){ seenCards = new Set(cards.map(idOf)); }
+        else{
+          let i = 0;
+          cards.forEach(c => { const id = idOf(c); if(id && !seenCards.has(id)){ seenCards.add(id); if(!reduce){ c.style.setProperty('--i', i++); c.classList.add('fx-new-card'); } } });
+        }
+      }catch(e){}
+      return r;
+    };
+  }
 })();
 
 
