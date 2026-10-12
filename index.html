@@ -865,25 +865,58 @@ html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color
 @keyframes fxPulse{ 0%{ box-shadow:0 0 0 0 rgba(193,59,31,.55); } 80%,100%{ box-shadow:0 0 0 10px rgba(193,59,31,0); } }
 @keyframes fxDrive{ 0%,100%{ transform:translateX(0) rotate(0); } 25%{ transform:translateX(8px) rotate(-3deg); } 50%{ transform:translateX(16px) rotate(0); } 75%{ transform:translateX(8px) rotate(2deg); } }
 
-/* ③ Gift Card ဘူးပွင့် */
+/* ③ Gift Card — လက်ဆောင်ဘူး ပွင့် */
 .fx-gift{ position:fixed; inset:0; z-index:10070; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-.fx-gift-bg{ position:absolute; inset:0; background:rgba(10,10,9,.72); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); opacity:0; transition:opacity .3s; }
+.fx-gift-bg{ position:absolute; inset:0; background:radial-gradient(circle at 50% 42%, rgba(214,255,63,.16), rgba(10,10,9,.82) 60%); -webkit-backdrop-filter:blur(7px); backdrop-filter:blur(7px); opacity:0; transition:opacity .35s; }
 .fx-gift.show .fx-gift-bg{ opacity:1; } .fx-gift.hide{ opacity:0; transition:opacity .3s; }
-.fx-gift-stage{ position:relative; width:260px; height:330px; text-align:center; color:#E9E4D8; }
-.fx-gift-box{ position:absolute; left:50%; top:70px; width:110px; height:96px; margin-left:-55px; animation:fxBoxIn .5s cubic-bezier(.2,1.5,.4,1) backwards, fxBoxShake .4s ease .5s; }
-.fx-gift-body{ position:absolute; left:6px; right:6px; bottom:0; height:70px; background:#C13B1F; border:3px solid #141412; }
-.fx-gift-lid{ position:absolute; left:0; right:0; top:8px; height:22px; background:#D6FF3F; border:3px solid #141412; z-index:2; animation:fxLid .6s cubic-bezier(.3,1.4,.5,1) .85s forwards; }
-.fx-gift-ribbon{ position:absolute; left:50%; top:8px; bottom:0; width:14px; margin-left:-7px; background:#D6FF3F; border-left:3px solid #141412; border-right:3px solid #141412; z-index:1; }
-.fx-gift-amt{ position:absolute; left:0; right:0; top:90px; font-family:'Archivo Black','Anton',sans-serif; font-size:34px; color:#D6FF3F; opacity:0; animation:fxAmt 1.5s cubic-bezier(.3,1,.4,1) 1s forwards; }
-.fx-gift-amt small{ font-family:'Noto Sans Myanmar',sans-serif; font-size:14px; color:#E9E4D8; margin-left:4px; }
-.fx-gift-card{ position:absolute; left:50%; top:200px; width:170px; height:104px; margin-left:-85px; border-radius:12px; background:#141412; border:2px solid #D6FF3F; box-shadow:0 10px 30px rgba(0,0,0,.4);
-  display:flex; flex-direction:column; justify-content:center; font-family:'Archivo Black','Anton',sans-serif; color:#D6FF3F; font-size:14px; animation:fxCardIn .5s cubic-bezier(.2,1.4,.4,1) .3s backwards, fxCardGulp .4s ease 2.15s; }
+.fx-gift-stage{ position:relative; width:280px; height:380px; text-align:center; color:#E9E4D8; }
+/* အလင်းတန်းများ */
+.fx-gift-rays{ position:absolute; left:50%; top:150px; width:420px; height:420px; margin:-210px 0 0 -210px; border-radius:50%; opacity:0; pointer-events:none;
+  background:repeating-conic-gradient(from 0deg, rgba(214,255,63,.32) 0deg 9deg, transparent 9deg 24deg);
+  -webkit-mask:radial-gradient(circle, #000 18%, transparent 68%); mask:radial-gradient(circle, #000 18%, transparent 68%);
+  animation:fgRays 3.2s ease 1.05s forwards; }
+/* ဘူး */
+.fx-gift-box{ position:absolute; left:50%; top:96px; width:150px; height:150px; margin-left:-75px; transform-origin:50% 100%;
+  animation:fgDrop .7s cubic-bezier(.25,1.4,.45,1) backwards, fgWiggle .5s ease .72s; }
+.fx-gift-shadow{ position:absolute; left:8px; right:8px; bottom:-14px; height:16px; border-radius:50%; background:rgba(0,0,0,.45); filter:blur(4px); animation:fgShadow .7s cubic-bezier(.25,1.4,.45,1) backwards; }
+.fx-gift-body{ position:absolute; left:10px; right:10px; bottom:0; height:96px; border:3px solid #141412; border-radius:4px 4px 8px 8px; overflow:hidden;
+  background:linear-gradient(90deg, rgba(0,0,0,.22), transparent 18%, transparent 78%, rgba(0,0,0,.28)),
+             repeating-linear-gradient(135deg, #C13B1F 0 12px, #b23419 12px 24px); box-shadow:inset 0 10px 0 rgba(0,0,0,.18); }
+.fx-gift-body .fgb-rib-v{ position:absolute; left:50%; top:0; bottom:0; width:22px; margin-left:-11px; background:linear-gradient(90deg, #b8e02a, #D6FF3F 40%, #eaff8f 55%, #D6FF3F 70%, #b8e02a); border-left:2.5px solid #141412; border-right:2.5px solid #141412; }
+.fx-gift-body .fgb-tag{ position:absolute; right:8px; bottom:10px; background:#E9E4D8; color:#141412; font:700 9px 'Space Mono',monospace; letter-spacing:.08em; padding:2px 5px; border:2px solid #141412; transform:rotate(-8deg); }
+.fx-gift-lid{ position:absolute; left:0; right:0; top:28px; height:30px; z-index:3; border:3px solid #141412; border-radius:5px;
+  background:linear-gradient(180deg, #e04d2c, #C13B1F 70%, #a52f15); box-shadow:0 5px 0 rgba(0,0,0,.25);
+  transform-origin:15% 100%; animation:fgLid .75s cubic-bezier(.3,1.3,.5,1) 1.1s forwards; }
+.fx-gift-lid .fgl-rib{ position:absolute; left:50%; top:-3px; bottom:-3px; width:26px; margin-left:-13px; background:linear-gradient(90deg, #b8e02a, #D6FF3F 40%, #eaff8f 55%, #D6FF3F 70%, #b8e02a); border-left:2.5px solid #141412; border-right:2.5px solid #141412; }
+/* ဖဲပြားအဖုံး (Bow) */
+.fx-gift-bow{ position:absolute; left:50%; bottom:26px; width:0; height:0; }
+.fx-gift-bow b{ position:absolute; display:block; border:3px solid #141412; background:linear-gradient(135deg, #eaff8f, #D6FF3F 45%, #b8e02a); }
+.fx-gift-bow .l{ width:38px; height:28px; left:-40px; bottom:-4px; border-radius:60% 10% 60% 60%; transform:rotate(-18deg); transform-origin:100% 100%; }
+.fx-gift-bow .r{ width:38px; height:28px; left:2px; bottom:-4px; border-radius:10% 60% 60% 60%; transform:rotate(18deg); transform-origin:0 100%; }
+.fx-gift-bow .k{ width:18px; height:18px; left:-9px; bottom:-6px; border-radius:6px; z-index:2; }
+.fx-gift-bow .t1, .fx-gift-bow .t2{ width:10px; height:24px; bottom:-26px; border-radius:0 0 3px 3px; z-index:1; }
+.fx-gift-bow .t1{ left:-14px; transform:rotate(18deg); } .fx-gift-bow .t2{ left:4px; transform:rotate(-18deg); }
+.fx-gift-box .fgb-glow{ position:absolute; left:20px; right:20px; top:40px; height:30px; border-radius:50%; background:radial-gradient(closest-side, #f6ffb0, rgba(214,255,63,.6), transparent); opacity:0; filter:blur(3px); animation:fgGlow 1.6s ease 1.15s forwards; z-index:2; }
+/* ကြယ်လေးများ */
+.fx-gift-spark{ position:absolute; color:#D6FF3F; font-size:16px; opacity:0; animation:fgSpark 1.2s ease var(--d) 2; }
+/* ငွေ + Card */
+.fx-gift-amt{ position:absolute; left:0; right:0; top:108px; font-family:'Archivo Black','Anton',sans-serif; font-size:38px; color:#D6FF3F; opacity:0; z-index:4;
+  text-shadow:0 3px 0 #141412, 0 0 18px rgba(214,255,63,.55); animation:fgAmt 1.7s cubic-bezier(.3,1,.4,1) 1.2s forwards; }
+.fx-gift-amt small{ font-family:'Noto Sans Myanmar',sans-serif; font-size:14px; color:#E9E4D8; margin-left:4px; text-shadow:none; }
+.fx-gift-card{ position:absolute; left:50%; top:262px; width:178px; height:108px; margin-left:-89px; border-radius:12px; background:#141412; border:2px solid #D6FF3F;
+  background-image:linear-gradient(rgba(214,255,63,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(214,255,63,.08) 1px, transparent 1px); background-size:12px 12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.45); display:flex; flex-direction:column; justify-content:center; font-family:'Archivo Black','Anton',sans-serif; color:#D6FF3F; font-size:14px; z-index:3;
+  animation:fxCardIn .55s cubic-bezier(.2,1.4,.4,1) .35s backwards, fxCardGulp .45s ease 2.6s; }
 .fx-gift-card i{ font-style:normal; color:#E9E4D8; } .fx-gift-card b{ font-size:22px; color:#E9E4D8; font-weight:400; }
-.fx-gift-text{ position:absolute; left:-20px; right:-20px; bottom:0; font-weight:700; font-size:15px; animation:fxUp .5s ease 1.6s backwards; }
-@keyframes fxBoxIn{ from{ transform:scale(0) rotate(-20deg); } }
-@keyframes fxBoxShake{ 25%{ transform:rotate(-8deg); } 75%{ transform:rotate(8deg); } }
-@keyframes fxLid{ to{ transform:translate(30px,-70px) rotate(35deg); opacity:0; } }
-@keyframes fxAmt{ 0%{ opacity:0; transform:translateY(20px) scale(.5); } 35%{ opacity:1; transform:translateY(-40px) scale(1.15); } 70%{ opacity:1; transform:translateY(-40px) scale(1); } 100%{ opacity:0; transform:translateY(130px) scale(.4); } }
+.fx-gift-text{ position:absolute; left:-24px; right:-24px; bottom:-34px; font-weight:700; font-size:15px; animation:fxUp .5s ease 2s backwards; }
+@keyframes fgDrop{ 0%{ transform:translateY(-260px) scale(.7) rotate(-14deg); opacity:0; } 60%{ opacity:1; } 100%{ transform:none; } }
+@keyframes fgShadow{ 0%{ transform:scale(.3); opacity:0; } }
+@keyframes fgWiggle{ 0%,100%{ transform:none; } 20%{ transform:rotate(-7deg) scale(1.03,.97); } 45%{ transform:rotate(6deg); } 70%{ transform:rotate(-3deg); } }
+@keyframes fgLid{ 0%{ transform:none; } 35%{ transform:translateY(-34px) rotate(-6deg); } 100%{ transform:translate(-62px,-118px) rotate(-38deg); opacity:0; } }
+@keyframes fgGlow{ 0%{ opacity:0; transform:scaleY(.4); } 25%{ opacity:1; transform:scaleY(1.6); } 100%{ opacity:0; transform:scaleY(1); } }
+@keyframes fgRays{ 0%{ opacity:0; transform:rotate(0) scale(.3); } 20%{ opacity:1; } 100%{ opacity:0; transform:rotate(80deg) scale(1.1); } }
+@keyframes fgSpark{ 0%{ opacity:0; transform:scale(.2) rotate(0); } 50%{ opacity:1; transform:scale(1.2) rotate(90deg); } 100%{ opacity:0; transform:scale(.4) rotate(180deg); } }
+@keyframes fgAmt{ 0%{ opacity:0; transform:translateY(30px) scale(.4); } 30%{ opacity:1; transform:translateY(-58px) scale(1.18); } 68%{ opacity:1; transform:translateY(-58px) scale(1); } 100%{ opacity:0; transform:translateY(176px) scale(.35); } }
 @keyframes fxCardIn{ from{ opacity:0; transform:translateY(60px); } }
 @keyframes fxCardGulp{ 50%{ transform:scale(1.12); box-shadow:0 0 0 8px rgba(214,255,63,.35); } }
 
@@ -930,8 +963,37 @@ html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color
 @media (prefers-reduced-motion: reduce){
   .fx-shake, .fx-success *, .fx-track *, .fx-truck, .fx-gift *, .fx-bal-up, .fx-plus, .fx-coin, .fx-promo-in, .fx-promo-in *, .fx-slide-left, .fx-slide-right, #fx-loader *{ animation:none !important; }
   .fx-success .big-check circle, .fx-success .big-check path{ stroke-dashoffset:0; }
-  .fx-gift-lid{ display:none; } .fx-gift-amt{ opacity:1; top:20px; } .fx-coin{ display:none; }
+  .fx-gift-lid, .fx-gift-rays, .fx-gift-spark{ display:none; } .fx-gift-amt{ opacity:1; top:20px; } .fx-coin{ display:none; }
 }
+.fx-gift-stage > .fx-confetti{ top:130px; }
+
+/* ⑥ Cart */
+.fx-cart-in .cart-row{ animation:fxCartIn .42s cubic-bezier(.2,1.2,.4,1) calc(var(--i,0) * .08s) backwards; }
+.fx-cart-in .order-summary-line.total, .fx-cart-in .submit-order-btn{ animation:fxUp .4s ease .25s backwards; }
+.fx-swipe-out{ animation:fxSwipe .38s ease forwards; pointer-events:none; }
+.cart-qty{ display:inline-block; min-width:14px; text-align:center; font-weight:700; color:var(--ink); }
+.fx-bump{ animation:fxBump .35s cubic-bezier(.3,1.8,.5,1); }
+.fx-flash{ animation:fxFlash .6s ease; }
+@keyframes fxCartIn{ from{ opacity:0; transform:translateX(36px); } }
+@keyframes fxSwipe{ to{ opacity:0; transform:translateX(110%); } }
+@keyframes fxBump{ 40%{ transform:scale(1.7); color:var(--rust); } }
+@keyframes fxFlash{ 30%{ background:var(--acid); color:#141412; } }
+
+/* ⑨ ခြင်းထဲ ထည့်ပြီး ✓ */
+.fx-added{ position:relative; }
+.fx-added::after{ content:'✓'; position:absolute; inset:-2px; display:flex; align-items:center; justify-content:center; background:var(--acid); color:#141412;
+  font-size:20px; font-weight:800; z-index:2; animation:fxAddPop .4s cubic-bezier(.3,1.7,.5,1); }
+@keyframes fxAddPop{ from{ transform:scale(.3); opacity:0; } }
+
+/* ⑩ Chat */
+.chat-bubble.fx-pop{ animation:fxPop .38s cubic-bezier(.3,1.6,.5,1) backwards; transform-origin:bottom left; }
+.chat-bubble.customer.fx-pop{ transform-origin:bottom right; }
+.fx-typing{ display:inline-flex !important; gap:5px; align-items:center; width:auto; }
+.fx-typing i{ width:7px; height:7px; border-radius:50%; background:currentColor; opacity:.5; animation:fxDot 1s ease-in-out infinite; }
+.fx-typing i:nth-child(2){ animation-delay:.15s; } .fx-typing i:nth-child(3){ animation-delay:.3s; }
+@keyframes fxPop{ from{ opacity:0; transform:scale(.4); } }
+@keyframes fxDot{ 0%,60%,100%{ transform:translateY(0); opacity:.35; } 30%{ transform:translateY(-5px); opacity:1; } }
+@media (prefers-reduced-motion: reduce){ .fx-cart-in *, .fx-swipe-out, .fx-bump, .fx-flash, .fx-added::after, .chat-bubble.fx-pop, .fx-typing i{ animation:none !important; } }
 </style>
 </head>
 <body>
@@ -1629,19 +1691,25 @@ function addToCart(item){
   showSiteToast(`🛒 "${item.name}" ကို ခြင်းထဲ ထည့်ပြီးပါပြီ`);
 }
 
+// ⑥ Cart Animation — ဖွင့်ရင် တစ်ခုချင်း ဝင်၊ အရေအတွက် ပြောင်းရင် ခုန်၊ ဖျက်ရင် ဘေးကို လွင့်
+let _cartFx = null;
 function removeFromCart(idx){
-  cart.splice(idx,1);
-  saveCart();
-  renderCartDrawer();
+  const row = document.querySelector(`#checkout-modal-content .cart-row[data-idx="${idx}"]`);
+  const doIt = ()=>{ cart.splice(idx,1); saveCart(); _cartFx = { type:'total' }; renderCartDrawer(); };
+  if(row && !window.fxReduce){ row.classList.add('fx-swipe-out'); setTimeout(doIt, 380); }
+  else doIt();
 }
 
 function changeCartQty(idx, delta){
+  const before = cart[idx].quantity;
   cart[idx].quantity = Math.max(1, cart[idx].quantity + delta);
   saveCart();
+  _cartFx = before === cart[idx].quantity ? { type:'stuck', idx } : { type:'qty', idx };
   renderCartDrawer();
 }
 
 function openCart(){
+  _cartFx = { type:'open' };
   renderCartDrawer();
   document.getElementById('checkout-modal').classList.add('open');
   document.body.style.overflow='hidden';
@@ -1662,20 +1730,30 @@ function renderCartDrawer(){
     <h3>ကျွန်ုပ်၏ ခြင်း</h3>
     <div class="modal-section" style="margin-top:10px;">
       ${cart.map((item,idx)=>`
-        <div class="order-summary-line" style="align-items:center;">
+        <div class="order-summary-line cart-row" data-idx="${idx}" style="align-items:center; --i:${idx};">
           <span>${item.name}${item.size?' ('+item.size+(item.color?', '+item.color:'')+')':''}<br>
             <span class="mono" style="font-size:11px; color:var(--grey);">
               <button type="button" onclick="changeCartQty(${idx},-1)" style="border:1px solid var(--ink); background:none; padding:1px 7px;">-</button>
-              ${item.quantity}
+              <b class="cart-qty">${item.quantity}</b>
               <button type="button" onclick="changeCartQty(${idx},1)" style="border:1px solid var(--ink); background:none; padding:1px 7px;">+</button>
               <a href="#" onclick="removeFromCart(${idx}); return false;" style="color:var(--rust); margin-left:8px; text-decoration:underline;">ဖျက်မည်</a>
             </span>
           </span>
-          <span>${(item.price*item.quantity).toLocaleString()} ကျပ်</span>
+          <span class="cart-line-amt">${(item.price*item.quantity).toLocaleString()} ကျပ်</span>
         </div>`).join('')}
-      <div class="order-summary-line total"><span>စုစုပေါင်း</span><span>${total.toLocaleString()} ကျပ်</span></div>
+      <div class="order-summary-line total"><span>စုစုပေါင်း</span><span class="cart-total">${total.toLocaleString()} ကျပ်</span></div>
       <button type="button" class="submit-order-btn" onclick="openCheckout(cart, 'cart')">Checkout ဆက်သွားမည် →</button>
     </div>`;
+  const fx = _cartFx; _cartFx = null;
+  if(!fx || window.fxReduce) return;
+  const pop = (el, cls)=>{ if(!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+  if(fx.type === 'open') box.querySelector('.modal-section')?.classList.add('fx-cart-in');
+  if(fx.type === 'qty'){
+    const row = box.querySelector(`.cart-row[data-idx="${fx.idx}"]`);
+    pop(row?.querySelector('.cart-qty'), 'fx-bump'); pop(row?.querySelector('.cart-line-amt'), 'fx-flash'); pop(box.querySelector('.cart-total'), 'fx-flash');
+  }
+  if(fx.type === 'stuck') pop(box.querySelector(`.cart-row[data-idx="${fx.idx}"] .cart-qty`), 'fx-shake');
+  if(fx.type === 'total') pop(box.querySelector('.cart-total'), 'fx-flash');
 }
 
 // SUWATI MEN FASHION — Wishlist
@@ -4240,8 +4318,15 @@ async function renderChatWidget(){
 function askFaqChip(idx){
   const rule = FAQ_RULES[idx];
   const log = document.getElementById('faq-log');
-  log.innerHTML += `<div class="chat-bubble customer">${rule.keys[0]}</div><div class="chat-bubble bot">${rule.answer}</div>`;
-  log.scrollTop = log.scrollHeight;
+  // ⑩ မေးခွန်း Bubble ပေါက်ထွက် → "…" ရေးနေ → အဖြေ Bubble ပေါက်ထွက်
+  log.insertAdjacentHTML('beforeend', `<div class="chat-bubble customer fx-pop">${rule.keys[0]}</div>`);
+  const typing = document.createElement('div'); typing.className = 'chat-bubble bot fx-pop fx-typing'; typing.innerHTML = '<i></i><i></i><i></i>';
+  log.appendChild(typing); log.scrollTop = log.scrollHeight;
+  setTimeout(()=>{
+    typing.remove();
+    log.insertAdjacentHTML('beforeend', `<div class="chat-bubble bot fx-pop">${rule.answer}</div>`);
+    log.scrollTop = log.scrollHeight;
+  }, window.fxReduce ? 0 : 750);
 }
 
 async function loadChatMessages(){
@@ -4249,8 +4334,10 @@ async function loadChatMessages(){
   const { data, error } = await sb.from('chat_messages').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:true });
   if(error){ log.innerHTML = '<p class="hint">Message များ Load မလုပ်နိုင်ပါ</p>'; return; }
   if(!data.length){ log.innerHTML = '<p class="hint">Message မရှိသေးပါ — အောက်မှာ ရေးပို့နိုင်ပါတယ်</p>'; return; }
-  log.innerHTML = data.map(m=>`
-    <div class="chat-bubble ${m.sender}">
+  const prevCount = log.dataset.count === undefined ? null : Number(log.dataset.count);
+  log.dataset.count = data.length;
+  log.innerHTML = data.map((m, i)=>`
+    <div class="chat-bubble ${m.sender}${prevCount !== null && i >= prevCount ? ' fx-pop' : ''}">
       ${m.image_url ? `<img src="${m.image_url}" style="max-width:100%; display:block; margin-bottom:${m.message?'6px':'0'}; cursor:zoom-in;" onclick="openSiteLightbox('${m.image_url}')">` : ''}
       ${m.message||''}
     </div>`).join('');
@@ -4298,6 +4385,15 @@ async function sendChatMessage(){
   loadChatMessages();
 }
 
+let _chatTypingTimer = null;
+function showChatTyping(){
+  const log = document.getElementById('chat-log'); if(!log) return;
+  let t = log.querySelector('.fx-typing');
+  if(!t){ t = document.createElement('div'); t.className = 'chat-bubble admin fx-pop fx-typing'; t.innerHTML = '<i></i><i></i><i></i>'; log.appendChild(t); log.scrollTop = log.scrollHeight; }
+  clearTimeout(_chatTypingTimer);
+  _chatTypingTimer = setTimeout(()=>t.remove(), 4000);
+}
+
 function subscribeToChatRealtime(){
   if(chatChannel) return;
   chatChannel = sb.channel('customer-chat-realtime')
@@ -4308,6 +4404,12 @@ function subscribeToChatRealtime(){
       }
     })
     .subscribe();
+  // ⑩ ဆိုင်က စာပြန်ရေးနေရင် "…" ပြ (Admin App က ပို့တဲ့ Typing အချက်ပြ)
+  try{
+    sb.channel('typing-' + currentUser.id)
+      .on('broadcast', { event:'typing' }, ()=>showChatTyping())
+      .subscribe();
+  }catch(e){}
   updateChatUnreadBadge(); // Login ဝင်ချက်ချင်း ရှိပြီးသား Unread Message ရှိမရှိ စစ်
 }
 
@@ -5177,19 +5279,26 @@ window.__PWA_APP = { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)
     el.innerHTML = `
       <div class="fx-gift-bg"></div>
       <div class="fx-gift-stage">
-        <div class="fx-gift-box"><div class="fx-gift-lid"></div><div class="fx-gift-body"></div><div class="fx-gift-ribbon"></div></div>
+        <div class="fx-gift-rays"></div>
+        ${[[18,60,'.9s'],[240,80,'1.3s'],[30,220,'1.6s'],[236,230,'1.15s'],[130,40,'1.45s']].map(([x,y,d])=>`<span class="fx-gift-spark" style="left:${x}px; top:${y}px; --d:${d};">✦</span>`).join('')}
+        <div class="fx-gift-box">
+          <div class="fx-gift-shadow"></div>
+          <div class="fx-gift-body"><i class="fgb-rib-v"></i><span class="fgb-tag">SUWATI</span></div>
+          <div class="fgb-glow"></div>
+          <div class="fx-gift-lid"><i class="fgl-rib"></i><div class="fx-gift-bow"><b class="t1"></b><b class="t2"></b><b class="l"></b><b class="r"></b><b class="k"></b></div></div>
+        </div>
         <div class="fx-gift-amt">+${Number(amount||0).toLocaleString()}<small>ကျပ်</small></div>
         <div class="fx-gift-card"><span>SUWATI<i>.</i>PREPAID</span><b>CARD</b></div>
         <div class="fx-gift-text">🎉 Gift Card ငွေ Prepaid Card ထဲ ဝင်ပါပြီ</div>
       </div>`;
     document.body.appendChild(el);
     void el.offsetWidth; el.classList.add('show');
-    if(!reduce) setTimeout(() => confetti(el.querySelector('.fx-gift-stage'), 36), 650);
+    if(!reduce) setTimeout(() => confetti(el.querySelector('.fx-gift-stage'), 40), 1150);
     try{ if(navigator.vibrate) navigator.vibrate([20, 60, 30]); }catch(e){}
     let closed = false;
     const close = async () => { if(closed) return; closed = true; el.classList.add('hide'); await wait(350); el.remove(); };
     el.addEventListener('click', close);
-    await wait(reduce ? 1200 : 2700);
+    await wait(reduce ? 1200 : 3300);
     await close();
   };
 
@@ -5303,6 +5412,23 @@ window.__PWA_APP = { name:'SUWATI', snoozeKey:'suwati_install_snooze', toast:(m)
       document.querySelectorAll('.form-error, .promo-msg').forEach(el => lastErr.delete(el));
     }
   }, true);
+
+  // ---------- ⑨ "ခြင်းထဲ ထည့်မည်" ခလုတ် → ✓ ခဏပြောင်း ----------
+  let lastBtn = null, lastBtnAt = 0;
+  document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('button'); if(b){ lastBtn = b; lastBtnAt = Date.now(); } }, true);
+  document.addEventListener('keydown', e => { if((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.tagName === 'BUTTON'){ lastBtn = document.activeElement; lastBtnAt = Date.now(); } }, true);
+  if(typeof window.addToCart === 'function'){
+    const oa = window.addToCart;
+    window.addToCart = function(){
+      const r = oa.apply(this, arguments);
+      const b = lastBtn;
+      if(b && Date.now() - lastBtnAt < 1500 && document.contains(b) && !reduce){
+        b.classList.remove('fx-added'); void b.offsetWidth; b.classList.add('fx-added');
+        clearTimeout(b._fxAddT); b._fxAddT = setTimeout(() => b.classList.remove('fx-added'), 1100);
+      }
+      return r;
+    };
+  }
 
   // ---------- ⑪ SUWATI Loader ပိတ် ----------
   const loader = document.getElementById('fx-loader');

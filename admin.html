@@ -462,6 +462,20 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 @keyframes fxCardFlash{ 0%,100%{ box-shadow:0 0 0 0 rgba(214,255,63,0); } 40%{ box-shadow:0 0 0 4px #D6FF3F, 0 0 24px rgba(214,255,63,.5); } }
 @media (prefers-reduced-motion: reduce){ #fx-order-banner{ transition:none; } .fob-bell, .order-card.fx-new-card{ animation:none !important; } }
 @media (max-width:560px){ #admin-email-display{ flex-basis:100%; } }
+/* ⑮ ငွေသား စာရင်းပိတ် ရလဒ် */
+.cc-msg{ display:flex; align-items:center; gap:10px; }
+.cc-badge{ width:30px; height:30px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-weight:800; font-size:16px; flex-shrink:0; }
+.cc-badge.cc-ok{ background:var(--acid-text); color:#141412; }
+.cc-badge.cc-short{ background:#C13B1F; color:#fff; }
+.cc-badge.cc-over{ background:var(--info-text); color:#141412; }
+.fx-cc-pop{ animation:ccPop .5s cubic-bezier(.3,1.8,.5,1); }
+.fx-cc-shake{ animation:ccShake .45s ease .15s; }
+.fx-cc-glow b{ animation:ccGlow .9s ease; }
+@keyframes ccPop{ from{ transform:scale(0) rotate(-40deg); } }
+@keyframes ccShake{ 20%,60%{ transform:translateX(-6px); } 40%,80%{ transform:translateX(6px); } }
+@keyframes ccGlow{ 40%{ text-shadow:0 0 14px var(--acid-text); transform:scale(1.15); } }
+.admin-chat-bubble.fx-pop{ animation:ccPop .35s cubic-bezier(.3,1.6,.5,1); }
+@media (prefers-reduced-motion: reduce){ .fx-cc-pop, .fx-cc-shake, .fx-cc-glow b, .admin-chat-bubble.fx-pop{ animation:none !important; } }
 </style>
 </head>
 <body>
@@ -3215,6 +3229,11 @@ function renderSalesChart(){
     },
     options: {
       responsive: true,
+      // ⑭ Bar တွေ တစ်ခုချင်း တက်လာ
+      animation: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? false : {
+        duration: 900, easing: 'easeOutQuart',
+        delay: (c) => (c.type === 'data' && c.mode === 'default') ? c.dataIndex * 55 : 0,
+      },
       plugins: { legend: { labels: { color: chartTextColor() } } },
       scales: {
         x: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
@@ -4022,6 +4041,7 @@ document.getElementById('pos-complete-sale-btn').addEventListener('click', async
   const change = (paymentMethod==='Cash' && tendered!==null) ? tendered - finalTotal : null;
 
   logActivity('pos_sale_completed', `${customerName} — ${finalTotal.toLocaleString()} ကျပ် (${paymentMethod})${totalDiscount>0?' [Discount: '+totalDiscount.toLocaleString()+']':''}`);
+  window.__fxPrintAnim = true;
   printPosReceipt(rows, paymentMethod, groupId, receiptWindow, { tendered, change, discount: totalDiscount, split: splitPayments });
   showToast('✅ အရောင်း မှတ်တမ်းတင်ပြီးပါပြီ');
   { const b=document.getElementById('pos-complete-sale-btn'); if(b){ b.classList.remove('pos-sale-done'); void b.offsetWidth; b.classList.add('pos-sale-done'); } }
@@ -4246,15 +4266,25 @@ function showReceiptOverlay(html){
       #receipt-overlay .ro-close{background:#C13B1F; color:#fff; border-color:#C13B1F !important; flex:0 0 auto !important; padding:12px 16px !important;}
       #receipt-overlay .ro-print{background:#D6FF3F; color:#141412; border-color:#D6FF3F !important;}
       #receipt-overlay iframe{flex:1; width:100%; border:none; background:#fff;}
+      #receipt-overlay .ro-paper{flex:1; display:flex; overflow:hidden; position:relative;}
+      #receipt-overlay .ro-slot{height:14px; flex-shrink:0; background:#2a2924; border-bottom:3px solid #141412; position:relative; overflow:hidden;}
+      #receipt-overlay .ro-slot i{position:absolute; top:0; bottom:0; width:30%; background:linear-gradient(90deg, transparent, rgba(214,255,63,.7), transparent); animation:roScan .7s linear 3;}
+      #receipt-overlay.ro-printing iframe{animation:roPrint 1.5s steps(16, end) both !important;}
+      @keyframes roPrint{ from{ transform:translateY(-100%); } to{ transform:translateY(0); } }
+      @keyframes roScan{ from{ left:-30%; } to{ left:100%; } }
+      @media (prefers-reduced-motion: reduce){ #receipt-overlay.ro-printing iframe, #receipt-overlay .ro-slot i{ animation:none !important; } }
       @media screen{ #receipt-print-root{display:none !important;} }`;
     document.head.appendChild(st);
   }
   closeReceiptOverlay(true);
   const ov = document.createElement('div'); ov.id = 'receipt-overlay';
+  // ⑬ POS အရောင်းပြီးချိန် — Receipt က Printer ထဲက ထွက်လာသလို
+  const printing = !!window.__fxPrintAnim; window.__fxPrintAnim = false;
+  if(printing) ov.classList.add('ro-printing');
   ov.innerHTML = `<div class="ro-bar">
       <button type="button" class="ro-close" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>
       <button type="button" class="ro-print" onclick="printReceiptOverlay()">🖨️ Print / PDF</button>
-    </div><iframe id="receipt-overlay-frame" title="Receipt"></iframe>`;
+    </div>${printing ? '<div class="ro-slot"><i></i></div>' : ''}<div class="ro-paper"><iframe id="receipt-overlay-frame" title="Receipt"></iframe></div>`;
   document.body.appendChild(ov);
   // Receipt ထဲက Print ခလုတ်ကလည်း အပြင် Page ရဲ့ Print Function ကို သုံးစေရန်
   document.getElementById('receipt-overlay-frame').srcdoc = String(html).replace(/onclick="window\.print\(\)"/g, 'onclick="parent.printReceiptOverlay()"');
@@ -4619,12 +4649,18 @@ function updateCashCloseSummary(){
   const el = document.getElementById('cc-summary'); if(!el) return;
   const c = readCashClose();
   const cls = Math.abs(c.diff) < 1 ? 'cc-ok' : (c.diff < 0 ? 'cc-short' : 'cc-over');
-  const msg = Math.abs(c.diff) < 1 ? '✅ ကိုက်ညီပါသည်' : (c.diff < 0 ? `⚠️ ငွေ ${Math.abs(c.diff).toLocaleString()} ကျပ် လိုနေပါသည်` : `⚠️ ငွေ ${c.diff.toLocaleString()} ကျပ် ပိုနေပါသည်`);
+  const msg = Math.abs(c.diff) < 1 ? 'ကိုက်ညီပါသည်' : (c.diff < 0 ? `ငွေ ${Math.abs(c.diff).toLocaleString()} ကျပ် လိုနေပါသည်` : `ငွေ ${c.diff.toLocaleString()} ကျပ် ပိုနေပါသည်`);
   el.innerHTML = `
     <div class="cc-line"><span>ရှိသင့်သော ငွေသား</span><b>${c.expected.toLocaleString()} ကျပ်</b></div>
     <div class="cc-line"><span>ရေတွက်ရသော ငွေသား</span><b>${c.counted.toLocaleString()} ကျပ်</b></div>
     <div class="cc-line cc-diff ${cls}"><span>ကွာခြားချက်</span><b>${c.diff>0?'+':''}${c.diff.toLocaleString()} ကျပ်</b></div>
-    <div class="cc-msg ${cls}">${msg}</div>`;
+    <div class="cc-msg ${cls}"><span class="cc-badge ${cls}">${cls === 'cc-ok' ? '✓' : '!'}</span>${msg}</div>`;
+  // ⑮ ရလဒ် ပြောင်းသွားမှသာ ခုန် (ကိုက်ညီ ↔ ငွေလို/ပို)
+  if(el.dataset.cls !== cls && c.counted > 0){
+    const badge = el.querySelector('.cc-badge'), diff = el.querySelector('.cc-diff');
+    badge.classList.add('fx-cc-pop'); if(cls !== 'cc-ok') diff.classList.add('fx-cc-shake'); else diff.classList.add('fx-cc-glow');
+  }
+  el.dataset.cls = cls;
 }
 
 async function saveCashClosing(){
@@ -5905,6 +5941,61 @@ function loadPaymentSettings(data){
           let i = 0;
           cards.forEach(c => { const id = idOf(c); if(id && !seenCards.has(id)){ seenCards.add(id); if(!reduce){ c.style.setProperty('--i', i++); c.classList.add('fx-new-card'); } } });
         }
+      }catch(e){}
+      return r;
+    };
+  }
+})();
+
+// ---------- ⑭ Dashboard ဂဏန်းများ 0/အဟောင်း ကနေ တက်လာ ----------
+(function(){
+  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const IDS = ['stat-total-orders','stat-total-revenue','stat-confirmed-revenue','stat-confirmed-orders','stat-pending-orders',
+               'sr-total-revenue','sr-total-orders','sr-total-items','sr-total-topup','sr-total-giftcard','stat-total-customers','stat-avg-spend'];
+  const num = t => Number(String(t).replace(/[^\d.-]/g, '')) || 0;
+  IDS.forEach(id => {
+    const el = document.getElementById(id); if(!el) return;
+    let last = 0, raf = 0, written = null;
+    new MutationObserver(() => {
+      const txt = el.textContent;
+      if(txt === written) return;                 // ကိုယ်တိုင် ရေးထားတဲ့ Frame — လျစ်လျူရှု
+      const to = num(txt);
+      if(reduce || !/\d/.test(txt) || to === last){ last = to; return; }
+      const from = last, suffix = txt.replace(/^[\d,.-]+/, ''), comma = /,/.test(txt) || to >= 1000;
+      last = to; cancelAnimationFrame(raf);
+      const t0 = performance.now(), dur = 900;
+      const step = t => {
+        const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3), v = Math.round(from + (to - from) * e);
+        written = (k < 1 ? (comma ? v.toLocaleString() : String(v)) + suffix : txt);
+        el.textContent = written;
+        if(k < 1) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    }).observe(el, { childList:true, characterData:true, subtree:true });
+  });
+})();
+
+// ---------- ⑩ Customer Chat — Admin စာရိုက်နေရင် Customer ဘက်မှာ "…" ပြ ----------
+(function(){
+  const chans = {};
+  function chan(uid){
+    if(!chans[uid]){ chans[uid] = sb.channel('typing-' + uid); try{ chans[uid].subscribe(); }catch(e){} }
+    return chans[uid];
+  }
+  if(typeof window.openConversation === 'function'){
+    const oc = window.openConversation;
+    window.openConversation = async function(userId){
+      const r = await oc.apply(this, arguments);
+      try{
+        const input = document.getElementById('admin-chat-input');
+        let lastSent = 0;
+        input && input.addEventListener('input', () => {
+          if(!input.value.trim() || Date.now() - lastSent < 2500) return;
+          lastSent = Date.now();
+          try{ chan(userId).send({ type:'broadcast', event:'typing', payload:{ at: Date.now() } }); }catch(e){}
+        });
+        // စာအသစ် Bubble ပေါက်ထွက်
+        document.querySelectorAll('#admin-chat-log .admin-chat-bubble').forEach((b, i, all) => { if(i === all.length - 1) b.classList.add('fx-pop'); });
       }catch(e){}
       return r;
     };
