@@ -1264,6 +1264,90 @@ html[data-theme="dark"] .sd-head{ border-color:var(--concrete); }
   .acct-menu.open, .acct-menu.closing, .acct-menu.open .am-head, .acct-menu.open .am-item, .site-drawer.open *, .acct-btn.acct-pop, .acct-btn.acct-heart{ animation:none !important; }
   .site-drawer, .hm-lines i{ transition:none; }
 }
+
+/* ===== Category ခလုတ်များ — အရွယ် တညီတည်း ===== */
+.filter-chips:not([style*="none"]){ display:grid !important; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:8px; }
+.filter-chip{ display:flex; align-items:center; justify-content:center; min-height:44px; padding:8px 10px; text-align:center; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; transition:background .2s, color .2s, transform .15s; }
+.filter-chip:active{ transform:scale(.96); }
+.filter-chip.active{ animation:chipOn .35s cubic-bezier(.34,1.56,.64,1); }
+@keyframes chipOn{ 0%{ transform:scale(.9); } 100%{ transform:scale(1); } }
+@media (max-width:560px){
+  .filter-chips:not([style*="none"]){ grid-template-columns:repeat(3, minmax(0,1fr)); padding:0 14px 16px; gap:7px; }
+  .filter-chip{ font-size:12px; min-height:42px; padding:6px 6px; }
+}
+
+/* ===== Product Card (ဖုန်း) — "+" = ခြင်းထဲထည့် · အောက်မှာ "ဝယ်မည်" ===== */
+.cq-buy{ display:none; }
+.cq-cart{ display:none; }
+@media (max-width:560px){
+  .card .cq-buy{ display:flex; align-items:center; justify-content:center; width:100%; margin-top:8px; min-height:40px; background:var(--ink); color:var(--concrete); border:2.5px solid var(--ink);
+    font:700 13px 'Noto Sans Myanmar',sans-serif; cursor:pointer; transition:transform .15s, background .2s; }
+  .card .cq-buy:active{ transform:scale(.96); }
+  .card .cq-add{ position:relative; overflow:hidden; }
+  .card .cq-add .cq-plus{ transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
+  .card .cq-add .cq-cart{ display:block; position:absolute; width:20px; height:20px; transform:translateY(140%); opacity:0; transition:transform .3s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
+  .card .cq-add.fx-added .cq-plus{ transform:translateY(-140%); opacity:0; }
+  .card .cq-add.fx-added .cq-cart{ transform:none; opacity:1; animation:cqCart .6s ease .1s; }
+  @keyframes cqCart{ 40%{ transform:translateX(3px) rotate(-8deg); } 70%{ transform:translateX(-2px); } }
+  .card .cq-add.is-off{ opacity:.35; cursor:not-allowed; }
+  html[data-theme="dark"] .card .cq-buy{ background:var(--concrete); color:var(--black); border-color:var(--concrete); }
+}
+
+/* ===== အမြန်ရွေး Sheet (Size/အရောင်) ===== */
+.qa-dim{ position:fixed; inset:0; z-index:9500; background:rgba(10,10,9,.5); -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); opacity:0; pointer-events:none; transition:opacity .3s; }
+.qa-dim.open{ opacity:1; pointer-events:auto; }
+.qa-sheet{ position:fixed; left:0; right:0; bottom:0; z-index:9501; max-width:520px; margin:0 auto; max-height:86vh; overflow-y:auto; background:var(--concrete); color:var(--ink);
+  border:3px solid var(--ink); border-bottom:none; border-radius:20px 20px 0 0; padding:8px 18px calc(18px + env(safe-area-inset-bottom)); box-shadow:0 -14px 40px rgba(0,0,0,.35);
+  transform:translateY(105%); transition:transform .45s cubic-bezier(.22,1.15,.36,1); }
+.qa-sheet.open{ transform:none; }
+body.qa-open{ overflow:hidden; }
+.qa-grip{ width:44px; height:5px; border-radius:3px; background:var(--grey); margin:2px auto 12px; opacity:.6; }
+.qa-top{ display:flex; gap:12px; align-items:center; padding-bottom:12px; border-bottom:2px solid var(--ink); }
+.qa-top img{ width:64px; height:64px; object-fit:cover; border:2px solid var(--ink); }
+.qa-top div{ flex:1; min-width:0; } .qa-top b{ display:block; font-family:'Anton',sans-serif; font-weight:400; font-size:20px; line-height:1.15; }
+.qa-top span{ font:700 13px 'Space Mono',monospace; color:var(--rust); }
+.qa-x{ width:36px; height:36px; border:2px solid var(--ink); background:none; color:var(--ink); cursor:pointer; align-self:flex-start; }
+.qa-lbl{ font:700 11px 'Space Mono',monospace; letter-spacing:.12em; color:var(--grey); margin:14px 0 6px; }
+.qa-chips{ display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:7px; }
+.qa-chip{ min-height:42px; display:flex; align-items:center; justify-content:center; gap:6px; border:2px solid var(--ink); background:none; color:var(--ink); font:700 13px 'Space Mono','Noto Sans Myanmar',monospace; cursor:pointer; padding:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:background .2s, transform .15s; }
+.qa-chip i{ width:12px; height:12px; border-radius:50%; border:1.5px solid var(--ink); flex:0 0 auto; }
+.qa-chip.on{ background:var(--ink); color:var(--concrete); animation:chipOn .35s cubic-bezier(.34,1.56,.64,1); }
+.qa-chip:disabled{ opacity:.3; text-decoration:line-through; cursor:not-allowed; }
+.qa-stock{ margin:14px 0 10px; font:700 12.5px 'Noto Sans Myanmar',sans-serif; } .qa-stock .off{ color:var(--rust); }
+.qa-add{ width:100%; min-height:50px; background:var(--acid); color:#141412; border:2.5px solid var(--ink); font:700 15px 'Noto Sans Myanmar',sans-serif; cursor:pointer; box-shadow:4px 4px 0 var(--ink); transition:transform .15s, box-shadow .15s; }
+.qa-add:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink); }
+.qa-add:disabled{ opacity:.45; box-shadow:none; }
+.qa-add.fx-added{ background:var(--ink); color:var(--acid); }
+.qa-detail{ width:100%; margin-top:10px; background:none; border:none; color:var(--ink); font:700 13px 'Noto Sans Myanmar',sans-serif; text-decoration:underline; cursor:pointer; padding:8px; }
+.qa-sheet.open .qa-top, .qa-sheet.open .qa-lbl, .qa-sheet.open .qa-chips, .qa-sheet.open .qa-add{ animation:fxUp .4s ease backwards; }
+.qa-sheet.open .qa-chips{ animation-delay:.08s; } .qa-sheet.open .qa-add{ animation-delay:.14s; }
+html[data-theme="dark"] .qa-sheet{ background:#1E1D1A; border-color:#3a3833; }
+html[data-theme="dark"] .qa-add{ border-color:var(--black); }
+
+/* ===== ☰ Menu — Category နှိပ်မှ အောက်ကို ကျလာ ===== */
+.sd-catwrap{ border-bottom:1px dashed color-mix(in srgb, var(--ink) 30%, transparent); }
+.sd-catwrap .sd-item{ border-bottom:none; }
+.sd-chev{ font-style:normal; font-size:20px; line-height:1; transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+.sd-catwrap.open .sd-chev{ transform:rotate(180deg); }
+.sd-subwrap{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s cubic-bezier(.2,.9,.25,1); }
+.sd-catwrap.open .sd-subwrap{ grid-template-rows:1fr; }
+.sd-subwrap > .sd-subs{ overflow:hidden; min-height:0; }
+.sd-subs{ display:grid !important; grid-template-columns:repeat(2, minmax(0,1fr)); gap:7px; padding:0 0 0 2px !important; }
+.sd-catwrap.open .sd-subs{ padding:2px 0 14px 2px !important; }
+.sd-subs button{ min-height:40px; display:flex; align-items:center; justify-content:center; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; padding:4px 8px !important; }
+.sd-subs .sd-all{ background:var(--ink) !important; color:var(--concrete) !important; }
+.sd-catwrap.open .sd-subs button{ animation:sdSub .35s cubic-bezier(.34,1.4,.64,1) backwards; }
+.sd-catwrap.open .sd-subs button:nth-child(2){ animation-delay:.04s; } .sd-catwrap.open .sd-subs button:nth-child(3){ animation-delay:.08s; }
+.sd-catwrap.open .sd-subs button:nth-child(4){ animation-delay:.12s; } .sd-catwrap.open .sd-subs button:nth-child(n+5){ animation-delay:.16s; }
+@keyframes sdSub{ from{ opacity:0; transform:translateY(-8px) scale(.92); } }
+html[data-theme="dark"] .sd-subs .sd-all{ background:var(--concrete) !important; color:var(--black) !important; }
+
+/* Logo နှိပ်ရင် Refresh */
+.hdr-logo, .sd-head .logo{ transition:transform .2s; }
+.hdr-logo:active{ transform:scale(.94); }
+.hdr-reloading{ animation:hdrReload .3s ease forwards; }
+@keyframes hdrReload{ to{ opacity:.35; transform:scale(.92); filter:blur(1px); } }
+@media (prefers-reduced-motion: reduce){ .qa-sheet, .sd-subwrap{ transition:none; } .qa-sheet *, .sd-subs button, .filter-chip.active{ animation:none !important; } }
 </style>
 </head>
 <body>
@@ -1275,7 +1359,7 @@ html[data-theme="dark"] .sd-head{ border-color:var(--concrete); }
     <button type="button" class="cart-btn hdr-menu-btn" id="hdr-menu-btn" onclick="openSiteDrawer()" aria-label="Menu ဖွင့်ရန်" aria-controls="site-drawer" aria-expanded="false">
       <span class="hm-lines" aria-hidden="true"><i></i><i></i><i></i></span>
     </button>
-    <div class="hdr-logo" style="cursor:pointer;" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <div class="hdr-logo" style="cursor:pointer;" onclick="hdrReload(this)" title="Refresh" role="button" aria-label="SUWATI — စာမျက်နှာ ပြန်ဖွင့်ရန်">
       <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
       <div class="hdr-sub">FASHION</div>
     </div>
@@ -1734,6 +1818,7 @@ function renderProductGrid(){
         <div class="card-body">
           <h3 style="cursor:pointer;" onclick="openProductDetail(${idx})">${p.name}</h3>
           <div class="card-quick"><span class="cq-price">10,000 ကျပ်မှ</span><button type="button" class="cq-add" onclick="openProductDetail(${idx})" aria-label="Gift Card ဝယ်ရန်">+</button></div>
+          <button type="button" class="cq-buy" onclick="openProductDetail(${idx})">ဝယ်မည် →</button>
           <div class="hint" style="font-size:12px;">${p.description||'ပမာဏ ရွေးပြီး KBZPay ဖြင့် ဝယ်ယူနိုင်ပါသည်'}</div>
           <button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink);" onclick="openProductDetail(${idx})">ပမာဏ ရွေးပြီး ဝယ်ရန်</button>
           <a class="msg-link" href="https://m.me/suwatimenfashion" target="_blank" rel="noopener">မေးစရာရှိရင် Messenger ပို့ပါ</a>
@@ -1756,7 +1841,8 @@ function renderProductGrid(){
       </div>
       <div class="card-body">
         <h3 style="cursor:pointer;" onclick="openProductDetail(${idx})">${p.name}</h3>
-        <div class="card-quick"><span class="cq-price">${Number(p.price).toLocaleString()} ကျပ်</span><button type="button" class="cq-add" onclick="openProductDetail(${idx})" aria-label="${p.name} — Size/အရောင် ရွေးပြီး ဝယ်ရန်">+</button></div>
+        <div class="card-quick"><span class="cq-price">${Number(p.price).toLocaleString()} ကျပ်</span><button type="button" class="cq-add${soldOut?' is-off':''}" onclick="quickAddToCart(${idx}, this)" aria-label="${p.name} — ခြင်းထဲ ထည့်ရန်" ${soldOut?'disabled':''}><span class="cq-plus">+</span><svg class="cq-cart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg></button></div>
+        <button type="button" class="cq-buy" onclick="openProductDetail(${idx})">ဝယ်မည် →</button>
         ${sizes.length ? `
         <div class="opt-group">
           <div class="opt-label">SIZE ရွေးပါ</div>
@@ -1912,6 +1998,76 @@ function handleBannerClick(link){
     window.open(link, '_blank');
   }
 }
+
+
+// ---------- 🛒 Card ပေါ်က "+" — ခြင်းထဲ တန်းထည့် (Size/အရောင် တစ်မျိုးထက်ပိုရင် အမြန်ရွေး Sheet) ----------
+function qaVariantStock(p, size, color){
+  const s = size || '_', c = color || '_';
+  if(p.variant_stock && p.variant_stock[s] && p.variant_stock[s][c] !== undefined) return Number(p.variant_stock[s][c]) || 0;
+  if(color && p.color_stock && p.color_stock[color] !== undefined) return Number(p.color_stock[color]) || 0;
+  return productTotalStock(p);
+}
+function quickAddToCart(idx, btn){
+  const p = currentGridProducts[idx]; if(!p) return;
+  if(p.status === 'sold_out' || productTotalStock(p) <= 0) return;
+  const sizes = (p.sizes||'').split(',').map(x=>x.trim()).filter(Boolean);
+  const colors = (p.colors||'').split(',').map(x=>x.trim()).filter(Boolean);
+  if(sizes.length <= 1 && colors.length <= 1){
+    if(qaVariantStock(p, sizes[0], colors[0]) <= 0){ showSiteToast('⚫ ကုန်သွားပါပြီ'); return; }
+    addToCart({ name:p.name, price:Number(p.price), size:sizes[0]||null, color:colors[0]||null, image_url:p.image_url, quantity:1 });
+    return;
+  }
+  openQuickAdd(p, sizes, colors);
+}
+let __qa = null;
+function openQuickAdd(p, sizes, colors){
+  let sh = document.getElementById('qa-sheet');
+  if(!sh){
+    document.body.insertAdjacentHTML('beforeend', '<div class="qa-dim" id="qa-dim" onclick="closeQuickAdd()"></div><div class="qa-sheet" id="qa-sheet" role="dialog" aria-modal="true" aria-label="ခြင်းထဲ ထည့်ရန်"></div>');
+    sh = document.getElementById('qa-sheet');
+  }
+  // ပထမ ဝယ်လို့ရတဲ့ Size/အရောင်
+  let size = sizes[0] || null, color = colors[0] || null;
+  outer: for(const s of (sizes.length ? sizes : [null])) for(const c of (colors.length ? colors : [null])) if(qaVariantStock(p, s, c) > 0){ size = s; color = c; break outer; }
+  __qa = { p, sizes, colors, size, color };
+  renderQuickAdd();
+  requestAnimationFrame(() => { document.getElementById('qa-dim').classList.add('open'); sh.classList.add('open'); });
+  document.body.classList.add('qa-open');
+}
+function renderQuickAdd(){
+  const { p, sizes, colors, size, color } = __qa;
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const left = qaVariantStock(p, size, color);
+  const idx = currentGridProducts.indexOf(p);
+  document.getElementById('qa-sheet').innerHTML = `
+    <div class="qa-grip"></div>
+    <div class="qa-top">
+      <img src="${esc(p.image_url || 'https://placehold.co/200x200/141412/E9E4D8?text=SUWATI')}" alt="">
+      <div><b>${esc(p.name)}</b><span>${Number(p.price).toLocaleString()} ကျပ်</span></div>
+      <button type="button" class="qa-x" onclick="closeQuickAdd()" aria-label="ပိတ်ရန်">✕</button>
+    </div>
+    ${sizes.length ? `<div class="qa-lbl">SIZE</div><div class="qa-chips">${sizes.map(s => { const n = colors.length ? colors.reduce((a,c)=>a+qaVariantStock(p,s,c),0) : qaVariantStock(p,s,null); return `<button type="button" class="qa-chip${s===size?' on':''}" ${n<=0?'disabled':''} onclick="__qa.size='${esc(s).replace(/'/g,"\\'")}';qaFix('size');renderQuickAdd()">${esc(s)}</button>`; }).join('')}</div>` : ''}
+    ${colors.length ? `<div class="qa-lbl">အရောင်</div><div class="qa-chips">${colors.map(c => { const n = qaVariantStock(p, size, c); return `<button type="button" class="qa-chip${c===color?' on':''}" ${n<=0?'disabled':''} onclick="__qa.color='${esc(c).replace(/'/g,"\\'")}';renderQuickAdd()"><i style="background:${esc(c)}"></i>${esc(c)}</button>`; }).join('')}</div>` : ''}
+    <div class="qa-stock">${left <= 0 ? '<span class="off">⚫ ဒီ Size/အရောင် ကုန်သွားပြီ</span>' : (left <= 5 ? `🔥 ${left} ခုပဲ ကျန်သည်` : '✅ ရနိုင်သည်')}</div>
+    <button type="button" class="qa-add" ${left<=0?'disabled':''} onclick="qaConfirm(this)">🛒 ခြင်းထဲ ထည့်မည်</button>
+    <button type="button" class="qa-detail" onclick="closeQuickAdd(); openProductDetail(${idx})">အသေးစိတ် ကြည့်ပြီး ဝယ်မည် →</button>`;
+}
+function qaFix(){ // Size ပြောင်းလို့ အရောင် ကုန်နေရင် ရနိုင်တဲ့ အရောင်ကို ရွေး
+  const { p, colors } = __qa;
+  if(colors.length && qaVariantStock(p, __qa.size, __qa.color) <= 0){ const c = colors.find(c => qaVariantStock(p, __qa.size, c) > 0); if(c) __qa.color = c; }
+}
+function qaConfirm(btn){
+  const { p, size, color } = __qa;
+  if(qaVariantStock(p, size, color) <= 0) return;
+  addToCart({ name:p.name, price:Number(p.price), size:size||null, color:color||null, image_url:p.image_url, quantity:1 });
+  setTimeout(closeQuickAdd, 420);
+}
+function closeQuickAdd(){
+  document.getElementById('qa-sheet')?.classList.remove('open');
+  document.getElementById('qa-dim')?.classList.remove('open');
+  document.body.classList.remove('qa-open');
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeQuickAdd(); });
 
 // SUWATI MEN FASHION — Realtime auto refresh
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
@@ -5837,8 +5993,9 @@ function hdrName(){
   return m.nickname || m.full_name || m.name || (currentUser?.email || '').split('@')[0] || '';
 }
 function hdrInitial(){
-  const n = hdrName().trim();
-  return n ? Array.from(n)[0].toUpperCase() : 'S';
+  // Latin စာလုံး/ဂဏန်း မဟုတ်ရင် (မြန်မာနာမည် စသည်) Email ရဲ့ ပထမစာလုံး
+  const first = s => { const ch = Array.from(String(s||'').trim())[0] || ''; return /[A-Za-z0-9]/.test(ch) ? ch.toUpperCase() : ''; };
+  return first(hdrName()) || first(currentUser?.email) || '';
 }
 function hdrOpenModal(fn){
   document.getElementById('checkout-modal').classList.add('open');
@@ -5854,7 +6011,7 @@ function renderAcctButton(){
   if(b.dataset.k === key) return;
   b.dataset.k = key;
   b.classList.toggle('is-in', logged);
-  b.innerHTML = logged ? `<span class="acct-initial">${hdrEsc(hdrInitial())}</span>` : HDR_IC.user;
+  b.innerHTML = logged ? (hdrInitial() ? `<span class="acct-initial">${hdrEsc(hdrInitial())}</span>` : HDR_IC.user) : HDR_IC.user;
   b.setAttribute('aria-label', logged ? `Account — ${hdrName()}` : 'Login / Account');
   b.classList.remove('acct-pop'); void b.offsetWidth; b.classList.add('acct-pop');
 }
@@ -5880,7 +6037,7 @@ function renderAcctMenu(){
   const item = (ic, label, act, extra='') => `<button type="button" role="menuitem" class="am-item" onclick="${act}">${HDR_IC[ic]}<span>${label}</span>${extra}</button>`;
   m.innerHTML = `
     <div class="am-head">${logged
-      ? `<div class="am-av">${hdrEsc(hdrInitial())}</div><div class="am-who"><b>မင်္ဂလာပါ, ${hdrEsc(hdrName())}</b><small>${hdrEsc(currentUser.email || '')}</small></div>`
+      ? `<div class="am-av">${hdrInitial() ? hdrEsc(hdrInitial()) : HDR_IC.user}</div><div class="am-who"><b>မင်္ဂလာပါ, ${hdrEsc(hdrName())}</b><small>${hdrEsc(currentUser.email || '')}</small></div>`
       : `<div class="am-who"><b>SUWATI မှ ကြိုဆိုပါတယ် 👋</b><small>Login ဝင်ရင် Order မှတ်တမ်း၊ Prepaid Card၊ Wishlist သိမ်းထားနိုင်ပါတယ်</small></div>
          <div class="am-auth"><button type="button" class="am-login" onclick="acctGo(()=>openAuthModal('login'))">Login</button><button type="button" class="am-signup" onclick="acctGo(()=>openAuthModal('signup'))">Sign up</button></div>`}
     </div>
@@ -5938,16 +6095,20 @@ function renderSiteDrawer(){
   const active = (typeof activeCategory !== 'undefined') ? activeCategory : 'all';
   d.innerHTML = `
     <div class="sd-head">
-      <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
+      <div class="logo" onclick="hdrReload(this)" style="cursor:pointer;">SUWATI<span class="dot">.</span>MEN</div>
       <button type="button" class="sd-close" onclick="closeSiteDrawer()" aria-label="ပိတ်ရန်">✕</button>
     </div>
     <div class="sd-sec">CATEGORY</div>
     <button type="button" class="sd-item sd-cat${active==='all'?' on':''}" onclick="drawerCat('all')"><span>အားလုံး</span><b>→</b></button>
-    ${cats.map(c => `
-      <div class="sd-catwrap">
-        <button type="button" class="sd-item sd-cat${active===c.name?' on':''}" onclick="drawerCat('${q(c.name)}')"><span>${hdrEsc(c.name)}</span><b>→</b></button>
-        ${c.subs.length ? `<div class="sd-subs">${c.subs.map(s => `<button type="button" onclick="drawerSub('${q(c.name)}','${q(s)}')">${hdrEsc(s)}</button>`).join('')}</div>` : ''}
-      </div>`).join('')}
+    ${cats.map(c => c.subs.length ? `
+      <div class="sd-catwrap${active===c.name?' open':''}">
+        <button type="button" class="sd-item sd-cat sd-acc${active===c.name?' on':''}" aria-expanded="${active===c.name}" onclick="drawerToggleCat(this)"><span>${hdrEsc(c.name)}</span><em class="sd-chev">⌄</em></button>
+        <div class="sd-subwrap"><div class="sd-subs">
+          <button type="button" class="sd-all" onclick="drawerCat('${q(c.name)}')">အားလုံး</button>
+          ${c.subs.map(s => `<button type="button" onclick="drawerSub('${q(c.name)}','${q(s)}')">${hdrEsc(s)}</button>`).join('')}
+        </div></div>
+      </div>` : `
+      <button type="button" class="sd-item sd-cat${active===c.name?' on':''}" onclick="drawerCat('${q(c.name)}')"><span>${hdrEsc(c.name)}</span><b>→</b></button>`).join('')}
     <div class="sd-sec">MENU</div>
     <a class="sd-item" href="#posts" onclick="closeSiteDrawer()"><span>📰 Post များ</span></a>
     <a class="sd-item" href="#order" onclick="closeSiteDrawer()"><span>🛍️ မှာယူနည်း</span></a>
@@ -5974,6 +6135,18 @@ function closeSiteDrawer(){
   const b = document.getElementById('hdr-menu-btn'); b?.classList.remove('open'); b?.setAttribute('aria-expanded', 'false');
   d.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('drawer-open');
+}
+function drawerToggleCat(btn){
+  const w = btn.closest('.sd-catwrap'); const open = !w.classList.contains('open');
+  document.querySelectorAll('#site-drawer .sd-catwrap.open').forEach(x => { if(x !== w){ x.classList.remove('open'); x.querySelector('.sd-acc')?.setAttribute('aria-expanded','false'); } });
+  w.classList.toggle('open', open); btn.setAttribute('aria-expanded', open);
+  if(open) setTimeout(() => { const r = w.getBoundingClientRect(); if(r.bottom > innerHeight - 20) w.scrollIntoView({ block:'nearest', behavior: hdrReduce() ? 'auto' : 'smooth' }); }, 320);
+}
+// Logo နှိပ်ရင် စာမျက်နှာ အသစ်ပြန်ဖွင့် (Refresh)
+function hdrReload(el){
+  try{ (el || document.querySelector('.hdr-logo'))?.classList.add('hdr-reloading'); }catch(e){}
+  try{ history.replaceState(null, '', location.pathname); }catch(e){}
+  setTimeout(() => location.reload(), hdrReduce() ? 0 : 260);
 }
 function drawerGoProducts(){
   const t = document.getElementById('filter-chips') || document.getElementById('product-grid');
