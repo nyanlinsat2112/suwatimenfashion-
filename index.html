@@ -758,6 +758,30 @@ html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color
   .pp-sheet{ opacity:0; } .pp-anim.show .pp-sheet{ opacity:1; } .pp-anim.hide .pp-sheet{ opacity:0; }
   .pp-check, .pp-x{ stroke-dashoffset:0 !important; animation:none !important; }
 }
+
+/* ===== 🎫 Prepaid Card ကြည့်ရန် — Card လေး အောက်ကနေ တက်လာ Animation ===== */
+.pc-stage{ position:relative; padding:6px 0 14px; }
+.pc-glow{ position:absolute; left:12%; right:12%; bottom:4px; height:26px; border-radius:50%; background:radial-gradient(closest-side, rgba(214,255,63,.45), transparent); filter:blur(6px); opacity:0; animation:pcGlow .9s ease .9s forwards; }
+.pc-wrap.pc-enter .pc-inner{ animation:pcRise 1.15s cubic-bezier(.2,.9,.25,1.08) .15s backwards, pcPeek 1s cubic-bezier(.45,0,.25,1) 1.5s; }
+.pc-wrap.pc-enter{ animation:pcFloat 3.2s ease-in-out 2.6s infinite; }
+.pc-stage{ overflow:visible; }
+.pc-wrap .pp-shine{ border-radius:4.2cqw; }
+.pc-wrap.pc-enter .pp-shine::after{ animation:ppShine 1.4s ease 1.1s 1; }
+.pc-hint-in{ animation:pcFade .5s ease 1.2s backwards; }
+@keyframes pcRise{
+  0%{ transform:translateY(190%) rotateX(55deg) rotateZ(-6deg) scale(.8); opacity:0; }
+  25%{ opacity:1; }
+  70%{ transform:translateY(-4%) rotateX(-6deg) rotateZ(0) scale(1.02); }
+  100%{ transform:none; opacity:1; }
+}
+@keyframes pcPeek{ 0%,100%{ transform:rotateY(0); } 45%{ transform:rotateY(-22deg); } 70%{ transform:rotateY(6deg); } }
+@keyframes pcFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-5px); } }
+@keyframes pcGlow{ to{ opacity:1; } }
+@keyframes pcFade{ from{ opacity:0; transform:translateY(6px); } }
+@media (prefers-reduced-motion: reduce){
+  .pc-wrap.pc-enter, .pc-wrap.pc-enter .pc-inner, .pc-wrap.pc-enter .pp-shine::after, .pc-hint-in{ animation:none !important; }
+  .pc-glow{ animation:none; opacity:1; }
+}
 </style>
 </head>
 <body>
@@ -2087,7 +2111,7 @@ async function renderCheckoutStep2(){
       ${currentOrder.promo ? `<div class="order-summary-line" style="color:var(--rust);"><span>🎟️ Promo (${currentOrder.promo.code})</span><span>-${currentOrder.promo.discount.toLocaleString()} ကျပ်</span></div>` : ''}
       <div class="order-summary-line total"><span>စုစုပေါင်း</span><span>${currentOrder.total.toLocaleString()} ကျပ်</span></div>
       <div id="co-cashback-line"></div>
-      <div class="delivery-fee-note">🚚 ${currentOrder.delivery ? `<b>${currentOrder.delivery.zone}</b> — Delivery ခ <b>${currentOrder.delivery.range}</b> ကို ` : 'Delivery ခ ကို '}ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည် (အထက်ပါ စုစုပေါင်းထဲ မပါဝင်ပါ)</div>
+      <div class="delivery-fee-note">🚚 ${currentOrder.delivery ? `<b>${currentOrder.delivery.zone}</b> — Delivery ခ <b>${currentOrder.delivery.range}</b> ကို ` : 'Delivery ခ ကို '}ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည် (အထက်ပါ စုစုပေါင်းထဲ မပါဝင်ပါ)<br><span style="font-size:11.5px;">📦 ${(settings && settings.delivery_note) || DEFAULT_DELIVERY_NOTE}</span></div>
     </div>
 
     ${currentUser ? `
@@ -2119,7 +2143,7 @@ async function renderCheckoutStep2(){
       ${payLaterOn ? `
       <div class="paylater-or"><span>သို့မဟုတ်</span></div>
       <button type="button" class="submit-order-btn paylater-btn" id="co-paylater-btn" onclick="submitOrder({ payLater:true })">⏰ Order အရင်တင်ပြီး ငွေ နောက်မှ လွှဲမည်</button>
-      <p class="hint" style="margin-top:6px;">ပစ္စည်းကို <b>${payLaterHours} နာရီ</b> သိမ်းထားပေးပါမည် — အဲ့ဒီအတွင်း Profile › Order History ကနေ Screenshot တင်ပေးပါ။ မတင်ရင် Order အလိုအလျောက် ပယ်ဖျက်ပါမည်။</p>` : (!currentUser ? `<p class="hint" style="margin-top:8px;">💡 Login ဝင်ထားရင် "ငွေ နောက်မှ လွှဲမည်" ကို ရွေးလို့ ရပါသည်</p>` : '')}
+      <p class="hint" style="margin-top:6px;">ပစ္စည်းကို <b>${payLaterHours} နာရီ</b> သိမ်းထားပေးပါမည် — အဲ့ဒီအတွင်း Profile › Order History ကနေ Screenshot တင်ပေးပါ။ မတင်ရင် Order အလိုအလျောက် ပယ်ဖျက်ပါမည်။</p>` : ((!currentUser && settings?.pay_later_enabled !== false) ? `<p class="hint" style="margin-top:8px;">💡 Login ဝင်ထားရင် "ငွေ နောက်မှ လွှဲမည်" ကို ရွေးလို့ ရပါသည်</p>` : '')}
       <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:8px;" onclick="renderCheckoutStep1()">← ပြန်သွားမည်</button>
     </div>`;
 
@@ -2275,7 +2299,7 @@ async function submitOrder(opts){
 
   if(!payLater){
     if(!file){
-      err.textContent = 'ငွေပေးချေပြီးကြောင်း Screenshot တင်ရန် လိုအပ်ပါသည်' + (currentUser ? ' (သို့) "ငွေ နောက်မှ လွှဲမည်" ကို ရွေးပါ' : '');
+      err.textContent = 'ငွေပေးချေပြီးကြောင်း Screenshot တင်ရန် လိုအပ်ပါသည်' + (document.getElementById('co-paylater-btn') ? ' (သို့) "ငွေ နောက်မှ လွှဲမည်" ကို ရွေးပါ' : '');
       return;
     }
     if(!['image/jpeg','image/jpg','image/png'].includes(file.type)){
@@ -3248,7 +3272,7 @@ async function openPrepaidCard(){
   const pinBoxes = (pin.length ? pin : '****').split('').map(() => '<b>*</b>').join('');
 
   area.innerHTML = `
-    <div class="pc-wrap" id="pc-wrap">
+    <div class="pc-stage"><div class="pc-glow"></div><div class="pc-wrap pc-enter" id="pc-wrap">
       <div class="pc-inner" onclick="flipPrepaidCard()" role="button" tabindex="0" aria-label="Card ကို လှန်ရန်" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();flipPrepaidCard();}">
         <div class="pc-face pc-front">
           <svg class="pc-outline" viewBox="0 0 856 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><text x="28" y="522" textLength="668" lengthAdjust="spacingAndGlyphs" font-family="Archivo Black, sans-serif" font-size="216" fill="none" stroke="#D6FF3F" stroke-width="2" opacity=".28">SUWATI</text></svg>
@@ -3257,7 +3281,7 @@ async function openPrepaidCard(){
           <div class="pc-tags"><span class="pc-badge">MEN FASHION</span><span class="muted">NAY PYI TAW</span></div>
           <div class="pc-flip-hint">TAP TO FLIP ↻</div>
           <div class="pc-bal-label">AVAILABLE BALANCE</div>
-          <div class="pc-bal">${Number(data.balance||0).toLocaleString()}<small>MMK</small></div>
+          <div class="pc-bal"><span id="pc-bal-num" data-v="${Number(data.balance||0)}">${Number(data.balance||0).toLocaleString()}</span><small>MMK</small></div>
           <div class="pc-divider"></div>
           <div class="pc-num">${num}</div>
           <div class="pc-holder-label">CARDHOLDER NAME</div>
@@ -3275,8 +3299,21 @@ async function openPrepaidCard(){
           </div>
         </div>
       </div>
-    </div>
-    <p class="hint" style="text-align:center; margin-top:10px;">Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Barcode နှင့် PIN ရှိပါသည်။ PIN ကြည့်ရန် အကွက်များပေါ် တို့ပါ</p>`;
+      <div class="pp-shine"></div>
+    </div></div>
+    <p class="hint pc-hint-in" style="text-align:center; margin-top:10px;">Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Barcode နှင့် PIN ရှိပါသည်။ PIN ကြည့်ရန် အကွက်များပေါ် တို့ပါ</p>`;
+
+  // 💰 လက်ကျန်ငွေ 0 ကနေ တက်လာ (Card တက်လာချိန်နဲ့ တပြိုင်နက်)
+  try{
+    const el = document.getElementById('pc-bal-num'); const target = Number(el.dataset.v)||0;
+    if(target > 0 && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
+      const t0 = performance.now() + 500, dur = 1200;
+      el.textContent = '0';
+      const tick = (t)=>{ const k = Math.min(1, Math.max(0, (t - t0) / dur)); const e = 1 - Math.pow(1 - k, 3);
+        el.textContent = Math.round(target * e).toLocaleString(); if(k < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    }
+  }catch(e){}
 
   try{
     const svg = document.getElementById('prepaid-barcode-svg');
