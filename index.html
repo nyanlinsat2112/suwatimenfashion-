@@ -1141,6 +1141,129 @@ html[data-theme="dark"] .pc-sec-alert{ background:#2a1611; color:#ffc9b8; }
   .sgc, .sgc__stamp, .sgc__dot, .sgc__hint svg, .sgc__code{ animation:none !important; }
   .sgc__btn{ transition:none; } .sgc.is-flipping .sgc__btn, .sgc.is-peek .sgc__btn, .sgc.is-flipping .sgc__face::after, .sgc.is-shine .sgc__front::after{ animation:none; }
 }
+
+/* ===== Product Detail — ဆွဲပြီး ပုံပြောင်း Slider ===== */
+.detail-slider{ overflow:hidden !important; scroll-snap-type:none !important; touch-action:pan-y pinch-zoom; cursor:grab; user-select:none; -webkit-user-select:none; }
+.detail-slider:active{ cursor:grabbing; }
+.ds-track{ display:flex; width:100%; height:100%; will-change:transform; }
+.ds-track .detail-slide{ flex:0 0 100%; width:100%; height:100%; object-fit:cover; -webkit-user-drag:none; pointer-events:none; }
+.slider-arrow{ display:none !important; }
+.ds-dots{ position:absolute; left:0; right:0; bottom:10px; display:flex; justify-content:center; gap:6px; pointer-events:none; }
+.ds-dots i{ width:7px; height:7px; border-radius:4px; background:rgba(233,228,216,.55); box-shadow:0 0 0 1.5px rgba(20,20,18,.55); transition:width .35s cubic-bezier(.34,1.56,.64,1), background .25s; }
+.ds-dots i.on{ width:22px; background:#D6FF3F; }
+.slider-counter{ top:8px; bottom:auto; left:8px; right:auto; }
+.ds-swipe-hint{ position:absolute; left:50%; bottom:30px; transform:translateX(-50%); background:rgba(20,20,18,.78); color:#E9E4D8; font:700 12px 'Noto Sans Myanmar',sans-serif; padding:5px 12px; border-radius:20px; pointer-events:none; opacity:0; animation:dsHint 2.6s ease .5s; white-space:nowrap; }
+.detail-slider-wrap.swiped .ds-swipe-hint{ display:none; }
+@keyframes dsHint{ 15%,75%{ opacity:1; } }
+@media (prefers-reduced-motion: reduce){ .ds-swipe-hint{ display:none; } .ds-dots i{ transition:none; } }
+
+/* =====================================================================
+   ★ HEADER (E+F) — ☰ ဘေး Menu + Logo + 🛒 + 👤 Account Menu
+   ===================================================================== */
+.hdr-legacy{ display:none !important; }
+.hdr-sub{ font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.15em; color:var(--grey); margin-top:-2px; }
+.hdr-actions{ display:flex; align-items:center; gap:10px; }
+.hdr-menu-btn{ display:none; }
+/* ☰ → ✕ */
+.hm-lines{ position:relative; width:18px; height:14px; display:block; }
+.hm-lines i{ position:absolute; left:0; height:2px; border-radius:2px; background:currentColor; transition:transform .35s cubic-bezier(.34,1.56,.64,1), opacity .2s, width .3s; }
+.hm-lines i:nth-child(1){ top:0; width:18px; } .hm-lines i:nth-child(2){ top:6px; width:13px; } .hm-lines i:nth-child(3){ top:12px; width:16px; }
+.hdr-menu-btn:hover .hm-lines i{ width:18px; }
+.hdr-menu-btn.open .hm-lines i:nth-child(1){ transform:translateY(6px) rotate(45deg); width:18px; }
+.hdr-menu-btn.open .hm-lines i:nth-child(2){ opacity:0; transform:translateX(-8px); }
+.hdr-menu-btn.open .hm-lines i:nth-child(3){ transform:translateY(-6px) rotate(-45deg); width:18px; }
+
+/* 👤 Account ခလုတ် */
+.acct-wrap{ position:relative; }
+.acct-btn svg{ width:20px; height:20px; }
+.acct-btn.is-in{ background:var(--acid); color:#141412; box-shadow:0 0 0 2px var(--ink), 0 2px 6px rgba(0,0,0,.25); }
+.acct-initial{ font-family:'Anton','Noto Sans Myanmar',sans-serif; font-size:18px; line-height:1; }
+.acct-btn.active{ transform:scale(.94); }
+.acct-btn.acct-pop{ animation:acctPop .55s cubic-bezier(.34,1.56,.64,1); }
+@keyframes acctPop{ 0%{ transform:scale(.4) rotate(-90deg); } 100%{ transform:scale(1) rotate(0); } }
+.acct-btn.acct-heart{ animation:acctHeart .6s ease; }
+@keyframes acctHeart{ 25%{ transform:scale(1.18); box-shadow:0 0 0 6px rgba(193,59,31,.35); } 50%{ transform:scale(.95); } }
+
+/* 👤 Dropdown Menu */
+.acct-menu{ position:absolute; right:-4px; top:calc(100% + 12px); width:280px; max-width:calc(100vw - 20px); z-index:120;
+  background:var(--surface); color:var(--ink); border:3px solid var(--ink); box-shadow:6px 6px 0 var(--ink);
+  display:none; transform-origin:calc(100% - 24px) -10px; }
+.acct-menu::before{ content:''; position:absolute; right:16px; top:-10px; width:14px; height:14px; background:var(--surface); border-left:3px solid var(--ink); border-top:3px solid var(--ink); transform:rotate(45deg); }
+.acct-menu.open{ display:block; animation:amIn .42s cubic-bezier(.34,1.45,.5,1); }
+.acct-menu.closing{ animation:amOut .18s ease forwards; }
+@keyframes amIn{ from{ opacity:0; transform:scale(.55) translateY(-6px); } }
+@keyframes amOut{ to{ opacity:0; transform:scale(.85) translateY(-6px); } }
+.am-head{ position:relative; padding:14px 14px 12px; border-bottom:2px solid var(--ink); display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:var(--paper); }
+.am-av{ width:42px; height:42px; border-radius:50%; background:var(--acid); color:#141412; border:2px solid var(--ink); display:grid; place-items:center; font:22px 'Anton','Noto Sans Myanmar',sans-serif; flex:0 0 auto; }
+.am-who{ min-width:0; flex:1; }
+.am-who b{ display:block; font-size:14px; line-height:1.5; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.am-who small{ display:block; font:11px/1.6 'Space Mono','Noto Sans Myanmar',monospace; color:var(--grey); overflow-wrap:anywhere; }
+.am-auth{ display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-top:4px; }
+.am-auth button{ padding:10px; font:700 13px 'Space Mono',monospace; border:2px solid var(--ink); cursor:pointer; }
+.am-login{ background:var(--ink); color:var(--concrete); } .am-signup{ background:var(--acid); color:#141412; }
+.am-list{ padding:6px 0; }
+.am-item{ display:flex; align-items:center; gap:12px; width:100%; padding:11px 16px; background:none; border:none; color:var(--ink); font:700 14px 'Noto Sans Myanmar',sans-serif; text-align:left; cursor:pointer; position:relative; }
+.am-item svg{ width:19px; height:19px; flex:0 0 auto; transition:transform .3s cubic-bezier(.34,1.56,.64,1); }
+.am-item span{ flex:1; }
+.am-item:hover, .am-item:focus-visible{ background:color-mix(in srgb, var(--acid) 35%, transparent); outline:none; }
+.am-item:hover svg{ transform:scale(1.18) rotate(-8deg); }
+.am-item:active{ transform:scale(.98); }
+.am-item[onclick*="handleLogout"]{ color:var(--rust); border-top:1px dashed var(--grey); margin-top:4px; }
+.am-badge{ font:700 11px 'Space Mono',monospace; font-style:normal; background:var(--rust); color:#fff; min-width:22px; height:22px; border-radius:11px; display:grid; place-items:center; padding:0 6px; }
+.am-switch{ width:40px; height:22px; border-radius:22px; border:2px solid var(--ink); background:var(--ph); position:relative; flex:0 0 auto; transition:background .25s; }
+.am-switch b{ position:absolute; top:2px; left:2px; width:14px; height:14px; border-radius:50%; background:var(--ink); transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+.am-switch.on{ background:var(--acid); } .am-switch.on b{ transform:translateX(18px); background:#141412; }
+.acct-menu.open .am-head, .acct-menu.open .am-item{ animation:amItem .4s cubic-bezier(.2,.9,.25,1.1) backwards; animation-delay:calc(var(--i,0) * 35ms + 60ms); }
+@keyframes amItem{ from{ opacity:0; transform:translateX(14px); } }
+html[data-theme="dark"] .acct-menu{ border-color:var(--concrete); box-shadow:6px 6px 0 #000; }
+html[data-theme="dark"] .acct-menu::before{ border-color:var(--concrete); }
+html[data-theme="dark"] .am-head{ border-color:#3a3833; }
+html[data-theme="dark"] .acct-btn.is-in{ box-shadow:0 0 0 2px var(--black), 0 2px 6px rgba(0,0,0,.4); }
+
+/* ☰ ဘေး Menu */
+.site-drawer-dim{ position:fixed; inset:0; z-index:9000; background:rgba(10,10,9,.55); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); opacity:0; pointer-events:none; transition:opacity .3s; }
+.site-drawer-dim.open{ opacity:1; pointer-events:auto; }
+.site-drawer{ position:fixed; top:0; left:0; bottom:0; width:min(84vw, 340px); z-index:9001; background:var(--concrete); color:var(--ink); border-right:3px solid var(--ink);
+  box-shadow:12px 0 40px rgba(0,0,0,.35); overflow-y:auto; overscroll-behavior:contain; padding:calc(14px + env(safe-area-inset-top)) 18px calc(24px + env(safe-area-inset-bottom));
+  transform:translateX(-105%); visibility:hidden; transition:transform .45s cubic-bezier(.22,1.1,.36,1), visibility 0s linear .45s; }
+.site-drawer.open{ transform:none; visibility:visible; transition:transform .45s cubic-bezier(.22,1.1,.36,1), visibility 0s; }
+body.drawer-open{ overflow:hidden; }
+.sd-head{ display:flex; align-items:center; justify-content:space-between; padding-bottom:12px; border-bottom:3px solid var(--ink); margin-bottom:6px; }
+.sd-head .logo{ font-size:26px; }
+.sd-close{ width:38px; height:38px; border:2px solid var(--ink); background:none; color:var(--ink); font-size:16px; cursor:pointer; transition:transform .3s; }
+.sd-close:active{ transform:rotate(90deg) scale(.9); }
+.sd-sec{ font:700 11px 'Space Mono',monospace; letter-spacing:.14em; color:var(--grey); margin:18px 0 4px; }
+.sd-item{ display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%; padding:12px 2px; background:none; border:none; border-bottom:1px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+  color:var(--ink); font:700 15px 'Noto Sans Myanmar',sans-serif; text-align:left; text-decoration:none; cursor:pointer; position:relative; }
+.sd-item > b{ font-family:'Space Mono',monospace; opacity:0; transform:translateX(-8px); transition:all .25s; }
+.sd-item:hover > b, .sd-item.on > b{ opacity:1; transform:none; }
+.sd-item.on{ color:var(--rust); }
+.sd-item.on::before{ content:''; position:absolute; left:-18px; top:10px; bottom:10px; width:4px; background:var(--rust); }
+.sd-item:active{ background:color-mix(in srgb, var(--acid) 30%, transparent); }
+.sd-subs{ display:flex; flex-wrap:wrap; gap:6px; padding:2px 0 10px 12px; }
+.sd-subs button{ border:1.5px solid var(--ink); background:none; color:var(--ink); font:600 12px 'Noto Sans Myanmar',sans-serif; padding:5px 10px; cursor:pointer; }
+.sd-subs button:active{ background:var(--ink); color:var(--concrete); }
+.sd-msg{ display:flex; align-items:center; gap:8px; justify-content:center; margin-top:22px; padding:12px; border:2px solid var(--ink); background:var(--ink); color:var(--concrete); font:700 13px 'Noto Sans Myanmar',sans-serif; text-decoration:none; }
+.sd-msg svg{ width:18px; height:18px; }
+.site-drawer.open .sd-head, .site-drawer.open .sd-sec, .site-drawer.open .sd-item, .site-drawer.open .sd-catwrap, .site-drawer.open .sd-msg{ animation:sdItem .45s cubic-bezier(.2,.9,.25,1.05) backwards; animation-delay:calc(var(--i,0) * 30ms + 80ms); }
+@keyframes sdItem{ from{ opacity:0; transform:translateX(-26px); } }
+.sd-catwrap .sd-item{ animation:none !important; }
+html[data-theme="dark"] .site-drawer{ background:#1E1D1A; border-color:#3a3833; }
+html[data-theme="dark"] .sd-head{ border-color:var(--concrete); }
+
+/* 📱 ဖုန်း — ☰ ဘယ် · Logo အလယ် · 🛒 👤 ညာ */
+@media (max-width:640px){
+  header.site nav.wrap{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:6px; }
+  .hdr-menu-btn{ display:flex; justify-self:start; }
+  .hdr-logo{ justify-self:center; text-align:center; }
+  .hdr-actions{ justify-self:end; gap:8px; }
+  .hdr-sub{ letter-spacing:.3em; }
+  .acct-menu{ right:-6px; }
+}
+@media (prefers-reduced-motion: reduce){
+  .acct-menu.open, .acct-menu.closing, .acct-menu.open .am-head, .acct-menu.open .am-item, .site-drawer.open *, .acct-btn.acct-pop, .acct-btn.acct-heart{ animation:none !important; }
+  .site-drawer, .hm-lines i{ transition:none; }
+}
 </style>
 </head>
 <body>
@@ -1149,9 +1272,12 @@ html[data-theme="dark"] .pc-sec-alert{ background:#2a1611; color:#ffc9b8; }
 
 <header class="site">
   <nav class="wrap">
-    <div style="cursor:pointer;" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <button type="button" class="cart-btn hdr-menu-btn" id="hdr-menu-btn" onclick="openSiteDrawer()" aria-label="Menu ဖွင့်ရန်" aria-controls="site-drawer" aria-expanded="false">
+      <span class="hm-lines" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+    <div class="hdr-logo" style="cursor:pointer;" onclick="window.scrollTo({top:0,behavior:'smooth'})">
       <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
-      <div style="font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.15em; color:var(--grey); margin-top:-2px;">FASHION</div>
+      <div class="hdr-sub">FASHION</div>
     </div>
     <div class="links">
       <div class="megamenu-wrap">
@@ -1170,23 +1296,27 @@ html[data-theme="dark"] .pc-sec-alert{ background:#2a1611; color:#ffc9b8; }
       <a href="#contact">ဆက်သွယ်ရန်</a>
       <a href="#" onclick="openOrderTracking(); return false;">Order Track</a>
     </div>
-    <div style="display:flex; align-items:center; gap:10px;">
-      <button class="cart-btn theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Light / Dark Mode ပြောင်းရန်" title="Light / Dark Mode">
-        <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
-        <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+    <div class="hdr-actions">
+      <!-- မူလ ခလုတ်များ (Script တွေ သုံးနေလို့ ဖျောက်ထားရုံ) -->
+      <button class="cart-btn theme-toggle hdr-legacy" id="theme-toggle" onclick="toggleTheme()" tabindex="-1" aria-hidden="true">
+        <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle></svg>
       </button>
-      <button class="auth-btn" id="auth-nav-btn" onclick="openAuthOrHistory()">Login</button>
-      <button class="cart-btn" id="wishlist-btn-nav" onclick="openWishlist()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-        <span id="wishlist-count-badge" style="display:none;" class="cart-count">0</span>
-      </button>
-      <button class="cart-btn" id="cart-btn" onclick="openCart()">
+      <button class="cart-btn hdr-legacy" id="wishlist-btn-nav" onclick="openWishlist()" tabindex="-1" aria-hidden="true"><span id="wishlist-count-badge" style="display:none;" class="cart-count">0</span></button>
+      <button class="cart-btn" id="cart-btn" onclick="openCart()" aria-label="ခြင်းတောင်း">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
         <span id="cart-count-badge" style="display:none;" class="cart-count">0</span>
       </button>
+      <div class="acct-wrap">
+        <button type="button" class="cart-btn acct-btn" id="auth-nav-btn" onclick="toggleAcctMenu(event)" aria-haspopup="menu" aria-expanded="false" aria-label="Account Menu"></button>
+        <div class="acct-menu" id="acct-menu" role="menu" aria-label="Account Menu"></div>
+      </div>
     </div>
   </nav>
 </header>
+<!-- ☰ ဘေး Menu (ဖုန်း) -->
+<div class="site-drawer-dim" id="site-drawer-dim" onclick="closeSiteDrawer()"></div>
+<aside class="site-drawer" id="site-drawer" aria-label="Menu" aria-hidden="true"></aside>
 <div class="ticker">
   <div class="ticker-track" id="ticker-track">
     <span>ORDER NOW</span><span class="acc">·</span>
@@ -4865,7 +4995,7 @@ function renderProductDetail(p){
 
     box.innerHTML = `
       <button class="modal-close" onclick="closeCheckout()">&times;</button>
-      <img class="detail-main-img" id="detail-main-img" src="${images[0]}" alt="${p.name}" onclick="openSiteLightbox(this.src)">
+      ${detailSliderHtml(images, p.name)}
       <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
         <h3 style="margin:0;">${p.name}</h3>
         <button type="button" class="share-btn" onclick="shareProduct('${p.name.replace(/'/g,"\\'")}')">🔗 Share</button>
@@ -4889,6 +5019,7 @@ function renderProductDetail(p){
 
       ${renderRelatedProductsHtml(p)}
     `;
+    initDetailSlider();
     return;
   }
 
@@ -4899,18 +5030,7 @@ function renderProductDetail(p){
 
   box.innerHTML = `
     <button class="modal-close" onclick="closeCheckout()">&times;</button>
-    <div class="detail-slider-wrap">
-      <div class="detail-slider" id="detail-slider" onscroll="onDetailSliderScroll()">
-        ${images.map((img,i)=>`<img class="detail-slide" src="${img}" alt="${p.name} ${i+1}" loading="${i===0?'eager':'lazy'}" onclick="openSiteLightbox(this.src)">`).join('')}
-      </div>
-      ${images.length>1 ? `
-        <button type="button" class="slider-arrow prev" onclick="slideDetail(-1)" aria-label="Previous">‹</button>
-        <button type="button" class="slider-arrow next" onclick="slideDetail(1)" aria-label="Next">›</button>
-        <div class="slider-counter" id="slider-counter">1 / ${images.length}</div>` : ''}
-    </div>
-    ${images.length>1 ? `<div class="detail-thumbs">
-      ${images.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" onclick="goToDetailSlide(${i})">`).join('')}
-    </div>` : ''}
+    ${detailSliderHtml(images, p.name)}
 
     <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
       <h3 style="margin:0;">${p.name}</h3>
@@ -4953,6 +5073,7 @@ function renderProductDetail(p){
 
     ${renderRelatedProductsHtml(p)}
   `;
+  initDetailSlider();
   updateDetailStockLabel();
   renderDetailPrepaidButton(p);
 }
@@ -5091,29 +5212,87 @@ function switchDetailImg(el, src){
   if(idx >= 0) goToDetailSlide(idx);
 }
 
-// ---------- Product Detail Image Slider (လက်ဖြင့် ပွတ်ဆွဲ / Arrow / Thumbnail) ----------
+// ---------- Product Detail Image Slider — လက်နဲ့ ဘယ်/ညာ ဆွဲရုံ (Arrow မပါ) ----------
+function detailSliderHtml(images, name){
+  const n = images.length;
+  const alt = String(name||'').replace(/"/g,'&quot;');
+  return `
+    <div class="detail-slider-wrap${n>1?' multi':''}" id="detail-slider-wrap">
+      <div class="detail-slider" id="detail-slider">
+        <div class="ds-track" id="ds-track">
+          ${images.map((img,i)=>`<img class="detail-slide" src="${img}" alt="${alt} ${i+1}" loading="${i<2?'eager':'lazy'}" draggable="false">`).join('')}
+        </div>
+      </div>
+      ${n>1 ? `<div class="slider-counter" id="slider-counter">1 / ${n}</div>
+      <div class="ds-dots" id="ds-dots">${images.map((_,i)=>`<i class="${i===0?'on':''}"></i>`).join('')}</div>
+      <div class="ds-swipe-hint" aria-hidden="true">👆 ဘေးတိုက် ဆွဲပါ</div>` : ''}
+    </div>
+    ${n>1 ? `<div class="detail-thumbs">
+      ${images.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" onclick="goToDetailSlide(${i})" alt="">`).join('')}
+    </div>` : ''}`;
+}
+let __ds = { idx:0, n:1 };
+function initDetailSlider(){
+  const wrap = document.getElementById('detail-slider'), track = document.getElementById('ds-track');
+  if(!wrap || !track) return;
+  const n = track.children.length; __ds = { idx:0, n };
+  track.style.transform = 'translate3d(0,0,0)';
+  let x0 = 0, y0 = 0, dx = 0, t0 = 0, axis = null, down = false, moved = false;
+  const W = () => wrap.clientWidth || 1;
+  const set = (px, anim) => { track.style.transition = anim ? 'transform .42s cubic-bezier(.2,.85,.25,1)' : 'none'; track.style.transform = `translate3d(${px}px,0,0)`; };
+  wrap.addEventListener('pointerdown', e => {
+    if(e.pointerType === 'mouse' && e.button !== 0) return;
+    down = true; moved = false; axis = null; x0 = e.clientX; y0 = e.clientY; dx = 0; t0 = performance.now();
+  });
+  wrap.addEventListener('pointermove', e => {
+    if(!down || n < 2) return;
+    const mx = e.clientX - x0, my = e.clientY - y0;
+    if(!axis){ if(Math.abs(mx) < 6 && Math.abs(my) < 6) return; axis = Math.abs(mx) > Math.abs(my) ? 'x' : 'y'; if(axis === 'x'){ try{ wrap.setPointerCapture(e.pointerId); }catch(_){} } }
+    if(axis !== 'x') return;
+    moved = true; dx = mx;
+    // အစွန်းရောက်ရင် ဆွဲလို့ ခက်သလို ခံစားရ
+    if((__ds.idx === 0 && dx > 0) || (__ds.idx === n-1 && dx < 0)) dx = dx * .35;
+    set(-__ds.idx * W() + dx, false);
+  });
+  const end = e => {
+    if(!down) return; down = false;
+    if(axis === 'x' && n > 1){
+      const v = dx / Math.max(1, performance.now() - t0);
+      let to = __ds.idx;
+      if(dx < -W()*0.18 || v < -0.45) to++;
+      else if(dx > W()*0.18 || v > 0.45) to--;
+      goToDetailSlide(Math.max(0, Math.min(n-1, to)));
+    } else if(!moved && e.type === 'pointerup'){
+      const img = track.children[__ds.idx]; if(img) openSiteLightbox(img.src);
+    }
+    axis = null;
+  };
+  wrap.addEventListener('pointerup', end);
+  wrap.addEventListener('pointercancel', end);
+  wrap.addEventListener('lostpointercapture', end);
+  wrap.addEventListener('keydown', e => { if(e.key === 'ArrowLeft') goToDetailSlide(__ds.idx-1); if(e.key === 'ArrowRight') goToDetailSlide(__ds.idx+1); });
+  window.addEventListener('resize', () => set(-__ds.idx * W(), false));
+  // ပုံ ၂ ပုံ အထက်ရှိရင် "ဆွဲလို့ရတယ်" သိအောင် တစ်ချက် ချောင်းပြ
+  if(n > 1 && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
+    setTimeout(() => { if(__ds.idx !== 0 || down) return; set(-W()*0.14, true); setTimeout(() => { if(__ds.idx === 0 && !down) set(0, true); }, 420); }, 700);
+  }
+}
 function goToDetailSlide(idx){
-  const slider = document.getElementById('detail-slider');
-  if(!slider) return;
-  slider.scrollTo({ left: idx * slider.clientWidth, behavior:'smooth' });
-}
-function slideDetail(dir){
-  const slider = document.getElementById('detail-slider');
-  if(!slider) return;
-  const total = slider.children.length;
-  let idx = Math.round(slider.scrollLeft / slider.clientWidth) + dir;
-  if(idx < 0) idx = total - 1;
-  if(idx >= total) idx = 0;
-  goToDetailSlide(idx);
-}
-function onDetailSliderScroll(){
-  const slider = document.getElementById('detail-slider');
-  if(!slider) return;
-  const idx = Math.round(slider.scrollLeft / slider.clientWidth);
+  const wrap = document.getElementById('detail-slider'), track = document.getElementById('ds-track');
+  if(!wrap || !track) return;
+  const n = track.children.length;
+  idx = Math.max(0, Math.min(n-1, idx));
+  __ds.idx = idx;
+  track.style.transition = 'transform .42s cubic-bezier(.2,.85,.25,1)';
+  track.style.transform = `translate3d(${-idx * wrap.clientWidth}px,0,0)`;
   document.querySelectorAll('.detail-thumbs img').forEach((img,i)=>img.classList.toggle('active', i===idx));
+  document.querySelectorAll('#ds-dots i').forEach((d,i)=>d.classList.toggle('on', i===idx));
   const counter = document.getElementById('slider-counter');
-  if(counter) counter.textContent = `${idx+1} / ${slider.children.length}`;
+  if(counter) counter.textContent = `${idx+1} / ${n}`;
+  document.getElementById('detail-slider-wrap')?.classList.add('swiped');
 }
+function slideDetail(dir){ goToDetailSlide(__ds.idx + dir); }
+function onDetailSliderScroll(){}
 
 // ---------- Product Share (Link ကူးယူ / Share Sheet) ----------
 function getProductShareUrl(name){
@@ -5635,6 +5814,196 @@ function handlePushOpen(url){
 }
 window.addEventListener('load', () => handlePushOpen());
 try{ navigator.serviceWorker?.addEventListener('message', e => { if(e.data?.type === 'suwati-push-open') handlePushOpen(e.data.url); }); }catch(e){}
+
+// =====================================================================
+// ★ HEADER — ☰ ဘေး Menu (ဖုန်း) + Logo + 🛒 + 👤 Account Menu
+//   👤 Menu: Profile · Wishlist · Order များ · Prepaid Card · Gift Card · Dark mode · Logout
+// =====================================================================
+const HDR_IC = {
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>',
+  card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>',
+  gift:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13"/><path d="M12 8v13M3 12h18M12 8c-2-4-6-4-6-1s6 1 6 1zm0 0c2-4 6-4 6-1s-6 1-6 1z"/></svg>',
+  moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+  truck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4h14v12H1zM15 9h4l3 3v4h-7"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
+  out:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12z"/></svg>',
+};
+const hdrEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const hdrReduce = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+function hdrName(){
+  const m = currentUser?.user_metadata || {};
+  return m.nickname || m.full_name || m.name || (currentUser?.email || '').split('@')[0] || '';
+}
+function hdrInitial(){
+  const n = hdrName().trim();
+  return n ? Array.from(n)[0].toUpperCase() : 'S';
+}
+function hdrOpenModal(fn){
+  document.getElementById('checkout-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  return fn();
+}
+
+// ---------- 👤 Account ခလုတ် ----------
+function renderAcctButton(){
+  const b = document.getElementById('auth-nav-btn'); if(!b) return;
+  const logged = !!currentUser;
+  const key = logged ? 'in:' + hdrInitial() : 'out';
+  if(b.dataset.k === key) return;
+  b.dataset.k = key;
+  b.classList.toggle('is-in', logged);
+  b.innerHTML = logged ? `<span class="acct-initial">${hdrEsc(hdrInitial())}</span>` : HDR_IC.user;
+  b.setAttribute('aria-label', logged ? `Account — ${hdrName()}` : 'Login / Account');
+  b.classList.remove('acct-pop'); void b.offsetWidth; b.classList.add('acct-pop');
+}
+if(typeof updateAuthUI === 'function'){
+  const _uaH = updateAuthUI;
+  updateAuthUI = function(){
+    const b = document.getElementById('auth-nav-btn'); const k = b?.dataset.k;
+    const r = _uaH.apply(this, arguments);   // မူလက textContent ပြောင်းသွားလို့ ပြန်ဆွဲ
+    if(b){ b.dataset.k = ''; renderAcctButton(); if(k && b.dataset.k === k) b.classList.remove('acct-pop'); }
+    if(document.getElementById('acct-menu')?.classList.contains('open')) renderAcctMenu();
+    return r;
+  };
+}
+
+function wishlistCountNow(){
+  try{ return (typeof wishlist !== 'undefined' && Array.isArray(wishlist)) ? wishlist.length : 0; }catch(e){ return 0; }
+}
+function isDarkNow(){ return document.documentElement.getAttribute('data-theme') === 'dark'; }
+
+function renderAcctMenu(){
+  const m = document.getElementById('acct-menu'); if(!m) return;
+  const logged = !!currentUser; const wl = wishlistCountNow();
+  const item = (ic, label, act, extra='') => `<button type="button" role="menuitem" class="am-item" onclick="${act}">${HDR_IC[ic]}<span>${label}</span>${extra}</button>`;
+  m.innerHTML = `
+    <div class="am-head">${logged
+      ? `<div class="am-av">${hdrEsc(hdrInitial())}</div><div class="am-who"><b>မင်္ဂလာပါ, ${hdrEsc(hdrName())}</b><small>${hdrEsc(currentUser.email || '')}</small></div>`
+      : `<div class="am-who"><b>SUWATI မှ ကြိုဆိုပါတယ် 👋</b><small>Login ဝင်ရင် Order မှတ်တမ်း၊ Prepaid Card၊ Wishlist သိမ်းထားနိုင်ပါတယ်</small></div>
+         <div class="am-auth"><button type="button" class="am-login" onclick="acctGo(()=>openAuthModal('login'))">Login</button><button type="button" class="am-signup" onclick="acctGo(()=>openAuthModal('signup'))">Sign up</button></div>`}
+    </div>
+    <div class="am-list">
+      ${logged ? item('user', 'Profile', "acctGo(openProfile)") : ''}
+      ${item('heart', 'Wishlist', "acctGo(openWishlist)", wl ? `<i class="am-badge">${wl}</i>` : '')}
+      ${logged ? item('box', 'Order များ', "acctGo(()=>hdrOpenModal(openOrderHistory))") : item('truck', 'Order Track', "acctGo(openOrderTracking)")}
+      ${logged ? item('card', 'Prepaid Card', "acctGo(()=>hdrOpenModal(openPrepaidCard))") : ''}
+      ${logged ? item('gift', 'Gift Card များ', "acctGo(()=>hdrOpenModal(openMyGiftCards))") : ''}
+      <button type="button" role="menuitemcheckbox" aria-checked="${isDarkNow()}" class="am-item am-theme" onclick="acctToggleTheme(event)">${HDR_IC.moon}<span>Dark mode</span><i class="am-switch${isDarkNow()?' on':''}"><b></b></i></button>
+      ${logged ? item('out', 'Logout', "acctGo(handleLogout)", '') : ''}
+    </div>`;
+  m.querySelectorAll('.am-item, .am-head').forEach((el, i) => el.style.setProperty('--i', i));
+}
+function toggleAcctMenu(e){
+  e?.stopPropagation();
+  const m = document.getElementById('acct-menu'), b = document.getElementById('auth-nav-btn');
+  if(m.classList.contains('open')){ closeAcctMenu(); return; }
+  closeSiteDrawer();
+  renderAcctMenu();
+  m.classList.remove('closing'); m.classList.add('open'); b.setAttribute('aria-expanded', 'true'); b.classList.add('active');
+  try{ navigator.vibrate?.(6); }catch(_){}
+  setTimeout(() => m.querySelector('.am-item, .am-login')?.focus({ preventScroll:true }), 60);
+}
+function closeAcctMenu(){
+  const m = document.getElementById('acct-menu'), b = document.getElementById('auth-nav-btn');
+  if(!m || !m.classList.contains('open')) return;
+  b?.setAttribute('aria-expanded', 'false'); b?.classList.remove('active');
+  if(hdrReduce()){ m.classList.remove('open'); return; }
+  m.classList.add('closing');
+  setTimeout(() => m.classList.remove('open', 'closing'), 180);
+}
+function acctGo(fn){ closeAcctMenu(); closeSiteDrawer(); setTimeout(() => { try{ fn(); }catch(e){ console.error(e); } }, 60); }
+function acctToggleTheme(e){
+  e?.stopPropagation();
+  toggleTheme();
+  document.querySelectorAll('.am-switch, .sd-switch').forEach(s => s.classList.toggle('on', isDarkNow()));
+  document.querySelectorAll('.am-theme, .sd-theme').forEach(s => s.setAttribute('aria-checked', isDarkNow()));
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('.acct-wrap')) closeAcctMenu();
+});
+document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeAcctMenu(); closeSiteDrawer(); } });
+window.addEventListener('scroll', () => { if(document.getElementById('acct-menu')?.classList.contains('open') && window.innerWidth < 700) closeAcctMenu(); }, { passive:true });
+
+// ---------- ☰ ဘေး Menu ----------
+function renderSiteDrawer(){
+  const d = document.getElementById('site-drawer'); if(!d) return;
+  const cats = Array.from(document.querySelectorAll('#megamenu-categories .megamenu-col')).map(col => {
+    const h = col.querySelector('h5'); const name = h ? h.textContent.trim() : '';
+    const subs = Array.from(col.querySelectorAll('button')).map(b => b.textContent.trim());
+    return { name, subs };
+  }).filter(c => c.name);
+  const q = s => s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  const active = (typeof activeCategory !== 'undefined') ? activeCategory : 'all';
+  d.innerHTML = `
+    <div class="sd-head">
+      <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
+      <button type="button" class="sd-close" onclick="closeSiteDrawer()" aria-label="ပိတ်ရန်">✕</button>
+    </div>
+    <div class="sd-sec">CATEGORY</div>
+    <button type="button" class="sd-item sd-cat${active==='all'?' on':''}" onclick="drawerCat('all')"><span>အားလုံး</span><b>→</b></button>
+    ${cats.map(c => `
+      <div class="sd-catwrap">
+        <button type="button" class="sd-item sd-cat${active===c.name?' on':''}" onclick="drawerCat('${q(c.name)}')"><span>${hdrEsc(c.name)}</span><b>→</b></button>
+        ${c.subs.length ? `<div class="sd-subs">${c.subs.map(s => `<button type="button" onclick="drawerSub('${q(c.name)}','${q(s)}')">${hdrEsc(s)}</button>`).join('')}</div>` : ''}
+      </div>`).join('')}
+    <div class="sd-sec">MENU</div>
+    <a class="sd-item" href="#posts" onclick="closeSiteDrawer()"><span>📰 Post များ</span></a>
+    <a class="sd-item" href="#order" onclick="closeSiteDrawer()"><span>🛍️ မှာယူနည်း</span></a>
+    <a class="sd-item" href="#location" onclick="closeSiteDrawer()"><span>📍 လိပ်စာ</span></a>
+    <a class="sd-item" href="#contact" onclick="closeSiteDrawer()"><span>📞 ဆက်သွယ်ရန်</span></a>
+    <button type="button" class="sd-item" onclick="acctGo(openOrderTracking)"><span>🚚 Order Track</span></button>
+    <button type="button" class="sd-item sd-theme" role="menuitemcheckbox" aria-checked="${isDarkNow()}" onclick="acctToggleTheme(event)"><span>🌙 Dark mode</span><i class="am-switch sd-switch${isDarkNow()?' on':''}"><b></b></i></button>
+    <a class="sd-msg" href="https://m.me/suwatimenfashion" target="_blank" rel="noopener">${HDR_IC.chat} Messenger မှ မေးမြန်းရန်</a>`;
+  d.querySelectorAll('.sd-head, .sd-sec, .sd-item, .sd-catwrap, .sd-msg').forEach((el, i) => el.style.setProperty('--i', i));
+}
+function openSiteDrawer(){
+  const d = document.getElementById('site-drawer'), dim = document.getElementById('site-drawer-dim'), b = document.getElementById('hdr-menu-btn');
+  closeAcctMenu();
+  renderSiteDrawer();
+  d.classList.add('open'); dim.classList.add('open'); b?.classList.add('open');
+  d.setAttribute('aria-hidden', 'false'); b?.setAttribute('aria-expanded', 'true');
+  document.body.classList.add('drawer-open');
+  try{ navigator.vibrate?.(6); }catch(_){}
+}
+function closeSiteDrawer(){
+  const d = document.getElementById('site-drawer'); if(!d || !d.classList.contains('open')) return;
+  d.classList.remove('open'); d.style.transform = '';
+  document.getElementById('site-drawer-dim')?.classList.remove('open');
+  const b = document.getElementById('hdr-menu-btn'); b?.classList.remove('open'); b?.setAttribute('aria-expanded', 'false');
+  d.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('drawer-open');
+}
+function drawerGoProducts(){
+  const t = document.getElementById('filter-chips') || document.getElementById('product-grid');
+  if(t) setTimeout(() => window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 90, behavior: hdrReduce() ? 'auto' : 'smooth' }), 120);
+}
+function drawerCat(name){ closeSiteDrawer(); try{ filterByCategory(name); }catch(e){} drawerGoProducts(); }
+function drawerSub(cat, sub){ closeSiteDrawer(); try{ filterBySubcategory(cat, sub); }catch(e){} drawerGoProducts(); }
+// ဘယ်ဘက်ကို ပွတ်ဆွဲရင် ပိတ်
+(function(){
+  const d = document.getElementById('site-drawer'); if(!d) return;
+  let x0 = null, dx = 0;
+  d.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; dx = 0; }, { passive:true });
+  d.addEventListener('touchmove', e => { if(x0 === null) return; dx = Math.min(0, e.touches[0].clientX - x0); if(dx < -8){ d.style.transition = 'none'; d.style.transform = `translateX(${dx}px)`; } }, { passive:true });
+  d.addEventListener('touchend', () => { d.style.transition = ''; if(dx < -70) closeSiteDrawer(); else d.style.transform = ''; x0 = null; });
+})();
+window.addEventListener('resize', () => { if(window.innerWidth > 640) closeSiteDrawer(); });
+
+// Wishlist အရေအတွက် ပြောင်းရင် Menu ထဲ ပြန်ပြ + 👤 ခလုတ် တစ်ချက် ခုန်
+(function(){
+  const badge = document.getElementById('wishlist-count-badge'); if(!badge) return;
+  let last = badge.textContent;
+  new MutationObserver(() => {
+    if(badge.textContent === last) return;
+    const up = Number(badge.textContent) > Number(last); last = badge.textContent;
+    if(document.getElementById('acct-menu')?.classList.contains('open')) renderAcctMenu();
+    const b = document.getElementById('auth-nav-btn');
+    if(up && b && !hdrReduce()){ b.classList.remove('acct-heart'); void b.offsetWidth; b.classList.add('acct-heart'); }
+  }).observe(badge, { childList:true, characterData:true, subtree:true, attributes:true });
+})();
+renderAcctButton();
 
 // SUWATI MEN FASHION — ✨ Animation များ (Scroll ပေါ်လာခြင်း၊ ခြင်းထဲထည့်ခြင်း၊ Popup ပိတ်ခြင်း စသည်)
 (function(){
