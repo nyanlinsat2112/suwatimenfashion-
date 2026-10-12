@@ -360,6 +360,7 @@
   .order-summary-line.total{font-weight:700; font-size:16px; border-top:2px solid var(--ink); margin-top:6px; padding-top:8px;}
   .qr-box{text-align:center; padding:14px; background:#fff; border:2px dashed var(--ink);}
   .qr-box img{max-width:220px; margin:0 auto 10px;}
+  .qr-box{color:#141412;} .qr-box .qr-note{color:#5c574c !important;}
   .qr-note{font-size:12.5px; color:var(--grey); font-family:'Space Mono',monospace; margin-top:8px; line-height:1.6;}
   .upload-box{border:2px dashed var(--ink); padding:16px; text-align:center;}
   .upload-preview{max-width:160px; margin:12px auto 0; border:2px solid var(--ink);}
@@ -373,7 +374,7 @@
   .success-box .big-check{font-size:52px; color:var(--rust);}
   .success-box h3{margin-top:10px;}
   .success-box p{font-size:14px; margin-top:10px; line-height:1.7;}
-  .success-box .order-id{font-family:'Space Mono',monospace; background:var(--ink); color:var(--acid); padding:8px 14px; display:inline-block; margin-top:10px;}
+  .success-box .order-id{font-family:'Space Mono',monospace; background:#141412; color:#D6FF3F; border:2px solid var(--ink); padding:8px 14px; display:inline-block; margin-top:10px;}
 
   #site-toast{
     position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -402,7 +403,7 @@
   .promo-applied{font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .promo-remove{background:transparent; border:1.5px solid var(--rust); color:var(--rust); font-size:11px; padding:3px 8px; cursor:pointer; margin-left:auto;}
   .promo-msg{font-size:12px; color:var(--rust); margin-top:6px; min-height:0;}
-  .cashback-banner{position:sticky; z-index:45; background:var(--acid); color:var(--black); border-bottom:3px solid var(--ink); padding:9px 16px; font-size:13px; line-height:1.5; text-align:center;}
+  .cashback-banner{position:sticky; z-index:45; background:var(--acid); color:var(--black); border-bottom:3px solid #141412; padding:9px 16px; font-size:13px; line-height:1.5; text-align:center;}
   .cashback-banner b{font-family:'Anton',sans-serif; letter-spacing:.03em; font-weight:400; font-size:14px;}
   .cashback-est{border:2px dashed var(--ink); background:rgba(214,255,63,.35); padding:8px 10px; margin-top:10px; font-size:12.5px;}
   .gift-addon-box{border:2.5px dashed var(--rust); background:rgba(193,59,31,.06); padding:12px; margin:12px 0 4px;}
@@ -515,7 +516,7 @@
    ===================================================================== */
 html[data-theme="dark"]{
   --ink:#E9E4D8; --concrete:#141412; --paper:#1E1D1A; --grey:#a39e91; --line:#3a3833;
-  --surface:#1E1D1A; --ph:#2a2924; --text2:#cfc9bb; color-scheme:dark;
+  --surface:#1E1D1A; --ph:#2a2924; --text2:#cfc9bb; --rust:#D9502F; color-scheme:dark;
 }
 html[data-theme="dark"] body::before{ opacity:.035; mix-blend-mode:screen; }
 /* အမြဲ အနက်ဖြစ်ရမည့် အပိုင်းများ (Light/Dark မရွေး) */
@@ -708,6 +709,55 @@ html.theme-fade, html.theme-fade *{ transition:background-color .35s ease, color
 .topup-bonus-info .tbi-title{ font-family:'Space Mono',monospace; font-weight:700; color:var(--acid); letter-spacing:.1em; font-size:11px; }
 .topup-bonus-preview{ margin-top:8px; font-size:13px; color:var(--rust); font-weight:700; }
 .topup-bonus-preview:empty{ display:none; }
+
+/* ===== 🎫 Prepaid Card ငွေချေ Animation (Apple Pay ပုံစံ) ===== */
+.pp-anim{ position:fixed; inset:0; z-index:10050; display:flex; align-items:flex-end; justify-content:center; pointer-events:auto; }
+.pp-backdrop{ position:absolute; inset:0; background:rgba(10,10,9,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); opacity:0; transition:opacity .35s ease; }
+.pp-sheet{ position:relative; width:100%; max-width:440px; background:#141412; color:#E9E4D8; border-top:3px solid #D6FF3F; border-radius:22px 22px 0 0;
+  padding:10px 22px calc(26px + env(safe-area-inset-bottom)); transform:translateY(105%); transition:transform .55s cubic-bezier(.2,1.15,.3,1); box-shadow:0 -20px 50px rgba(0,0,0,.45); }
+.pp-anim.show .pp-backdrop{ opacity:1; } .pp-anim.show .pp-sheet{ transform:translateY(0); }
+.pp-anim.hide .pp-backdrop{ opacity:0; } .pp-anim.hide .pp-sheet{ transform:translateY(105%); transition:transform .4s cubic-bezier(.5,0,.75,0); }
+.pp-grip{ width:42px; height:5px; border-radius:3px; background:#3a3833; margin:2px auto 12px; }
+.pp-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; }
+.pp-brand{ font-family:'Archivo Black','Anton',sans-serif; font-size:15px; letter-spacing:.04em; } .pp-brand i{ font-style:normal; color:#D6FF3F; }
+.pp-amt{ font-family:'Archivo Black','Anton',sans-serif; font-size:24px; color:#D6FF3F; } .pp-amt small{ font-family:'Noto Sans Myanmar',sans-serif; font-size:13px; color:#E9E4D8; }
+.pp-card{ position:relative; max-width:330px; margin:0 auto; perspective:900px; }
+.pp-card .pc-inner{ cursor:default; transform:translateY(60px) rotateX(38deg) scale(.86); opacity:0; transition:transform .8s cubic-bezier(.17,1.2,.3,1) .12s, opacity .35s ease .12s; }
+.pp-anim.show .pp-card .pc-inner{ transform:none; opacity:1; animation:ppFloat 2.4s ease-in-out 1s infinite; }
+.pp-anim.done .pp-card .pc-inner{ animation:ppPaid .5s cubic-bezier(.3,1.6,.5,1) forwards; }
+.pp-anim.failed .pp-card .pc-inner{ animation:ppShake .45s ease; }
+.pp-shine{ position:absolute; inset:0; border-radius:4.2cqw; overflow:hidden; pointer-events:none; }
+.pp-shine::after{ content:""; position:absolute; top:-20%; bottom:-20%; width:35%; left:-60%; transform:skewX(-20deg);
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent); }
+.pp-anim.show .pp-shine::after{ animation:ppShine 1.6s ease .7s 2; }
+.pp-status{ text-align:center; margin-top:18px; min-height:96px; }
+.pp-ring{ width:52px; height:52px; margin:0 auto 8px; }
+.pp-ring svg{ width:100%; height:100%; overflow:visible; }
+.pp-ring circle{ fill:none; stroke-width:3.5; }
+.pp-ring-bg{ stroke:#3a3833; }
+.pp-ring-spin{ stroke:#D6FF3F; stroke-linecap:round; stroke-dasharray:36 200; transform-origin:26px 26px; animation:ppSpin .9s linear infinite; }
+.pp-check, .pp-x{ fill:none; stroke:#141412; stroke-width:4.5; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:40; stroke-dashoffset:40; }
+.pp-anim.done .pp-ring-spin{ animation:none; stroke-dasharray:none; fill:#D6FF3F; transition:fill .2s; }
+.pp-anim.done .pp-ring-bg{ stroke:#D6FF3F; }
+.pp-anim.done .pp-check{ animation:ppDraw .35s ease .1s forwards; }
+.pp-anim.failed .pp-ring-spin{ animation:none; stroke-dasharray:none; stroke:#D9502F; fill:#D9502F; }
+.pp-anim.failed .pp-x{ stroke:#fff; animation:ppDraw .3s ease forwards; }
+.pp-anim.done .pp-ring{ animation:ppPop .45s cubic-bezier(.3,1.7,.5,1); }
+.pp-text{ font-size:15px; font-weight:700; } .pp-sub{ font-family:'Space Mono',monospace; font-size:12px; color:#a39e91; margin-top:4px; }
+@keyframes ppFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+@keyframes ppPaid{ 0%{ transform:scale(1); } 45%{ transform:scale(1.05) translateY(-8px); } 100%{ transform:scale(.98); } }
+@keyframes ppShake{ 0%,100%{ transform:translateX(0); } 20%,60%{ transform:translateX(-10px); } 40%,80%{ transform:translateX(10px); } }
+@keyframes ppShine{ from{ left:-60%; } to{ left:130%; } }
+@keyframes ppSpin{ to{ transform:rotate(360deg); } }
+@keyframes ppDraw{ to{ stroke-dashoffset:0; } }
+@keyframes ppPop{ 0%{ transform:scale(.6); } 100%{ transform:scale(1); } }
+@media (prefers-reduced-motion: reduce){
+  .pp-sheet, .pp-card .pc-inner, .pp-backdrop{ transition:opacity .2s ease !important; }
+  .pp-sheet, .pp-card .pc-inner{ transform:none !important; }
+  .pp-anim .pp-card .pc-inner, .pp-shine::after, .pp-ring, .pp-ring-spin{ animation:none !important; }
+  .pp-sheet{ opacity:0; } .pp-anim.show .pp-sheet{ opacity:1; } .pp-anim.hide .pp-sheet{ opacity:0; }
+  .pp-check, .pp-x{ stroke-dashoffset:0 !important; animation:none !important; }
+}
 </style>
 </head>
 <body>
@@ -2019,6 +2069,7 @@ async function renderCheckoutStep2(){
   // ⑦ ခွဲချေ — Prepaid လက်ကျန် မလုံလောက်ရင် ရှိသလောက် သုံးပြီး ကျန်ငွေကို KBZPay ဖြင့်
   const walletPartAvail = (currentUser && !canPayWithWallet) ? Math.floor(Math.min(walletBalance, currentOrder.total - 1)) : 0;
   currentOrder.walletPartAvail = walletPartAvail > 0 ? walletPartAvail : 0;
+  currentOrder.walletBalance = walletBalance;
   // ③ ငွေ နောက်မှ လွှဲ
   const payLaterOn = !!currentUser && settings?.pay_later_enabled !== false;
   const payLaterHours = Math.max(1, parseInt(settings?.unpaid_cancel_hours) || 24);
@@ -2112,6 +2163,7 @@ async function payWithWallet(){
   if(!confirm(`Prepaid Card ဖြင့် ${currentOrder.total.toLocaleString()} ကျပ် ဝယ်မှာ သေချာပါသလား?`)) return;
   const btn = document.getElementById('pay-wallet-btn');
   btn.disabled = true; btn.textContent = 'လုပ်ဆောင်နေသည်...';
+  const payAnim = prepaidPayAnim.start(currentOrder.total);   // 🎫 Card လေး တက်လာ
 
   // Stock ကို အရင် Reserve
   const reservedItems = [];
@@ -2119,6 +2171,7 @@ async function payWithWallet(){
     const { data: ok, error: stockErr } = await sb.rpc('decrement_stock', { p_name: i.name, p_qty: i.quantity, p_color: i.color || null, p_size: i.size || null });
     if(stockErr || ok !== true){
       for(const r of reservedItems){ await safeRestoreStockGlobal(r); }
+      await payAnim.fail('Stock မလုံလောက်တော့ပါ');
       showSiteToast(`"${i.name}" — Stock မလုံလောက်တော့ပါ`);
       btn.disabled = false; btn.textContent = 'Wallet ဖြင့် ချက်ချင်း ဝယ်မည်';
       loadProducts();
@@ -2134,6 +2187,7 @@ async function payWithWallet(){
   });
   if(debitErr || debitOk !== true){
     for(const r of reservedItems){ await safeRestoreStockGlobal(r); }
+    await payAnim.fail('Card လက်ကျန် မလုံလောက်ပါ');
     showSiteToast('Wallet ငွေ မလုံလောက်တော့ပါ');
     btn.disabled = false; btn.textContent = 'Wallet ဖြင့် ချက်ချင်း ဝယ်မည်';
     return;
@@ -2158,11 +2212,15 @@ async function payWithWallet(){
   if(orderErr){
     for(const r of reservedItems){ await safeRestoreStockGlobal(r); }
     await sb.rpc('refund_failed_purchase', { p_reference: groupId });
+    await payAnim.fail('ငွေ ပြန်အမ်းပြီးပါပြီ');
     showSiteToast(friendlyOrderError(orderErr.message) + ' (Prepaid Card ငွေ ပြန်အမ်းပြီးပါပြီ)');
     btn.disabled = false; btn.textContent = 'Wallet ဖြင့် ချက်ချင်း ဝယ်မည်';
     return;
   }
 
+  let remaining = null;
+  try{ const { data: w } = await sb.from('wallets').select('balance').eq('user_id', currentUser.id).maybeSingle(); remaining = w ? w.balance : null; }catch(e){}
+  await payAnim.success(remaining);
   cart = [];
   saveCart();
   renderCheckoutSuccess(rows);
@@ -2300,12 +2358,15 @@ async function submitOrder(opts){
     const groupId = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+'-'+Math.random().toString(36).slice(2)));
 
     // ⑦ ခွဲချေ — Prepaid ထဲက တစ်စိတ်ကို အရင် နုတ်ယူ (Order မဝင်ရင် ပြန်အမ်းမည်)
+    let splitAnim = null;
     if(walletPart > 0){
+      splitAnim = prepaidPayAnim.start(walletPart);
       const { data: debitOk, error: debitErr } = await sb.rpc('debit_wallet', {
         p_amount: walletPart, p_type: 'purchase', p_description: `Website Order (ခွဲချေ) — #${groupId.slice(0,8).toUpperCase()}`, p_reference: groupId,
       });
       if(debitErr || debitOk !== true){
         for(const r of reservedItems){ await safeRestoreStock(r); }
+        await splitAnim.fail('Card လက်ကျန် မလုံလောက်ပါ');
         err.textContent = 'Prepaid Card လက်ကျန် မလုံလောက်တော့ပါ — စာမျက်နှာ ပြန်ဖွင့်ပြီး ထပ်စမ်းပါ';
         resetBtns();
         return;
@@ -2347,8 +2408,10 @@ async function submitOrder(opts){
         await safeRestoreStock(r);
       }
       if(walletPart > 0){ try{ await sb.rpc('refund_failed_purchase', { p_reference: groupId }); }catch(e){} }
+      if(splitAnim) await splitAnim.fail('Prepaid ငွေ ပြန်အမ်းပြီးပါပြီ');
       throw orderErr;
     }
+    if(splitAnim) await splitAnim.success(Math.max(0, (Number(currentOrder.walletBalance)||0) - walletPart));
 
     cart = [];
     saveCart();
@@ -3460,6 +3523,87 @@ function updateTopupBonusPreview(){
   el.innerHTML = b ? `🎉 Bonus <b>${b.toLocaleString()} ကျပ်</b> ထပ်ရမည် — Card ထဲ စုစုပေါင်း <b>${(amt+b).toLocaleString()} ကျပ်</b> ဝင်ပါမည်` : '';
 }
 
+// SUWATI MEN FASHION — 🎫 Prepaid Card ငွေချေ Animation (Apple Pay ပုံစံ — Card လေး အောက်ကနေ တက်လာ)
+// အသုံးပြုပုံ: const a = prepaidPayAnim.start(18000); ... await a.success(remaining) / await a.fail()
+
+const prepaidPayAnim = (function(){
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const reduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function cardHtml(number, holder){
+    return `
+      <div class="pc-wrap pp-card" aria-hidden="true">
+        <div class="pc-inner">
+          <div class="pc-face pc-front">
+            <svg class="pc-outline" viewBox="0 0 856 540" preserveAspectRatio="xMidYMid meet"><text x="28" y="522" textLength="668" lengthAdjust="spacingAndGlyphs" font-family="Archivo Black, sans-serif" font-size="216" fill="none" stroke="#D6FF3F" stroke-width="2" opacity=".28">SUWATI</text></svg>
+            <div class="pc-stripe"><span>SUWATI ✕ SUWATI ✕ SUWATI ✕ SUWATI</span></div>
+            <div class="pc-title">SUWATI<i>.</i>PREPAID CARD</div>
+            <div class="pc-tags"><span class="pc-badge">MEN FASHION</span><span class="muted">NAY PYI TAW</span></div>
+            <div class="pc-divider"></div>
+            <div class="pc-num">${esc(number)}</div>
+            <div class="pc-holder-label">CARDHOLDER NAME</div>
+            <div class="pc-holder">${esc(holder)}</div>
+          </div>
+        </div>
+        <div class="pp-shine"></div>
+      </div>`;
+  }
+
+  function start(amount){
+    document.getElementById('pp-anim')?.remove();
+    const cu = (typeof currentUser !== 'undefined') ? currentUser : null;
+    const holder = (cu && (cu.user_metadata?.full_name || cu.email) || '').toUpperCase();
+    const el = document.createElement('div');
+    el.id = 'pp-anim'; el.className = 'pp-anim';
+    el.setAttribute('role','status'); el.setAttribute('aria-live','polite');
+    el.innerHTML = `
+      <div class="pp-backdrop"></div>
+      <div class="pp-sheet">
+        <div class="pp-grip"></div>
+        <div class="pp-head"><span class="pp-brand">SUWATI<i>.</i>PAY</span><span class="pp-amt">${Number(amount||0).toLocaleString()} <small>ကျပ်</small></span></div>
+        ${cardHtml('•••• •••• •••• ••••', holder)}
+        <div class="pp-status">
+          <div class="pp-ring"><svg viewBox="0 0 52 52"><circle class="pp-ring-bg" cx="26" cy="26" r="23"/><circle class="pp-ring-spin" cx="26" cy="26" r="23"/><path class="pp-check" d="M15 27 l8 8 l15 -17"/><path class="pp-x" d="M18 18 L34 34 M34 18 L18 34"/></svg></div>
+          <div class="pp-text">Prepaid Card ဖြင့် ငွေချေနေသည်...</div>
+          <div class="pp-sub"></div>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    void el.offsetWidth;
+    el.classList.add('show');
+    // Card နံပါတ်အစစ် (နောက်ဆုံး ၄ လုံး) ကို ဖြည့်
+    try{
+      if(cu){
+        sb.from('wallets').select('card_number').eq('user_id', cu.id).maybeSingle().then(({ data })=>{
+          const n = el.querySelector('.pc-num');
+          if(n && data && data.card_number){ const d = String(data.card_number).replace(/\s/g,''); n.textContent = '•••• •••• •••• ' + d.slice(-4); }
+        }).catch(()=>{});
+      }
+    }catch(e){}
+
+    const started = Date.now();
+    async function finish(ok, sub){
+      const minShow = reduced() ? 300 : 1100;               // Card တက်လာတာ အနည်းဆုံး မြင်ရစေရန်
+      const left = minShow - (Date.now() - started); if(left > 0) await wait(left);
+      el.classList.add(ok ? 'done' : 'failed');
+      el.querySelector('.pp-text').textContent = ok ? 'ငွေချေပြီးပါပြီ' : 'ငွေချေ၍ မရပါ';
+      if(sub) el.querySelector('.pp-sub').textContent = sub;
+      try{ if(navigator.vibrate) navigator.vibrate(ok ? 30 : [40,60,40]); }catch(e){}
+      await wait(ok ? (reduced() ? 700 : 1500) : 1300);
+      el.classList.remove('show'); el.classList.add('hide');
+      await wait(reduced() ? 150 : 420);
+      el.remove();
+    }
+    el.addEventListener('click', ()=>{ if(el.classList.contains('done') || el.classList.contains('failed')){ el.remove(); } });
+    return {
+      success: (remaining) => finish(true, (remaining !== undefined && remaining !== null) ? `Card လက်ကျန်: ${Number(remaining).toLocaleString()} ကျပ်` : ''),
+      fail: (msg) => finish(false, msg || ''),
+    };
+  }
+  return { start };
+})();
+
 // SUWATI MEN FASHION — Gift Card
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= GIFT CARD =================
@@ -3661,7 +3805,7 @@ function renderProfileEdit(){
     <h3>Profile ပြင်ဆင်ရန်</h3>
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       <label>အမည် (Account ဖွင့်စဉ်က သတ်မှတ်ပြီးသား — ပြောင်း၍မရပါ)</label>
-      <input type="text" id="pf-name" value="${meta.full_name || ''}" disabled style="opacity:.6; background:#e5e0d3;">
+      <input type="text" id="pf-name" value="${meta.full_name || ''}" disabled style="opacity:.75; background:var(--ph); color:var(--ink);">
       <label style="margin-top:10px;">Nickname (အလွတ်တန်း ပြောင်းလို့ရသည် — Chat/Website ပေါ်မှာ ဒီနာမည် ပြပါမည်)</label>
       <input type="text" id="pf-nickname" value="${meta.nickname || ''}" placeholder="ဥပမာ Ah Lin">
       <label style="margin-top:10px;">ဖုန်းနံပါတ်</label>
@@ -3939,7 +4083,7 @@ function renderOrderTrackingResult(rows){
   if(status === 'cancelled'){
     timelineHtml = `<div class="track-step cancelled"><div class="track-dot">✕</div><div class="track-label">ပယ်ဖျက်ပြီး (Cancelled)</div></div>`;
     if(first.cancellation_reason){
-      timelineHtml += `<div style="margin-top:10px; padding:12px; background:#fdf0ee; border:2px solid var(--rust);">
+      timelineHtml += `<div style="margin-top:10px; padding:12px; background:rgba(193,59,31,.12); border:2px solid var(--rust); color:var(--ink);">
         <div class="mono" style="font-size:11px; color:var(--rust); font-weight:700; margin-bottom:4px;">ပယ်ဖျက်ရသည့် အကြောင်းရင်း</div>
         <div style="font-size:13.5px;">${first.cancellation_reason}</div>
       </div>`;
