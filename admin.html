@@ -476,6 +476,32 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 @keyframes ccGlow{ 40%{ text-shadow:0 0 14px var(--acid-text); transform:scale(1.15); } }
 .admin-chat-bubble.fx-pop{ animation:ccPop .35s cubic-bezier(.3,1.6,.5,1); }
 @media (prefers-reduced-motion: reduce){ .fx-cc-pop, .fx-cc-shake, .fx-cc-glow b, .admin-chat-bubble.fx-pop{ animation:none !important; } }
+
+/* ===== 💬 Admin Dialog (confirm/prompt အစား) ===== */
+.ad-wrap{ position:fixed; inset:0; z-index:100500; display:flex; align-items:center; justify-content:center; padding:20px; }
+.ad-backdrop{ position:absolute; inset:0; background:rgba(10,10,9,.6); -webkit-backdrop-filter:blur(5px); backdrop-filter:blur(5px); opacity:0; transition:opacity .22s ease; }
+.ad-card{ position:relative; width:100%; max-width:360px; background:#141412; color:#E9E4D8; border:2px solid #E9E4D8; border-top:6px solid #D6FF3F;
+  padding:28px 20px 18px; text-align:center; box-shadow:8px 8px 0 #D6FF3F; transform:translateY(40px) scale(.9) rotate(-1.5deg); opacity:0;
+  transition:transform .42s cubic-bezier(.2,1.4,.35,1), opacity .2s ease; }
+.ad-danger .ad-card{ border-top-color:#D9502F; box-shadow:8px 8px 0 #D9502F; }
+.ad-wrap.show .ad-backdrop{ opacity:1; } .ad-wrap.show .ad-card{ transform:none; opacity:1; }
+.ad-wrap.hide .ad-backdrop{ opacity:0; } .ad-wrap.hide .ad-card{ transform:translateY(24px) scale(.95); opacity:0; transition:transform .2s ease-in, opacity .2s ease-in; }
+.ad-icon{ width:54px; height:54px; margin:-56px auto 12px; border-radius:50%; background:#D6FF3F; color:#141412; display:flex; align-items:center; justify-content:center;
+  font-family:'Anton',sans-serif; font-size:26px; border:3px solid #141412; box-shadow:0 0 0 2px #E9E4D8; }
+.ad-danger .ad-icon{ background:#D9502F; color:#fff; }
+.ad-wrap.show .ad-icon span{ display:inline-block; animation:adBounce .65s cubic-bezier(.3,1.8,.5,1) .12s backwards; }
+.ad-msg{ font-family:'Noto Sans Myanmar',sans-serif; font-size:15px; line-height:1.75; }
+.ad-input{ margin-top:12px; width:100%; background:#1E1D1A; color:#E9E4D8; border:2px solid #E9E4D8; padding:10px; font-family:'Noto Sans Myanmar','Space Mono',sans-serif; font-size:14px; resize:vertical; }
+.ad-input:focus{ outline:none; border-color:#D6FF3F; }
+.ad-actions{ display:flex; gap:10px; margin-top:18px; }
+.ad-btn{ flex:1; padding:13px 10px; font-family:'Noto Sans Myanmar',sans-serif; font-weight:700; font-size:14.5px; cursor:pointer; border:2px solid #E9E4D8; transition:transform .1s ease; }
+.ad-btn:active{ transform:translate(2px,2px); }
+.ad-cancel{ background:transparent; color:#E9E4D8; }
+.ad-ok{ background:#D6FF3F; color:#141412; border-color:#D6FF3F; }
+.ad-danger .ad-ok{ background:#D9502F; border-color:#D9502F; color:#fff; }
+.ad-btn:focus-visible{ outline:3px solid #fff; outline-offset:2px; }
+@keyframes adBounce{ 0%{ transform:scale(0) rotate(-30deg); } 100%{ transform:scale(1) rotate(0); } }
+@media (prefers-reduced-motion: reduce){ .ad-card{ transform:none !important; transition:opacity .15s ease !important; } .ad-wrap.show .ad-icon span{ animation:none !important; } }
 </style>
 </head>
 <body>
@@ -1235,6 +1261,56 @@ function showToast(msg){
 // ဖုန်း/ကွန်ပျူတာရဲ့ ဒေသစံတော်ချိန်အတိုင်း ရက်စွဲ (YYYY-MM-DD) — toISOString() က UTC ဖြစ်လို့ မနက် 6:30 မတိုင်ခင် မနေ့က ရက်စွဲ ဖြစ်နေတတ်သည်
 function localYMD(d){ d = d ? new Date(d) : new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 
+// ---------- 💬 Admin Dialog — Browser ရဲ့ confirm()/prompt() အစား ဒီဇိုင်းနဲ့ Box ----------
+// await adminConfirm('စာ') → true/false · await adminPrompt('မေးခွန်း', 'default') → စာ / null
+function _adminDialog(message, o){
+  o = o || {};
+  return new Promise(resolve=>{
+    document.getElementById('admin-dialog')?.remove();
+    const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const danger = o.danger ?? /ဖျက်|ဖယ်ရှား|Reject|Refund|Void|Cancel|ပယ်ဖျက်/i.test(String(message));
+    const isPrompt = o.mode === 'prompt';
+    const icon = o.icon || (isPrompt ? '✎' : (danger ? '!' : '?'));
+    const el = document.createElement('div');
+    el.id = 'admin-dialog'; el.className = 'ad-wrap' + (danger ? ' ad-danger' : '');
+    el.setAttribute('role', 'alertdialog'); el.setAttribute('aria-modal', 'true');
+    el.innerHTML = `
+      <div class="ad-backdrop"></div>
+      <div class="ad-card">
+        <div class="ad-icon"><span>${esc(icon)}</span></div>
+        <div class="ad-msg">${esc(message).replace(/\n/g, '<br>')}</div>
+        ${isPrompt ? `<textarea class="ad-input" id="admin-dialog-input" rows="2" placeholder="ဒီမှာ ရေးပါ...">${esc(o.value || '')}</textarea>` : ''}
+        <div class="ad-actions">
+          <button type="button" class="ad-btn ad-cancel">မလုပ်တော့ပါ</button>
+          <button type="button" class="ad-btn ad-ok">${isPrompt ? 'အတည်ပြုမည်' : (danger ? 'သေချာပါတယ်' : 'OK')}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    const prev = document.activeElement;
+    void el.offsetWidth; el.classList.add('show');
+    let done = false;
+    const close = (val)=>{
+      if(done) return; done = true;
+      el.classList.remove('show'); el.classList.add('hide');
+      document.removeEventListener('keydown', onKey, true);
+      setTimeout(()=>{ el.remove(); try{ prev && prev.focus && prev.focus({ preventScroll:true }); }catch(e){} }, 240);
+      resolve(val);
+    };
+    const okVal = ()=> isPrompt ? document.getElementById('admin-dialog-input').value : true;
+    const onKey = (e)=>{
+      if(e.key === 'Escape'){ e.preventDefault(); close(isPrompt ? null : false); }
+      else if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); close(okVal()); }
+    };
+    document.addEventListener('keydown', onKey, true);
+    el.querySelector('.ad-ok').addEventListener('click', ()=>close(okVal()));
+    el.querySelector('.ad-cancel').addEventListener('click', ()=>close(isPrompt ? null : false));
+    el.querySelector('.ad-backdrop').addEventListener('click', ()=>close(isPrompt ? null : false));
+    setTimeout(()=>{ try{ (isPrompt ? document.getElementById('admin-dialog-input') : el.querySelector('.ad-ok')).focus({ preventScroll:true }); }catch(e){} }, 80);
+  });
+}
+function adminConfirm(message, o){ return _adminDialog(message, o); }
+function adminPrompt(message, value, o){ return _adminDialog(message, { ...(o||{}), mode:'prompt', value }); }
+
 // ---------- AUTH ----------
 let currentAdminEmail = null;
 let currentAdminRole = 'owner';
@@ -1870,7 +1946,7 @@ async function editProduct(p){
 }
 
 async function deleteProduct(id, name){
-  if(!confirm('ဒီပစ္စည်းကို ဖျက်မှာ သေချာပါသလား?')) return;
+  if(!await adminConfirm('ဒီပစ္စည်းကို ဖျက်မှာ သေချာပါသလား?')) return;
   const { error } = await sb.from('products').delete().eq('id', id);
   if(error){ showToast('Error: '+error.message); return; }
   showToast('ဖျက်ပြီးပါပြီ');
@@ -2101,7 +2177,7 @@ function editPost(p){
 }
 
 async function deletePost(id, title){
-  if(!confirm('ဒီ post ကို ဖျက်မှာ သေချာပါသလား?')) return;
+  if(!await adminConfirm('ဒီ post ကို ဖျက်မှာ သေချာပါသလား?')) return;
   const { error } = await sb.from('posts').delete().eq('id', id);
   if(error){ showToast('Error: '+error.message); return; }
   showToast('ဖျက်ပြီးပါပြီ');
@@ -2277,7 +2353,7 @@ async function loadSubcategories(){
     </div>`).join('');
   list.querySelectorAll('.del-subcat-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      if(!confirm('ဒီ Sub-Category ကို ဖျက်မှာ သေချာပါသလား?')) return;
+      if(!await adminConfirm('ဒီ Sub-Category ကို ဖျက်မှာ သေချာပါသလား?')) return;
       const { error } = await sb.from('subcategories').delete().eq('id', btn.dataset.id);
       if(error){ showToast('Error: '+error.message); return; }
       showToast('Sub-Category ဖျက်ပြီးပါပြီ');
@@ -2315,7 +2391,7 @@ document.getElementById('category-form').addEventListener('submit', async (e)=>{
 });
 
 async function renameCategory(cat){
-  const newName = prompt('Category နာမည်အသစ်:', cat.name);
+  const newName = await adminPrompt('Category နာမည်အသစ်:', cat.name);
   if(!newName || newName.trim()===cat.name) return;
   const trimmed = newName.trim();
 
@@ -2333,7 +2409,7 @@ async function renameCategory(cat){
 }
 
 async function deleteCategory(cat){
-  if(!confirm(`"${cat.name}" ကို ဖျက်မှာ သေချာပါသလား? (ဒီ Category ပါတဲ့ ပစ္စည်းရှိပြီးသားဆိုရင် ပစ္စည်းက ဒီ Category နာမည်ကို ဆက်ကိုင်ထားမည် — Category List ကနေပဲ ပျောက်သွားမည်)`)) return;
+  if(!await adminConfirm(`"${cat.name}" ကို ဖျက်မှာ သေချာပါသလား? (ဒီ Category ပါတဲ့ ပစ္စည်းရှိပြီးသားဆိုရင် ပစ္စည်းက ဒီ Category နာမည်ကို ဆက်ကိုင်ထားမည် — Category List ကနေပဲ ပျောက်သွားမည်)`)) return;
   const { error } = await sb.from('categories').delete().eq('id', cat.id);
   if(error){ showToast('Error: '+error.message); return; }
   showToast('Category ဖျက်ပြီးပါပြီ');
@@ -2454,7 +2530,7 @@ async function loadOrders(){
     });
 
     div.querySelector('.del-order-btn').addEventListener('click', async ()=>{
-      if(!confirm('ဒီ Order (ပစ္စည်း အားလုံး) ကို ဖျက်မှာ သေချာပါသလား?')) return;
+      if(!await adminConfirm('ဒီ Order (ပစ္စည်း အားလုံး) ကို ဖျက်မှာ သေချာပါသလား?')) return;
       const { error } = await sb.from('orders').delete().in('id', g.ids);
       if(error){ showToast('Error: '+error.message); return; }
       showToast('Order ဖျက်ပြီးပါပြီ');
@@ -2469,7 +2545,7 @@ async function loadOrders(){
 
       let cancellation_reason = null;
       if(newStatus === 'cancelled' && !wasAlreadyCancelled){
-        cancellation_reason = prompt('ဘာကြောင့် Cancel လုပ်ရတာလဲ? (Customer မြင်ရပါမည်)', '');
+        cancellation_reason = await adminPrompt('ဘာကြောင့် Cancel လုပ်ရတာလဲ? (Customer မြင်ရပါမည်)', '');
         if(cancellation_reason === null){
           e.target.value = g.order_status; // Prompt ကို Cancel လိုက်ရင် Dropdown ကို မူလ Status ပြန်ထား
           return;
@@ -2690,7 +2766,7 @@ async function togglePromo(i){
 }
 async function deletePromo(i){
   const p = promoCache[i];
-  if(!confirm(p.used_count>0 ? `"${p.code}" ကို ${p.used_count} ကြိမ် သုံးပြီးသားပါ — ဖျက်မည့်အစား "ရပ်မည်" ကို သုံးဖို့ အကြံပြုပါသည်။ ဖျက်မှာ သေချာပါသလား?` : `"${p.code}" ကို ဖျက်မှာ သေချာပါသလား?`)) return;
+  if(!await adminConfirm(p.used_count>0 ? `"${p.code}" ကို ${p.used_count} ကြိမ် သုံးပြီးသားပါ — ဖျက်မည့်အစား "ရပ်မည်" ကို သုံးဖို့ အကြံပြုပါသည်။ ဖျက်မှာ သေချာပါသလား?` : `"${p.code}" ကို ဖျက်မှာ သေချာပါသလား?`)) return;
   const { error } = await sb.from('promo_codes').delete().eq('id', p.id);
   if(error){ showToast('Error: '+error.message); return; }
   logActivity('promo_deleted', p.code); loadPromoCodes();
@@ -2797,7 +2873,7 @@ async function toggleCb(i){
 }
 async function deleteCb(i){
   const c = cbCache[i];
-  if(!confirm(`"${c.name}" ကို ဖျက်မှာ သေချာပါသလား? (ပေးပြီးသား/ပေးရန် Lock ဖြစ်ပြီးသား Cashback များကို မထိခိုက်ပါ)`)) return;
+  if(!await adminConfirm(`"${c.name}" ကို ဖျက်မှာ သေချာပါသလား? (ပေးပြီးသား/ပေးရန် Lock ဖြစ်ပြီးသား Cashback များကို မထိခိုက်ပါ)`)) return;
   const { error } = await sb.from('cashback_campaigns').delete().eq('id', c.id);
   if(error){ showToast('Error: '+error.message); return; }
   logActivity('cashback_deleted', c.name); loadCashbackCampaigns();
@@ -3390,7 +3466,7 @@ function renderCustomersList(){
       hist.classList.toggle('open');
     });
     div.querySelector('.edit-name-btn').addEventListener('click', async ()=>{
-      const newName = prompt(`"${c.name}" ရဲ့ Name အသစ်ကို ရိုက်ထည့်ပါ (Order/Message/Receipt အားလုံးမှာ ဒီနာမည်အသစ် ပြောင်းပြပါမည်)`, c.name);
+      const newName = await adminPrompt(`"${c.name}" ရဲ့ Name အသစ်ကို ရိုက်ထည့်ပါ (Order/Message/Receipt အားလုံးမှာ ဒီနာမည်အသစ် ပြောင်းပြပါမည်)`, c.name);
       if(!newName || !newName.trim() || newName.trim() === c.name) return;
       const trimmed = newName.trim();
 
@@ -3416,7 +3492,7 @@ function renderCustomersList(){
       }
     });
     div.querySelector('.delete-customer-btn').addEventListener('click', async ()=>{
-      if(!confirm(`"${c.name}" ကို Customer List ကနေ ဖျက်မှာ သေချာပါသလား? (Order မှတ်တမ်းများကတော့ ဖျက်မဖျက်ဘဲ ဒီ List ထဲကနေပဲ ဖျောက်ပေးပါမည်)`)) return;
+      if(!await adminConfirm(`"${c.name}" ကို Customer List ကနေ ဖျက်မှာ သေချာပါသလား? (Order မှတ်တမ်းများကတော့ ဖျက်မဖျက်ဘဲ ဒီ List ထဲကနေပဲ ဖျောက်ပေးပါမည်)`)) return;
       const { error } = await sb.from('hidden_customers').insert({ customer_key: c.key });
       if(error){ showToast('Error: '+error.message); return; }
       showToast('Customer List ကနေ ဖျက်ပြီးပါပြီ');
@@ -3525,7 +3601,7 @@ function editBanner(b){
 }
 
 async function deleteBanner(id, title){
-  if(!confirm('ဒီ Banner ကို ဖျက်မှာ သေချာပါသလား?')) return;
+  if(!await adminConfirm('ဒီ Banner ကို ဖျက်မှာ သေချာပါသလား?')) return;
   const { error } = await sb.from('banners').delete().eq('id', id);
   if(error){ showToast('Error: '+error.message); return; }
   showToast('Banner ဖျက်ပြီးပါပြီ');
@@ -4259,7 +4335,7 @@ function showReceiptOverlay(html){
   if(!document.getElementById('receipt-overlay-style')){
     const st = document.createElement('style'); st.id = 'receipt-overlay-style';
     st.textContent = `
-      #receipt-overlay{position:fixed; inset:0; z-index:100000; background:rgba(20,20,18,.82); display:flex; flex-direction:column; padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);}
+      #receipt-overlay{position:fixed; inset:0; z-index:100000; background:rgba(20,20,18,.96); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; flex-direction:column; padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);}
       #receipt-overlay .ro-bar{display:flex; gap:8px; padding:10px 12px; background:#141412; border-bottom:3px solid #D6FF3F; flex-shrink:0;}
       #receipt-overlay .ro-bar button{flex:1; padding:12px 8px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; border:2.5px solid #E9E4D8;}
       #receipt-overlay .ro-close{background:#C13B1F; color:#fff; border-color:#C13B1F !important; flex:0 0 auto !important; padding:12px 16px !important;}
@@ -4435,8 +4511,8 @@ function renderSaleHistory(){
   list.querySelectorAll('.refund-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const g = items[parseInt(btn.dataset.idx)];
-      if(!confirm(`"${g.customer_name}" ရဲ့ ${g.total_amount.toLocaleString()} ကျပ် Order ကို Refund/Void လုပ်မှာ သေချာပါသလား? (Stock ပြန်တိုးမည်)`)) return;
-      let cancellation_reason = prompt('ဘာကြောင့် Void/Cancel လုပ်ရတာလဲ? (Record အတွက် သိမ်းထားပါမည်)', '');
+      if(!await adminConfirm(`"${g.customer_name}" ရဲ့ ${g.total_amount.toLocaleString()} ကျပ် Order ကို Refund/Void လုပ်မှာ သေချာပါသလား? (Stock ပြန်တိုးမည်)`)) return;
+      let cancellation_reason = await adminPrompt('ဘာကြောင့် Void/Cancel လုပ်ရတာလဲ? (Record အတွက် သိမ်းထားပါမည်)', '');
       if(cancellation_reason === null) return;
       btn.disabled = true; btn.textContent = 'လုပ်ဆောင်နေသည်...';
       const updatePayload = { order_status:'cancelled', payment_status:'refunded' };
@@ -4669,9 +4745,9 @@ function updateCashCloseSummary(){
 async function saveCashClosing(){
   if(!cashCloseState) return;
   const c = readCashClose();
-  if(!c.counted && !confirm('ရေတွက်ရသော ငွေ 0 ဖြစ်နေပါသည် — ဒီအတိုင်း သိမ်းမှာ သေချာပါသလား?')) return;
+  if(!c.counted && !await adminConfirm('ရေတွက်ရသော ငွေ 0 ဖြစ်နေပါသည် — ဒီအတိုင်း သိမ်းမှာ သေချာပါသလား?')) return;
   const note = document.getElementById('cc-note').value.trim();
-  if(Math.abs(c.diff) >= 1 && !note && !confirm('ငွေ ကွာခြားနေပါသည် — မှတ်ချက် မရေးဘဲ သိမ်းမှာလား?')) return;
+  if(Math.abs(c.diff) >= 1 && !note && !await adminConfirm('ငွေ ကွာခြားနေပါသည် — မှတ်ချက် မရေးဘဲ သိမ်းမှာလား?')) return;
   const btn = document.getElementById('cc-save-btn'); btn.disabled = true;
   const { error } = await sb.from('cash_closings').insert({
     closing_date: cashCloseState.dateStr, opening_float: c.float, cash_sales: cashCloseState.posCash,
@@ -4719,7 +4795,7 @@ document.getElementById('staff-form').addEventListener('submit', async (e)=>{
   if(!email || !uid || !name) return;
 
   if(role === 'owner'){
-    if(!confirm(`"${name}" (${email}) ကို Owner (အပြည့်အစုံ လုပ်ပိုင်ခွင့်) ပေးမှာ သေချာပါသလား?`)) return;
+    if(!await adminConfirm(`"${name}" (${email}) ကို Owner (အပြည့်အစုံ လုပ်ပိုင်ခွင့်) ပေးမှာ သေချာပါသလား?`)) return;
   }
 
   if(editId){
@@ -4832,7 +4908,7 @@ async function loadStaffList(){
 
   list.querySelectorAll('.del-staff-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      if(!confirm('ဒီ Staff ကို ဖယ်ရှားမှာ သေချာပါသလား? (Admin App ဝင်ခွင့် ပျက်သွားမည်)')) return;
+      if(!await adminConfirm('ဒီ Staff ကို ဖယ်ရှားမှာ သေချာပါသလား? (Admin App ဝင်ခွင့် ပျက်သွားမည်)')) return;
       const { error } = await sb.from('admins').delete().eq('user_id', btn.dataset.id);
       if(error){ showToast('Error: '+error.message); return; }
       showToast('Staff ဖယ်ရှားပြီးပါပြီ');
@@ -5483,7 +5559,7 @@ async function loadTopupRequests(){
   list.querySelectorAll('.approve-topup-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const bonusPreview = calcTopupBonusAdmin(bonusCfg, Number(btn.dataset.amt));
-      if(!confirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Wallet ထဲ ဖြည့်ပေးမှာ သေချာပါသလား?` + (bonusPreview ? `\n🎁 Top-up Bonus ${bonusPreview.toLocaleString()} ကျပ် ပါ အလိုအလျောက် ထပ်ထည့်ပါမည်` : ''))) return;
+      if(!await adminConfirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Wallet ထဲ ဖြည့်ပေးမှာ သေချာပါသလား?` + (bonusPreview ? `\n🎁 Top-up Bonus ${bonusPreview.toLocaleString()} ကျပ် ပါ အလိုအလျောက် ထပ်ထည့်ပါမည်` : ''))) return;
       btn.disabled = true;
 
       // ★ Status ကို "pending" ကနေ "approved" ပြောင်းခြင်းကို အရင်ဆုံး လုပ် — "pending" အနေအထားမှသာ ပြောင်းခွင့်ပြု (တခြား Admin တစ်ယောက် Approve ပြီးသားဖြစ်ရင် (သို့) Error တက်ရင် ဒီနေရာမှာပဲ ရပ်သွားမည် — Wallet ကို ထပ်ဆင့် ငွေ ထည့်ပေးမိမှာ လုံးဝ မဖြစ်စေရ)
@@ -5525,7 +5601,7 @@ async function loadTopupRequests(){
   });
   list.querySelectorAll('.reject-topup-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      const reason = prompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
+      const reason = await adminPrompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
       if(reason === null) return;
       await sb.from('wallet_topups').update({
         status:'rejected', rejection_reason:reason||null, reviewed_at:new Date().toISOString(),
@@ -5562,7 +5638,7 @@ async function loadGiftCardRequests(){
 
   list.querySelectorAll('.approve-gift-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      if(!confirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Gift Card ကို Active လုပ်မှာ သေချာပါသလား?`)) return;
+      if(!await adminConfirm(`${Number(btn.dataset.amt).toLocaleString()} ကျပ် Gift Card ကို Active လုပ်မှာ သေချာပါသလား?`)) return;
       btn.disabled = true;
       const { data: updated, error } = await sb.from('gift_cards').update({
         status:'active', reviewed_by: currentAdminUserId, reviewed_by_email: currentAdminEmail, reviewed_at: new Date().toISOString(),
@@ -5578,7 +5654,7 @@ async function loadGiftCardRequests(){
   });
   list.querySelectorAll('.reject-gift-btn').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
-      const reason = prompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
+      const reason = await adminPrompt('ဘာကြောင့် Reject လုပ်ရတာလဲ?', '');
       if(reason === null) return;
       await sb.from('gift_cards').update({
         status:'rejected', rejection_reason:reason||null,
