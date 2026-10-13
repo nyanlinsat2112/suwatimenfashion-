@@ -1348,6 +1348,39 @@ html[data-theme="dark"] .sd-subs .sd-all{ background:var(--concrete) !important;
 .hdr-reloading{ animation:hdrReload .3s ease forwards; }
 @keyframes hdrReload{ to{ opacity:.35; transform:scale(.92); filter:blur(1px); } }
 @media (prefers-reduced-motion: reduce){ .qa-sheet, .sd-subwrap{ transition:none; } .qa-sheet *, .sd-subs button, .filter-chip.active{ animation:none !important; } }
+
+/* ===== Size / အရောင် / ပမာဏ ရွေးခလုတ်များ — တစ်ညီတည်း Clean ===== */
+#checkout-modal-content .opt-group, .card-body .opt-group{ margin-top:16px; }
+#checkout-modal-content .opt-label, .card-body .opt-label{ font:700 11.5px 'Space Mono','Noto Sans Myanmar',monospace; letter-spacing:.08em; color:var(--grey); text-transform:uppercase; margin-bottom:8px; }
+#checkout-modal-content .opt-chips, .card-body .opt-chips{ display:grid !important; gap:8px; grid-template-columns:repeat(auto-fill, minmax(68px, 1fr)); }
+#detail-color-chips, .card-body .color-chips{ grid-template-columns:repeat(auto-fill, minmax(118px, 1fr)) !important; }
+#detail-giftamount-chips{ grid-template-columns:repeat(3, minmax(0,1fr)) !important; }
+#checkout-modal-content .opt-chips .chip, .card-body .opt-chips .chip{
+  display:flex; align-items:center; justify-content:center; gap:8px; min-width:0; min-height:46px; margin:0; padding:6px 8px;
+  border:2px solid var(--ink); background:var(--surface); color:var(--ink); font:700 13px 'Space Mono','Noto Sans Myanmar',monospace;
+  text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-transform:none; text-decoration:none; position:relative; }
+.card-body .opt-chips .chip{ min-height:38px; font-size:12px; }
+#checkout-modal-content .opt-chips .chip.active, .card-body .opt-chips .chip.active,
+#checkout-modal-content .opt-chips .chip.color-chip.active, .card-body .opt-chips .chip.color-chip.active{
+  background:var(--ink); color:var(--concrete); border-color:var(--ink); border-width:2px; box-shadow:3px 3px 0 var(--acid); }
+#checkout-modal-content .opt-chips .chip:disabled, #checkout-modal-content .opt-chips .chip[disabled]{ opacity:.32 !important; text-decoration:line-through !important; cursor:not-allowed; box-shadow:none; }
+#checkout-modal-content .opt-chips .swatch-dot, .card-body .opt-chips .swatch-dot{ width:14px; height:14px; margin:0; flex:0 0 auto; border:1.5px solid currentColor; box-shadow:0 0 0 1.5px var(--surface); }
+#checkout-modal-content .opt-chips .chip.active .swatch-dot{ box-shadow:0 0 0 2px var(--ink), 0 0 0 3.5px var(--concrete); }
+html[data-theme="dark"] #checkout-modal-content .opt-chips .chip:not(.active){ background:#252420; color:var(--ink); border-color:#4a4840; }
+html[data-theme="dark"] #checkout-modal-content .opt-chips .chip.active{ background:var(--ink); color:var(--black); border-color:var(--ink); }
+
+/* အရေအတွက် — − [ 1 ] + တစ်တွဲတည်း */
+#checkout-modal-content .qty-control{ display:inline-flex; align-items:stretch; gap:0; margin:18px 0 6px; border:2px solid var(--ink); height:48px; }
+#checkout-modal-content .qty-control button{ width:48px; height:auto; border:none; background:var(--surface); color:var(--ink); font:700 22px 'Space Mono',monospace; display:grid; place-items:center; padding:0; transition:background .15s; }
+#checkout-modal-content .qty-control button:active{ background:var(--acid); color:#141412; }
+#checkout-modal-content .qty-control input#detail-qty{ width:64px; height:auto; border:none; border-left:2px solid var(--ink); border-right:2px solid var(--ink); background:var(--paper); color:var(--ink); font-size:17px; }
+html[data-theme="dark"] #checkout-modal-content .qty-control button{ background:#252420; }
+
+/* ပုံသေးများ — တစ်တန်းတည်း ဘေးတိုက် ဆွဲ */
+.detail-thumbs{ flex-wrap:nowrap !important; overflow-x:auto; scrollbar-width:none; padding:2px 2px 6px; margin:0 0 14px; scroll-snap-type:x proximity; }
+.detail-thumbs::-webkit-scrollbar{ display:none; }
+.detail-thumbs img{ flex:0 0 auto; width:56px !important; height:56px !important; scroll-snap-align:start; transition:opacity .2s, transform .2s, border-color .2s; }
+.detail-thumbs img.active{ transform:translateY(-2px); box-shadow:0 3px 0 var(--rust); }
 </style>
 </head>
 <body>
@@ -5441,7 +5474,7 @@ function goToDetailSlide(idx){
   __ds.idx = idx;
   track.style.transition = 'transform .42s cubic-bezier(.2,.85,.25,1)';
   track.style.transform = `translate3d(${-idx * wrap.clientWidth}px,0,0)`;
-  document.querySelectorAll('.detail-thumbs img').forEach((img,i)=>img.classList.toggle('active', i===idx));
+  document.querySelectorAll('.detail-thumbs img').forEach((img,i)=>{ img.classList.toggle('active', i===idx); if(i===idx){ const t = img.parentNode; t.scrollTo({ left: img.offsetLeft - t.clientWidth/2 + img.offsetWidth/2, behavior:'smooth' }); } });
   document.querySelectorAll('#ds-dots i').forEach((d,i)=>d.classList.toggle('on', i===idx));
   const counter = document.getElementById('slider-counter');
   if(counter) counter.textContent = `${idx+1} / ${n}`;
