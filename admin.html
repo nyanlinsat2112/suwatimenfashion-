@@ -695,6 +695,69 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .bb-item.attn .bb-ico{ animation:navWiggle 2.6s ease-in-out infinite; filter:none; }
 @media (prefers-reduced-motion: reduce){ .admin-nav .tab-btn.needs-attention, .admin-nav .tab-btn.needs-attention .mt-icon, .bb-item.attn .bb-ico{ animation:none !important; } }
 .cc-rcpt-btn{ margin-top:6px; padding:5px 9px !important; font-size:11px !important; }
+
+/* =====================================================================
+   ⚖️ ခလုတ် အရွယ် တစ်ညီတည်း — Panel ထဲက ခလုတ်တန်းတွေ (စာလုံးရေ မတူလည်း အကျယ်တူ)
+   ===================================================================== */
+.panel div:has(> button + button):not(:has(> :not(button, span.sep))):not(.qty-control):not(.np-grid):not(.np-quick):not(.pf-cost-row):not(.ad-btns):not(.cc-rcpt-wrap):not(.cim-thumbs){
+  display:grid !important; grid-template-columns:repeat(auto-fit, minmax(118px, 1fr)); gap:8px !important; align-items:stretch;
+}
+.panel div:has(> button + button):not(:has(> :not(button, span.sep))):not(.cim-thumbs) > button{
+  width:100%; margin:0 !important; min-height:46px; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.3; padding:8px 10px;
+}
+/* Sales Report — Daily/Weekly/Monthly/Yearly တစ်တန်း ၄ ခု · Export ကို အောက်မှာ အပြည့် */
+.panel div:has(> .sr-period-btn){ grid-template-columns:repeat(4, minmax(0,1fr)) !important; }
+.panel div:has(> .sr-period-btn) > #export-sales-csv-btn{ grid-column:1 / -1; margin-left:0 !important; }
+#chart-metric-switcher{ grid-template-columns:repeat(2, minmax(0,1fr)) !important; }
+/* ရက်စွဲ + ခလုတ် တန်း — နှစ်ခု အရွယ်တူ */
+.panel div:has(> input[type=date] + button){ display:grid !important; grid-template-columns:1fr 1fr; gap:8px !important; align-items:stretch; }
+.panel div:has(> input[type=date] + button) > *{ width:100%; min-width:0 !important; margin:0; min-height:46px; }
+/* အမြတ်စာရင်း ကာလ ရွေးခလုတ်များ */
+.pf-presets{ display:grid !important; grid-template-columns:repeat(5, minmax(0,1fr)) !important; gap:6px !important; }
+.pf-presets .pf-preset{ min-height:42px; padding:6px 2px !important; width:100%; }
+.pf-dates{ display:grid !important; grid-template-columns:1fr auto 1fr; gap:8px !important; }
+.pf-dates #pf-load-btn{ grid-column:1 / -1; min-height:46px; }
+.pf-dates span{ align-self:center; }
+.pf-cost-row button{ min-height:42px; }
+@media (max-width:560px){ .pf-presets{ grid-template-columns:repeat(3, minmax(0,1fr)) !important; } }
+@media (max-width:420px){
+  .panel div:has(> button + button):not(:has(> :not(button, span.sep))):not(.cim-thumbs) > button{ font-size:12px; padding:8px 6px; }
+}
+/* 🎨 အရောင် → ပုံ */
+.color-img-mapper{ margin-top:8px; }
+.color-img-mapper:empty{ display:none; }
+.cim-head{ font-weight:700; font-size:13px; margin:6px 0 8px; display:flex; flex-direction:column; gap:2px; }
+.cim-row{ display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px dashed var(--bd); }
+.cim-color{ flex:0 0 96px; display:flex; align-items:center; gap:6px; font:700 12.5px 'Space Mono',monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.cim-dot{ width:16px; height:16px; border-radius:50%; border:2px solid var(--concrete); flex:0 0 auto; }
+.cim-thumbs{ flex:1; display:flex; gap:6px; overflow-x:auto; padding:3px 2px; scrollbar-width:thin; }
+.cim-th{ position:relative; flex:0 0 auto; width:48px; height:48px; padding:0 !important; border:2px solid var(--bd) !important; background:var(--s3); cursor:pointer; opacity:.55; transition:opacity .2s, transform .2s, border-color .2s; min-height:0 !important; }
+.cim-th img{ width:100%; height:100%; object-fit:cover; display:block; }
+.cim-th i{ position:absolute; left:2px; bottom:2px; font:700 9px 'Space Mono',monospace; font-style:normal; background:rgba(0,0,0,.6); color:#fff; padding:0 3px; }
+.cim-th.on{ opacity:1; border-color:var(--acid) !important; transform:translateY(-2px); box-shadow:0 3px 0 var(--acid); }
+.cim-th.on::after{ content:'✓'; position:absolute; top:-7px; right:-7px; width:18px; height:18px; border-radius:50%; background:var(--acid); color:#141412; font:700 11px sans-serif; display:grid; place-items:center; }
+.ab-box{ margin-top:16px; padding-top:12px; border-top:1.5px dashed var(--bd); }
+.ab-table td:last-child{ width:1%; }
+.ab-dl{ padding:6px 10px !important; font-size:11.5px !important; min-height:0 !important; white-space:nowrap; }
+.img-opt-bar{ height:10px; border:2px solid var(--concrete); margin-top:6px; overflow:hidden; }
+.img-opt-bar i{ display:block; height:100%; width:0; background:var(--acid); transition:width .3s; }
+/* 📥 Excel Bulk Import */
+.bulk-card summary{ cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.bulk-card summary::-webkit-details-marker{ display:none; }
+.bulk-card summary::after{ content:'⌄'; font-size:22px; transition:transform .3s; }
+.bulk-card[open] summary::after{ transform:rotate(180deg); }
+.bulk-actions{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:12px 0; }
+.bulk-file{ position:relative; display:flex; align-items:center; justify-content:center; min-height:46px; border:2.5px solid var(--acid); background:var(--acid); color:#141412; font-weight:700; cursor:pointer; text-align:center; padding:6px; }
+.bulk-file input{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+.bulk-opt{ display:flex; gap:8px; align-items:flex-start; font-size:12.5px; margin:6px 0; line-height:1.5; } .bulk-opt input{ width:auto; margin-top:3px; }
+.bulk-sum{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 8px; } .bulk-sum span{ border:2px solid var(--bd); padding:4px 10px; font:700 12px 'Space Mono','Noto Sans Myanmar',monospace; }
+.bulk-sum .ok{ border-color:var(--acid); color:var(--acid-text); } .bulk-sum .up{ border-color:var(--info-text); color:var(--info-text); } .bulk-sum .err{ border-color:var(--warn-text); color:var(--warn-text); }
+.bulk-table-wrap{ overflow-x:auto; max-height:420px; overflow-y:auto; border:1.5px solid var(--bd); }
+.bulk-table{ font-size:12px !important; } .bulk-table td, .bulk-table th{ padding:6px 8px !important; white-space:nowrap; }
+.bulk-table tr.is-err td{ background:rgba(193,59,31,.12); }
+.b-ok{ color:var(--acid-text); font-weight:700; } .b-up{ color:var(--info-text); font-weight:700; } .b-err{ color:var(--warn-text); font-weight:700; white-space:normal; } .b-warn{ color:var(--warn-text); }
+.bulk-bar{ height:10px; border:2px solid var(--concrete); margin-top:10px; overflow:hidden; } .bulk-bar i{ display:block; height:100%; width:0; background:var(--acid); transition:width .3s; }
+.bulk-done{ border:2px solid var(--acid); padding:12px; margin-top:12px; line-height:1.7; }
 </style>
 </head>
 <body>
@@ -878,6 +941,17 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 
   <!-- PRODUCTS -->
   <div class="panel active" id="products-panel">
+    <details class="form-card bulk-card" id="bulk-import-card">
+      <summary><h3 style="display:inline;">📥 Excel ဖြင့် ပစ္စည်း အများကြီး တစ်ခါတည်း ထည့်ရန်</h3></summary>
+      <div class="hint" style="margin-top:10px;">① Template ဒေါင်း → ② Excel (သို့) Google Sheets မှာ ပစ္စည်းတွေ ဖြည့် → ③ ဖိုင်ရွေး → ④ စစ်ပြီး "ထည့်မည်" နှိပ်။ ပုံတွေကို ထည့်ပြီးမှ ပစ္စည်းတစ်ခုချင်း ✏️ ပြင်ပြီး တင်ပါ (သို့) ပုံ Link ကို image_urls မှာ ထည့်ပါ။</div>
+      <div class="bulk-actions">
+        <button type="button" class="secondary" id="bulk-template-btn">📄 Template ဒေါင်းရန်</button>
+        <label class="bulk-file acid"><input type="file" id="bulk-file" accept=".xlsx,.xls,.csv">📂 Excel ဖိုင် ရွေးရန်</label>
+      </div>
+      <label class="bulk-opt"><input type="checkbox" id="bulk-update-existing" checked> နာမည်တူ ပစ္စည်း ရှိပြီးသားဆိုရင် Update လုပ်မည် (ဈေး၊ Stock၊ Size/အရောင် စသည်)</label>
+      <label class="bulk-opt"><input type="checkbox" id="bulk-create-cats" checked> မရှိသေးတဲ့ Category / Sub-Category ကို အလိုအလျောက် ဖန်တီးမည်</label>
+      <div id="bulk-preview"></div>
+    </details>
     <div class="form-card">
       <h3 id="product-form-title">ပစ္စည်းအသစ် Add ရန်</h3>
       <form id="product-form">
@@ -1301,6 +1375,20 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
       <button type="button" class="acid" id="backup-excel-btn" style="width:100%; margin-top:8px;">📥 Excel Backup (.xlsx) ထုတ်မည် — ဖတ်ရလွယ်</button>
       <button type="button" class="secondary" id="backup-json-btn" style="width:100%; margin-top:8px;">📦 Full Backup (.json) ထုတ်မည် — ပြန် Restore လုပ်ရန်</button>
       <div class="hint" id="backup-progress" style="margin-top:8px;"></div>
+      <div class="ab-box">
+        <div class="pay-set-sec">☁️ အလိုအလျောက် Backup <span class="hint" style="margin:0;">— နေ့တိုင်း ည ၁၁:၀၀ · Email + Cloud ထဲ ရက် ၃၀ စာ</span></div>
+        <div id="auto-backup-status" class="hint" style="margin:6px 0 8px;"></div>
+        <button type="button" class="secondary" id="auto-backup-now-btn" style="width:100%;">☁️ အခု Backup ယူပြီး Email ပို့မည်</button>
+        <div id="auto-backup-list" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+    <div class="form-card" id="img-opt-card">
+      <h3>🖼️ ပုံများ မြန်မြန်ပေါ်အောင် (ပုံဟောင်း ချုံ့ရန်)</h3>
+      <div class="hint">အခုကစပြီး တင်တဲ့ ပုံတိုင်းကို အလိုအလျောက် ချုံ့ပြီး ပုံသေး (Thumbnail) ပါ လုပ်ပေးပါသည်။ အရင်က တင်ထားတဲ့ ပစ္စည်းပုံတွေကိုလည်း ဒီခလုတ်နဲ့ တစ်ခါတည်း ချုံ့လို့ရပါသည် — ဖုန်း Data နည်းနည်းနဲ့ Website ပိုမြန်ပါမည်။ (Wi-Fi နဲ့ လုပ်ပါ)</div>
+      <div id="img-opt-status" class="hint" style="margin:8px 0;"></div>
+      <div class="img-opt-bar" id="img-opt-bar" style="display:none;"><i></i></div>
+      <button type="button" class="acid" id="img-opt-btn" style="width:100%; margin-top:8px;">🖼️ ပစ္စည်းပုံဟောင်းများ ချုံ့မည်</button>
     </div>
 
     <div class="form-card">
@@ -1879,14 +1967,49 @@ async function refreshAllAttentionStates(){
 }
 
 // ---------- IMAGE UPLOAD HELPER ----------
+// 🖼️ ပုံ တင်တိုင်း အလိုအလျောက် ချုံ့ (အကျယ် 1600px) + ပုံသေး (520px) တစ်ပုံ ထပ်တင် — Website ပုံတွေ မြန်မြန်ပေါ်ရန်
+function compressImageForWeb(file, maxSide, quality){
+  return new Promise(async (resolve) => {
+    try{
+      let src, w, h, bmp = null;
+      try{ bmp = await createImageBitmap(file, { imageOrientation:'from-image' }); src = bmp; w = bmp.width; h = bmp.height; }
+      catch(e){
+        const url = URL.createObjectURL(file);
+        src = await new Promise((ok, bad) => { const im = new Image(); im.onload = () => ok(im); im.onerror = bad; im.src = url; });
+        w = src.naturalWidth; h = src.naturalHeight;
+      }
+      const k = Math.min(1, maxSide / Math.max(w, h));
+      const cw = Math.max(1, Math.round(w * k)), ch = Math.max(1, Math.round(h * k));
+      const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+      const ctx = c.getContext('2d'); ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, cw, ch);
+      ctx.imageSmoothingQuality = 'high'; ctx.drawImage(src, 0, 0, cw, ch);
+      if(bmp && bmp.close) bmp.close();
+      c.toBlob(b => resolve(b), 'image/jpeg', quality);
+    }catch(e){ resolve(null); }
+  });
+}
 async function uploadImage(file){
   if(!file) return null;
-  const ext = file.name.split('.').pop();
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const { error } = await sb.storage.from('images').upload(path, file);
-  if(error){ showToast('ပုံတင်ရာတွင် error ("'+file.name+'"): '+error.message); return null; }
-  const { data } = sb.storage.from('images').getPublicUrl(path);
-  return data.publicUrl;
+  const plain = async () => {
+    const ext = (file.name || 'img.jpg').split('.').pop();
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+    const { error } = await sb.storage.from('images').upload(path, file);
+    if(error){ showToast('ပုံတင်ရာတွင် error ("'+(file.name||'')+'"): '+error.message); return null; }
+    return sb.storage.from('images').getPublicUrl(path).data.publicUrl;
+  };
+  if(!/^image\//.test(file.type || 'image/') || /gif|svg/.test(file.type || '')) return plain();
+  const [big, thumb] = await Promise.all([compressImageForWeb(file, 1600, 0.82), compressImageForWeb(file, 520, 0.74)]);
+  if(!big || !thumb) return plain();
+  // ချုံ့တာထက် မူရင်းက သေးနေရင်တောင် Thumbnail ရဖို့ ချုံ့ထားတာကိုပဲ သုံး
+  const base = `p2_${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const opt = { contentType:'image/jpeg', cacheControl:'31536000', upsert:false };
+  const [r1, r2] = await Promise.all([
+    sb.storage.from('images').upload(`${base}.jpg`, big, opt),
+    sb.storage.from('images').upload(`${base}.t.jpg`, thumb, opt),
+  ]);
+  if(r1.error){ showToast('ပုံတင်ရာတွင် error ("'+(file.name||'')+'"): '+r1.error.message); return null; }
+  if(r2.error) console.warn('thumb upload failed', r2.error);
+  return sb.storage.from('images').getPublicUrl(`${base}.jpg`).data.publicUrl;
 }
 
 // ---------- LIGHTBOX (ပုံကို Zoom ချဲ့ကြည့်ရန်) ----------
@@ -1992,9 +2115,54 @@ function renderProductImagePreview(){
 }
 
 function removeProductImage(idx){
+  const it = productImageList[idx];
   productImageList.splice(idx,1);
+  Object.keys(productColorImageMap).forEach(c => { if(productColorImageMap[c] === it) delete productColorImageMap[c]; });
   renderProductImagePreview();
 }
+
+// ---------- 🎨 အရောင်နဲ့ ပုံ တွဲရန် (Customer က အရောင်ရွေးရင် အဲဒီပုံ ပြောင်းပြ) ----------
+let productColorImageMap = {}; // { colorName: productImageList item }
+function renderColorImageMapper(){
+  let box = document.getElementById('color-image-mapper');
+  const area = document.getElementById('image-preview-area');
+  if(!box && area){ box = document.createElement('div'); box.id = 'color-image-mapper'; box.className = 'full color-img-mapper'; area.insertAdjacentElement('afterend', box); }
+  if(!box) return;
+  const isGift = document.getElementById('product-is-giftcard')?.checked;
+  const colors = (document.getElementById('product-colors')?.value || '').split(',').map(s=>s.trim()).filter(Boolean);
+  if(isGift || !colors.length || productImageList.length < 2){ box.innerHTML = colors.length && productImageList.length === 1 && !isGift ? '<div class="hint" style="margin:6px 0 0;">🎨 အရောင်တစ်ခုချင်း ပုံ တွဲချင်ရင် ပုံ ၂ ပုံ အထက် တင်ပါ</div>' : ''; return; }
+  Object.keys(productColorImageMap).forEach(c => { if(!colors.includes(c) || !productImageList.includes(productColorImageMap[c])) delete productColorImageMap[c]; });
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  box.innerHTML = `
+    <div class="cim-head">🎨 အရောင်နဲ့ ပုံ တွဲရန် <span class="hint" style="margin:0;">— Customer က အရောင်ရွေးရင် အဲဒီပုံ ပြောင်းပြမည် (မတွဲလည်းရ)</span></div>
+    ${colors.map((c, ci) => `
+      <div class="cim-row">
+        <div class="cim-color"><span class="cim-dot" style="background:${esc(c)}"></span>${esc(c)}</div>
+        <div class="cim-thumbs">
+          ${productImageList.map((it, i) => { const url = it.type === 'existing' ? it.url : it.previewUrl; const on = productColorImageMap[c] === it;
+            return `<button type="button" class="cim-th${on ? ' on' : ''}" onclick="pickColorImage(${ci}, ${i})" aria-label="${esc(c)} — ပုံ ${i+1}"><img src="${esc(url)}" alt=""><i>${i+1}</i></button>`; }).join('')}
+        </div>
+      </div>`).join('')}`;
+}
+function pickColorImage(ci, i){
+  const colors = (document.getElementById('product-colors')?.value || '').split(',').map(s=>s.trim()).filter(Boolean);
+  const c = colors[ci], it = productImageList[i]; if(!c || !it) return;
+  if(productColorImageMap[c] === it) delete productColorImageMap[c]; else productColorImageMap[c] = it;
+  renderColorImageMapper();
+}
+function buildColorImagesPayload(colorsStr){
+  const colors = (colorsStr || '').split(',').map(s=>s.trim()).filter(Boolean);
+  const out = {};
+  colors.forEach(c => { const it = productColorImageMap[c]; if(it && it._finalUrl) out[c] = it._finalUrl; });
+  return colors.length ? out : null;
+}
+// ပုံ (သို့) အရောင် ပြောင်းတိုင်း ပြန်ဆွဲ
+(function(){
+  const _rpip = renderProductImagePreview;
+  renderProductImagePreview = function(){ const r = _rpip.apply(this, arguments); renderColorImageMapper(); return r; };
+  document.getElementById('product-colors')?.addEventListener('input', () => renderColorImageMapper());
+  document.getElementById('product-is-giftcard')?.addEventListener('change', () => renderColorImageMapper());
+})();
 
 // ---------- PRODUCTS ----------
 const productForm = document.getElementById('product-form');
@@ -2010,10 +2178,10 @@ productForm.addEventListener('submit', async (e)=>{
   }
   for(const item of productImageList){
     if(item.type==='existing'){
-      finalImageUrls.push(item.url);
+      finalImageUrls.push(item.url); item._finalUrl = item.url;
     } else {
       const url = await uploadImage(item.file);
-      if(url) finalImageUrls.push(url);
+      if(url){ finalImageUrls.push(url); item._finalUrl = url; }
     }
   }
 
@@ -2049,12 +2217,18 @@ productForm.addEventListener('submit', async (e)=>{
   // ပုံအားလုံး ဖျက်ထားရင်တောင် Field ကို Update လုပ်ရန် (empty string ဖြစ်စေ)
   payload.image_url = finalImageUrls[0] || null;
   payload.images = finalImageUrls.join(',');
+  // 🎨 အရောင် → ပုံ တွဲထားချက်
+  const colorImgs = buildColorImagesPayload(payload.colors);
+  if(colorImgs) payload.color_images = colorImgs;
 
   let error;
-  if(id){
-    ({ error } = await sb.from('products').update(payload).eq('id', id));
-  } else {
-    ({ error } = await sb.from('products').insert(payload));
+  const save = async (pl) => id ? await sb.from('products').update(pl).eq('id', id) : await sb.from('products').insert(pl);
+  ({ error } = await save(payload));
+  if(error && /color_images/.test(error.message || '')){
+    // COLOR-IMAGES.sql မ Run ရသေးရင် — အရောင်ပုံ မပါဘဲ သိမ်းပြီး သတိပေး
+    delete payload.color_images;
+    ({ error } = await save(payload));
+    if(!error) setTimeout(() => showToast('⚠️ အရောင်နဲ့ပုံ တွဲတာ မသိမ်းရသေးပါ — Supabase မှာ COLOR-IMAGES.sql ကို Run ပါ'), 1800);
   }
   if(error){ showToast('Error: '+error.message); return; }
   showToast('သိမ်းပြီးပါပြီ');
@@ -2159,7 +2333,9 @@ function resetProductForm(){
   document.getElementById('product-cancel').style.display='none';
   document.getElementById('color-stock-fields').innerHTML='';
   productImageList = [];
+  productColorImageMap = {};
   document.getElementById('image-preview-area').innerHTML='';
+  renderColorImageMapper();
   document.querySelectorAll('.size-chip-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tag-toggle-btn').forEach(b=>b.classList.remove('active'));
   toggleGiftCardFormMode();
@@ -2232,6 +2408,9 @@ async function editProduct(p){
   // လက်ရှိ ပုံများကို Array ထဲ ထည့် (Preview + ဖျက်နိုင်ရန်)
   const imgs = (p.images ? p.images.split(',').map(s=>s.trim()).filter(Boolean) : (p.image_url ? [p.image_url] : []));
   productImageList = imgs.map(url=>({ type:'existing', url }));
+  // 🎨 သိမ်းထားတဲ့ အရောင် → ပုံ ပြန်ချိတ်
+  productColorImageMap = {};
+  Object.entries(p.color_images || {}).forEach(([c, url]) => { const it = productImageList.find(x => x.url === url); if(it) productColorImageMap[c] = it; });
   renderProductImagePreview();
 
   document.getElementById('product-form-title').textContent='ပစ္စည်း ပြင်ဆင်ရန်';
@@ -6137,6 +6316,28 @@ async function loadCustomerWallets(){
     }
   });
 
+  // Gift Card ဝယ်သူ / Chat ပို့ဖူးသူ နာမည်များပါ ထပ်ရှာ
+  try{
+    const [{ data: gcs }, { data: chats }] = await Promise.all([
+      sb.from('gift_cards').select('purchased_by, purchaser_name, phone, created_at'),
+      sb.from('chat_messages').select('user_id, customer_name, created_at').eq('sender','customer'),
+    ]);
+    (gcs||[]).forEach(g => { if(g.purchased_by && !nameMap[g.purchased_by] && g.purchaser_name) nameMap[g.purchased_by] = { customer_name:g.purchaser_name, phone:g.phone, created_at:g.created_at }; });
+    (chats||[]).forEach(c => { if(c.user_id && !nameMap[c.user_id] && c.customer_name) nameMap[c.user_id] = { customer_name:c.customer_name, phone:null, created_at:c.created_at }; });
+  }catch(e){}
+  // Account ထဲက နာမည်/ဖုန်း/Email (CUSTOMER-NAMES.sql Run ထားရင်) — အမှန်ဆုံး
+  try{
+    const ids = wallets.map(w => w.user_id).filter(Boolean);
+    if(ids.length){
+      const { data: users, error: uErr } = await sb.rpc('admin_customer_names', { p_ids: ids });
+      if(!uErr) (users||[]).forEach(u => {
+        const nm = u.full_name ? (u.nickname ? `${u.full_name} (${u.nickname})` : u.full_name) : (u.nickname || null);
+        const prev = nameMap[u.user_id] || {};
+        nameMap[u.user_id] = { ...prev, customer_name: nm || prev.customer_name || u.email, phone: u.phone || prev.phone, email: u.email };
+      });
+    }
+  }catch(e){}
+
   customerWalletsCache = wallets
     .filter(w => Number(w.balance) > 0 || w.card_number) // လက်ကျန် ၀ ဖြစ်ပြီး Card မထုတ်ရသေးသူများ ဖျောက်
     .map(w => ({
@@ -6145,6 +6346,7 @@ async function loadCustomerWallets(){
       card_number: w.card_number,
       customer_name: nameMap[w.user_id]?.customer_name || 'Unknown Customer',
       phone: nameMap[w.user_id]?.phone || '-',
+      email: nameMap[w.user_id]?.email || '',
     }))
     .sort((a,b) => b.balance - a.balance); // ပိုက်ဆံအများဆုံးရှိသူ အပေါ်ဆုံး
 
@@ -6156,14 +6358,14 @@ function renderCustomerWalletsList(){
   if(!list) return;
   const q = (document.getElementById('customer-wallets-search')?.value || '').trim().toLowerCase();
   let items = customerWalletsCache;
-  if(q){ items = items.filter(w => (w.customer_name||'').toLowerCase().includes(q) || (w.phone||'').toLowerCase().includes(q)); }
+  if(q){ items = items.filter(w => (w.customer_name||'').toLowerCase().includes(q) || (w.phone||'').toLowerCase().includes(q) || (w.email||'').toLowerCase().includes(q) || (w.card_number||'').replace(/\s/g,'').includes(q.replace(/\s/g,''))); }
   if(!items.length){ list.innerHTML = '<p class="hint">Wallet Balance ရှိသော Customer မရှိသေးပါ</p>'; return; }
 
   list.innerHTML = items.map((w,idx)=>`
     <div class="list-item">
       <div class="info">
         <h4>${idx===0 && w.balance>0 ? '👑 ' : ''}${w.customer_name}</h4>
-        <p class="mono" style="font-size:11px; color:var(--grey);">📞 ${w.phone} ${w.card_number ? '· 💳 '+w.card_number : ''}</p>
+        <p class="mono" style="font-size:11px; color:var(--grey);">📞 ${w.phone}${w.email ? ' · ✉️ '+w.email : ''}${w.card_number ? '<br>💳 '+w.card_number : ''}</p>
       </div>
       <div style="text-align:right;">
         <div class="mono" style="font-size:18px; font-weight:700; color:var(--acid-text);">${w.balance.toLocaleString()} ကျပ်</div>
@@ -6625,6 +6827,324 @@ if(typeof applyRolePermissions === 'function'){
     if(currentAdminRole !== 'delivery'){ subscribePushFlush(); flushCustomerPush(3000); }
     return r;
   };
+}
+
+// =====================================================================
+// ☁️ အလိုအလျောက် Backup — Cloud ထဲက Backup စာရင်း + "အခု Backup ယူမည်"
+// (Supabase မှာ AUTO-BACKUP-PUSH.sql Run + auto-backup Edge Function Deploy ထားရန်)
+// =====================================================================
+async function listCloudBackups(){
+  const box = document.getElementById('auto-backup-list'), st = document.getElementById('auto-backup-status');
+  if(!box || currentAdminRole !== 'owner') return;
+  box.innerHTML = '<p class="hint">Load လုပ်နေသည်...</p>';
+  try{
+    const B = sb.storage.from('backups');
+    const files = [];
+    const { data: years, error } = await B.list('', { limit:100, sortBy:{ column:'name', order:'desc' } });
+    if(error) throw error;
+    for(const y of (years||[]).slice(0, 2)){
+      const { data: months } = await B.list(y.name, { limit:100, sortBy:{ column:'name', order:'desc' } });
+      for(const m of (months||[]).slice(0, 2)){
+        const { data: fs } = await B.list(`${y.name}/${m.name}`, { limit:100, sortBy:{ column:'name', order:'desc' } });
+        (fs||[]).filter(f => /\.json\.gz$/.test(f.name)).forEach(f => files.push({ path:`${y.name}/${m.name}/${f.name}`, name:f.name, size:f.metadata?.size || 0, at:f.created_at }));
+      }
+    }
+    files.sort((a, b) => b.name.localeCompare(a.name));
+    if(!files.length){
+      box.innerHTML = '<p class="hint">Cloud ထဲ Backup မရှိသေးပါ — ည ၁၁ နာရီ ရောက်ရင် (သို့) အပေါ်က ခလုတ် နှိပ်ရင် ပေါ်လာပါမည်</p>';
+      if(st) st.innerHTML = '⏳ ပထမဆုံး Backup ကို စောင့်နေသည်';
+      return;
+    }
+    const last = files[0];
+    const hrs = last.at ? Math.floor((Date.now() - new Date(last.at).getTime()) / 3600000) : null;
+    if(st){
+      st.innerHTML = hrs !== null && hrs > 30 ? `⚠️ နောက်ဆုံး Backup ${Math.floor(hrs/24)} ရက်ကြာပြီ — Cron အလုပ်မလုပ်တာ ဖြစ်နိုင်ပါသည်` : `✅ နောက်ဆုံး Backup: ${last.at ? new Date(last.at).toLocaleString() : last.name}`;
+      st.style.color = hrs !== null && hrs > 30 ? 'var(--warn-text)' : 'var(--acid-text)';
+    }
+    box.innerHTML = `<table class="recon-table ab-table">${files.slice(0, 10).map((f, i) => `
+      <tr><td>🗂️ ${f.name.replace('suwati-backup-','').replace('.json.gz','')}<br><span class="hint" style="margin:0;">${(f.size/1024).toFixed(0)} KB</span></td>
+      <td><button type="button" class="secondary ab-dl" data-path="${f.path}" data-name="${f.name}">⬇️ Download</button></td></tr>`).join('')}</table>`;
+    box.querySelectorAll('.ab-dl').forEach(b => b.addEventListener('click', async () => {
+      b.disabled = true;
+      const { data, error } = await B.createSignedUrl(b.dataset.path, 300, { download: b.dataset.name });
+      b.disabled = false;
+      if(error || !data?.signedUrl){ showToast('Download မရပါ — ' + (error?.message || '')); return; }
+      const a = document.createElement('a'); a.href = data.signedUrl; a.download = b.dataset.name; document.body.appendChild(a); a.click(); a.remove();
+    }));
+  }catch(e){
+    box.innerHTML = `<p class="hint">Cloud Backup ဖတ်မရပါ — Supabase မှာ AUTO-BACKUP-PUSH.sql ကို Run ထားရန် လိုပါသည်</p>`;
+    if(st) st.innerHTML = '';
+  }
+}
+document.getElementById('auto-backup-now-btn')?.addEventListener('click', async () => {
+  const btn = document.getElementById('auto-backup-now-btn'), st = document.getElementById('auto-backup-status');
+  btn.disabled = true; const old = btn.textContent; btn.textContent = '☁️ Backup ယူနေသည်... (စက္ကန့် အနည်းငယ်)';
+  try{
+    const { data:{ session } } = await sb.auth.getSession();
+    const r = await fetch(`${SUPABASE_URL}/functions/v1/auto-backup`, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + (session?.access_token || ''), 'apikey':SUPABASE_ANON_KEY }, body:'{"source":"manual"}' });
+    if(r.status === 404) throw new Error('auto-backup Edge Function ကို Deploy မလုပ်ရသေးပါ');
+    const j = await r.json().catch(() => ({}));
+    if(!r.ok || !j.ok) throw new Error(j.error || j.storeErr || j.mailErr || ('HTTP ' + r.status));
+    showToast(`✅ Backup ပြီးပါပြီ (${j.size_kb} KB)${j.emailed ? ' — Email ပို့ပြီး' : ''}`);
+    if(st){ st.innerHTML = `✅ ${j.file}${j.emailed ? ' · 📧 Email ပို့ပြီး' : (j.mailErr ? ' · ⚠️ Email မပို့ရ: ' + String(j.mailErr).slice(0,80) : ' · Email မပို့ (BACKUP_EMAIL Secret မထည့်ရသေး)')}`; st.style.color = 'var(--acid-text)'; }
+    listCloudBackups();
+  }catch(e){
+    showToast('⚠️ ' + e.message);
+    if(st){ st.innerHTML = '⚠️ ' + e.message; st.style.color = 'var(--warn-text)'; }
+  }finally{ btn.disabled = false; btn.textContent = old; }
+});
+document.querySelector('.tab-btn[data-tab="settings-panel"]')?.addEventListener('click', () => listCloudBackups());
+
+// =====================================================================
+// 🖼️ ပစ္စည်းပုံဟောင်းများ ချုံ့ — (p2_ မဟုတ်တဲ့) ပုံတိုင်းကို ချုံ့ + Thumbnail လုပ်ပြီး Product ထဲ အစားထိုး
+// =====================================================================
+const isOptimizedImg = u => /\/p2_[^/?#]+\.jpg$/.test(u || '');
+async function countOldProductImages(){
+  const st = document.getElementById('img-opt-status'); if(!st) return;
+  try{
+    const { data } = await sb.from('products').select('id, images, image_url');
+    let n = 0, total = 0;
+    (data||[]).forEach(p => { const imgs = (p.images ? p.images.split(',').map(s=>s.trim()).filter(Boolean) : (p.image_url ? [p.image_url] : [])); total += imgs.length; n += imgs.filter(u => !isOptimizedImg(u)).length; });
+    st.innerHTML = n ? `ချုံ့ရန် ကျန်သော ပုံ <b>${n}</b> ပုံ (စုစုပေါင်း ${total} ပုံ)` : `✅ ပစ္စည်းပုံ ${total} ပုံလုံး ချုံ့ပြီးသားပါ`;
+    st.style.color = n ? 'var(--warn-text)' : 'var(--acid-text)';
+    document.getElementById('img-opt-btn').disabled = !n;
+  }catch(e){}
+}
+document.getElementById('img-opt-btn')?.addEventListener('click', async () => {
+  if(!await adminConfirm('ပစ္စည်းပုံဟောင်း အားလုံးကို ချုံ့ပြီး အစားထိုးမလား?\nပုံအရေအတွက်ပေါ် မူတည်ပြီး မိနစ်အနည်းငယ် ကြာနိုင်ပါသည် — ပြီးတဲ့အထိ ဒီစာမျက်နှာ မပိတ်ပါနှင့်။', { title:'🖼️ ပုံချုံ့မည်', ok:'ချုံ့မည်' })) return;
+  const btn = document.getElementById('img-opt-btn'), st = document.getElementById('img-opt-status'), bar = document.getElementById('img-opt-bar');
+  btn.disabled = true; bar.style.display = 'block';
+  const { data: prods, error } = await sb.from('products').select('id, name, images, image_url, color_images');
+  if(error){ showToast('Error: ' + error.message); btn.disabled = false; return; }
+  const jobs = [];
+  (prods||[]).forEach(p => { const imgs = (p.images ? p.images.split(',').map(s=>s.trim()).filter(Boolean) : (p.image_url ? [p.image_url] : [])); if(imgs.some(u => !isOptimizedImg(u))) jobs.push({ p, imgs }); });
+  const totalImgs = jobs.reduce((s, j) => s + j.imgs.filter(u => !isOptimizedImg(u)).length, 0);
+  let done = 0, failed = 0, savedKB = 0;
+  for(const { p, imgs } of jobs){
+    const map = {};
+    for(const u of imgs){
+      if(isOptimizedImg(u)) continue;
+      try{
+        const r = await fetch(u, { cache:'no-store' }); if(!r.ok) throw new Error('HTTP ' + r.status);
+        const blob = await r.blob();
+        const file = new File([blob], 'img.jpg', { type: blob.type || 'image/jpeg' });
+        const nu = await uploadImage(file);
+        if(nu){ map[u] = nu; const nb = await fetch(nu, { method:'HEAD' }).then(x => Number(x.headers.get('content-length'))||0).catch(()=>0); if(nb) savedKB += Math.max(0, (blob.size - nb) / 1024); }
+        else failed++;
+      }catch(e){ failed++; console.warn('optimize failed', u, e); }
+      done++;
+      bar.firstElementChild.style.width = Math.round(done / totalImgs * 100) + '%';
+      st.innerHTML = `ချုံ့နေသည်... ${done} / ${totalImgs} — ${p.name.replace(/</g,'&lt;')}`;
+    }
+    if(!Object.keys(map).length) continue;
+    const newImgs = imgs.map(u => map[u] || u);
+    const upd = { images: newImgs.join(','), image_url: map[p.image_url] || newImgs[0] || p.image_url };
+    if(p.color_images && typeof p.color_images === 'object'){ const ci = {}; Object.entries(p.color_images).forEach(([c, u]) => ci[c] = map[u] || u); upd.color_images = ci; }
+    let { error: uErr } = await sb.from('products').update(upd).eq('id', p.id);
+    if(uErr && /color_images/.test(uErr.message||'')){ delete upd.color_images; ({ error: uErr } = await sb.from('products').update(upd).eq('id', p.id)); }
+    if(uErr){ failed++; console.warn(uErr); }
+  }
+  bar.style.display = 'none'; btn.disabled = false;
+  showToast(`✅ ပုံ ${done - failed} ပုံ ချုံ့ပြီးပါပြီ${savedKB > 1024 ? ` — ${(savedKB/1024).toFixed(1)} MB သက်သာ` : ''}${failed ? ` (မရ ${failed})` : ''}`);
+  logActivity('images_optimized', `${done - failed}/${totalImgs} images`);
+  countOldProductImages(); try{ loadProducts(); }catch(e){}
+});
+document.querySelector('.tab-btn[data-tab="settings-panel"]')?.addEventListener('click', () => countOldProductImages());
+
+// =====================================================================
+// 📥 Excel ဖြင့် ပစ္စည်း အများကြီး တစ်ခါတည်း ထည့်ခြင်း
+//   Column များ: name*, price*, category*, subcategory, sizes, colors, stock, description, tags, status, image_urls, cost_price
+//   stock — ဂဏန်းတစ်ခု (Size/အရောင် တွဲတိုင်း အဲဒီအရေအတွက်) သို့မဟုတ် "M-Black:3, L-White:2"
+// =====================================================================
+const BULK_COLS = ['name','price','category','subcategory','sizes','colors','stock','description','tags','status','image_urls','cost_price'];
+const BULK_HEAD_ALIASES = {
+  name:['name','ပစ္စည်းနာမည်','product','product name'], price:['price','ဈေး','ရောင်းဈေး'], category:['category','အမျိုးအစား'],
+  subcategory:['subcategory','sub-category','sub category'], sizes:['sizes','size'], colors:['colors','color','colour','အရောင်'],
+  stock:['stock','qty','stock qty','လက်ကျန်'], description:['description','ဖော်ပြချက်'], tags:['tags','tag'], status:['status'],
+  image_urls:['image_urls','images','image','ပုံ'], cost_price:['cost_price','cost','ဝယ်ဈေး'],
+};
+let bulkRows = [];
+const bulkEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function bulkLoadXLSX(){ await loadScriptOnce('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'); }
+
+document.getElementById('bulk-template-btn')?.addEventListener('click', async () => {
+  try{ await bulkLoadXLSX(); }catch(e){ showToast('⚠️ ' + e.message); return; }
+  const rows = [
+    BULK_COLS,
+    ['BLACK ICON TEE', 18000, 'Top Wear', 'T-Shirt', 'M, L, XL', 'Black, White', 5, 'Cotton 100% Oversize Tee', 'New Arrival', 'available', '', 9000],
+    ['CARGO PANTS', 30000, 'Pants', 'Cargo Pants', 'M, L', 'Black', 'M-Black:3, L-Black:2', '', 'Best Seller', 'available', '', 15000],
+    ['LEATHER BELT', 12000, 'Accessories', 'Belt', '', '', 10, '', '', 'available', '', 6000],
+  ];
+  const help = [
+    ['Column', 'ဖြည့်နည်း'],
+    ['name *', 'ပစ္စည်းနာမည် (မဖြစ်မနေ) — Website ပေါ်ရှိပြီးသား နာမည်နဲ့တူရင် Update ဖြစ်မည်'],
+    ['price *', 'ရောင်းဈေး (ကျပ်) — ဂဏန်းသာ'],
+    ['category *', 'Top Wear / Pants / Accessories ... (မရှိသေးရင် အလိုအလျောက် ဖန်တီးနိုင်)'],
+    ['subcategory', 'Polo / Cargo Pants ... (မထည့်လည်းရ)'],
+    ['sizes', 'Comma ခြား — M, L, XL (မရှိရင် အလွတ်)'],
+    ['colors', 'Comma ခြား — Black, White (မရှိရင် အလွတ်)'],
+    ['stock', 'ဂဏန်းတစ်ခု = Size/အရောင် တွဲတိုင်း ဒီအရေအတွက် · သို့မဟုတ် တစ်ခုချင်း "M-Black:3, L-White:2"'],
+    ['description', 'ဖော်ပြချက် (မထည့်လည်းရ)'],
+    ['tags', 'New Arrival, Best Seller, Featured, Sale (မထည့်လည်းရ)'],
+    ['status', 'available / sold_out (အလွတ်ဆို available)'],
+    ['image_urls', 'ပုံ Link များ Comma ခြား (မထည့်လည်းရ — နောက်မှ ✏️ ပြင်ပြီး ပုံတင်နိုင်)'],
+    ['cost_price', 'ဝယ်ဈေး — အမြတ်စာရင်းအတွက် (Owner ချည်း မြင်ရ၊ မထည့်လည်းရ)'],
+  ];
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet(rows); ws['!cols'] = BULK_COLS.map(c => ({ wch: c === 'description' ? 30 : (c === 'name' ? 22 : 14) }));
+  XLSX.utils.book_append_sheet(wb, ws, 'Products');
+  const hs = XLSX.utils.aoa_to_sheet(help); hs['!cols'] = [{ wch:14 }, { wch:80 }];
+  XLSX.utils.book_append_sheet(wb, hs, 'ဖြည့်နည်း');
+  const out = XLSX.write(wb, { bookType:'xlsx', type:'array' });
+  downloadBlob(new Blob([out], { type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'SUWATI-products-template.xlsx');
+});
+
+function bulkNum(v){ if(v === null || v === undefined || v === '') return null; const n = Number(String(v).replace(/[,\s]|ကျပ်|ks|mmk/gi, '')); return isFinite(n) ? n : NaN; }
+function bulkList(v){ return String(v ?? '').split(/[,،၊\n]/).map(s => s.trim()).filter(Boolean); }
+
+document.getElementById('bulk-file')?.addEventListener('change', async (e) => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  const box = document.getElementById('bulk-preview');
+  box.innerHTML = '<p class="hint">ဖိုင် ဖတ်နေသည်...</p>';
+  try{ await bulkLoadXLSX(); }catch(err){ box.innerHTML = `<p class="hint" style="color:var(--warn-text);">⚠️ ${bulkEsc(err.message)}</p>`; return; }
+  try{
+    const wb = XLSX.read(await f.arrayBuffer(), { type:'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const raw = XLSX.utils.sheet_to_json(ws, { defval:'', raw:true });
+    // Header နာမည် တိုက်ဆိုင်
+    const norm = h => String(h).trim().toLowerCase().replace(/\s*\*\s*$/, '');
+    const keyOf = h => { const n = norm(h); return Object.keys(BULK_HEAD_ALIASES).find(k => BULK_HEAD_ALIASES[k].includes(n)); };
+    const rows = raw.map(r => { const o = {}; Object.keys(r).forEach(h => { const k = keyOf(h); if(k) o[k] = r[h]; }); return o; })
+      .filter(o => Object.values(o).some(v => String(v).trim() !== ''));
+    await bulkValidate(rows);
+  }catch(err){ box.innerHTML = `<p class="hint" style="color:var(--warn-text);">⚠️ ဖိုင် ဖတ်မရပါ — ${bulkEsc(err.message)}</p>`; }
+});
+
+async function bulkValidate(rows){
+  const box = document.getElementById('bulk-preview');
+  const [{ data: prods }, { data: cats }, { data: subs }] = await Promise.all([
+    sb.from('products').select('id, name, is_gift_card'), sb.from('categories').select('name'), sb.from('subcategories').select('category_name, name'),
+  ]);
+  const existing = new Map((prods||[]).map(p => [p.name.trim().toLowerCase(), p]));
+  const catSet = new Set((cats||[]).map(c => c.name.trim().toLowerCase()));
+  const seen = new Set();
+  bulkRows = rows.map((r, i) => {
+    const errs = [], warns = [];
+    const name = String(r.name ?? '').trim();
+    const price = bulkNum(r.price);
+    const category = String(r.category ?? '').trim();
+    const sizes = bulkList(r.sizes), colors = bulkList(r.colors);
+    if(!name) errs.push('နာမည် မပါ');
+    if(price === null || isNaN(price) || price <= 0) errs.push('ဈေး မှားနေ');
+    if(!category) errs.push('Category မပါ');
+    const key = name.toLowerCase();
+    if(name && seen.has(key)) errs.push('ဖိုင်ထဲ နာမည် ထပ်နေ'); seen.add(key);
+    const ex = existing.get(key);
+    if(ex && ex.is_gift_card) errs.push('Gift Card ပစ္စည်း — ဒီနည်းနဲ့ မပြင်ရ');
+    if(category && !catSet.has(category.toLowerCase())) warns.push('Category အသစ်');
+    // Stock
+    const sKeys = sizes.length ? sizes : ['_'], cKeys = colors.length ? colors : ['_'];
+    const vs = {}; let total = 0;
+    const stockRaw = String(r.stock ?? '').trim();
+    if(/[:=]/.test(stockRaw)){
+      sKeys.forEach(s => { vs[s] = {}; cKeys.forEach(c => vs[s][c] = 0); });
+      stockRaw.split(/[,၊;\n]/).map(x => x.trim()).filter(Boolean).forEach(part => {
+        const m = part.match(/^(.+?)\s*[:=]\s*(-?\d+)$/); if(!m){ errs.push(`Stock "${part}" ပုံစံမှား`); return; }
+        const lhs = m[1].trim(), q = Math.max(0, parseInt(m[2]));
+        let s = '_', c = '_';
+        const bits = lhs.split(/\s*[-\/]\s*/);
+        if(sizes.length && colors.length){ s = bits[0]; c = bits.slice(1).join('-'); }
+        else if(sizes.length) s = lhs; else if(colors.length) c = lhs;
+        const sk = sKeys.find(x => x.toLowerCase() === s.toLowerCase()), ck = cKeys.find(x => x.toLowerCase() === c.toLowerCase());
+        if(!sk || !ck){ errs.push(`Stock "${part}" — Size/အရောင် မတွေ့`); return; }
+        vs[sk][ck] = q;
+      });
+    }else{
+      const q = stockRaw === '' ? 0 : bulkNum(stockRaw);
+      if(isNaN(q) || q < 0) errs.push('Stock မှားနေ');
+      sKeys.forEach(s => { vs[s] = {}; cKeys.forEach(c => vs[s][c] = Math.max(0, Math.round(q || 0))); });
+    }
+    Object.values(vs).forEach(o => Object.values(o).forEach(q => total += q));
+    const statusIn = String(r.status ?? '').trim().toLowerCase();
+    let status = /sold|ကုန်/.test(statusIn) ? 'sold_out' : 'available';
+    if(total <= 0){ status = 'sold_out'; warns.push('Stock 0 → Sold Out'); }
+    const cost = bulkNum(r.cost_price);
+    if(cost !== null && (isNaN(cost) || cost < 0)) errs.push('ဝယ်ဈေး မှားနေ');
+    const imgs = bulkList(r.image_urls).filter(u => /^https?:\/\//.test(u));
+    const payload = {
+      name, price, category, subcategory: String(r.subcategory ?? '').trim() || null,
+      sizes: sizes.join(', '), colors: colors.join(', '), variant_stock: vs, stock_qty: total, status,
+      description: String(r.description ?? '').trim(), tags: bulkList(r.tags).join(', '), is_gift_card: false,
+    };
+    if(!sizes.length && !colors.length) payload.variant_stock = null;   // Size/အရောင် မရှိ — စုစုပေါင်း Stock ပဲ
+    if(imgs.length){ payload.images = imgs.join(','); payload.image_url = imgs[0]; }
+    return { row: i + 2, payload, cost: (cost === null || isNaN(cost)) ? null : cost, existing: ex || null, errs, warns };
+  });
+  bulkRenderPreview();
+}
+
+function bulkRenderPreview(){
+  const box = document.getElementById('bulk-preview');
+  if(!bulkRows.length){ box.innerHTML = '<p class="hint">ဖိုင်ထဲ ပစ္စည်း မတွေ့ပါ — Template အတိုင်း ဖြည့်ထားလား စစ်ပါ</p>'; return; }
+  const upd = document.getElementById('bulk-update-existing').checked;
+  const ok = bulkRows.filter(r => !r.errs.length && (!r.existing || upd));
+  const nNew = ok.filter(r => !r.existing).length, nUpd = ok.filter(r => r.existing).length, nErr = bulkRows.filter(r => r.errs.length).length, nSkip = bulkRows.filter(r => !r.errs.length && r.existing && !upd).length;
+  box.innerHTML = `
+    <div class="bulk-sum"><span class="ok">🆕 အသစ် ${nNew}</span><span class="up">🔄 Update ${nUpd}</span>${nSkip ? `<span>⏭️ ကျော် ${nSkip}</span>` : ''}${nErr ? `<span class="err">⚠️ မှား ${nErr}</span>` : ''}</div>
+    <div class="bulk-table-wrap"><table class="inventory-table-styled bulk-table">
+      <thead><tr><th>#</th><th>ပစ္စည်း</th><th>ဈေး</th><th>Category</th><th>Size / အရောင်</th><th>Stock</th><th>အခြေအနေ</th></tr></thead>
+      <tbody>${bulkRows.map(r => { const p = r.payload; const st = r.errs.length ? `<span class="b-err">⚠️ ${bulkEsc(r.errs.join('၊ '))}</span>` : (r.existing ? (upd ? '<span class="b-up">🔄 Update</span>' : '<span>⏭️ ကျော်</span>') : '<span class="b-ok">🆕 အသစ်</span>');
+        return `<tr class="${r.errs.length ? 'is-err' : ''}"><td>${r.row}</td><td><b>${bulkEsc(p.name || '—')}</b>${r.warns.length ? `<br><small class="b-warn">${bulkEsc(r.warns.join('၊ '))}</small>` : ''}</td><td>${isFinite(p.price) && p.price ? Number(p.price).toLocaleString() : '—'}</td><td>${bulkEsc(p.category)}${p.subcategory ? ' › ' + bulkEsc(p.subcategory) : ''}</td><td>${bulkEsc([p.sizes, p.colors].filter(Boolean).join(' / ') || '—')}</td><td>${p.stock_qty}</td><td>${st}</td></tr>`; }).join('')}</tbody>
+    </table></div>
+    <div class="bulk-bar" id="bulk-bar" style="display:none;"><i></i></div>
+    <button type="button" class="acid" id="bulk-go-btn" style="width:100%; margin-top:10px;" ${ok.length ? '' : 'disabled'}>✅ ပစ္စည်း ${ok.length} ခု ထည့်မည်</button>`;
+  document.getElementById('bulk-go-btn')?.addEventListener('click', bulkImport);
+}
+document.getElementById('bulk-update-existing')?.addEventListener('change', () => { if(bulkRows.length) bulkRenderPreview(); });
+
+async function bulkImport(){
+  const upd = document.getElementById('bulk-update-existing').checked, mkCats = document.getElementById('bulk-create-cats').checked;
+  const todo = bulkRows.filter(r => !r.errs.length && (!r.existing || upd));
+  if(!todo.length) return;
+  if(!await adminConfirm(`ပစ္စည်း ${todo.length} ခု ထည့်/Update လုပ်မလား?`, { title:'📥 Excel ထည့်မည်', ok:'ထည့်မည်' })) return;
+  const btn = document.getElementById('bulk-go-btn'), bar = document.getElementById('bulk-bar');
+  btn.disabled = true; bar.style.display = 'block';
+  const setP = (d) => { bar.firstElementChild.style.width = Math.round(d / todo.length * 100) + '%'; btn.textContent = `ထည့်နေသည်... ${d} / ${todo.length}`; };
+  // Category / Sub-category အသစ်
+  if(mkCats){
+    const [{ data: cats }, { data: subs }] = await Promise.all([sb.from('categories').select('name'), sb.from('subcategories').select('category_name, name')]);
+    const cs = new Set((cats||[]).map(c => c.name.toLowerCase())), ss = new Set((subs||[]).map(s => (s.category_name + '›' + s.name).toLowerCase()));
+    for(const r of todo){
+      const c = r.payload.category; if(c && !cs.has(c.toLowerCase())){ await sb.from('categories').insert({ name:c }); cs.add(c.toLowerCase()); }
+      const s = r.payload.subcategory; if(s && !ss.has((c + '›' + s).toLowerCase())){ await sb.from('subcategories').insert({ category_name:c, name:s }); ss.add((c + '›' + s).toLowerCase()); }
+    }
+  }
+  let ok = 0, fail = 0; const errors = [];
+  const news = todo.filter(r => !r.existing), olds = todo.filter(r => r.existing);
+  for(let i = 0; i < news.length; i += 25){
+    const chunk = news.slice(i, i + 25);
+    const { error } = await sb.from('products').insert(chunk.map(r => r.payload));
+    if(error){ // တစ်ခုချင်း ပြန်စမ်း — ဘယ်တစ်ခု မှားလဲ သိရအောင်
+      for(const r of chunk){ const { error: e1 } = await sb.from('products').insert(r.payload); if(e1){ fail++; errors.push(`Row ${r.row}: ${e1.message}`); } else ok++; }
+    }else ok += chunk.length;
+    setP(Math.min(todo.length, ok + fail));
+  }
+  for(const r of olds){
+    const pl = { ...r.payload }; if(!pl.images){ delete pl.images; delete pl.image_url; }
+    const { error } = await sb.from('products').update(pl).eq('id', r.existing.id);
+    if(error){ fail++; errors.push(`Row ${r.row}: ${error.message}`); } else ok++;
+    setP(ok + fail);
+  }
+  // ဝယ်ဈေး (အမြတ်စာရင်း)
+  const costs = todo.filter(r => r.cost !== null).map(r => ({ product_name: r.payload.name, cost_price: r.cost, updated_at: new Date().toISOString() }));
+  if(costs.length){ try{ await sb.from('product_costs').upsert(costs, { onConflict:'product_name' }); }catch(e){} }
+  bar.style.display = 'none';
+  logActivity('bulk_import', `${ok} ok, ${fail} failed`);
+  showToast(`✅ ပစ္စည်း ${ok} ခု ထည့်ပြီးပါပြီ${fail ? ` — မရ ${fail}` : ''}`);
+  document.getElementById('bulk-preview').innerHTML = `<div class="bulk-done">✅ <b>${ok}</b> ခု အောင်မြင်${fail ? ` · ⚠️ <b>${fail}</b> ခု မရ<br><small>${bulkEsc(errors.slice(0, 5).join(' | '))}</small>` : ''}<br><small>ပုံထည့်ရန် — အောက်က ပစ္စည်းစာရင်းမှာ ✏️ ပြင် နှိပ်ပြီး ပုံတင်ပါ</small></div>`;
+  bulkRows = [];
+  try{ loadProducts(); loadInventory(); refreshLowStockBadge(); }catch(e){}
+  try{ if(typeof loadCategories === 'function') loadCategories(); }catch(e){}
 }
 
 // ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
