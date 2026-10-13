@@ -694,6 +694,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 @keyframes navWiggle{ 0%,30%,100%{ transform:rotate(0); } 8%{ transform:rotate(-14deg) scale(1.1); } 16%{ transform:rotate(12deg) scale(1.1); } 24%{ transform:rotate(-6deg); } }
 .bb-item.attn .bb-ico{ animation:navWiggle 2.6s ease-in-out infinite; filter:none; }
 @media (prefers-reduced-motion: reduce){ .admin-nav .tab-btn.needs-attention, .admin-nav .tab-btn.needs-attention .mt-icon, .bb-item.attn .bb-ico{ animation:none !important; } }
+.cc-rcpt-btn{ margin-top:6px; padding:5px 9px !important; font-size:11px !important; }
 </style>
 </head>
 <body>
@@ -4984,6 +4985,7 @@ function renderCashCloseArea(dateStr, posCash, giftCash){
     <div class="form-grid" style="margin-top:10px;">
       <div><label class="hint" for="cc-float">ဆိုင်ဖွင့်ချိန် အမ်းငွေ (Opening)</label><input type="number" id="cc-float" min="0" step="100" placeholder="0" inputmode="numeric"></div>
       <div><label class="hint" for="cc-out">ဗီရိုထဲက ထုတ်သုံးငွေ (Cash Out)</label><input type="number" id="cc-out" min="0" step="100" placeholder="0" inputmode="numeric"></div>
+      <div><label class="hint" for="cc-next">နောက်နေ့အတွက် ချန်ထားမည့် အမ်းငွေ</label><input type="number" id="cc-next" min="0" step="100" placeholder="0" inputmode="numeric"></div>
     </div>
     <div class="pay-set-sec" style="margin-top:14px;">🧮 ဗီရိုထဲ ငွေ ရေတွက်ခြင်း</div>
     <div class="denom-grid">
@@ -5003,7 +5005,7 @@ function renderCashCloseArea(dateStr, posCash, giftCash){
 function readCashClose(){
   const st = cashCloseState || { posCash:0, giftCash:0 };
   const num = id => Math.max(0, parseFloat(document.getElementById(id)?.value) || 0);
-  const float = num('cc-float'), out = num('cc-out'), loose = num('cc-loose');
+  const float = num('cc-float'), out = num('cc-out'), loose = num('cc-loose'), next = num('cc-next');
   const giftIn = document.getElementById('cc-include-gift')?.checked ? st.giftCash : 0;
   const denoms = {}; let counted = loose;
   document.querySelectorAll('#cash-close-area .cc-denom').forEach(i=>{
@@ -5014,7 +5016,7 @@ function readCashClose(){
   const looseEl = document.getElementById('cc-loose-sum'); if(looseEl) looseEl.textContent = loose.toLocaleString();
   if(loose) denoms.loose = loose;
   const expected = float + st.posCash + giftIn - out;
-  return { float, out, giftIn, counted, expected, diff: counted - expected, denoms };
+  return { float, out, giftIn, counted, expected, diff: counted - expected, denoms, next, deposit: Math.max(0, counted - next) };
 }
 
 function updateCashCloseSummary(){
@@ -5026,6 +5028,8 @@ function updateCashCloseSummary(){
     <div class="cc-line"><span>ရှိသင့်သော ငွေသား</span><b>${c.expected.toLocaleString()} ကျပ်</b></div>
     <div class="cc-line"><span>ရေတွက်ရသော ငွေသား</span><b>${c.counted.toLocaleString()} ကျပ်</b></div>
     <div class="cc-line cc-diff ${cls}"><span>ကွာခြားချက်</span><b>${c.diff>0?'+':''}${c.diff.toLocaleString()} ကျပ်</b></div>
+    ${c.next > 0 ? `<div class="cc-line"><span>နောက်နေ့ အမ်းငွေ ချန်</span><b>−${c.next.toLocaleString()} ကျပ်</b></div>` : ''}
+    <div class="cc-line"><span>🏦 ဘဏ်သွင်း / သိမ်းရမည့်ငွေ</span><b>${c.deposit.toLocaleString()} ကျပ်</b></div>
     <div class="cc-msg ${cls}"><span class="cc-badge ${cls}">${cls === 'cc-ok' ? '✓' : '!'}</span>${msg}</div>`;
   // ⑮ ရလဒ် ပြောင်းသွားမှသာ ခုန် (ကိုက်ညီ ↔ ငွေလို/ပို)
   if(el.dataset.cls !== cls && c.counted > 0){
@@ -5042,17 +5046,126 @@ async function saveCashClosing(){
   const note = document.getElementById('cc-note').value.trim();
   if(Math.abs(c.diff) >= 1 && !note && !await adminConfirm('ငွေ ကွာခြားနေပါသည် — မှတ်ချက် မရေးဘဲ သိမ်းမှာလား?')) return;
   const btn = document.getElementById('cc-save-btn'); btn.disabled = true;
-  const { error } = await sb.from('cash_closings').insert({
+  const denoms = { ...c.denoms, _next_float: c.next, _deposit: c.deposit };
+  const { data: saved, error } = await sb.from('cash_closings').insert({
     closing_date: cashCloseState.dateStr, opening_float: c.float, cash_sales: cashCloseState.posCash,
     cash_other_in: c.giftIn, cash_out: c.out, expected_cash: c.expected, counted_cash: c.counted,
-    difference: c.diff, denominations: c.denoms, note: note || null,
+    difference: c.diff, denominations: denoms, note: note || null,
     closed_by: currentAdminUserId, closed_by_email: currentAdminEmail,
-  });
+  }).select().maybeSingle();
   btn.disabled = false;
   if(error){ showToast('Error: '+error.message+' — PAYMENT-UPGRADE.sql ကို Run ရန် လိုအပ်ပါသည်'); return; }
   logActivity('cash_closing_saved', `${cashCloseState.dateStr} — ရှိသင့် ${c.expected.toLocaleString()} / ရေတွက် ${c.counted.toLocaleString()} (${c.diff>0?'+':''}${c.diff.toLocaleString()})`);
   showToast('🔒 ငွေသား စာရင်းပိတ်ပြီး မှတ်တမ်းတင်ပြီးပါပြီ');
   loadCashClosingHistory();
+  // 🧾 စာရင်းပိတ် Receipt ချက်ချင်း ထုတ်ပြ
+  const rec = saved || { closing_date: cashCloseState.dateStr, opening_float: c.float, cash_sales: cashCloseState.posCash, cash_other_in: c.giftIn, cash_out: c.out,
+    expected_cash: c.expected, counted_cash: c.counted, difference: c.diff, denominations: denoms, note: note || null, closed_by_email: currentAdminEmail, created_at: new Date().toISOString() };
+  window.__fxPrintAnim = true;
+  showReceiptOverlay(buildCashClosingReceiptHtml(rec));
+}
+
+// ---------- 🧾 ငွေသား စာရင်းပိတ် Receipt (ငွေစက္ကူ အမျိုးအစားအလိုက် ရေတွက်စာရင်း) ----------
+let cashClosingHistoryCache = [];
+function buildCashClosingReceiptHtml(r){
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const n = v => Number(v) || 0;
+  const k = v => n(v).toLocaleString();
+  const dn = r.denominations || {};
+  const loose = n(dn.loose);
+  const next = n(dn._next_float);
+  const counted = n(r.counted_cash), expected = n(r.expected_cash), diff = n(r.difference);
+  const deposit = dn._deposit !== undefined ? n(dn._deposit) : Math.max(0, counted - next);
+  const created = new Date(r.created_at || Date.now());
+  const pad = x => String(x).padStart(2, '0');
+  const stamp = `${created.getFullYear()}-${pad(created.getMonth()+1)}-${pad(created.getDate())} ${pad(created.getHours())}:${pad(created.getMinutes())}`;
+  const no = String(r.id || '').replace(/-/g,'').slice(0,6).toUpperCase() || '------';
+  const rows = CASH_DENOMS.map(d => { const q = n(dn[d]); return `<tr class="${q?'':'zero'}"><td>${d.toLocaleString()}</td><td class="c">${q}</td><td class="r">${(q*d).toLocaleString()}</td></tr>`; }).join('')
+    + `<tr class="${loose?'':'zero'}"><td>အကြွေ/အခြား</td><td class="c">—</td><td class="r">${loose.toLocaleString()}</td></tr>`;
+  const diffTxt = Math.abs(diff) < 1 ? '0' : (diff > 0 ? '+' : '−') + Math.abs(diff).toLocaleString();
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Cash Closing ${esc(r.closing_date)} — SUWATI MEN FASHION</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --ink:#141412; --rust:#C13B1F; --grey:#666; }
+  *{ box-sizing:border-box; }
+  body{ font-family:'Space Mono','Noto Sans Myanmar',monospace; width:300px; margin:20px auto; padding:0; color:var(--ink); background:#fff; }
+  .receipt-box{ border:3px solid var(--ink); padding:18px 16px; background:#fff; }
+  .brand{ text-align:center; }
+  .brand .logo{ font-family:'Anton',sans-serif; font-size:30px; line-height:1; letter-spacing:.01em; }
+  .brand .logo .dot{ color:var(--rust); }
+  .brand .tagline{ font-size:10px; letter-spacing:.25em; color:var(--grey); margin-top:2px; }
+  .brand .address{ font-family:'Noto Sans Myanmar',sans-serif; font-size:11px; color:var(--grey); margin-top:6px; }
+  .title{ text-align:center; margin:12px 0 4px; font-family:'Noto Sans Myanmar',sans-serif; font-weight:700; font-size:17px; }
+  .title small{ display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.2em; font-weight:400; color:var(--grey); }
+  hr.solid{ border:none; border-top:3px solid var(--ink); margin:12px 0; }
+  hr.dashed{ border:none; border-top:1.5px dashed #999; margin:10px 0; }
+  .meta{ font-size:11.5px; line-height:1.9; display:grid; grid-template-columns:auto 1fr; column-gap:10px; }
+  .meta b{ font-weight:700; } .meta span{ text-align:right; overflow-wrap:anywhere; }
+  table{ width:100%; border-collapse:collapse; font-size:12.5px; }
+  th{ font-size:10.5px; letter-spacing:.06em; text-align:left; padding:4px 0; border-bottom:1.5px solid var(--ink); font-family:'Noto Sans Myanmar','Space Mono',sans-serif; }
+  td{ padding:3px 0; } td.c, th.c{ text-align:center; } td.r, th.r{ text-align:right; }
+  tr.zero td{ color:#9a9a9a; }
+  .line{ display:flex; justify-content:space-between; font-size:12.5px; padding:2px 0; font-family:'Noto Sans Myanmar','Space Mono',sans-serif; }
+  .line b{ font-family:'Space Mono',monospace; }
+  .line.big{ font-size:14px; font-weight:700; }
+  .line.diff b{ color:${Math.abs(diff) < 1 ? 'var(--ink)' : 'var(--rust)'}; }
+  .sec{ font-family:'Anton',sans-serif; font-size:14px; letter-spacing:.06em; margin:2px 0 4px; }
+  .total-box{ border:3px solid var(--ink); padding:9px 12px; margin:12px 0 4px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .total-box .label{ font-family:'Noto Sans Myanmar',sans-serif; font-weight:700; font-size:13px; line-height:1.3; }
+  .total-box .value{ font-family:'Anton',sans-serif; font-size:22px; white-space:nowrap; }
+  .status{ text-align:center; margin:10px 0 0; font-family:'Noto Sans Myanmar',sans-serif; font-weight:700; font-size:12.5px; border:2px ${Math.abs(diff) < 1 ? 'solid var(--ink)' : 'dashed var(--rust)'}; color:${Math.abs(diff) < 1 ? 'var(--ink)' : 'var(--rust)'}; padding:5px; }
+  .note{ font-family:'Noto Sans Myanmar',sans-serif; font-size:11.5px; border:1.5px dashed #999; padding:6px 8px; margin-top:10px; }
+  .sign{ display:flex; justify-content:space-between; gap:12px; margin-top:22px; font-family:'Noto Sans Myanmar',sans-serif; font-size:10.5px; color:var(--grey); }
+  .sign div{ flex:1; border-top:1.5px solid var(--ink); padding-top:4px; text-align:center; }
+  .footer{ text-align:center; margin-top:14px; font-size:10px; color:var(--grey); letter-spacing:.1em; }
+  @media print{ body{ margin:0 auto; } }
+</style></head>
+<body>
+  <div class="receipt-box">
+    <div class="brand">
+      <div class="logo">SUWATI<span class="dot">.</span>MEN</div>
+      <div class="tagline">FASHION</div>
+      <div class="address">နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့</div>
+    </div>
+    <div class="title">ငွေသား စာရင်းပိတ်<small>CASH DRAWER CHECK</small></div>
+    <hr class="solid">
+    <div class="meta">
+      <b>ရက်စွဲ</b><span>${esc(r.closing_date)}</span>
+      <b>ပိတ်ချိန်</b><span>${stamp}</span>
+      <b>No.</b><span>${no}</span>
+      <b>တာဝန်ခံ</b><span>${esc(r.closed_by_email || '')}</span>
+    </div>
+    <hr class="dashed">
+    <table>
+      <thead><tr><th>ငွေစက္ကူ</th><th class="c">အရေအတွက်</th><th class="r">ပမာဏ</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <hr class="dashed">
+    <div class="line big"><span>ရေတွက်ရငွေ</span><b>${k(counted)}</b></div>
+    <div class="line"><span>ရှိသင့်ငွေ (စနစ်)</span><b>${k(expected)}</b></div>
+    <div class="line diff big"><span>ကွာခြားချက်</span><b>${diffTxt}</b></div>
+    <hr class="solid">
+    <div class="sec">DAILY SUMMARY · တစ်နေ့တာ</div>
+    <div class="line"><span>ဆိုင်ဖွင့် အမ်းငွေ</span><b>${k(r.opening_float)}</b></div>
+    <div class="line"><span>POS ငွေသား အရောင်း</span><b>${k(r.cash_sales)}</b></div>
+    ${n(r.cash_other_in) ? `<div class="line"><span>Gift Card ငွေသား</span><b>${k(r.cash_other_in)}</b></div>` : ''}
+    ${n(r.cash_out) ? `<div class="line"><span>ထုတ်သုံးငွေ</span><b>−${k(r.cash_out)}</b></div>` : ''}
+    <div class="line"><span>ရှိသင့်ငွေ</span><b>${k(expected)}</b></div>
+    <div class="line"><span>ရေတွက်ရငွေ</span><b>${k(counted)}</b></div>
+    <div class="line diff"><span>ကွာခြားချက်</span><b>${diffTxt}</b></div>
+    <div class="line"><span>နောက်နေ့ အမ်းငွေ</span><b>${k(next)}</b></div>
+    <div class="total-box"><span class="label">🏦 ဘဏ်သွင်း /<br>သိမ်းရမည့်ငွေ</span><span class="value">${k(deposit)}<span style="font-size:11px;"> ကျပ်</span></span></div>
+    <div class="status">${Math.abs(diff) < 1 ? '✓ ငွေ ကိုက်ညီပါသည်' : (diff < 0 ? `! ငွေ ${Math.abs(diff).toLocaleString()} ကျပ် လိုနေပါသည်` : `! ငွေ ${diff.toLocaleString()} ကျပ် ပိုနေပါသည်`)}</div>
+    ${r.note ? `<div class="note">📝 ${esc(r.note)}</div>` : ''}
+    <div class="sign"><div>ရေတွက်သူ</div><div>စစ်ဆေးသူ</div></div>
+    <div class="footer">SUWATI MEN FASHION · CASH CLOSING</div>
+  </div>
+</body></html>`;
+}
+function reprintCashClosing(i){
+  const r = cashClosingHistoryCache[i]; if(!r) return;
+  showReceiptOverlay(buildCashClosingReceiptHtml(r));
 }
 
 async function loadCashClosingHistory(){
@@ -5060,13 +5173,14 @@ async function loadCashClosingHistory(){
   const { data, error } = await sb.from('cash_closings').select('*').order('created_at', { ascending:false }).limit(15);
   if(error){ box.innerHTML = '<p class="hint">စာရင်းပိတ် မှတ်တမ်း ဖတ်၍ မရပါ — PAYMENT-UPGRADE.sql ကို Run ထားရန် လိုပါသည်</p>'; return; }
   if(!data || !data.length){ box.innerHTML = '<p class="hint">စာရင်းပိတ် မှတ်တမ်း မရှိသေးပါ</p>'; return; }
+  cashClosingHistoryCache = data;
   box.innerHTML = `<div class="pay-set-sec">📜 စာရင်းပိတ် မှတ်တမ်း (နောက်ဆုံး ${data.length} ခု)</div>
-    <table class="recon-table">${data.map(r=>{
+    <table class="recon-table">${data.map((r,i)=>{
       const d = Number(r.difference)||0;
       const cls = Math.abs(d) < 1 ? 'cc-ok' : (d < 0 ? 'cc-short' : 'cc-over');
       return `<tr><td><b>${r.closing_date}</b> <span class="hint" style="margin:0;">${new Date(r.created_at).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })} · ${r.closed_by_email||''}</span><br>
         <span class="hint" style="margin:0;">ရှိသင့် ${Number(r.expected_cash).toLocaleString()} · ရေတွက် ${Number(r.counted_cash).toLocaleString()}${r.note ? ' · 📝 '+String(r.note).replace(/</g,'&lt;') : ''}</span></td>
-        <td class="${cls}" style="white-space:nowrap;"><b>${d>0?'+':''}${d.toLocaleString()}</b></td></tr>`;
+        <td class="${cls}" style="white-space:nowrap;"><b>${d>0?'+':''}${d.toLocaleString()}</b><br><button type="button" class="secondary cc-rcpt-btn" onclick="reprintCashClosing(${i})">🧾 Receipt</button></td></tr>`;
     }).join('')}</table>`;
 }
 
