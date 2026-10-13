@@ -1381,6 +1381,56 @@ html[data-theme="dark"] #checkout-modal-content .qty-control button{ background:
 .detail-thumbs::-webkit-scrollbar{ display:none; }
 .detail-thumbs img{ flex:0 0 auto; width:56px !important; height:56px !important; scroll-snap-align:start; transition:opacity .2s, transform .2s, border-color .2s; }
 .detail-thumbs img.active{ transform:translateY(-2px); box-shadow:0 3px 0 var(--rust); }
+
+/* ===== 🎁 Gift Card Hub ===== */
+.gh-tabs{ position:relative; display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); border:2.5px solid var(--ink); margin:12px 0 16px; background:var(--surface); }
+.gh-tab{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; min-height:56px; padding:6px 2px; background:none; border:none; color:var(--ink);
+  font:700 11.5px 'Noto Sans Myanmar',sans-serif; cursor:pointer; transition:color .3s; white-space:nowrap; }
+.gh-tab span{ font-size:18px; line-height:1; transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+.gh-tab + .gh-tab{ border-left:1.5px solid color-mix(in srgb, var(--ink) 25%, transparent); }
+.gh-tab.on{ color:var(--concrete); }
+.gh-tab.on span{ transform:scale(1.15) translateY(-1px); }
+.gh-ind{ position:absolute; top:0; bottom:0; width:25%; left:calc(var(--gprev, 0) * 25%); background:var(--ink); transition:left .45s cubic-bezier(.34,1.3,.5,1); }
+.gh-tabs.ready .gh-ind{ left:calc(var(--gi) * 25%); }
+html[data-theme="dark"] .gh-tabs{ background:#252420; }
+html[data-theme="dark"] .gh-tab.on{ color:var(--black); }
+.gh-in{ animation:ghIn .4s cubic-bezier(.2,.9,.25,1) both; }
+@keyframes ghIn{ from{ opacity:0; transform:translateX(calc(var(--gdir, 1) * 22px)); } }
+/* Gift Card ပမာဏ ခလုတ် — တစ်ညီတည်း */
+#gift-denom-chips{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; }
+#gift-denom-chips .denom-chip{ display:flex; align-items:center; justify-content:center; margin:0; min-height:48px; padding:6px 4px; font-weight:700; text-align:center; white-space:nowrap; transition:transform .15s, background .2s; }
+#gift-denom-chips .denom-chip:active{ transform:scale(.95); }
+#gift-denom-chips .denom-chip.active{ box-shadow:3px 3px 0 var(--acid); animation:chipOn .35s cubic-bezier(.34,1.56,.64,1); }
+html[data-theme="dark"] #gift-denom-chips .denom-chip:not(.active){ background:#252420; color:var(--ink); }
+.upload-box input[type=file]{ width:100%; font:600 12px 'Noto Sans Myanmar',sans-serif; color:var(--grey); }
+.upload-box input[type=file]::file-selector-button{ margin-right:10px; padding:10px 14px; border:2px solid var(--ink); background:var(--ink); color:var(--concrete); font:700 12px 'Noto Sans Myanmar','Space Mono',sans-serif; cursor:pointer; border-radius:0; }
+/* Code သုံး */
+.gh-redeem-art{ font-size:44px; text-align:center; margin:4px 0 6px; animation:ghKey 2.4s ease-in-out infinite; }
+@keyframes ghKey{ 0%,60%,100%{ transform:rotate(0); } 70%{ transform:rotate(-18deg); } 80%{ transform:rotate(12deg); } 90%{ transform:rotate(-6deg); } }
+/* History */
+.gh-sum{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.gh-sum div{ border:2px solid var(--ink); padding:10px 12px; background:var(--surface); }
+.gh-sum span{ display:block; font:700 11px 'Noto Sans Myanmar',sans-serif; color:var(--grey); }
+.gh-sum b{ font:400 24px 'Anton',sans-serif; } .gh-sum small{ font:11px 'Space Mono',monospace; margin-left:4px; color:var(--grey); }
+.gh-sum div:last-child b{ color:var(--rust); }
+.gh-list{ display:flex; flex-direction:column; }
+.gh-row{ display:flex; gap:10px; align-items:flex-start; padding:12px 0; border-bottom:1.5px dashed color-mix(in srgb, var(--ink) 25%, transparent); animation:ghRow .4s ease backwards; animation-delay:calc(var(--j, 0) * 45ms + 100ms); }
+@keyframes ghRow{ from{ opacity:0; transform:translateY(10px); } }
+.gh-ic{ width:40px; height:40px; flex:0 0 auto; display:grid; place-items:center; font-size:19px; border:2px solid var(--ink); }
+.gh-ic.buy{ background:var(--acid); } .gh-ic.use{ background:var(--ink); }
+.gh-mid{ flex:1; min-width:0; } .gh-mid b{ display:block; font-size:14px; }
+.gh-mid small{ display:block; font:11px 'Space Mono',monospace; color:var(--grey); margin-top:2px; }
+.gh-mid .gh-code{ color:var(--ink); letter-spacing:.06em; } .gh-mid .gh-rej{ color:var(--rust); font-family:'Noto Sans Myanmar',sans-serif; }
+.gh-right{ display:flex; flex-direction:column; align-items:flex-end; gap:4px; text-align:right; }
+.gh-right b{ font:700 15px 'Space Mono',monospace; white-space:nowrap; } .gh-right b.plus{ color:#3f7a00; }
+html[data-theme="dark"] .gh-right b.plus{ color:var(--acid); }
+.gh-st{ font:700 10.5px 'Noto Sans Myanmar',sans-serif; padding:2px 7px; border:1.5px solid currentColor; white-space:nowrap; }
+.gh-st.ok{ color:#3f7a00; } .gh-st.pend{ color:#b07000; } .gh-st.rej{ color:var(--rust); } .gh-st.done{ color:var(--grey); }
+html[data-theme="dark"] .gh-st.ok{ color:var(--acid); } html[data-theme="dark"] .gh-st.pend{ color:#FFB020; }
+.gh-rc{ background:none; border:none; padding:2px 0; font:700 11px 'Noto Sans Myanmar',sans-serif; color:var(--ink); text-decoration:underline; cursor:pointer; }
+.gh-empty{ text-align:center; padding:22px 8px; } .gh-empty-ic{ font-size:42px; margin-bottom:6px; animation:ghKey 2.4s ease-in-out infinite; }
+.gh-empty b{ display:block; font-size:15px; margin-bottom:4px; }
+@media (prefers-reduced-motion: reduce){ .gh-ind{ transition:none; } .gh-in, .gh-row, .gh-redeem-art, .gh-empty-ic{ animation:none !important; } }
 </style>
 </head>
 <body>
@@ -3810,10 +3860,10 @@ async function renderProfileView(){
     <div class="modal-section">
       <div class="modal-label">🎁 GIFT CARD</div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardPurchase()">Gift Card ဝယ်ရန်</button>
-        <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardRedeem()">Code သုံးရန်</button>
+        <button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardHub('buy')">Gift Card ဝယ်ရန်</button>
+        <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardHub('redeem')">Code သုံးရန်</button>
       </div>
-      <button type="button" class="auth-link" style="margin-top:10px;" onclick="openMyGiftCards()">🎁 ကျွန်ုပ်၏ Gift Card များ ကြည့်ရန်</button>
+      <button type="button" class="auth-link" style="margin-top:10px;" onclick="openGiftCardHub('cards')">🎁 ကျွန်ုပ်၏ Gift Card များ · History ကြည့်ရန်</button>
     </div>
 
     <div class="modal-section">
@@ -4539,7 +4589,7 @@ function generateGiftCardCode(){
 
 async function openGiftCardPurchase(presetAmount){
   const box = document.getElementById('checkout-modal-content');
-  box.innerHTML = `<button class="modal-close" onclick="closeCheckout()">&times;</button><h3>🎁 Gift Card ဝယ်ရန်</h3><p class="hint">Load လုပ်နေသည်...</p>`;
+  box.innerHTML = `${giftHubHead('buy')}<p class="hint">Load လုပ်နေသည်...</p>`;
   document.getElementById('checkout-modal').classList.add('open');
   document.body.style.overflow='hidden';
 
@@ -4555,8 +4605,7 @@ async function openGiftCardPurchase(presetAmount){
   const qrUrl = settings && settings.kbzpay_qr_url;
 
   box.innerHTML = `
-    <button class="modal-close" onclick="closeCheckout()">&times;</button>
-    <h3>🎁 Gift Card ဝယ်ရန်</h3>
+    ${giftHubHead('buy')}
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       <div class="modal-label">ပမာဏ ရွေးပါ</div>
       <div id="gift-denom-chips">
@@ -4582,7 +4631,6 @@ async function openGiftCardPurchase(presetAmount){
       </div>
       <div class="form-error" id="gift-error"></div>
       <button type="button" class="submit-order-btn" id="gift-submit-btn" ${!availableDenoms.length?'disabled':''} onclick="submitGiftCardPurchase()">ဝယ်ယူမည်</button>
-      <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:8px;" onclick="renderProfileView()">← ပြန်သွားမည်</button>
     </div>`;
 
   document.querySelectorAll('.denom-chip:not(.sold-out)').forEach(chip=>{
@@ -4644,7 +4692,7 @@ async function submitGiftCardPurchase(){
     }
 
     showSiteToast('✅ Gift Card ဝယ်ယူမှု တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Code ရပါမည်');
-    renderProfileView();
+    openGiftCardHub('cards');
   }catch(e){
     err.textContent = friendlyOrderError(e.message);
     btn.disabled = false; btn.textContent = 'ဝယ်ယူမည်';
@@ -4654,15 +4702,16 @@ async function submitGiftCardPurchase(){
 async function openGiftCardRedeem(){
   const box = document.getElementById('checkout-modal-content');
   box.innerHTML = `
-    <button class="modal-close" onclick="closeCheckout()">&times;</button>
-    <h3>🎁 Gift Card Code သုံးရန်</h3>
+    ${giftHubHead('redeem')}
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
+      <div class="gh-redeem-art" aria-hidden="true">🔑</div>
+      <p class="hint" style="text-align:center; margin:0 0 14px;">လက်ဆောင်ရထားတဲ့ Gift Card Code ကို ထည့်ပါ — ပမာဏအတိုင်း Prepaid Card ထဲ ချက်ချင်း ဝင်ပါမည်</p>
       <label>Gift Card Code</label>
-      <input type="text" id="redeem-code-input" placeholder="ဥပမာ SUWATI-ABCD-1234" style="text-transform:uppercase;">
+      <input type="text" id="redeem-code-input" placeholder="SUWATI-XXXX-XXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" style="text-transform:uppercase; font-family:'Space Mono',monospace; letter-spacing:.08em; text-align:center; font-size:17px;">
       <div class="form-error" id="redeem-error"></div>
       <button type="button" class="submit-order-btn" id="redeem-submit-btn" onclick="submitRedeemGiftCard()">သုံးမည်</button>
-      <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:8px;" onclick="renderProfileView()">← ပြန်သွားမည်</button>
     </div>`;
+  setTimeout(() => document.getElementById('redeem-code-input')?.focus(), 250);
 }
 
 async function submitRedeemGiftCard(){
@@ -4680,7 +4729,7 @@ async function submitRedeemGiftCard(){
 
   if(typeof fxGiftRedeem === 'function') await fxGiftRedeem(data.amount);
   else showSiteToast(`🎉 Gift Card အောင်မြင်ပါသည်! ${Number(data.amount).toLocaleString()} ကျပ် Wallet ထဲ ဝင်ပါပြီ`);
-  renderProfileView();
+  openGiftCardHub('history');
 }
 
 // ---------- 🎁 ကျွန်ုပ်၏ Gift Card များ — လှန်လို့ရတဲ့ Card ပုံစံ ----------
@@ -4773,13 +4822,11 @@ async function openMyGiftCards(){
   const { data, error } = await sb.from('gift_cards').select('*').eq('purchased_by', currentUser.id).order('created_at', { ascending:false });
   window.myGiftCardsCache = data || [];
   box.innerHTML = `
-    <button class="modal-close" onclick="closeCheckout()">&times;</button>
-    <h3>🎁 ကျွန်ုပ်၏ Gift Card များ</h3>
+    ${giftHubHead('cards')}
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       ${(!error && data && data.length) ? '<div class="hint" style="margin:0 0 14px;">Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Code နဲ့ သုံးရန် ခလုတ် ရှိပါတယ်</div><div class="sgc-list" id="sgc-list"></div>'
-        : '<p class="hint">Gift Card မရှိသေးပါ</p><button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink);" onclick="openGiftCardPurchase()">🎁 Gift Card ဝယ်ရန်</button>'}
-    </div>
-    <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink);" onclick="renderProfileView()">← Profile ပြန်သွားရန်</button>`;
+        : '<div class="gh-empty"><div class="gh-empty-ic">🎁</div><b>Gift Card မရှိသေးပါ</b><p class="hint">ချစ်ရသူကို လက်ဆောင်ပေးဖို့ (သို့) ကိုယ်တိုင်သုံးဖို့ ဝယ်လို့ရပါတယ်</p><button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink);" onclick="openGiftCardHub(\'buy\')">🛒 Gift Card ဝယ်ရန်</button></div>'}
+    </div>`;
   const list = document.getElementById('sgc-list'); if(!list) return;
   data.forEach((g, i) => list.appendChild(createGiftCardEl(g, i)));
   // ပထမ သုံးလို့ရတဲ့ Card ကို လှန်လို့ရကြောင်း သိအောင် အနည်းငယ် စောင်းပြ + အလင်းဖြတ်
@@ -4797,7 +4844,7 @@ async function useMyGiftCardNow(idx){
   if(!data.success){ showSiteToast(data.message); return; }
   if(typeof fxGiftRedeem === 'function') await fxGiftRedeem(data.amount);
   else showSiteToast(`🎉 ${Number(data.amount).toLocaleString()} ကျပ် Wallet ထဲ ဝင်ပါပြီ`);
-  renderProfileView();
+  openGiftCardHub('cards');
 }
 
 function renderProfileEdit(){
@@ -4848,6 +4895,88 @@ async function handleProfileSave(){
   await sb.from('chat_messages').update({ customer_name: getCustomerDisplayName(currentUser) }).eq('user_id', currentUser.id);
 
   renderProfileView();
+}
+
+
+// ---------- 🎁 Gift Card Hub — ကတ်များ · ဝယ်ရန် · Code သုံး · History ----------
+const GIFT_HUB_TABS = [
+  ['cards', '🎁', 'ကတ်များ'],
+  ['buy', '🛒', 'ဝယ်ရန်'],
+  ['redeem', '🔑', 'Code သုံး'],
+  ['history', '📜', 'History'],
+];
+function giftHubHead(active){
+  const i = Math.max(0, GIFT_HUB_TABS.findIndex(t => t[0] === active));
+  return `
+    <button class="modal-close" onclick="closeCheckout()">&times;</button>
+    <h3>🎁 Gift Card</h3>
+    <div class="gh-tabs" role="tablist" style="--gi:${i}; --gprev:${window.__ghPrev ?? i}">
+      <span class="gh-ind" aria-hidden="true"></span>
+      ${GIFT_HUB_TABS.map(([k, ic, l]) => `<button type="button" role="tab" aria-selected="${k===active}" class="gh-tab${k===active?' on':''}" onclick="openGiftCardHub('${k}')"><span>${ic}</span>${l}</button>`).join('')}
+    </div>`;
+}
+async function openGiftCardHub(tab){
+  if(!currentUser){ openAuthModal('login'); return; }
+  document.getElementById('checkout-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  const prev = window.__ghTab;
+  window.__ghPrev = Math.max(0, GIFT_HUB_TABS.findIndex(t => t[0] === prev));
+  window.__ghTab = tab || 'cards';
+  const box = document.getElementById('checkout-modal-content');
+  if(tab === 'buy') await openGiftCardPurchase();
+  else if(tab === 'redeem') await openGiftCardRedeem();
+  else if(tab === 'history') await openGiftCardHistory();
+  else await openMyGiftCards();
+  // Tab ပြောင်းရင် အရောင်ဘား ချော်ရွှေ့ + အကြောင်းအရာ ဘေးကနေ ဝင်
+  const tabs = box.querySelector('.gh-tabs');
+  if(tabs){ requestAnimationFrame(() => tabs.classList.add('ready')); }
+  const dir = GIFT_HUB_TABS.findIndex(t => t[0] === window.__ghTab) >= window.__ghPrev ? 1 : -1;
+  box.querySelectorAll('.gh-tabs ~ *').forEach(el => { el.style.setProperty('--gdir', dir); el.classList.add('gh-in'); });
+  box.scrollTop = 0; document.getElementById('checkout-modal').scrollTop = 0;
+}
+
+async function openGiftCardHistory(){
+  const box = document.getElementById('checkout-modal-content');
+  box.innerHTML = `${giftHubHead('history')}<p class="hint">Load လုပ်နေသည်...</p>`;
+  const uid = currentUser.id;
+  const { data, error } = await sb.from('gift_cards').select('*').or(`purchased_by.eq.${uid},redeemed_by.eq.${uid}`).order('created_at', { ascending:false });
+  const rows = (data || []).filter(g => g.purchased_by === uid || g.redeemed_by === uid);
+  window.myGiftCardsCache = rows;
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmtD = d => { const x = new Date(d); return isNaN(x) ? '' : x.toLocaleDateString() + ' ' + x.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }); };
+  const ST = { pending:['⏳','စစ်ဆေးဆဲ','pend'], active:['✅','သုံးလို့ရ','ok'], redeemed:['☑️','သုံးပြီး','done'], rejected:['❌','ငြင်းပယ်','rej'] };
+  const ev = [];
+  rows.forEach((g, i) => {
+    if(g.purchased_by === uid) ev.push({ t:g.created_at, kind:'buy', g, i });
+    if(g.redeemed_by === uid && g.redeemed_at) ev.push({ t:g.redeemed_at, kind:'use', g, i });
+  });
+  ev.sort((a, b) => new Date(b.t) - new Date(a.t));
+  const spent = rows.filter(g => g.purchased_by === uid && g.status !== 'rejected').reduce((s, g) => s + Number(g.amount||0), 0);
+  const used = rows.filter(g => g.redeemed_by === uid && g.redeemed_at).reduce((s, g) => s + Number(g.amount||0), 0);
+  const list = ev.length ? ev.map((e, j) => {
+    const g = e.g, st = ST[g.status] || ['•', g.status, ''];
+    const amt = Number(g.amount||0).toLocaleString();
+    return e.kind === 'buy' ? `
+      <div class="gh-row" style="--j:${j}">
+        <div class="gh-ic buy">🛒</div>
+        <div class="gh-mid"><b>Gift Card ဝယ်ယူ</b><small>${fmtD(e.t)}</small>${g.status==='rejected' && g.rejection_reason ? `<small class="gh-rej">အကြောင်းရင်း: ${esc(g.rejection_reason)}</small>` : ''}</div>
+        <div class="gh-right"><b>${amt}</b><span class="gh-st ${st[2]}">${st[0]} ${st[1]}</span>
+          <button type="button" class="gh-rc" onclick="openTransactionReceipt('giftcard', myGiftCardsCache[${e.i}])">🧾 Receipt</button></div>
+      </div>` : `
+      <div class="gh-row" style="--j:${j}">
+        <div class="gh-ic use">🎫</div>
+        <div class="gh-mid"><b>Prepaid Card ထဲ ဖြည့်သုံး</b><small>${fmtD(e.t)}</small><small class="gh-code">${esc(String(g.code||'').replace(/^(.{7}).*(.{4})$/, '$1••••$2'))}</small></div>
+        <div class="gh-right"><b class="plus">+${amt}</b><span class="gh-st done">Wallet ဝင်</span></div>
+      </div>`;
+  }).join('') : '<div class="gh-empty"><div class="gh-empty-ic">📜</div><b>မှတ်တမ်း မရှိသေးပါ</b><p class="hint">Gift Card ဝယ်တာ / သုံးတာ တွေ ဒီမှာ ပေါ်ပါမည်</p></div>';
+  box.innerHTML = `
+    ${giftHubHead('history')}
+    ${error ? `<p class="hint" style="color:var(--rust);">⚠️ ${esc(error.message)}</p>` : ''}
+    <div class="gh-sum">
+      <div><span>ဝယ်ယူခဲ့သော</span><b>${spent.toLocaleString()}</b><small>ကျပ်</small></div>
+      <div><span>ဖြည့်သုံးခဲ့သော</span><b>${used.toLocaleString()}</b><small>ကျပ်</small></div>
+    </div>
+    <div class="gh-list">${list}</div>`;
 }
 
 // SUWATI MEN FASHION — Chat widget
@@ -6079,7 +6208,7 @@ function renderAcctMenu(){
       ${item('heart', 'Wishlist', "acctGo(openWishlist)", wl ? `<i class="am-badge">${wl}</i>` : '')}
       ${logged ? item('box', 'Order များ', "acctGo(()=>hdrOpenModal(openOrderHistory))") : item('truck', 'Order Track', "acctGo(openOrderTracking)")}
       ${logged ? item('card', 'Prepaid Card', "acctGo(()=>hdrOpenModal(openPrepaidCard))") : ''}
-      ${logged ? item('gift', 'Gift Card များ', "acctGo(()=>hdrOpenModal(openMyGiftCards))") : ''}
+      ${logged ? item('gift', 'Gift Card', "acctGo(()=>openGiftCardHub('cards'))") : ''}
       <button type="button" role="menuitemcheckbox" aria-checked="${isDarkNow()}" class="am-item am-theme" onclick="acctToggleTheme(event)">${HDR_IC.moon}<span>Dark mode</span><i class="am-switch${isDarkNow()?' on':''}"><b></b></i></button>
       ${logged ? item('out', 'Logout', "acctGo(handleLogout)", '') : ''}
     </div>`;
