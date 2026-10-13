@@ -710,8 +710,6 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .panel div:has(> .sr-period-btn) > #export-sales-csv-btn{ grid-column:1 / -1; margin-left:0 !important; }
 #chart-metric-switcher{ grid-template-columns:repeat(2, minmax(0,1fr)) !important; }
 /* ရက်စွဲ + ခလုတ် တန်း — နှစ်ခု အရွယ်တူ */
-.panel div:has(> input[type=date] + button){ display:grid !important; grid-template-columns:1fr 1fr; gap:8px !important; align-items:stretch; }
-.panel div:has(> input[type=date] + button) > *{ width:100%; min-width:0 !important; margin:0; min-height:46px; }
 /* အမြတ်စာရင်း ကာလ ရွေးခလုတ်များ */
 .pf-presets{ display:grid !important; grid-template-columns:repeat(5, minmax(0,1fr)) !important; gap:6px !important; }
 .pf-presets .pf-preset{ min-height:42px; padding:6px 2px !important; width:100%; }
@@ -758,6 +756,20 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .b-ok{ color:var(--acid-text); font-weight:700; } .b-up{ color:var(--info-text); font-weight:700; } .b-err{ color:var(--warn-text); font-weight:700; white-space:normal; } .b-warn{ color:var(--warn-text); }
 .bulk-bar{ height:10px; border:2px solid var(--concrete); margin-top:10px; overflow:hidden; } .bulk-bar i{ display:block; height:100%; width:0; background:var(--acid); transition:width .3s; }
 .bulk-done{ border:2px solid var(--acid); padding:12px; margin-top:12px; line-height:1.7; }
+
+/* ===== iOS date/datetime input — card ထက် မကျော်အောင် ===== */
+.panel input[type=date], .panel input[type=datetime-local], .panel input[type=time], .panel input[type=month]{
+  -webkit-appearance:none; appearance:none; display:block; width:100%; max-width:100%; min-width:0; min-height:46px; box-sizing:border-box; text-align:left; line-height:1.3; }
+.panel input[type=date]::-webkit-date-and-time-value, .panel input[type=datetime-local]::-webkit-date-and-time-value{ text-align:left; min-height:1.3em; }
+.panel select{ max-width:100%; min-width:0; box-sizing:border-box; min-height:46px; }
+.panel .form-card{ min-width:0; overflow-wrap:anywhere; }
+/* Card ထဲ တန်းလိုက် ခလုတ်များ — စာကြောင်းရှည်လည်း အမြင့်လိုက်ချဲ့ */
+.panel .form-card > button{ height:auto; min-height:46px; white-space:normal; line-height:1.35; display:flex; align-items:center; justify-content:center; text-align:center; gap:6px; }
+#activity-log-list, #salehistory-list, #delivery-list{ margin-top:12px; }
+/* Order card — Status + Receipt + ဖျက် */
+.ord-actions{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.ord-actions > select{ grid-column:1 / -1; width:100%; margin:0; }
+.ord-actions > button{ width:100%; margin:0 !important; min-height:46px; display:flex; align-items:center; justify-content:center; }
 </style>
 </head>
 <body>
@@ -2990,7 +3002,7 @@ async function loadOrders(){
       <div class="details" style="margin-top:8px; font-weight:700;">💰 စုစုပေါင်း: ${g.total_amount.toLocaleString()} ကျပ်</div>
       ${orderPaymentInfoHtml(g)}
       ${g.payment_screenshot_url ? `<img class="ss-thumb" data-ss="${g.payment_screenshot_url}" alt="Screenshot" onclick="openSS(this)">` : ''}
-      <div>
+      <div class="ord-actions">
         <select class="order-status-select">
           ${statusOptions.filter(s=>s!=='awaiting_payment' || g.order_status==='awaiting_payment').map(s=>`<option value="${s}" ${g.order_status===s?'selected':''}>${statusLabels[s]}</option>`).join('')}
         </select>
@@ -6880,11 +6892,19 @@ document.getElementById('auto-backup-now-btn')?.addEventListener('click', async 
   const btn = document.getElementById('auto-backup-now-btn'), st = document.getElementById('auto-backup-status');
   btn.disabled = true; const old = btn.textContent; btn.textContent = '☁️ Backup ယူနေသည်... (စက္ကန့် အနည်းငယ်)';
   try{
-    const { data:{ session } } = await sb.auth.getSession();
-    const r = await fetch(`${SUPABASE_URL}/functions/v1/auto-backup`, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + (session?.access_token || ''), 'apikey':SUPABASE_ANON_KEY }, body:'{"source":"manual"}' });
+    const call = async (fresh) => {
+      let session = (await sb.auth.getSession()).data.session;
+      if(fresh || !session || (session.expires_at && session.expires_at * 1000 < Date.now() + 60000)){
+        const rr = await sb.auth.refreshSession(); if(rr.data?.session) session = rr.data.session;
+      }
+      return fetch(`${SUPABASE_URL}/functions/v1/auto-backup`, { method:'POST', headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + (session?.access_token || ''), 'apikey':SUPABASE_ANON_KEY }, body:'{"source":"manual"}' });
+    };
+    let r = await call(false);
+    if(r.status === 401) r = await call(true);   // Login သက်တမ်းကုန်နေရင် အသစ်ယူပြီး တစ်ခါ ထပ်စမ်း
     if(r.status === 404) throw new Error('auto-backup Edge Function ကို Deploy မလုပ်ရသေးပါ');
     const j = await r.json().catch(() => ({}));
-    if(!r.ok || !j.ok) throw new Error(j.error || j.storeErr || j.mailErr || ('HTTP ' + r.status));
+    if(r.status === 401 && !j.error) throw new Error('HTTP 401 — Supabase › Edge Functions › auto-backup › Details မှာ "Verify JWT" ကို ပိတ်ပြီး Save ပါ');
+    if(!r.ok || !j.ok) throw new Error(j.error || j.storeErr || j.mailErr || j.message || j.msg || ('HTTP ' + r.status));
     showToast(`✅ Backup ပြီးပါပြီ (${j.size_kb} KB)${j.emailed ? ' — Email ပို့ပြီး' : ''}`);
     if(st){ st.innerHTML = `✅ ${j.file}${j.emailed ? ' · 📧 Email ပို့ပြီး' : (j.mailErr ? ' · ⚠️ Email မပို့ရ: ' + String(j.mailErr).slice(0,80) : ' · Email မပို့ (BACKUP_EMAIL Secret မထည့်ရသေး)')}`; st.style.color = 'var(--acid-text)'; }
     listCloudBackups();
