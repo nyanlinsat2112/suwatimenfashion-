@@ -1853,6 +1853,11 @@ html[data-theme="dark"] .msgr-b.them{ background:#2c2b27 !important; color:#E9E4
 .chat-fab.is-open{ animation:none !important; }
 @keyframes fabX{ from{ transform:rotate(-90deg) scale(.4); } }
 @media (prefers-reduced-motion: reduce){ .modal-overlay.chat-mode .modal-box, .chat-fab .fab-x{ animation:none !important; } }
+/* 📱 iPad ဒေါင် (700–1100px) — Header Menu စာ ၂ ကြောင်း မကျိုးစေ */
+@media (min-width: 700px) and (max-width: 1100px){
+  header.site nav .links > *, header.site nav .links a, header.site nav .links button{ white-space:nowrap; }
+  header.site nav .links{ gap:12px !important; font-size:12px; }
+}
 </style>
 </head>
 <body>

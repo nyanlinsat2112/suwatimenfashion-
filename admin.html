@@ -1028,6 +1028,15 @@ html[data-theme="light"] .msgr-b.them{ background:#e2ddd0 !important; color:#141
 html[data-theme="light"] .msgr-card .msgr-ib svg{ stroke:#141412; }
 html[data-theme="light"] .msgr-av::after{ border-color:#fff; }
 .msgr-b.fx-pop{ animation:ccPop .35s cubic-bezier(.3,1.6,.5,1); }
+/* 📱 iPhone — အောက်ဆုံးထိ ဆွဲရင် တစ်မျက်နှာလုံး ခုန်တက်တာ (Bar ပါ တက်သွားတာ) ပိတ် */
+html, body{ overscroll-behavior-y:none; }
+/* 📱 ဖုန်းသေးသေး (iPhone SE စသည်) — Header ခလုတ် မကျော်ထွက်စေ */
+@media (max-width: 374px){
+  header{ padding-left:10px !important; padding-right:10px !important; gap:6px; }
+  header .logo{ font-size:16px !important; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  header > div{ gap:4px !important; flex-shrink:0; }
+  header button.secondary{ width:34px !important; height:34px !important; font-size:13px !important; }
+}
 </style>
 </head>
 <body>
@@ -9249,6 +9258,28 @@ function renderStaffActionCheckboxes(actions){
   }
 })();
 
+// ---------- 🔔 Notification နှိပ်ပြီး ဝင်လာရင် — Chat / Order Tab တန်းဖွင့် ----------
+(function(){
+  function go(url){
+    let q; try{ q = new URL(url || location.href, location.origin).searchParams; }catch(e){ return; }
+    const open = q.get('open'); if(!open) return;
+    try{ const u = new URL(location.href); u.searchParams.delete('open'); u.searchParams.delete('uid'); history.replaceState(null, '', u.pathname + u.search + u.hash); }catch(e){}
+    let n = 0;
+    const run = async () => {
+      if((typeof currentAdminUserId === 'undefined' || !currentAdminUserId) && n++ < 40){ setTimeout(run, 250); return; }
+      if(open === 'orders'){ document.getElementById('orders-tab-btn')?.click(); return; }
+      if(open === 'chat'){
+        document.getElementById('messages-tab-btn')?.click();
+        const uid = q.get('uid');
+        if(uid){ try{ if(!messagesCache.some(m => m.user_id === uid)) await loadMessages(); openConversation(uid); }catch(e){} }
+      }
+    };
+    setTimeout(run, 300);
+  }
+  window.addEventListener('load', () => go());
+  try{ navigator.serviceWorker?.addEventListener('message', e => { if(e.data?.type === 'suwati-push-open') go(e.data.url); }); }catch(e){}
+})();
+
 // =====================================================================
 // ★ ADMIN NAVIGATION
 //   ဖုန်း (<700px)  : အောက်ခြေ Tab Bar (အသုံးများဆုံး ၄ ခု + "⋯ အားလုံး") — ကျန်တာ အောက်က တက်လာတဲ့ Sheet ထဲ
@@ -9426,6 +9457,25 @@ function renderStaffActionCheckboxes(actions){
   build();
   // Dashboard ပေါ်လာချိန် (Login ပြီး) Pill နေရာ ပြန်ညှိ
   new MutationObserver(() => requestAnimationFrame(sync)).observe(document.getElementById('dashboard'), { attributes:true, attributeFilter:['style'] });
+})();
+
+// ---------- 📱 iPhone — Scroll ဆွဲရင် အောက်ခြေ Bar အပေါ်တက်သွားတာ ပြင် ----------
+//   iOS Home Screen App မှာ Layout Viewport နဲ့ မြင်ရတဲ့ Viewport မညီတော့ရင် Bar ကို မြင်ရတဲ့ အောက်ခြေထိ ပြန်ချ
+(function(){
+  const vv = window.visualViewport; if(!vv) return;
+  const els = () => [document.getElementById('admin-bbar'), document.getElementById('admin-nav')].filter(Boolean);
+  let raf = 0;
+  const fix = () => {
+    raf = 0;
+    const gap = Math.round(vv.height + vv.offsetTop - window.innerHeight);
+    const kb = vv.height < window.innerHeight - 120;   // Keyboard ပေါ်နေ — မရွှေ့
+    els().forEach(el => { el.style.translate = (!kb && Math.abs(gap) > 1) ? `0 ${gap}px` : ''; });
+  };
+  const q = () => { if(!raf) raf = requestAnimationFrame(fix); };
+  vv.addEventListener('resize', q); vv.addEventListener('scroll', q);
+  window.addEventListener('scroll', q, { passive:true }); window.addEventListener('resize', q);
+  document.addEventListener('visibilitychange', q);
+  q();
 })();
 
 

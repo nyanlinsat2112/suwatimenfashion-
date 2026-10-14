@@ -52,7 +52,8 @@ self.addEventListener('notificationclick', (e) => {
   const target = new URL((e.notification.data && e.notification.data.url) || '/', self.location.origin).href;
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
     for (const c of list) {
-      if (c.url.split('#')[0].split('?')[0] === target.split('#')[0].split('?')[0] && 'focus' in c) {
+      const norm = (u) => u.split('#')[0].split('?')[0].replace(/\.html$/, '').replace(/\/index$/, '/');
+      if (norm(c.url) === norm(target) && 'focus' in c) {
         try { c.postMessage({ type: 'suwati-push-open', url: target }); } catch (err) {}
         return c.focus();
       }
