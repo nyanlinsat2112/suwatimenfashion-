@@ -8876,7 +8876,7 @@ async function adminPushServerTest(btn){
     const { data } = await sb.auth.getSession();
     let res = null;
     try{ res = await fetch(`${SUPABASE_URL}/functions/v1/send-push`, { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + (data?.session?.access_token || '') },
-      body: JSON.stringify({ source:'test', vapid:ADMIN_VAPID_KEY, endpoint: sub ? sub.endpoint : null, url:'/admin' }) }); }catch(e){}
+      body: JSON.stringify({ source:'test', scope:'admin', vapid:ADMIN_VAPID_KEY, endpoint: sub ? sub.endpoint : null, url:'/admin' }) }); }catch(e){}
     let j = {}; try{ j = res ? await res.json() : {}; }catch(e){}
     if(!res) L.push(['bad', 'send-push ကို ခေါ်မရပါ — Supabase › Edge Functions မှာ "send-push" Deploy လုပ်ထားလား စစ်ပါ']);
     else if(res.status === 404) L.push(['bad', 'send-push Function မရှိသေးပါ — Deploy လုပ်ပါ (နာမည် send-push အတိအကျ)']);

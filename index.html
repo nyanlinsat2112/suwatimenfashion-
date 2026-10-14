@@ -1834,6 +1834,25 @@ html[data-theme="dark"] .msgr-av::after{ border-color:#1E1D1A; }
 html[data-theme="dark"] .msgr-b.me{ background:#C13B1F !important; color:#fff !important; }
 html[data-theme="dark"] .msgr-b.them{ background:#2c2b27 !important; color:#E9E4D8 !important; }
 .cp-auth-pin input.cp-pw{ width:100%; letter-spacing:normal; font:600 16px 'Noto Sans Myanmar',-apple-system,sans-serif; text-align:left; padding:10px 12px; }
+
+/* ===== ❓ FAQ ခလုတ် အရွယ်တူ ===== */
+.faq-grid{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; }
+.faq-grid .faq-chip{ display:flex; align-items:center; justify-content:center; margin:0; min-height:42px; padding:6px 4px; text-align:center; line-height:1.3; }
+
+/* ===== 💬 Chat ခလုတ်ကနေ ဆွဲပွင့် / ပြန်ဝင် ===== */
+.modal-overlay.chat-mode.open:not(.closing) .modal-box{ animation:chatGrow .46s cubic-bezier(.2,.95,.25,1.06); }
+@keyframes chatGrow{ 0%{ transform:scale(.05); opacity:0; border-radius:48px; } 35%{ opacity:1; } 100%{ transform:none; border-radius:0; } }
+.modal-overlay.chat-mode.closing .modal-box{ animation:chatShrink .17s cubic-bezier(.5,0,.75,0) forwards; }
+@keyframes chatShrink{ to{ transform:scale(.05); opacity:0; border-radius:48px; } }
+.modal-overlay.chat-mode.open:not(.closing){ animation:fadeIn .3s ease; }
+.chat-fab .fab-x{ display:none; stroke:var(--concrete); fill:none; }
+.chat-fab > svg{ transition:transform .3s cubic-bezier(.3,1.5,.5,1); }
+.chat-fab.is-open > svg:not(.fab-x){ display:none; }
+.chat-fab.is-open .fab-x{ display:block; animation:fabX .3s cubic-bezier(.3,1.6,.5,1); }
+.chat-fab.is-open .chat-badge{ display:none !important; }
+.chat-fab.is-open{ animation:none !important; }
+@keyframes fabX{ from{ transform:rotate(-90deg) scale(.4); } }
+@media (prefers-reduced-motion: reduce){ .modal-overlay.chat-mode .modal-box, .chat-fab .fab-x{ animation:none !important; } }
 </style>
 </head>
 <body>
@@ -6604,7 +6623,7 @@ async function renderChatWidget(){
     <h3>💬 Help / Chat</h3>
     <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
       <div class="modal-label">မေးလေ့ရှိသော မေးခွန်းများ</div>
-      <div>${faqChipsHtml}</div>
+      <div class="faq-grid">${faqChipsHtml}</div>
       <div class="chat-log" id="faq-log" style="max-height:160px; margin-top:10px;"></div>
     </div>
     ${adminChatHtml}
@@ -8121,7 +8140,7 @@ try{ navigator.serviceWorker?.addEventListener('message', e => { if(e.data?.type
     try{
       res = await fetch(SUPABASE_URL + '/functions/v1/send-push', { method:'POST',
         headers:{ 'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + (data?.session?.access_token || '') },
-        body: JSON.stringify({ source:'test', vapid:VAPID_PUBLIC_KEY, endpoint: sub ? sub.endpoint : null, url:'/' }) });
+        body: JSON.stringify({ source:'test', scope:'site', vapid:VAPID_PUBLIC_KEY, endpoint: sub ? sub.endpoint : null, url:'/' }) });
     }catch(e){ return { net:true }; }
     let j = {}; try{ j = await res.json(); }catch(e){}
     return { status: res.status, j, hasSub: !!sub };
@@ -8878,6 +8897,104 @@ if(siteLang === 'en'){
     window.fxHideLoader = hide;
     if(document.readyState === 'complete') hide(); else window.addEventListener('load', hide);
     setTimeout(hide, 3500);   // အင်တာနက် နှေးရင်လည်း ၃.၅ စက္ကန့်ထက် မစောင့်စေ
+  }
+})();
+
+// SUWATI MEN FASHION — 💬 Chat ခလုတ်ကနေ ဆွဲပွင့်လာ / ပြန်ဝင်သွား + ခလုတ်ပြန်နှိပ်ရင် ပိတ်
+(function(){
+  const fab = document.getElementById('chat-fab'); const ov = document.getElementById('checkout-modal');
+  if(!fab || !ov || typeof openChatWidget !== 'function') return;
+  fab.setAttribute('role', 'button'); fab.setAttribute('aria-label', 'Chat ဖွင့်/ပိတ်');
+  fab.insertAdjacentHTML('beforeend', '<svg class="fab-x" viewBox="0 0 24 24" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>');
+  const setOrigin = () => {
+    const box = ov.querySelector('.modal-box'); if(!box) return;
+    // Animation က Scale လုပ်နေတုန်းမို့ getBoundingClientRect မသုံး — offset နဲ့ တွက်
+    const f = fab.getBoundingClientRect(), o = ov.getBoundingClientRect();
+    const bl = o.left + box.offsetLeft, bt = o.top + box.offsetTop - ov.scrollTop;
+    box.style.transformOrigin = `${Math.round(f.left + f.width / 2 - bl)}px ${Math.round(f.top + f.height / 2 - bt)}px`;
+  };
+  const clear = () => { ov.classList.remove('chat-mode'); fab.classList.remove('is-open'); const box = ov.querySelector('.modal-box'); if(box) box.style.transformOrigin = ''; };
+
+  const _open = openChatWidget;
+  openChatWidget = function(){
+    if(ov.classList.contains('open') && ov.classList.contains('chat-mode')){ closeCheckout(); return; }   // ခလုတ်ပြန်နှိပ် = ပိတ်
+    const wasOpen = ov.classList.contains('open');
+    if(!wasOpen) ov.classList.add('chat-mode');
+    const r = _open.apply(this, arguments);
+    ov.scrollTop = 0; setOrigin();
+    fab.classList.add('is-open');
+    return r;
+  };
+  window.openChatWidget = openChatWidget;
+
+  const _close = closeCheckout;
+  closeCheckout = function(){
+    if(ov.classList.contains('chat-mode')) setOrigin();
+    const r = _close.apply(this, arguments);
+    setTimeout(() => { if(!ov.classList.contains('open')) clear(); }, 230);
+    return r;
+  };
+  window.closeCheckout = closeCheckout;
+
+  // Chat ကနေ တခြား (Login စသည်) ပြောင်းသွားရင် Chat ပုံစံ ဖြုတ်
+  try{
+    new MutationObserver(() => { if(ov.classList.contains('chat-mode') && !document.getElementById('faq-log')) { fab.classList.remove('is-open'); ov.classList.remove('chat-mode'); } })
+      .observe(document.getElementById('checkout-modal-content'), { childList:true });
+  }catch(e){}
+})();
+
+// SUWATI MEN FASHION — 🔊 အသံလေးများ (ဖိုင်မလို — Web Audio နဲ့ ထုတ်)
+//   🛍️ Order တင်ပြီး · 💳 Prepaid Card ငွေချေပြီး · 🎁 Gift Card သုံးပြီး · ❌ ငွေချေ မရ
+(function(){
+  let ctx = null;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  function ac(){ if(!AC) return null; if(!ctx){ try{ ctx = new AC(); }catch(e){ return null; } } if(ctx.state === 'suspended') ctx.resume().catch(() => {}); return ctx; }
+  // iPhone — ပထမဆုံး တို့ချိန်မှာ အသံ ဖွင့်ခွင့်ယူ
+  const unlock = () => { const c = ac(); if(c){ const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); try{ s.start(0); }catch(e){} } };
+  ['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, unlock, { once:true, passive:true, capture:true }));
+  const muted = () => { try{ return localStorage.getItem('suwati_sound') === 'off'; }catch(e){ return false; } };
+
+  function tone(f, t, dur, { type = 'sine', vol = .18, glide = 0, attack = .008 } = {}){
+    const c = ctx; const o = c.createOscillator(), g = c.createGain();
+    o.type = type; o.frequency.setValueAtTime(f, t); if(glide) o.frequency.exponentialRampToValueAtTime(glide, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + attack); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .05);
+  }
+  function noise(t, dur, vol = .12, hp = 3000){
+    const c = ctx; const n = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate); const d = n.getChannelData(0);
+    for(let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = n; f.type = 'highpass'; f.frequency.value = hp; g.gain.value = vol;
+    s.connect(f).connect(g).connect(c.destination); s.start(t);
+  }
+  const play = (fn) => { if(muted()) return; const c = ac(); if(!c) return; try{ fn(c.currentTime + .02); }catch(e){} };
+
+  window.suwatiSfx = {
+    // 🛍️ Order တင်ပြီး — တက်လာတဲ့ ချိုမြိန်တဲ့ Chime
+    order: () => play(t => { [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => tone(f, t + i * .09, .5, { type:'triangle', vol:.16 })); tone(2093, t + .36, .7, { vol:.05 }); }),
+    // 💳 Prepaid ငွေချေပြီး — "ချင်း" ငွေသား အသံ
+    pay: () => play(t => { tone(1318.5, t, .12, { type:'square', vol:.06 }); tone(1975.5, t + .07, .5, { type:'triangle', vol:.15 }); noise(t + .07, .25, .08, 5000); tone(2637, t + .1, .6, { vol:.06 }); }),
+    // 🎁 Gift Card သုံးပြီး — မှော်ဆန်ဆန် တလက်လက်
+    gift: () => play(t => { tone(392, t, .6, { glide:1568, vol:.09 }); [1568, 1975.5, 2349.3, 2637, 3136].forEach((f, i) => tone(f, t + .18 + i * .06, .45, { vol:.07 })); tone(1046.5, t + .5, .9, { type:'triangle', vol:.12 }); }),
+    // ❌ မရ
+    fail: () => play(t => { tone(311, t, .18, { type:'sawtooth', vol:.06 }); tone(233, t + .16, .3, { type:'sawtooth', vol:.06 }); }),
+  };
+
+  // ---------- ချိတ်ဆက် ----------
+  if(typeof renderCheckoutSuccess === 'function'){
+    const _r = renderCheckoutSuccess;
+    renderCheckoutSuccess = function(){ const r = _r.apply(this, arguments); setTimeout(() => suwatiSfx.order(), 250); return r; };
+  }
+  if(typeof prepaidPayAnim === 'object' && prepaidPayAnim){
+    const wrap = (c) => { if(!c || !c.success) return c; const s = c.success, f = c.fail;
+      c.success = function(){ suwatiSfx.pay(); return s.apply(this, arguments); };
+      c.fail = function(){ suwatiSfx.fail(); return f.apply(this, arguments); }; return c; };
+    ['start', 'confirm'].forEach(k => { const o = prepaidPayAnim[k]; if(typeof o !== 'function') return;
+      prepaidPayAnim[k] = function(){ const r = o.apply(this, arguments); return (r && typeof r.then === 'function') ? r.then(wrap) : wrap(r); }; });
+  }
+  if(typeof fxGiftRedeem === 'function'){
+    const _g = fxGiftRedeem;
+    fxGiftRedeem = function(){ suwatiSfx.gift(); return _g.apply(this, arguments); };
   }
 })();
 
