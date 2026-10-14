@@ -958,6 +958,76 @@ body.no-refund .refund-btn{ display:none !important; }
 .pt-rep .pt-bad{ color:#C13B1F; }
 .pt-rep .pt-ok{ color:#2f7d1e; }
 .pt-rep .pt-tip{ border-style:dashed; opacity:.85; }
+
+/* ===== 💬 Chat Live — စာရိုက်နေ ••• · Logo Refresh · ပြင်ရန် Form ===== */
+.admin-chat-bubble{ white-space:pre-wrap; word-break:break-word; }
+.ac-typing{ display:inline-flex !important; gap:4px; align-items:center; width:auto !important; padding:12px 14px !important; }
+.ac-typing i{ width:7px; height:7px; border-radius:50%; background:currentColor; opacity:.35; animation:acDot 1.2s infinite ease-in-out; }
+.ac-typing i:nth-child(2){ animation-delay:.15s; } .ac-typing i:nth-child(3){ animation-delay:.3s; }
+@keyframes acDot{ 0%,60%,100%{ transform:translateY(0); opacity:.35; } 30%{ transform:translateY(-4px); opacity:1; } }
+.msg-thread-item.is-typing .mt-preview{ font-size:0 !important; }
+.msg-thread-item.is-typing .mt-preview::after{ content:'✍️ စာရိုက်နေသည်…'; font-size:12px; color:var(--acid); font-weight:700; }
+html[data-theme="light"] .msg-thread-item.is-typing .mt-preview::after{ color:#2f7d1e; }
+#dashboard-logo{ cursor:pointer; user-select:none; -webkit-user-select:none; transition:transform .15s; }
+#dashboard-logo:active{ transform:scale(.95); }
+#dashboard-logo.spinning .dot{ display:inline-block; animation:logoSpin .7s linear infinite; }
+@keyframes logoSpin{ to{ transform:rotate(360deg); } }
+.form-card.pf-flash{ animation:pfFlash 1.2s ease; }
+@keyframes pfFlash{ 0%,50%{ box-shadow:0 0 0 4px var(--acid); } 100%{ box-shadow:none; } }
+.ac-typing{ align-self:flex-start; }
+
+/* ===== 💬 Messenger ပုံစံ (A) ===== */
+.msgr{ border:2px solid var(--bd, #E9E4D8); background:var(--s2, #1E1D1A); display:flex; flex-direction:column; margin-top:8px; overflow:hidden; }
+.msgr-hd{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid rgba(128,128,128,.22); }
+.msgr-hd b{ display:block; font-size:14px; line-height:1.3; }
+.msgr-hd small{ display:block; font-size:11px; opacity:.65; line-height:1.4; }
+.msgr-av{ position:relative; flex:0 0 auto; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; background:#D6FF3F; color:#141412; font:700 13px 'Space Mono',monospace; }
+.msgr-av::after{ content:""; position:absolute; right:-1px; bottom:-1px; width:10px; height:10px; border-radius:50%; background:#34c759; border:2px solid var(--s2, #1E1D1A); }
+.msgr-log{ max-height:min(52vh, 420px) !important; min-height:180px; margin:0 !important; padding:10px 12px; gap:2px; overscroll-behavior:contain; }
+.msgr-log .hint{ text-align:center; margin:auto 0; }
+.msgr-day{ align-self:center; font:10.5px 'Space Mono',monospace; opacity:.55; margin:10px 0 6px; }
+.msgr-b{ max-width:78% !important; margin:0 !important; padding:9px 13px !important; border-radius:20px; font-size:13.5px; line-height:1.55; white-space:pre-wrap; word-break:break-word; border:none !important; box-shadow:none !important; }
+.msgr-b.first{ margin-top:6px !important; }
+.msgr-b.me{ align-self:flex-end; margin-left:auto !important; background:#141412 !important; color:#E9E4D8 !important; transform-origin:bottom right; }
+.msgr-b.them{ align-self:flex-start; background:#e2ddd0 !important; color:#141412 !important; transform-origin:bottom left; }
+.msgr-b.me:not(.last){ border-bottom-right-radius:6px; } .msgr-b.me:not(.first){ border-top-right-radius:6px; } .msgr-b.me.last{ border-bottom-right-radius:6px; }
+.msgr-b.them:not(.last){ border-bottom-left-radius:6px; } .msgr-b.them:not(.first){ border-top-left-radius:6px; } .msgr-b.them.last{ border-bottom-left-radius:6px; }
+.msgr-b img{ display:block; max-width:100%; max-height:240px; border-radius:14px; cursor:zoom-in; }
+.msgr-b img + span{ display:block; margin-top:6px; }
+.msgr-b.only-img{ padding:3px !important; background:transparent !important; }
+.msgr-meta{ font:10px 'Space Mono',monospace; opacity:.55; margin:3px 6px 4px; }
+.msgr-meta.r{ align-self:flex-end; } .msgr-meta.l{ align-self:flex-start; }
+.msgr-b.fx-typing{ padding:12px 14px !important; margin-top:6px !important; }
+.msgr-prev{ padding:0 12px; } .msgr-prev:empty{ display:none; } .msgr-prev .img-preview-thumb{ margin-top:8px; }
+.msgr-bar{ display:flex; align-items:flex-end; gap:8px; padding:8px 10px 10px; border-top:1px solid rgba(128,128,128,.18); }
+.msgr-ib{ flex:0 0 auto; width:38px; height:38px; display:grid; place-items:center; cursor:pointer; border-radius:50%; }
+.msgr-ib:active{ background:rgba(128,128,128,.15); }
+.msgr-ib svg{ width:24px; height:24px; stroke:currentColor; }
+.msgr-in{ flex:1; min-width:0; min-height:38px; max-height:110px; margin:0 !important; resize:none; border:none !important; outline:none; border-radius:20px !important;
+  background:rgba(128,128,128,.14) !important; color:inherit; font:14px 'Noto Sans Myanmar',sans-serif; line-height:1.5; padding:8px 14px !important; box-shadow:none !important; }
+.msgr-send{ flex:0 0 auto; width:38px !important; height:38px; padding:0 !important; margin:0 !important; border:none !important; border-radius:50% !important; background:#D6FF3F !important;
+  display:grid; place-items:center; cursor:pointer; transition:transform .2s cubic-bezier(.3,1.6,.5,1), opacity .2s; box-shadow:none !important; }
+.msgr-send svg{ width:20px; height:20px; fill:#141412; }
+.msgr-send:disabled{ opacity:.35; cursor:default; }
+.msgr-send:not(:disabled):active{ transform:scale(.85); }
+.msgr-send.fly svg{ animation:msgrFly .42s ease; }
+@keyframes msgrFly{ 50%{ transform:translate(9px,-9px) scale(.6); opacity:0; } 51%{ transform:translate(-9px,9px) scale(.6); opacity:0; } }
+@media (prefers-reduced-motion: reduce){ .msgr-send.fly svg{ animation:none; } }
+.msgr-card{ padding:0 !important; overflow:hidden; }
+.msgr-card .msgr-hd{ padding:12px 12px 10px; }
+.msgr-back{ width:34px !important; height:34px; padding:0 !important; border:none !important; background:none !important; color:inherit; font:400 34px/1 sans-serif; cursor:pointer; box-shadow:none !important; }
+.msgr-who{ min-width:0; } .msgr-who b{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.msgr-card .msgr-log{ border:none !important; background:transparent !important; max-height:min(60vh, 520px) !important; }
+.msgr-b.me{ background:#C13B1F !important; color:#fff !important; }
+.msgr-b.them{ background:#2c2b27 !important; color:#E9E4D8 !important; }
+.msgr-card .msgr-ib svg{ stroke:#D6FF3F; }
+.msgr-b.ac-typing{ display:inline-flex !important; gap:4px; align-items:center; padding:12px 14px !important; margin-top:6px !important; }
+.msgr-b.ac-typing i{ width:7px; height:7px; border-radius:50%; background:currentColor; opacity:.35; animation:acDot 1.2s infinite ease-in-out; }
+.msgr-b.ac-typing i:nth-child(2){ animation-delay:.15s; } .msgr-b.ac-typing i:nth-child(3){ animation-delay:.3s; }
+html[data-theme="light"] .msgr-b.them{ background:#e2ddd0 !important; color:#141412 !important; }
+html[data-theme="light"] .msgr-card .msgr-ib svg{ stroke:#141412; }
+html[data-theme="light"] .msgr-av::after{ border-color:#fff; }
+.msgr-b.fx-pop{ animation:ccPop .35s cubic-bezier(.3,1.6,.5,1); }
 </style>
 </head>
 <body>
@@ -2641,7 +2711,14 @@ async function editProduct(p){
 
   document.getElementById('product-form-title').textContent='ပစ္စည်း ပြင်ဆင်ရန်';
   document.getElementById('product-cancel').style.display='inline-block';
-  window.scrollTo({top:0, behavior:'smooth'});
+  // ✏️ ပြင်ရင် ပစ္စည်းထည့်တဲ့ Form ဆီ တိုက်ရိုက် (Excel အပိုင်း ကျော်မသွားစေ)
+  const fc = document.getElementById('product-form-title')?.closest('.form-card');
+  if(fc){
+    const hdr = document.querySelector('#dashboard > header');
+    const off = (hdr && getComputedStyle(hdr).position.match(/sticky|fixed/) ? hdr.offsetHeight : 0) + 12;
+    window.scrollTo({ top: Math.max(0, fc.getBoundingClientRect().top + window.scrollY - off), behavior:'smooth' });
+    fc.classList.remove('pf-flash'); void fc.offsetWidth; fc.classList.add('pf-flash');
+  } else window.scrollTo({top:0, behavior:'smooth'});
 }
 
 async function deleteProduct(id, name){
@@ -5979,6 +6056,10 @@ async function loadStaffList(){
 let messagesCache = [];
 let currentMessageUserId = null;
 let adminChatChannel = null;
+const msgEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function adminChatBubbleHtml(m){
+  return `<div class="admin-chat-bubble ${m.sender === 'admin' ? 'admin' : 'customer'}" data-id="${msgEsc(m.id)}">${m.image_url ? `<img src="${msgEsc(m.image_url)}" style="max-width:100%; display:block; margin-bottom:${m.message ? '6px' : '0'}; cursor:zoom-in;" onclick="openLightbox(this.src)">` : ''}${msgEsc(m.message || '')}</div>`;
+}
 
 document.getElementById('messages-search').addEventListener('input', renderMessageThreads);
 
@@ -6023,10 +6104,10 @@ function renderMessageThreads(){
   if(!threads.length){ list.innerHTML = '<p class="hint">Message မရှိသေးပါ</p>'; return; }
 
   list.innerHTML = threads.map(t=>`
-    <div class="msg-thread-item" data-uid="${t.userId}">
+    <div class="msg-thread-item" data-uid="${msgEsc(t.userId)}">
       <div>
-        <div class="mt-name">${t.hasUnread?'<span class="unread-dot"></span>':''}${t.name}${t.unreadCount>0?` <span class="mt-unread-count">${t.unreadCount}</span>`:''}</div>
-        <div class="mt-preview">${t.last.sender==='admin'?'You: ':''}${t.last.image_url?'📷 Photo '+(t.last.message||''):t.last.message}</div>
+        <div class="mt-name">${t.hasUnread?'<span class="unread-dot"></span>':''}${msgEsc(t.name)}${t.unreadCount>0?` <span class="mt-unread-count">${t.unreadCount}</span>`:''}</div>
+        <div class="mt-preview">${t.last.sender==='admin'?'You: ':''}${msgEsc(t.last.image_url?'📷 Photo '+(t.last.message||''):t.last.message)}</div>
       </div>
       <div class="mt-time">${new Date(t.last.created_at).toLocaleString()}</div>
     </div>`).join('');
@@ -6043,19 +6124,21 @@ async function openConversation(userId){
   const view = document.getElementById('messages-conversation-view');
   document.getElementById('messages-thread-list').style.display = 'none';
   view.style.display = 'block';
+  const ini = String(name || '?').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
   view.innerHTML = `
-    <div class="form-card">
-      <button type="button" class="secondary" id="back-to-threads-btn" style="margin-bottom:12px;">← Thread များ ပြန်ကြည့်ရန်</button>
-      <h3>${name}</h3>
-      <div class="admin-chat-log" id="admin-chat-log">
-        ${thread.map(m=>`<div class="admin-chat-bubble ${m.sender}">${m.image_url?`<img src="${m.image_url}" style="max-width:100%; display:block; margin-bottom:${m.message?'6px':'0'}; cursor:zoom-in;" onclick="openLightbox('${m.image_url}')">`:''}${m.message||''}</div>`).join('')}
+    <div class="form-card msgr-card">
+      <div class="msgr-hd">
+        <button type="button" class="msgr-back" id="back-to-threads-btn" aria-label="Thread များ ပြန်ကြည့်ရန်">‹</button>
+        <span class="msgr-av">${msgEsc(ini)}</span>
+        <span class="msgr-who"><b>${msgEsc(name)}</b><small>Customer</small></span>
       </div>
-      <div id="admin-chat-image-preview" style="margin-bottom:8px;"></div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <label for="admin-chat-image-input" style="cursor:pointer; font-size:22px; flex-shrink:0;">📎</label>
+      <div class="admin-chat-log msgr-log" id="admin-chat-log">${adminChatLogHtml(thread)}</div>
+      <div id="admin-chat-image-preview" class="msgr-prev"></div>
+      <div class="msgr-bar">
+        <label for="admin-chat-image-input" class="msgr-ib" title="ပုံပို့ရန်" aria-label="ပုံပို့ရန်">${MSGR_IMG}</label>
         <input type="file" id="admin-chat-image-input" accept="image/*" style="display:none;">
-        <input type="text" id="admin-chat-input" placeholder="အဖြေ ရေးပါ...">
-        <button type="button" class="acid" id="admin-chat-send-btn" style="width:auto; padding:12px 18px;">ပို့မည်</button>
+        <textarea id="admin-chat-input" class="msgr-in" rows="1" placeholder="အဖြေ ရေးပါ..." enterkeyhint="send"></textarea>
+        <button type="button" class="msgr-send" id="admin-chat-send-btn" aria-label="ပို့မည်" disabled>${MSGR_ARROW}</button>
       </div>
     </div>`;
   document.getElementById('admin-chat-log').scrollTop = document.getElementById('admin-chat-log').scrollHeight;
@@ -6065,14 +6148,17 @@ async function openConversation(userId){
     currentMessageUserId = null;
   });
   document.getElementById('admin-chat-send-btn').addEventListener('click', sendAdminReply);
-  document.getElementById('admin-chat-input').addEventListener('keypress', (e)=>{ if(e.key==='Enter') sendAdminReply(); });
+  const aci = document.getElementById('admin-chat-input');
+  aci.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendAdminReply(); } });
+  aci.addEventListener('input', ()=>{ msgrGrow(aci); adminSendState(); });
   document.getElementById('admin-chat-image-input').addEventListener('change', (e)=>{
     const file = e.target.files[0];
     if(!file) return;
     pendingAdminChatImageFile = file;
     const preview = document.getElementById('admin-chat-image-preview');
     const url = URL.createObjectURL(file);
-    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingAdminChatImageFile=null; document.getElementById('admin-chat-image-preview').innerHTML=''; return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
+    setTimeout(adminSendState, 0);
+    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingAdminChatImageFile=null; document.getElementById('admin-chat-image-preview').innerHTML=''; adminSendState(); return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
   });
 
   // Customer ကနေ Message ဖတ်ရသေးသည့်ဟာများကို "ဖတ်ပြီး" အဖြစ် မှတ်တမ်းတင်
@@ -6106,8 +6192,9 @@ async function sendAdminReply(){
     image_url = urlData.publicUrl;
   }
 
-  input.value = '';
+  input.value = ''; msgrGrow(input);
   pendingAdminChatImageFile = null;
+  adminSendState(); msgrFly(document.getElementById('admin-chat-send-btn'));
   const previewEl = document.getElementById('admin-chat-image-preview');
   if(previewEl) previewEl.innerHTML = '';
 
@@ -6131,6 +6218,45 @@ function subscribeToAdminChatRealtime(){
     })
     .subscribe();
 }
+
+// ---------- 💬 Messenger ပုံစံ (A) — Bubble အုပ်စု · အချိန် · ✓ ဖတ်ပြီး ----------
+const MSGR_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.5L15 12 3.4 13.9z"/></svg>';
+const MSGR_IMG = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>';
+function msgrEsc(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function msgrTime(d){ const t = new Date(d), n = new Date(); const hm = t.toTimeString().slice(0,5);
+  if(t.toDateString() === n.toDateString()) return hm;
+  const y = new Date(n); y.setDate(n.getDate()-1); if(t.toDateString() === y.toDateString()) return 'မနေ့က ' + hm;
+  return t.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + ' ' + hm; }
+function msgrDay(d){ const t = new Date(d), n = new Date(); if(t.toDateString() === n.toDateString()) return 'ယနေ့';
+  const y = new Date(n); y.setDate(n.getDate()-1); if(t.toDateString() === y.toDateString()) return 'မနေ့က';
+  return t.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); }
+// me = 'customer' (Website) / 'admin' (Admin App)
+function msgrLogHtml(list, me, popFrom, opts){
+  opts = opts || {};
+  let h = '', lastDay = '';
+  const lastMine = (() => { for(let i = list.length - 1; i >= 0; i--) if(list[i].sender === me) return i; return -1; })();
+  list.forEach((m, i) => {
+    const day = new Date(m.created_at).toDateString();
+    if(day !== lastDay){ h += `<div class="msgr-day">${msgrDay(m.created_at)}</div>`; lastDay = day; }
+    const mine = m.sender === me;
+    const prev = list[i-1], next = list[i+1];
+    const close = (a, b) => a && b && a.sender === b.sender && new Date(b.created_at).toDateString() === new Date(a.created_at).toDateString() && Math.abs(new Date(b.created_at) - new Date(a.created_at)) < 5*60e3;
+    const first = !close(prev, m), last = !close(m, next);
+    const pop = popFrom !== null && popFrom !== undefined && i >= popFrom ? ' fx-pop' : '';
+    const img = m.image_url ? `<img src="${msgrEsc(m.image_url)}" alt="" onclick="${opts.lightbox || 'openSiteLightbox'}(this.src)">` : '';
+    h += `<div class="chat-bubble msgr-b ${mine ? 'me' : 'them'} ${m.sender === 'admin' ? 'admin' : 'customer'}${first ? ' first' : ''}${last ? ' last' : ''}${img && !m.message ? ' only-img' : ''}${pop}" data-id="${msgrEsc(m.id)}">${img}${m.message ? `<span>${msgrEsc(m.message)}</span>` : ''}</div>`;
+    if(last){
+      const seen = mine && i === lastMine ? (m[me === 'customer' ? 'read_by_admin' : 'read_by_customer'] ? ' · ✓ ဖတ်ပြီး' : ' · ပို့ပြီး') : '';
+      h += `<div class="msgr-meta ${mine ? 'r' : 'l'}">${msgrTime(m.created_at)}${seen}</div>`;
+    }
+  });
+  return h;
+}
+function msgrGrow(t){ if(!t) return; t.style.height = 'auto'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; }
+function msgrGrow(t){ if(!t) return; t.style.height = 'auto'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; }
+function msgrFly(b){ if(!b) return; b.classList.remove('fly'); void b.offsetWidth; b.classList.add('fly'); }
+function adminSendState(){ const b = document.getElementById('admin-chat-send-btn'), i = document.getElementById('admin-chat-input'); if(b && i) b.disabled = !(i.value.trim() || pendingAdminChatImageFile); }
+function adminChatLogHtml(thread, popFrom){ return msgrLogHtml(thread, 'admin', popFrom, { lightbox:'openLightbox' }); }
 
 // ---------- DELIVERY QUEUE ----------
 let deliveryOrdersCache = [];
@@ -8974,6 +9100,152 @@ function renderStaffActionCheckboxes(actions){
       }catch(e){}
       return r;
     };
+  }
+})();
+
+// SUWATI MEN FASHION — 💬 Customer Chat တန်းရောက် + ✍️ စာရိုက်နေ "•••" + 🔄 App ပြန်ဖွင့်ရင် Update
+//   • Realtime (ချက်ချင်း) + ၈ စက္ကန့်တစ်ခါ စစ် (Realtime ပြတ်နေရင်လည်း စာ မလွတ်)
+//   • စာအသစ်ဝင်ရင် ရေးနေတဲ့စာ မပျက်ဘဲ Bubble သာ ထပ်ထည့်
+//   • SUWATI.ADMIN Logo နှိပ် = App တစ်ခုလုံး Refresh
+(function(){
+  const typingUntil = {};
+
+  // ---------- Conversation Log ကိုသာ ပြန်ဆွဲ (Input/ပုံ မပျက်) ----------
+  window.renderAdminChatLog = function(forceBottom){
+    const log = document.getElementById('admin-chat-log'); if(!log || !currentMessageUserId) return;
+    const near = forceBottom || log.scrollHeight - log.scrollTop - log.clientHeight < 90;
+    const thread = messagesCache.filter(m => m.user_id === currentMessageUserId);
+    const prev = Number(log.dataset.count || 0);
+    log.innerHTML = adminChatLogHtml(thread, prev && thread.length > prev ? prev : null);
+    log.dataset.count = thread.length;
+    if(typingUntil[currentMessageUserId] > Date.now()) showTypingDots();
+    if(near) log.scrollTop = log.scrollHeight;
+  };
+
+  const _oc = openConversation;
+  openConversation = async function(uid){
+    const r = await _oc.apply(this, arguments);
+    const log = document.getElementById('admin-chat-log'); if(log) log.dataset.count = '';
+    renderAdminChatLog(true);
+    return r;
+  };
+  window.openConversation = openConversation;
+
+  // ---------- စာအသစ် တစ်စောင် ဝင်လာရင် ----------
+  let lastAt = null;
+  async function onNew(m){
+    if(!m || m.is_broadcast) return;
+    if(messagesCache.some(x => x.id === m.id)) return;
+    messagesCache.push(m);
+    if(!lastAt || m.created_at > lastAt) lastAt = m.created_at;
+    if(m.sender === 'customer'){
+      typingUntil[m.user_id] = 0;
+      if(currentMessageUserId === m.user_id && document.getElementById('admin-chat-log') && !document.hidden){
+        m.read_by_admin = true;
+        sb.from('chat_messages').update({ read_by_admin: true }).eq('id', m.id).then(() => {});
+      }else{
+        try{ playNotificationSound(); }catch(e){}
+        try{ showToast('💬 ' + (m.customer_name || 'Customer') + ' — ' + (m.message ? String(m.message).slice(0, 40) : '📷 Photo')); }catch(e){}
+      }
+    }
+    renderMessageThreads();
+    if(currentMessageUserId === m.user_id) renderAdminChatLog();
+    try{ refreshAllAttentionStates(); }catch(e){}
+  }
+  window.chatLiveOnNew = onNew;
+
+  // ---------- Realtime ----------
+  subscribeToAdminChatRealtime = function(){
+    if(adminChatChannel) return;
+    adminChatChannel = sb.channel('admin-chat-live')
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages' }, (p) => onNew(p.new))
+      .subscribe();
+    startPoll();
+  };
+
+  // ---------- Realtime ပြတ်နေရင်လည်း ၈ စက္ကန့်တစ်ခါ စစ် ----------
+  let polling = false, pollT = null;
+  async function poll(){
+    if(polling || typeof currentAdminUserId === 'undefined' || !currentAdminUserId) return;
+    polling = true;
+    try{
+      if(!lastAt) lastAt = messagesCache.reduce((a, m) => (!a || m.created_at > a) ? m.created_at : a, null);
+      let q = sb.from('chat_messages').select('*').order('created_at', { ascending:true }).limit(100);
+      if(lastAt) q = q.gt('created_at', lastAt);
+      const { data } = await q;
+      for(const m of (data || [])) await onNew(m);
+    }catch(e){}
+    polling = false;
+  }
+  function startPoll(){ if(pollT) return; pollT = setInterval(() => { if(!document.hidden) poll(); }, 8000); }
+  window.chatLivePoll = poll;
+
+  // Auto-Refresh (၄၅ စက္ကန့်) က Conversation တစ်ခုလုံး ပြန်ဆွဲလို့ ရေးနေတဲ့စာ ပျက်တာ ပြင်
+  try{
+    TAB_REFRESH_MAP['messages-panel'] = async () => { await loadMessages(); renderAdminChatLog(); };
+  }catch(e){}
+  // ပို့ပြီးရင်လည်း Log သာ ပြန်ဆွဲ
+  if(typeof sendAdminReply === 'function'){
+    const _orig = openConversation;
+    const _sar = sendAdminReply;
+    sendAdminReply = async function(){
+      let restore = null;
+      openConversation = async function(uid){ if(uid === currentMessageUserId && document.getElementById('admin-chat-log')){ renderAdminChatLog(true); return; } return _orig.apply(this, arguments); };
+      try{ return await _sar.apply(this, arguments); }
+      finally{ openConversation = _orig; window.openConversation = _orig; }
+    };
+  }
+
+  // ---------- ✍️ Customer စာရိုက်နေ "•••" ----------
+  function showTypingDots(){
+    const log = document.getElementById('admin-chat-log'); if(!log) return;
+    let t = log.querySelector('.ac-typing');
+    if(!t){ t = document.createElement('div'); t.className = 'msgr-b them ac-typing'; t.innerHTML = '<i></i><i></i><i></i>';
+      const near = log.scrollHeight - log.scrollTop - log.clientHeight < 90; log.appendChild(t); if(near) log.scrollTop = log.scrollHeight; }
+  }
+  function paintTyping(){
+    const now = Date.now();
+    document.querySelectorAll('.msg-thread-item').forEach(el => {
+      const on = typingUntil[el.dataset.uid] > now; el.classList.toggle('is-typing', on);
+    });
+    if(currentMessageUserId && !(typingUntil[currentMessageUserId] > now)) document.querySelector('#admin-chat-log .ac-typing')?.remove();
+  }
+  setInterval(paintTyping, 1000);
+  try{
+    sb.channel('admin-typing')
+      .on('broadcast', { event:'typing' }, ({ payload }) => {
+        const uid = payload && payload.uid; if(!uid) return;
+        typingUntil[uid] = Date.now() + 4500;
+        if(uid === currentMessageUserId) showTypingDots();
+        paintTyping();
+      })
+      .subscribe();
+  }catch(e){}
+
+  // ---------- 🔄 App ပြန်ဖွင့်ရင် (ဖုန်း Lock ဖွင့် / App ပြန်ဝင်) ချက်ချင်း Update ----------
+  let hiddenAt = 0;
+  document.addEventListener('visibilitychange', async () => {
+    if(document.hidden){ hiddenAt = Date.now(); return; }
+    try{ if(sb.realtime && typeof sb.realtime.isConnected === 'function' && !sb.realtime.isConnected()) sb.realtime.connect(); }catch(e){}
+    poll();
+    if(Date.now() - hiddenAt > 15000){
+      try{ const p = document.querySelector('.panel.active'); const fn = p && TAB_REFRESH_MAP[p.id]; if(fn) await fn(); }catch(e){}
+      try{ refreshAllAttentionStates(); }catch(e){}
+    }
+  });
+  window.addEventListener('online', () => { try{ sb.realtime.connect(); }catch(e){} poll(); });
+
+  // ---------- SUWATI.ADMIN Logo နှိပ် = Refresh ----------
+  const logo = document.getElementById('dashboard-logo');
+  if(logo){
+    logo.style.cursor = 'pointer'; logo.setAttribute('role', 'button'); logo.setAttribute('title', 'နှိပ်ပြီး Refresh လုပ်ရန်');
+    logo.addEventListener('click', async () => {
+      if(logo.classList.contains('spinning')) return;
+      logo.classList.add('spinning');
+      try{ showToast('🔄 အသစ် ယူနေသည်...'); }catch(e){}
+      try{ const reg = await navigator.serviceWorker?.getRegistration(); if(reg) await Promise.race([reg.update(), new Promise(r => setTimeout(r, 2500))]); }catch(e){}
+      location.reload();
+    });
   }
 })();
 

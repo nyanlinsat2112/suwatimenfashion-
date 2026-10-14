@@ -1790,6 +1790,50 @@ html[data-theme="dark"] .pcr-am.plus{ color:var(--acid); }
 .pt-rep .pt-ok{ border-color:#2f7d1e; color:#2f7d1e; }
 html[data-theme="dark"] .pt-rep .pt-ok{ border-color:var(--acid); color:var(--acid); }
 .pt-rep .pt-tip{ border-style:dashed; color:var(--text2, var(--ink)); }
+.chat-bubble{ white-space:pre-wrap; word-break:break-word; }
+
+/* ===== 💬 Messenger ပုံစံ (A) ===== */
+.msgr{ border:2px solid var(--ink); background:var(--paper); display:flex; flex-direction:column; margin-top:8px; overflow:hidden; }
+.msgr-hd{ display:flex; align-items:center; gap:10px; padding:10px 12px; border-bottom:1px solid rgba(128,128,128,.22); }
+.msgr-hd b{ display:block; font-size:14px; line-height:1.3; }
+.msgr-hd small{ display:block; font-size:11px; opacity:.65; line-height:1.4; }
+.msgr-av{ position:relative; flex:0 0 auto; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; background:#D6FF3F; color:#141412; font:700 13px 'Space Mono',monospace; }
+.msgr-av::after{ content:""; position:absolute; right:-1px; bottom:-1px; width:10px; height:10px; border-radius:50%; background:#34c759; border:2px solid var(--paper); }
+.msgr-log{ max-height:min(52vh, 420px) !important; min-height:180px; margin:0 !important; padding:10px 12px; gap:2px; overscroll-behavior:contain; }
+.msgr-log .hint{ text-align:center; margin:auto 0; }
+.msgr-day{ align-self:center; font:10.5px 'Space Mono',monospace; opacity:.55; margin:10px 0 6px; }
+.msgr-b{ max-width:78% !important; margin:0 !important; padding:9px 13px !important; border-radius:20px; font-size:13.5px; line-height:1.55; white-space:pre-wrap; word-break:break-word; border:none !important; box-shadow:none !important; }
+.msgr-b.first{ margin-top:6px !important; }
+.msgr-b.me{ align-self:flex-end; margin-left:auto !important; background:#141412 !important; color:#E9E4D8 !important; transform-origin:bottom right; }
+.msgr-b.them{ align-self:flex-start; background:#e2ddd0 !important; color:#141412 !important; transform-origin:bottom left; }
+.msgr-b.me:not(.last){ border-bottom-right-radius:6px; } .msgr-b.me:not(.first){ border-top-right-radius:6px; } .msgr-b.me.last{ border-bottom-right-radius:6px; }
+.msgr-b.them:not(.last){ border-bottom-left-radius:6px; } .msgr-b.them:not(.first){ border-top-left-radius:6px; } .msgr-b.them.last{ border-bottom-left-radius:6px; }
+.msgr-b img{ display:block; max-width:100%; max-height:240px; border-radius:14px; cursor:zoom-in; }
+.msgr-b img + span{ display:block; margin-top:6px; }
+.msgr-b.only-img{ padding:3px !important; background:transparent !important; }
+.msgr-meta{ font:10px 'Space Mono',monospace; opacity:.55; margin:3px 6px 4px; }
+.msgr-meta.r{ align-self:flex-end; } .msgr-meta.l{ align-self:flex-start; }
+.msgr-b.fx-typing{ padding:12px 14px !important; margin-top:6px !important; }
+.msgr-prev{ padding:0 12px; } .msgr-prev:empty{ display:none; } .msgr-prev .img-preview-thumb{ margin-top:8px; }
+.msgr-bar{ display:flex; align-items:flex-end; gap:8px; padding:8px 10px 10px; border-top:1px solid rgba(128,128,128,.18); }
+.msgr-ib{ flex:0 0 auto; width:38px; height:38px; display:grid; place-items:center; cursor:pointer; border-radius:50%; }
+.msgr-ib:active{ background:rgba(128,128,128,.15); }
+.msgr-ib svg{ width:24px; height:24px; stroke:currentColor; }
+.msgr-in{ flex:1; min-width:0; min-height:38px; max-height:110px; margin:0 !important; resize:none; border:none !important; outline:none; border-radius:20px !important;
+  background:rgba(128,128,128,.14) !important; color:inherit; font:14px 'Noto Sans Myanmar',sans-serif; line-height:1.5; padding:8px 14px !important; box-shadow:none !important; }
+.msgr-send{ flex:0 0 auto; width:38px !important; height:38px; padding:0 !important; margin:0 !important; border:none !important; border-radius:50% !important; background:#D6FF3F !important;
+  display:grid; place-items:center; cursor:pointer; transition:transform .2s cubic-bezier(.3,1.6,.5,1), opacity .2s; box-shadow:none !important; }
+.msgr-send svg{ width:20px; height:20px; fill:#141412; }
+.msgr-send:disabled{ opacity:.35; cursor:default; }
+.msgr-send:not(:disabled):active{ transform:scale(.85); }
+.msgr-send.fly svg{ animation:msgrFly .42s ease; }
+@keyframes msgrFly{ 50%{ transform:translate(9px,-9px) scale(.6); opacity:0; } 51%{ transform:translate(-9px,9px) scale(.6); opacity:0; } }
+@media (prefers-reduced-motion: reduce){ .msgr-send.fly svg{ animation:none; } }
+html[data-theme="dark"] .msgr{ background:#1E1D1A; }
+html[data-theme="dark"] .msgr-av::after{ border-color:#1E1D1A; }
+html[data-theme="dark"] .msgr-b.me{ background:#C13B1F !important; color:#fff !important; }
+html[data-theme="dark"] .msgr-b.them{ background:#2c2b27 !important; color:#E9E4D8 !important; }
+.cp-auth-pin input.cp-pw{ width:100%; letter-spacing:normal; font:600 16px 'Noto Sans Myanmar',-apple-system,sans-serif; text-align:left; padding:10px 12px; }
 </style>
 </head>
 <body>
@@ -5907,7 +5951,9 @@ const prepaidPayAnim = (function(){
   const FACE = `<svg viewBox="0 0 70 70" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 20V12a6 6 0 0 1 6-6h8M50 6h8a6 6 0 0 1 6 6v8M64 50v8a6 6 0 0 1-6 6h-8M20 64h-8a6 6 0 0 1-6-6v-8"/><path d="M24 26v5M46 26v5M35 28v12h-3M26 47c5 4 13 4 18 0"/></svg>`;
   const OK = `<svg viewBox="0 0 70 70" fill="none" stroke="#34c759" stroke-width="4" stroke-linecap="round"><path d="M35 4a31 31 0 1 1 0 62a31 31 0 1 1 0-62M22 36l9 9 17-19"/></svg>`;
 
-  function authSheet(amount){
+  function authSheet(amount, opts){
+    opts = opts || {};
+    const rv = !!opts.reveal;   // 👁️ PIN ကြည့်ရန် — Fallback = Login Password
     return new Promise(resolve => {
       const word = bioWord();
       const el = document.createElement('div'); el.className = 'cp-auth'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
@@ -5915,13 +5961,13 @@ const prepaidPayAnim = (function(){
         <div class="cp-auth-box">
           <div class="cp-auth-ic">${FACE}</div>
           <div class="cp-auth-t">${word} ဖြင့် အတည်ပြုပါ</div>
-          <div class="cp-auth-amt">🎫 Prepaid Card — <b>${Number(amount || 0).toLocaleString()}</b> ကျပ်</div>
+          <div class="cp-auth-amt">${rv ? '🔒 Card PIN ကြည့်ရန်' : `🎫 Prepaid Card — <b>${Number(amount || 0).toLocaleString()}</b> ကျပ်`}</div>
           <div class="cp-auth-msg" role="alert"></div>
           <div class="cp-auth-face"><button type="button" class="cp-auth-go">🙂 ${word} ဖြင့် အတည်ပြု</button>
-            <button type="button" class="cp-auth-link" data-a="pin">🔑 Card PIN သုံးမည်</button></div>
+            <button type="button" class="cp-auth-link" data-a="pin">${rv ? '🔑 Login Password ဖြင့်' : '🔑 Card PIN သုံးမည်'}</button></div>
           <div class="cp-auth-pin" hidden>
-            <label>Card PIN ၄ လုံး</label>
-            <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••">
+            <label>${rv ? 'Login Password (' + esc(currentUser?.email || '') + ')' : 'Card PIN ၄ လုံး'}</label>
+            ${rv ? '<input type="password" class="cp-pw" autocomplete="current-password" placeholder="Password">' : '<input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••">'}
             <button type="button" class="cp-auth-go" data-a="pinok">အတည်ပြုမည်</button>
           </div>
           <button type="button" class="cp-auth-cancel">ပယ်ဖျက်မည်</button>
@@ -5931,10 +5977,10 @@ const prepaidPayAnim = (function(){
       const $ = s => el.querySelector(s);
       const msg = (m, ok) => { const x = $('.cp-auth-msg'); x.textContent = m || ''; x.classList.toggle('ok', !!ok); if(m && !ok){ x.classList.remove('shake'); void x.offsetWidth; x.classList.add('shake'); } };
       let done = false;
-      const close = (v, why) => { if(done) return; done = true; if(!v) window.__cpAuthMsg = { m: why || 'ငွေမဖြတ်ရသေးပါ — ' + word + ' / PIN အတည်ပြုချက် မရှိလို့ ဝယ်ယူမှု ပယ်ဖျက်ပါသည်', t: Date.now() };
+      const close = (v, why) => { if(done) return; done = true; if(!v && !rv) window.__cpAuthMsg = { m: why || 'ငွေမဖြတ်ရသေးပါ — ' + word + ' / PIN အတည်ပြုချက် မရှိလို့ ဝယ်ယူမှု ပယ်ဖျက်ပါသည်', t: Date.now() };
         el.classList.remove('show'); setTimeout(() => el.remove(), 260); resolve(v); };
       const success = (label) => { $('.cp-auth-ic').innerHTML = OK; $('.cp-auth-t').textContent = label; msg('', true); el.classList.add('ok'); try{ navigator.vibrate && navigator.vibrate(25); }catch(e){} setTimeout(() => close(true), 650); };
-      const showPin = () => { $('.cp-auth-face').hidden = true; $('.cp-auth-pin').hidden = false; $('.cp-auth-t').textContent = 'Card PIN ဖြင့် အတည်ပြုပါ'; $('.cp-auth-ic').innerHTML = '<span class="cp-auth-key">🔑</span>'; setTimeout(() => $('.cp-auth-pin input').focus(), 60); };
+      const showPin = () => { $('.cp-auth-face').hidden = true; $('.cp-auth-pin').hidden = false; $('.cp-auth-t').textContent = rv ? 'Login Password ဖြင့် အတည်ပြုပါ' : 'Card PIN ဖြင့် အတည်ပြုပါ'; $('.cp-auth-ic').innerHTML = '<span class="cp-auth-key">🔑</span>'; setTimeout(() => $('.cp-auth-pin input').focus(), 60); };
 
       // Challenge + ချိတ်ထားတဲ့ Device စာရင်း ကြိုယူ (ခလုတ်နှိပ်ချိန် ချက်ချင်း Face ID ခေါ်နိုင်ရန်)
       let ch = null, creds = (window.__cpBio && window.__cpBio.creds) || null;
@@ -5942,14 +5988,14 @@ const prepaidPayAnim = (function(){
         sb.rpc('passkey_challenge').then(r => { if(r.error) throw r.error; ch = r.data; }),
         creds && creds.length ? Promise.resolve() : sb.rpc('passkey_status').then(r => { creds = (r.data && r.data.credentials) || []; }),
       ]).catch(e => { console.warn('passkey prep', e); });
-      platformReady().then(ok => { if(!ok && !done) showPin(); });
+      if(opts.noBio) showPin(); else platformReady().then(ok => { if(!ok && !done) showPin(); });
 
       $('.cp-auth-face .cp-auth-go').onclick = async (ev) => {
         const b = ev.currentTarget; b.disabled = true; msg('');
         try{
           if(!ch) await prep;
           if(!ch) throw new Error('Challenge ယူ၍ မရပါ — Internet စစ်ပါ');
-          if(!creds || !creds.length){ msg('ဒီ Account မှာ ' + word + ' ချိတ်ထားတာ မရှိတော့ပါ — Card PIN သုံးပါ'); showPin(); return; }
+          if(!creds || !creds.length){ msg('ဒီ Account မှာ ' + word + ' ချိတ်ထားတာ မရှိတော့ပါ — ' + (rv ? 'Password' : 'Card PIN') + ' သုံးပါ'); showPin(); return; }
           const a = await navigator.credentials.get({ publicKey:{ challenge: b64uToBuf(ch), rpId: location.hostname, userVerification:'required', timeout:60000,
             allowCredentials: creds.map(c => ({ type:'public-key', id:b64uToBuf(c.id), transports:['internal','hybrid'] })) } });
           ch = null;
@@ -5963,7 +6009,7 @@ const prepaidPayAnim = (function(){
           success(word + ' အတည်ပြုပြီး');
         }catch(e){
           const n = e && e.name;
-          msg(n === 'NotAllowedError' || n === 'AbortError' ? word + ' မအောင်မြင်ပါ — Card PIN ဖြင့် ဆက်လုပ်နိုင်ပါသည်' : (e?.message || String(e)) + ' — Card PIN ဖြင့် ဆက်လုပ်နိုင်ပါသည်');
+          msg(n === 'NotAllowedError' || n === 'AbortError' ? word + ' မအောင်မြင်ပါ — ' + (rv ? 'Password' : 'Card PIN') + ' ဖြင့် ဆက်လုပ်နိုင်ပါသည်' : (e?.message || String(e)) + ' — ' + (rv ? 'Password' : 'Card PIN') + ' ဖြင့် ဆက်လုပ်နိုင်ပါသည်');
           showPin();
           sb.rpc('passkey_challenge').then(r => { ch = r.data || null; }).catch(() => {});
         }finally{ b.disabled = false; }
@@ -5971,6 +6017,16 @@ const prepaidPayAnim = (function(){
       $('[data-a="pin"]').onclick = () => showPin();
       const pinGo = async () => {
         const inp = $('.cp-auth-pin input'), b = $('[data-a="pinok"]'); const pin = inp.value.trim();
+        if(rv){
+          if(!pin){ msg('Password ရိုက်ပါ'); return; }
+          b.disabled = true;
+          try{
+            const { error } = await sb.auth.signInWithPassword({ email: currentUser.email, password: inp.value });
+            if(error){ msg('Password မှားနေပါသည်'); inp.value = ''; inp.focus(); return; }
+            success('Password မှန်ပါသည်');
+          }finally{ b.disabled = false; }
+          return;
+        }
         if(!/^\d{4}$/.test(pin)){ msg('Card PIN ဂဏန်း ၄ လုံး ရိုက်ပါ'); return; }
         b.disabled = true;
         try{
@@ -5981,11 +6037,37 @@ const prepaidPayAnim = (function(){
       };
       $('[data-a="pinok"]').onclick = pinGo;
       $('.cp-auth-pin input').addEventListener('keydown', e => { if(e.key === 'Enter') pinGo(); });
-      $('.cp-auth-pin input').addEventListener('input', e => { if(e.target.value.length === 4) pinGo(); });
+      $('.cp-auth-pin input').addEventListener('input', e => { if(!rv && e.target.value.length === 4) pinGo(); });
       $('.cp-auth-cancel').onclick = () => close(false);
     });
   }
   window.cpAuthSheet = authSheet;
+
+  // =====================================================================
+  // 👁️ Card PIN ကြည့်ရန် — Face ID (သို့) Login Password အရင်စစ် (Server က PIN ကို ဒါမှ ပေး)
+  // =====================================================================
+  let pinHideT = null;
+  const paintPin = (el, pin) => { el.querySelectorAll('b').forEach((b, i) => { b.textContent = pin ? (pin[i] || '') : '*'; }); el.dataset.revealed = pin ? 'true' : 'false'; };
+  window.togglePinReveal = async function(){
+    const el = document.getElementById('pc-pin-display'); if(!el || el.dataset.busy) return;
+    if(el.dataset.revealed === 'true'){ clearTimeout(pinHideT); paintPin(el, null); return; }
+    el.dataset.busy = '1';
+    try{
+      let st = window.__cpBio;
+      if(!st){ try{ const { data } = await sb.rpc('passkey_status'); st = { enabled: !!(data && data.enabled), creds: (data && data.credentials) || [] }; window.__cpBio = st; }catch(e){ st = { enabled:false, creds:[] }; } }
+      const useBio = st.enabled && await platformReady();
+      const ok = await authSheet(0, { reveal:true, noBio: !useBio });
+      if(!ok) return;
+      let pin = null;
+      const { data, error } = await sb.rpc('reveal_card_pin');
+      if(!error && data) pin = String(data);
+      else if(error && /reveal_card_pin|function|schema cache/i.test(error.message || '') && el.dataset.pin) pin = el.dataset.pin;   // FACE-ID-PIN.sql မ Run ရသေးရင်
+      else { showSiteToast('⚠️ ' + (error?.message || 'PIN ယူ၍ မရပါ').replace(/^AUTH_REQUIRED:\s*/, '')); return; }
+      paintPin(el, pin);
+      clearTimeout(pinHideT); pinHideT = setTimeout(() => { if(el.isConnected) paintPin(el, null); }, 20000);   // ၂၀ စက္ကန့်ကြာရင် ပြန်ဖုံး
+    }finally{ delete el.dataset.busy; }
+  };
+  try{ togglePinReveal = window.togglePinReveal; }catch(e){}
 
   function patchRpc(){
     if(typeof sb === 'undefined' || !sb || sb.__cpPatched) return;
@@ -6494,15 +6576,18 @@ async function renderChatWidget(){
     adminChatHtml = `
       <div class="modal-section">
         <div class="modal-label">ADMIN နှင့် တိုက်ရိုက် စကားပြော</div>
-        <div class="chat-log" id="chat-log"><p class="hint">Load လုပ်နေသည်...</p></div>
-        <div id="chat-image-preview" style="margin-bottom:8px;"></div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <label for="chat-image-input" style="cursor:pointer; font-size:22px; flex-shrink:0;">📎</label>
-          <input type="file" id="chat-image-input" accept="image/*" style="display:none;">
-          <input type="text" id="chat-input" placeholder="Message ရေးပါ..." style="margin-bottom:0;">
-          <button type="button" class="submit-order-btn" style="width:auto; margin-top:0; padding:12px 18px;" id="chat-send-btn">ပို့မည်</button>
+        <div class="msgr">
+          <div class="msgr-hd"><span class="msgr-av">S.</span><span><b>SUWATI MEN FASHION</b><small>Admin နဲ့ တိုက်ရိုက် · ပုံမှန် မကြာခင် ပြန်ဖြေပါမည်</small></span></div>
+          <div class="chat-log msgr-log" id="chat-log"><p class="hint">Load လုပ်နေသည်...</p></div>
+          <div id="chat-image-preview" class="msgr-prev"></div>
+          <div class="msgr-bar">
+            <label for="chat-image-input" class="msgr-ib" title="ပုံပို့ရန်" aria-label="ပုံပို့ရန်">${MSGR_IMG}</label>
+            <input type="file" id="chat-image-input" accept="image/*" style="display:none;">
+            <textarea id="chat-input" class="msgr-in" rows="1" placeholder="Message ရေးပါ..." enterkeyhint="send"></textarea>
+            <button type="button" class="msgr-send" id="chat-send-btn" aria-label="ပို့မည်" disabled>${MSGR_ARROW}</button>
+          </div>
         </div>
-        <p class="hint" style="margin-top:6px; font-size:10.5px;">Return/Refund Proof ပုံ ပို့ချင်ရင် 📎 ကို နှိပ်ပါ</p>
+        <p class="hint" style="margin-top:6px; font-size:10.5px;">Return/Refund Proof ပုံ ပို့ချင်ရင် 🖼️ ကို နှိပ်ပါ</p>
       </div>`;
   } else {
     adminChatHtml = `
@@ -6528,7 +6613,9 @@ async function renderChatWidget(){
   if(currentUser){
     await loadChatMessages();
     document.getElementById('chat-send-btn').addEventListener('click', sendChatMessage);
-    document.getElementById('chat-input').addEventListener('keypress', (e)=>{ if(e.key==='Enter') sendChatMessage(); });
+    const ci = document.getElementById('chat-input');
+    ci.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendChatMessage(); } });
+    ci.addEventListener('input', ()=>{ msgrGrow(ci); msgrSendState(); sendCustomerTyping(); });
     subscribeToChatRealtime();
   }
 }
@@ -6554,11 +6641,7 @@ async function loadChatMessages(){
   if(!data.length){ log.innerHTML = '<p class="hint">Message မရှိသေးပါ — အောက်မှာ ရေးပို့နိုင်ပါတယ်</p>'; return; }
   const prevCount = log.dataset.count === undefined ? null : Number(log.dataset.count);
   log.dataset.count = data.length;
-  log.innerHTML = data.map((m, i)=>`
-    <div class="chat-bubble ${m.sender}${prevCount !== null && i >= prevCount ? ' fx-pop' : ''}">
-      ${m.image_url ? `<img src="${m.image_url}" style="max-width:100%; display:block; margin-bottom:${m.message?'6px':'0'}; cursor:zoom-in;" onclick="openSiteLightbox('${m.image_url}')">` : ''}
-      ${m.message||''}
-    </div>`).join('');
+  log.innerHTML = msgrLogHtml(data, 'customer', prevCount);
   log.scrollTop = log.scrollHeight;
 }
 
@@ -6571,7 +6654,8 @@ document.addEventListener('change', (e)=>{
     pendingChatImageFile = file;
     const preview = document.getElementById('chat-image-preview');
     const url = URL.createObjectURL(file);
-    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingChatImageFile=null; document.getElementById('chat-image-preview').innerHTML=''; return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
+    setTimeout(msgrSendState, 0);
+    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingChatImageFile=null; document.getElementById('chat-image-preview').innerHTML=''; msgrSendState(); return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
   }
 });
 
@@ -6593,9 +6677,10 @@ async function sendChatMessage(){
     image_url = urlData.publicUrl;
   }
 
-  input.value = '';
+  input.value = ''; msgrGrow(input);
   pendingChatImageFile = null;
   document.getElementById('chat-image-preview').innerHTML = '';
+  msgrSendState(); msgrFly(document.getElementById('chat-send-btn'));
 
   const displayName = getCustomerDisplayName(currentUser);
   const { error } = await sb.from('chat_messages').insert({ user_id: currentUser.id, customer_name: displayName, sender:'customer', message:text, image_url, read_by_customer:true, read_by_admin:false });
@@ -6607,7 +6692,7 @@ let _chatTypingTimer = null;
 function showChatTyping(){
   const log = document.getElementById('chat-log'); if(!log) return;
   let t = log.querySelector('.fx-typing');
-  if(!t){ t = document.createElement('div'); t.className = 'chat-bubble admin fx-pop fx-typing'; t.innerHTML = '<i></i><i></i><i></i>'; log.appendChild(t); log.scrollTop = log.scrollHeight; }
+  if(!t){ t = document.createElement('div'); t.className = 'chat-bubble admin fx-pop fx-typing msgr-b them'; t.innerHTML = '<i></i><i></i><i></i>'; log.appendChild(t); log.scrollTop = log.scrollHeight; }
   clearTimeout(_chatTypingTimer);
   _chatTypingTimer = setTimeout(()=>t.remove(), 4000);
 }
@@ -6630,6 +6715,62 @@ function subscribeToChatRealtime(){
   }catch(e){}
   updateChatUnreadBadge(); // Login ဝင်ချက်ချင်း ရှိပြီးသား Unread Message ရှိမရှိ စစ်
 }
+
+// ✍️ Customer စာရိုက်နေရင် Admin ဘက်မှာ "•••" ပြ
+let _ctypChan = null, _ctypLast = 0;
+function sendCustomerTyping(){
+  const v = document.getElementById('chat-input')?.value.trim();
+  if(!currentUser || !v || Date.now() - _ctypLast < 2500) return;
+  _ctypLast = Date.now();
+  try{
+    if(!_ctypChan){ _ctypChan = sb.channel('admin-typing'); _ctypChan.subscribe(); }
+    _ctypChan.send({ type:'broadcast', event:'typing', payload:{ uid: currentUser.id } });
+  }catch(e){}
+}
+// 🔄 App ပြန်ဖွင့်ရင် Chat / Badge ချက်ချင်း Update
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden || !currentUser) return;
+  try{ if(sb.realtime && !sb.realtime.isConnected()) sb.realtime.connect(); }catch(e){}
+  if(document.getElementById('chat-log')) loadChatMessages();
+  updateChatUnreadBadge();
+});
+
+// ---------- 💬 Messenger ပုံစံ (A) — Bubble အုပ်စု · အချိန် · ✓ ဖတ်ပြီး ----------
+const MSGR_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.5L15 12 3.4 13.9z"/></svg>';
+const MSGR_IMG = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/></svg>';
+function msgrEsc(v){ return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function msgrTime(d){ const t = new Date(d), n = new Date(); const hm = t.toTimeString().slice(0,5);
+  if(t.toDateString() === n.toDateString()) return hm;
+  const y = new Date(n); y.setDate(n.getDate()-1); if(t.toDateString() === y.toDateString()) return 'မနေ့က ' + hm;
+  return t.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + ' ' + hm; }
+function msgrDay(d){ const t = new Date(d), n = new Date(); if(t.toDateString() === n.toDateString()) return 'ယနေ့';
+  const y = new Date(n); y.setDate(n.getDate()-1); if(t.toDateString() === y.toDateString()) return 'မနေ့က';
+  return t.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); }
+// me = 'customer' (Website) / 'admin' (Admin App)
+function msgrLogHtml(list, me, popFrom, opts){
+  opts = opts || {};
+  let h = '', lastDay = '';
+  const lastMine = (() => { for(let i = list.length - 1; i >= 0; i--) if(list[i].sender === me) return i; return -1; })();
+  list.forEach((m, i) => {
+    const day = new Date(m.created_at).toDateString();
+    if(day !== lastDay){ h += `<div class="msgr-day">${msgrDay(m.created_at)}</div>`; lastDay = day; }
+    const mine = m.sender === me;
+    const prev = list[i-1], next = list[i+1];
+    const close = (a, b) => a && b && a.sender === b.sender && new Date(b.created_at).toDateString() === new Date(a.created_at).toDateString() && Math.abs(new Date(b.created_at) - new Date(a.created_at)) < 5*60e3;
+    const first = !close(prev, m), last = !close(m, next);
+    const pop = popFrom !== null && popFrom !== undefined && i >= popFrom ? ' fx-pop' : '';
+    const img = m.image_url ? `<img src="${msgrEsc(m.image_url)}" alt="" onclick="${opts.lightbox || 'openSiteLightbox'}(this.src)">` : '';
+    h += `<div class="chat-bubble msgr-b ${mine ? 'me' : 'them'} ${m.sender === 'admin' ? 'admin' : 'customer'}${first ? ' first' : ''}${last ? ' last' : ''}${img && !m.message ? ' only-img' : ''}${pop}" data-id="${msgrEsc(m.id)}">${img}${m.message ? `<span>${msgrEsc(m.message)}</span>` : ''}</div>`;
+    if(last){
+      const seen = mine && i === lastMine ? (m[me === 'customer' ? 'read_by_admin' : 'read_by_customer'] ? ' · ✓ ဖတ်ပြီး' : ' · ပို့ပြီး') : '';
+      h += `<div class="msgr-meta ${mine ? 'r' : 'l'}">${msgrTime(m.created_at)}${seen}</div>`;
+    }
+  });
+  return h;
+}
+function msgrGrow(t){ if(!t) return; t.style.height = 'auto'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; }
+function msgrSendState(){ const b = document.getElementById('chat-send-btn'), i = document.getElementById('chat-input'); if(b && i) b.disabled = !(i.value.trim() || pendingChatImageFile); }
+function msgrFly(b){ if(!b) return; b.classList.remove('fly'); void b.offsetWidth; b.classList.add('fly'); }
 
 // SUWATI MEN FASHION — Guest order tracking
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
