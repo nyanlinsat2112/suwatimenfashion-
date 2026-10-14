@@ -1717,6 +1717,69 @@ html[data-theme="dark"] .bundle-badge{ color:#ff6a47; border-color:#ff6a47; }
 .pre-box .pre-sub{ color:var(--grey,#87806f); font-size:12px; }
 .pre-lbl{ color:#2e86de; font-weight:700; }
 .pre-mini{ font-style:normal; color:#2e86de; font-size:11px; }
+
+/* ===== 🎫 Card Plus — 360° ဆွဲလှည့် · ခလုတ်အသေး · နောက်ဆုံးအသုံးပြုမှု · 🙂 Face ID ===== */
+.pc-stage.cp-on{ touch-action:pan-y; user-select:none; -webkit-user-select:none; -webkit-touch-callout:none; animation:pcFloat 3.2s ease-in-out 2.6s infinite; }
+.pc-stage.cp-on .pc-wrap.pc-enter{ animation:none; }                       /* perspective element ပေါ် transform မထား (iPhone 3D) */
+.pc-stage.cp-on .pc-wrap.pc-enter .pc-inner{ animation:pcRise 1.15s cubic-bezier(.2,.9,.25,1.08) .15s backwards; }
+.pc-stage.cp-on .pc-inner{ transition:none; will-change:transform; cursor:grab; }
+.pc-stage.cp-on .pc-inner:active{ cursor:grabbing; }
+.pc-stage.cp-on .pc-inner.snap{ transition:transform .65s cubic-bezier(.2,.9,.25,1.12); }
+.pc-stage.cp-on .pc-flip-hint{ text-decoration:none; }
+.pc-panel-foot{ color:#141412 !important; font-weight:800 !important; opacity:1 !important; }   /* Barcode နံပါတ် — အမဲ */
+.pc-panel-foot span{ color:#141412 !important; }
+.cp-spin-hint{ text-align:center; font-size:11.5px !important; margin:4px 0 0 !important; color:var(--grey); }
+.cp-spin-hint b{ color:var(--ink); background:var(--acid); padding:0 4px; color:#141412; }
+.pc-acts{ display:flex; gap:6px; margin-top:12px; }
+.pc-act{ flex:1; min-width:0; height:40px; display:flex; align-items:center; justify-content:center; gap:5px; padding:0 8px;
+  border:2px solid var(--ink); background:var(--paper); color:var(--ink); border-radius:20px; font:700 12px 'Noto Sans Myanmar',sans-serif; cursor:pointer; white-space:nowrap; transition:transform .15s, background .2s; }
+.pc-act:active{ transform:scale(.94); }
+.pc-act.main{ background:var(--acid); color:#141412; border-color:#141412; }
+.pc-act i{ font-style:normal; font-size:14px; }
+.pc-recent{ margin-top:12px; border:2px solid var(--ink); background:var(--surface, var(--paper)); padding:10px 12px; text-align:left; }
+.pcr-head{ display:flex; justify-content:space-between; align-items:center; font-weight:800; font-size:13.5px; }
+.pcr-head button{ background:none; border:none; color:var(--rust); font:700 11.5px 'Space Mono','Noto Sans Myanmar',monospace; cursor:pointer; padding:4px 0; }
+.pcr-tx{ display:grid; grid-template-columns:30px 1fr auto; gap:10px; align-items:center; padding:8px 0; border-bottom:1px dashed var(--grey); }
+.pcr-tx:last-child{ border-bottom:none; }
+.pcr-ic{ width:30px; height:30px; border-radius:50%; display:grid; place-items:center; font-size:14px; background:var(--ph, #e7e2d5); }
+.pcr-mid{ min-width:0; }
+.pcr-mid b{ display:block; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pcr-mid small{ display:block; font:10.5px 'Space Mono','Noto Sans Myanmar',monospace; color:var(--grey); margin-top:1px; }
+.pcr-am{ font:700 13px 'Space Mono',monospace; white-space:nowrap; }
+.pcr-am.plus{ color:#2f7d1e; } .pcr-am.minus{ color:var(--rust); }
+html[data-theme="dark"] .pcr-am.plus{ color:var(--acid); }
+.pc-sec.cp-flash{ animation:cpFlash 1s ease; }
+@keyframes cpFlash{ 0%,60%{ box-shadow:0 0 0 4px var(--acid); } 100%{ box-shadow:0 0 0 0 transparent; } }
+.pc-bio .pc-sec-txt span{ max-width:none; }
+.pc-bio-devs{ display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+.pc-bio-devs span{ display:inline-block !important; font:700 10.5px 'Space Mono','Noto Sans Myanmar',monospace !important; border:1.5px solid var(--ink); padding:2px 7px; border-radius:12px; color:var(--ink) !important; margin:0 !important; }
+.pc-bio-form{ padding:4px 0 10px; border-bottom:1px dashed var(--grey); }
+.pc-bio-add{ display:block; margin:8px 0 2px; background:none; border:none; padding:4px 0; color:var(--ink); font:700 12.5px 'Noto Sans Myanmar',sans-serif; text-decoration:underline; cursor:pointer; }
+/* 🙂 Face ID အတည်ပြု Sheet */
+.cp-auth{ position:fixed; inset:0; z-index:10100; display:flex; align-items:center; justify-content:center; padding:16px; background:rgba(0,0,0,0); transition:background .25s; }
+.cp-auth.show{ background:rgba(0,0,0,.55); }
+.cp-auth-box{ width:100%; max-width:300px; background:rgba(34,34,32,.94); -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px); color:#fff; border-radius:22px; padding:22px 18px 14px; text-align:center;
+  font-family:'Noto Sans Myanmar',-apple-system,system-ui,sans-serif; transform:scale(.85); opacity:0; transition:transform .3s cubic-bezier(.3,1.4,.5,1), opacity .2s; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+.cp-auth.show .cp-auth-box{ transform:none; opacity:1; }
+.cp-auth-ic{ width:70px; height:70px; margin:0 auto 10px; color:#fff; display:grid; place-items:center; }
+.cp-auth-ic svg{ width:70px; height:70px; }
+.cp-auth-key{ font-size:44px; }
+.cp-auth.ok .cp-auth-ic{ animation:cpPop .4s cubic-bezier(.3,1.6,.5,1); }
+@keyframes cpPop{ from{ transform:scale(.6); } }
+.cp-auth-t{ font-weight:700; font-size:15px; }
+.cp-auth.ok .cp-auth-t{ color:#34c759; }
+.cp-auth-amt{ font-size:12.5px; color:#c9c6bd; margin-top:4px; }
+.cp-auth-amt b{ font-family:'Space Mono',monospace; color:#D6FF3F; }
+.cp-auth-msg{ min-height:18px; font-size:12px; color:#ff8a70; margin:8px 0 4px; line-height:1.5; }
+.cp-auth-msg.ok{ color:#c9c6bd; }
+.cp-auth-msg.shake{ animation:fxShake .4s ease; }
+.cp-auth-go{ width:100%; padding:12px; border:none; border-radius:12px; background:#D6FF3F; color:#141412; font:700 14px 'Noto Sans Myanmar',sans-serif; cursor:pointer; margin-top:6px; }
+.cp-auth-go:disabled{ opacity:.55; }
+.cp-auth-link{ display:block; width:100%; margin-top:8px; background:none; border:none; color:#9fd0ff; font:600 13px 'Noto Sans Myanmar',sans-serif; cursor:pointer; padding:6px; }
+.cp-auth-pin label{ display:block; font-size:12.5px; color:#c9c6bd; margin-bottom:6px; }
+.cp-auth-pin input{ width:150px; text-align:center; font:700 22px 'Space Mono',monospace; letter-spacing:.4em; padding:8px; border:2px solid #E9E4D8; border-radius:10px; background:#141412; color:#E9E4D8; }
+.cp-auth-cancel{ display:block; width:100%; margin-top:10px; padding:10px; background:none; border:none; border-top:1px solid rgba(255,255,255,.12); color:#fff; font:600 13.5px 'Noto Sans Myanmar',sans-serif; cursor:pointer; }
+@media (prefers-reduced-motion: reduce){ .pc-stage.cp-on, .pc-stage.cp-on .pc-inner, .cp-auth-box, .pc-sec.cp-flash{ animation:none !important; transition:none !important; } }
 </style>
 </head>
 <body>
@@ -5587,6 +5650,372 @@ const prepaidPayAnim = (function(){
     });
   }
   return { start, confirm };
+})();
+
+// SUWATI MEN FASHION — 🎫 Prepaid Card Plus
+//   🔄 Card ကို လက်နဲ့ ဆွဲလှည့် (360°) · တို့ရင် လှန်
+//   💰 ငွေဖြည့် / 📜 History / 🔐 လုံခြုံရေး ခလုတ်အသေး + နောက်ဆုံး အသုံးပြုမှု ၃ ခု
+//   🙂 Face ID / Touch ID ဖြင့် ဝယ်မည် (Passkey — Server "passkey-verify" က လက်မှတ်စစ်) · မရရင် Card PIN
+(function(){
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const toast = (m) => { try{ showSiteToast(m); }catch(e){} };
+
+  // ---------- base64url ----------
+  const bufToB64u = (b) => { const u = new Uint8Array(b); let s = ''; for(let i=0;i<u.length;i++) s += String.fromCharCode(u[i]); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+  const bufToB64 = (b) => { const u = new Uint8Array(b); let s = ''; for(let i=0;i<u.length;i++) s += String.fromCharCode(u[i]); return btoa(s); };
+  const b64uToBuf = (s) => { s = String(s).replace(/-/g,'+').replace(/_/g,'/'); while(s.length % 4) s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+
+  // ---------- CBOR (attestationObject ဖတ်ရန် — getPublicKey() မရတဲ့ Browser အတွက်) ----------
+  function cborDecode(bytes){
+    let p = 0; const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const len = (ai) => { if(ai < 24) return ai; if(ai === 24) return bytes[p++]; if(ai === 25){ const v = dv.getUint16(p); p += 2; return v; } if(ai === 26){ const v = dv.getUint32(p); p += 4; return v; } throw new Error('cbor len'); };
+    const item = () => {
+      const b = bytes[p++], mt = b >> 5, ai = b & 31;
+      if(mt === 0) return len(ai);
+      if(mt === 1) return -1 - len(ai);
+      if(mt === 2){ const n = len(ai); const v = bytes.slice(p, p + n); p += n; return v; }
+      if(mt === 3){ const n = len(ai); const v = new TextDecoder().decode(bytes.slice(p, p + n)); p += n; return v; }
+      if(mt === 4){ const n = len(ai); const a = []; for(let i=0;i<n;i++) a.push(item()); return a; }
+      if(mt === 5){ const n = len(ai); const m = new Map(); for(let i=0;i<n;i++){ const k = item(); m.set(k, item()); } return m; }
+      if(mt === 7){ if(ai === 20) return false; if(ai === 21) return true; return null; }
+      throw new Error('cbor type');
+    };
+    const v = item(); return { value:v, end:p };
+  }
+  function spkiFromAttestation(attObj){
+    const att = cborDecode(new Uint8Array(attObj)).value;
+    const ad = att.get('authData');
+    const credLen = (ad[53] << 8) | ad[54];
+    const cose = cborDecode(ad.slice(55 + credLen)).value;
+    if(cose.get(1) !== 2 || cose.get(3) !== -7) throw new Error('ES256 မဟုတ်ပါ');
+    const x = cose.get(-2), y = cose.get(-3);
+    const prefix = [0x30,0x59,0x30,0x13,0x06,0x07,0x2a,0x86,0x48,0xce,0x3d,0x02,0x01,0x06,0x08,0x2a,0x86,0x48,0xce,0x3d,0x03,0x01,0x07,0x03,0x42,0x00,0x04];
+    return new Uint8Array([...prefix, ...x, ...y]).buffer;
+  }
+
+  const bioSupported = () => !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.get);
+  async function platformReady(){
+    try{ return bioSupported() && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(); }catch(e){ return false; }
+  }
+  const deviceName = () => { const u = navigator.userAgent; return /iPhone/.test(u) ? 'iPhone' : /iPad/.test(u) ? 'iPad' : /Android/.test(u) ? 'Android' : /Macintosh/.test(u) ? 'Mac' : /Windows/.test(u) ? 'Windows PC' : 'Device'; };
+  const bioWord = () => /iPhone|iPad/.test(navigator.userAgent) ? 'Face ID' : /Macintosh/.test(navigator.userAgent) ? 'Touch ID' : 'Face ID / လက်ဗွေ';
+
+  // =====================================================================
+  // 🔄 Card — ဆွဲလှည့် 360° + တို့ရင် လှန်
+  // =====================================================================
+  let spin = null;
+  function attachSpin(){
+    const stage = document.querySelector('#prepaid-card-area .pc-stage');
+    const wrap = document.getElementById('pc-wrap');
+    const inner = wrap && wrap.querySelector('.pc-inner');
+    if(!stage || !inner || inner.dataset.spin) return;
+    inner.dataset.spin = '1';
+    inner.removeAttribute('onclick'); inner.removeAttribute('onkeydown');
+    inner.setAttribute('aria-label', 'Card — ဆွဲလှည့် (သို့) တို့ပြီး လှန်ရန်');
+    stage.classList.add('cp-on');
+    wrap.querySelectorAll('.pc-front .pc-flip-hint').forEach(h => h.textContent = '↺ 360°');
+    wrap.querySelectorAll('.pc-back .pc-flip-hint').forEach(h => h.remove());
+    // ဝင်လာ Animation ပြီးရင် pc-enter ဖြုတ် (iPhone မှာ 3D လှန်လို့ရအောင်)
+    setTimeout(() => wrap.classList.remove('pc-enter'), 1450);
+
+    let ang = 0, sx = null, sy = 0, startAng = 0, moved = false, vel = 0, lastX = 0, lastT = 0, downOnPin = false, pid = null;
+    const set = a => { inner.style.transform = `rotateY(${a}deg)`; const f = (((Math.round(a / 180)) % 2) + 2) % 2 === 1; wrap.classList.toggle('flipped', f); };
+    const snap = (t, ms) => { inner.classList.add('snap'); if(ms) inner.style.transition = `transform ${ms}ms cubic-bezier(.3,.9,.3,1)`; ang = t; set(ang);
+      clearTimeout(snap._t); snap._t = setTimeout(() => { inner.classList.remove('snap'); inner.style.transition = ''; }, (ms || 650) + 60); };
+    const flip = () => snap(Math.round(ang / 180) * 180 + 180);
+    spin = { flip };
+
+    stage.addEventListener('pointerdown', e => {
+      if(e.button > 0) return;
+      sx = e.clientX; sy = e.clientY; startAng = ang; moved = false; vel = 0; lastX = e.clientX; lastT = performance.now(); pid = e.pointerId;
+      downOnPin = !!e.target.closest('#pc-pin-display');
+      wrap.classList.remove('pc-enter'); inner.classList.remove('snap'); inner.style.transition = '';
+    });
+    stage.addEventListener('pointermove', e => {
+      if(sx == null || e.pointerId !== pid) return;
+      const dx = e.clientX - sx, dy = e.clientY - sy;
+      if(!moved){
+        if(Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)){ sx = null; return; }   // အပေါ်အောက် Scroll
+        if(Math.abs(dx) > 6){ moved = true; try{ stage.setPointerCapture(pid); }catch(_){} }
+        else return;
+      }
+      const now = performance.now(); vel = (e.clientX - lastX) / Math.max(1, now - lastT); lastX = e.clientX; lastT = now;
+      ang = startAng + dx * 0.9; set(ang);
+    });
+    const end = e => {
+      if(sx == null) return; sx = null;
+      if(!moved){ if(!downOnPin && !e.target.closest('button')) flip(); return; }
+      const fling = ang + Math.max(-360, Math.min(360, vel * 260));
+      snap(Math.round(fling / 180) * 180);
+    };
+    stage.addEventListener('pointerup', end);
+    stage.addEventListener('pointercancel', () => { if(sx == null) return; sx = null; if(moved) snap(Math.round(ang / 180) * 180); });
+    inner.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); flip(); } });
+
+    // ဝင်လာပြီးရင် တစ်ပတ် လည်ပြ
+    if(!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
+      setTimeout(() => { if(!inner.isConnected || ang !== 0 || sx != null) return; snap(360, 1600); }, 1500);
+    }
+  }
+  window.flipPrepaidCard = function(){ if(spin && document.querySelector('#pc-wrap .pc-inner[data-spin]')) spin.flip(); else document.getElementById('pc-wrap')?.classList.toggle('flipped'); };
+  try{ flipPrepaidCard = window.flipPrepaidCard; }catch(e){}
+
+  // =====================================================================
+  // ⬇️ ခလုတ်အသေး ၃ ခု + နောက်ဆုံး အသုံးပြုမှု
+  // =====================================================================
+  const TX_IC = { topup_bonus:'🎁', topup:'💰', gift_card_redeem:'🎁', refund:'↩️', purchase:'🛍️', pos_purchase:'🏪', cashback:'🎉', cashback_reversal:'↩️' };
+  const TX_LB = { topup_bonus:'Top-up Bonus', topup:'ငွေဖြည့်', gift_card_redeem:'Gift Card', refund:'ငွေပြန်အမ်း', purchase:'Website ဝယ်ယူမှု', pos_purchase:'ဆိုင်ထဲ ဝယ်ယူမှု', cashback:'Cashback', cashback_reversal:'Cashback ပြန်နုတ်' };
+  const fmtWhen = (d) => {
+    const t = new Date(d), now = new Date(); const hm = t.toTimeString().slice(0, 5);
+    const day = x => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+    const diff = Math.round((day(now) - day(t)) / 864e5);
+    if(diff === 0) return 'ယနေ့ ' + hm; if(diff === 1) return 'မနေ့က ' + hm;
+    return t.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  };
+  window.cpScrollSec = function(){ const s = document.getElementById('pc-sec'); if(!s) return; s.scrollIntoView({ behavior:'smooth', block:'start' }); s.classList.remove('cp-flash'); void s.offsetWidth; s.classList.add('cp-flash'); };
+
+  async function addActions(){
+    const area = document.getElementById('prepaid-card-area'); if(!area || area.querySelector('.pc-acts')) return;
+    const hint = area.querySelector('.pc-hint-in');
+    if(hint){ hint.className = 'hint pc-hint-in cp-spin-hint'; hint.removeAttribute('style'); hint.innerHTML = '👆 <b>ဆွဲလှည့်</b> — 360° · <b>တို့</b> — လှန် · PIN ကြည့်ရန် နောက်ကျော အကွက်ကို တို့ပါ'; }
+    const acts = document.createElement('div'); acts.className = 'pc-acts';
+    acts.innerHTML = `<button type="button" class="pc-act main" onclick="openWalletTopup()"><i>💰</i>ငွေဖြည့်</button><button type="button" class="pc-act" onclick="openWalletHistory()"><i>📜</i>History</button><button type="button" class="pc-act" onclick="cpScrollSec()"><i>🔐</i>လုံခြုံရေး</button>`;
+    const rec = document.createElement('div'); rec.className = 'pc-recent'; rec.id = 'pc-recent';
+    rec.innerHTML = `<div class="pcr-head">📜 နောက်ဆုံး အသုံးပြုမှု <button type="button" onclick="openWalletHistory()">အားလုံး →</button></div><div class="pcr-list"><p class="hint" style="margin:6px 0">Load လုပ်နေသည်...</p></div>`;
+    const sec = document.getElementById('pc-sec');
+    if(sec){ sec.before(acts); sec.before(rec); } else { area.append(acts, rec); }
+    try{
+      const { data, error } = await sb.from('wallet_transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending:false }).limit(3);
+      const list = rec.querySelector('.pcr-list');
+      if(error || !data || !data.length){ list.innerHTML = '<p class="hint" style="margin:6px 0">အသုံးပြုမှု မရှိသေးပါ — ငွေဖြည့်ပြီး စတင်လိုက်ပါ 💰</p>'; return; }
+      list.innerHTML = data.map(tx => { const a = Number(tx.amount) || 0; const plus = a >= 0;
+        return `<div class="pcr-tx"><span class="pcr-ic">${TX_IC[tx.type] || '💳'}</span><span class="pcr-mid"><b>${esc(tx.description || TX_LB[tx.type] || tx.type)}</b><small>${fmtWhen(tx.created_at)} · ${esc(TX_LB[tx.type] || tx.type)}</small></span><span class="pcr-am ${plus ? 'plus' : 'minus'}">${plus ? '+' : ''}${a.toLocaleString()}</span></div>`; }).join('');
+    }catch(e){ const l = rec.querySelector('.pcr-list'); if(l) l.innerHTML = ''; }
+  }
+
+  if(typeof openPrepaidCard === 'function'){
+    const _open = openPrepaidCard;
+    openPrepaidCard = async function(){
+      const r = await _open.apply(this, arguments);
+      try{ attachSpin(); }catch(e){ console.error(e); }
+      try{ await addActions(); }catch(e){ console.error(e); }
+      return r;
+    };
+  }
+
+  // =====================================================================
+  // 🙂 Card › လုံခြုံရေး — Face ID / Touch ID ဖွင့်/ပိတ်
+  // =====================================================================
+  let pendingCred = null;   // PIN မှားခဲ့ရင် Face ID ပြန်မတောင်းဘဲ ပြန်သုံး
+  const pinIn = (id) => `<input id="${id}" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••">`;
+
+  async function renderBio(){
+    const box = document.getElementById('pc-sec'); if(!box) return;
+    let el = document.getElementById('pc-bio');
+    if(!el){ el = document.createElement('div'); el.id = 'pc-bio'; el.className = 'pc-bio'; const head = box.querySelector('.pc-sec-head'); head ? head.after(el) : box.prepend(el); }
+    const word = bioWord();
+    el.innerHTML = `<div class="pc-sec-row"><div class="pc-sec-txt"><b>🙂 ${word} ဖြင့် ဝယ်မည်</b><span>Load လုပ်နေသည်...</span></div><button type="button" class="pc-switch" disabled><span></span></button></div>`;
+    const [{ data: st }, ready] = await Promise.all([ sb.rpc('passkey_status'), platformReady() ]);
+    const on = !!(st && st.enabled); const creds = (st && st.credentials) || [];
+    window.__cpBio = { enabled:on, creds };
+    const devs = creds.length ? `<div class="pc-bio-devs">${creds.map(c => `<span>📱 ${esc(c.label || ('Device · ' + new Date(c.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric' })))}</span>`).join('')}</div>` : '';
+    el.innerHTML = `
+      <div class="pc-sec-row">
+        <div class="pc-sec-txt"><b>🙂 ${word} ဖြင့် ဝယ်မည်</b><span>${on ? 'ဖွင့်ထားသည် — Website မှာ Prepaid နဲ့ ဝယ်တိုင်း ' + word + ' (သို့) Card PIN မှန်မှ ငွေဖြတ်ပါမည်' : 'ဖွင့်ထားရင် ဖုန်းပိုင်ရှင် ကိုယ်တိုင်မှသာ Prepaid နဲ့ ဝယ်လို့ရပါမည်'}${!ready && !on ? '<br>⚠️ ဒီ Browser မှာ ' + word + ' မရပါ — iPhone Safari / Home Screen App ကနေ ဖွင့်ပါ' : ''}</span>${devs}</div>
+        <button type="button" class="pc-switch${on ? ' on' : ''}" role="switch" aria-checked="${on}" aria-label="${word} ဖြင့် ဝယ်မည်" ${!ready && !on ? 'disabled' : ''} onclick="cpBioToggle()"><span></span></button>
+      </div>
+      <div class="pc-bio-form" id="pc-bio-form" hidden></div>
+      ${on && ready ? `<button type="button" class="pc-bio-add" onclick="cpBioForm('add')">➕ ဒီဖုန်းကိုပါ ချိတ်မည်</button>` : ''}`;
+  }
+
+  window.cpBioToggle = function(){ cpBioForm(window.__cpBio && window.__cpBio.enabled ? 'off' : 'on'); };
+  window.cpBioForm = function(mode){
+    const f = document.getElementById('pc-bio-form'); if(!f) return;
+    if(!f.hidden && f.dataset.mode === mode){ f.hidden = true; return; }
+    f.dataset.mode = mode; f.hidden = false; const word = bioWord();
+    f.innerHTML = `
+      <div class="pc-sec-form">
+        <label>Card PIN ၄ လုံး <small>(Card နောက်ကျောမှာ ကြည့်လို့ရ)</small>${pinIn('pc-bio-pin')}</label>
+        <div class="pc-sec-err" id="pc-bio-err" role="alert"></div>
+        <button type="button" class="submit-order-btn" id="pc-bio-go" onclick="cpBioGo('${mode}')">${mode === 'off' ? '🔓 ' + word + ' ပိတ်မည်' : '🙂 ' + word + ' ချိတ်မည်'}</button>
+      </div>`;
+    setTimeout(() => document.getElementById('pc-bio-pin')?.focus(), 50);
+  };
+
+  window.cpBioGo = async function(mode){
+    const pinEl = document.getElementById('pc-bio-pin'), err = document.getElementById('pc-bio-err'), btn = document.getElementById('pc-bio-go');
+    const pin = (pinEl?.value || '').trim();
+    const bad = (m) => { err.textContent = m; err.classList.remove('shake'); void err.offsetWidth; err.classList.add('shake'); };
+    if(!/^\d{4}$/.test(pin)) return bad('Card PIN ဂဏန်း ၄ လုံး ရိုက်ပါ');
+    btn.disabled = true;
+    try{
+      if(mode === 'off'){
+        const { data, error } = await sb.rpc('passkey_disable', { p_pin: pin });
+        if(error || !data?.ok) return bad(data?.message || error?.message || 'မအောင်မြင်ပါ');
+        pendingCred = null; toast('🔓 ' + bioWord() + ' ပိတ်လိုက်ပါပြီ'); return renderBio();
+      }
+      // ① ဖုန်းမှာ Passkey ဖန်တီး (ခလုတ်နှိပ်တာနဲ့ ချက်ချင်း — Safari လိုအပ်ချက်)
+      if(!pendingCred){
+        const exclude = ((window.__cpBio && window.__cpBio.creds) || []).map(c => ({ type:'public-key', id:b64uToBuf(c.id) }));
+        const name = currentUser.email || 'customer';
+        const cred = await navigator.credentials.create({ publicKey:{
+          challenge: crypto.getRandomValues(new Uint8Array(32)),
+          rp: { name:'SUWATI MEN FASHION', id: location.hostname },
+          user: { id: new TextEncoder().encode(currentUser.id), name, displayName: currentUser.user_metadata?.full_name || name },
+          pubKeyCredParams: [{ type:'public-key', alg:-7 }, { type:'public-key', alg:-257 }],
+          authenticatorSelection: { authenticatorAttachment:'platform', userVerification:'required', residentKey:'preferred' },
+          excludeCredentials: exclude, attestation:'none', timeout:60000 } });
+        const r = cred.response;
+        let spki = null, alg = -7;
+        try{ spki = r.getPublicKey && r.getPublicKey(); alg = (r.getPublicKeyAlgorithm && r.getPublicKeyAlgorithm()) || -7; }catch(e){}
+        if(!spki){ spki = spkiFromAttestation(r.attestationObject); alg = -7; }
+        pendingCred = { id: bufToB64u(cred.rawId), pk: bufToB64(spki), alg };
+      }
+      // ② Server မှာ မှတ် (Card PIN မှန်မှ)
+      const label = deviceName() + ' · ' + new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+      const { data, error } = await sb.rpc('passkey_register', { p_pin: pin, p_credential_id: pendingCred.id, p_public_key: pendingCred.pk, p_alg: pendingCred.alg, p_label: label });
+      if(error || !data?.ok) return bad((data?.message || error?.message || 'မအောင်မြင်ပါ') + ' — PIN ပြန်ရိုက်ပြီး ထပ်နှိပ်ပါ');
+      pendingCred = null; toast('✅ ' + bioWord() + ' ဖွင့်ပြီးပါပြီ — Prepaid နဲ့ ဝယ်တိုင်း စစ်ပါမည်'); return renderBio();
+    }catch(e){
+      const n = e && e.name;
+      if(n === 'InvalidStateError') bad('ဒီဖုန်းကို ချိတ်ပြီးသားပါ');
+      else if(n === 'NotAllowedError' || n === 'AbortError') bad(bioWord() + ' ကို ပယ်ဖျက်လိုက်ပါသည် (သို့) အချိန်ကုန် — ထပ်နှိပ်ပါ');
+      else if(n === 'SecurityError') bad('ဒီ Website လိပ်စာမှာ ' + bioWord() + ' သုံးလို့ မရပါ (https လိုအပ်)');
+      else bad('မအောင်မြင်ပါ — ' + (e?.message || e));
+    }finally{ if(btn.isConnected) btn.disabled = false; }
+  };
+
+  if(typeof renderCardSecurity === 'function'){
+    const _rcs = renderCardSecurity;
+    renderCardSecurity = function(){ const r = _rcs.apply(this, arguments); renderBio().catch(e => console.error(e)); return r; };
+  }
+
+  // =====================================================================
+  // 🛒 Prepaid နဲ့ ဝယ်ချိန် — Server က AUTH_REQUIRED ပြန်ရင် Face ID / PIN တောင်း
+  // =====================================================================
+  window.__cpAuthMsg = null;
+  const FACE = `<svg viewBox="0 0 70 70" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 20V12a6 6 0 0 1 6-6h8M50 6h8a6 6 0 0 1 6 6v8M64 50v8a6 6 0 0 1-6 6h-8M20 64h-8a6 6 0 0 1-6-6v-8"/><path d="M24 26v5M46 26v5M35 28v12h-3M26 47c5 4 13 4 18 0"/></svg>`;
+  const OK = `<svg viewBox="0 0 70 70" fill="none" stroke="#34c759" stroke-width="4" stroke-linecap="round"><path d="M35 4a31 31 0 1 1 0 62a31 31 0 1 1 0-62M22 36l9 9 17-19"/></svg>`;
+
+  function authSheet(amount){
+    return new Promise(resolve => {
+      const word = bioWord();
+      const el = document.createElement('div'); el.className = 'cp-auth'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+      el.innerHTML = `
+        <div class="cp-auth-box">
+          <div class="cp-auth-ic">${FACE}</div>
+          <div class="cp-auth-t">${word} ဖြင့် အတည်ပြုပါ</div>
+          <div class="cp-auth-amt">🎫 Prepaid Card — <b>${Number(amount || 0).toLocaleString()}</b> ကျပ်</div>
+          <div class="cp-auth-msg" role="alert"></div>
+          <div class="cp-auth-face"><button type="button" class="cp-auth-go">🙂 ${word} ဖြင့် အတည်ပြု</button>
+            <button type="button" class="cp-auth-link" data-a="pin">🔑 Card PIN သုံးမည်</button></div>
+          <div class="cp-auth-pin" hidden>
+            <label>Card PIN ၄ လုံး</label>
+            <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••">
+            <button type="button" class="cp-auth-go" data-a="pinok">အတည်ပြုမည်</button>
+          </div>
+          <button type="button" class="cp-auth-cancel">ပယ်ဖျက်မည်</button>
+        </div>`;
+      document.body.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('show'));
+      const $ = s => el.querySelector(s);
+      const msg = (m, ok) => { const x = $('.cp-auth-msg'); x.textContent = m || ''; x.classList.toggle('ok', !!ok); if(m && !ok){ x.classList.remove('shake'); void x.offsetWidth; x.classList.add('shake'); } };
+      let done = false;
+      const close = (v, why) => { if(done) return; done = true; if(!v) window.__cpAuthMsg = { m: why || 'ငွေမဖြတ်ရသေးပါ — ' + word + ' / PIN အတည်ပြုချက် မရှိလို့ ဝယ်ယူမှု ပယ်ဖျက်ပါသည်', t: Date.now() };
+        el.classList.remove('show'); setTimeout(() => el.remove(), 260); resolve(v); };
+      const success = (label) => { $('.cp-auth-ic').innerHTML = OK; $('.cp-auth-t').textContent = label; msg('', true); el.classList.add('ok'); try{ navigator.vibrate && navigator.vibrate(25); }catch(e){} setTimeout(() => close(true), 650); };
+      const showPin = () => { $('.cp-auth-face').hidden = true; $('.cp-auth-pin').hidden = false; $('.cp-auth-t').textContent = 'Card PIN ဖြင့် အတည်ပြုပါ'; $('.cp-auth-ic').innerHTML = '<span class="cp-auth-key">🔑</span>'; setTimeout(() => $('.cp-auth-pin input').focus(), 60); };
+
+      // Challenge + ချိတ်ထားတဲ့ Device စာရင်း ကြိုယူ (ခလုတ်နှိပ်ချိန် ချက်ချင်း Face ID ခေါ်နိုင်ရန်)
+      let ch = null, creds = (window.__cpBio && window.__cpBio.creds) || null;
+      const prep = Promise.all([
+        sb.rpc('passkey_challenge').then(r => { if(r.error) throw r.error; ch = r.data; }),
+        creds && creds.length ? Promise.resolve() : sb.rpc('passkey_status').then(r => { creds = (r.data && r.data.credentials) || []; }),
+      ]).catch(e => { console.warn('passkey prep', e); });
+      platformReady().then(ok => { if(!ok && !done) showPin(); });
+
+      $('.cp-auth-face .cp-auth-go').onclick = async (ev) => {
+        const b = ev.currentTarget; b.disabled = true; msg('');
+        try{
+          if(!ch) await prep;
+          if(!ch) throw new Error('Challenge ယူ၍ မရပါ — Internet စစ်ပါ');
+          if(!creds || !creds.length){ msg('ဒီ Account မှာ ' + word + ' ချိတ်ထားတာ မရှိတော့ပါ — Card PIN သုံးပါ'); showPin(); return; }
+          const a = await navigator.credentials.get({ publicKey:{ challenge: b64uToBuf(ch), rpId: location.hostname, userVerification:'required', timeout:60000,
+            allowCredentials: creds.map(c => ({ type:'public-key', id:b64uToBuf(c.id), transports:['internal','hybrid'] })) } });
+          ch = null;
+          msg('Server မှာ စစ်နေသည်...', true);
+          const { data: sess } = await sb.auth.getSession();
+          const res = await fetch(SUPABASE_URL + '/functions/v1/passkey-verify', { method:'POST',
+            headers:{ 'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + (sess?.session?.access_token || '') },
+            body: JSON.stringify({ credentialId: bufToB64u(a.rawId), clientDataJSON: bufToB64u(a.response.clientDataJSON), authenticatorData: bufToB64u(a.response.authenticatorData), signature: bufToB64u(a.response.signature) }) });
+          let j = {}; try{ j = await res.json(); }catch(_){}
+          if(!res.ok || !j.ok) throw new Error(j.error || ('Server စစ်ဆေးမှု မအောင်မြင်ပါ (' + res.status + ')'));
+          success(word + ' အတည်ပြုပြီး');
+        }catch(e){
+          const n = e && e.name;
+          msg(n === 'NotAllowedError' || n === 'AbortError' ? word + ' မအောင်မြင်ပါ — Card PIN ဖြင့် ဆက်လုပ်နိုင်ပါသည်' : (e?.message || String(e)) + ' — Card PIN ဖြင့် ဆက်လုပ်နိုင်ပါသည်');
+          showPin();
+          sb.rpc('passkey_challenge').then(r => { ch = r.data || null; }).catch(() => {});
+        }finally{ b.disabled = false; }
+      };
+      $('[data-a="pin"]').onclick = () => showPin();
+      const pinGo = async () => {
+        const inp = $('.cp-auth-pin input'), b = $('[data-a="pinok"]'); const pin = inp.value.trim();
+        if(!/^\d{4}$/.test(pin)){ msg('Card PIN ဂဏန်း ၄ လုံး ရိုက်ပါ'); return; }
+        b.disabled = true;
+        try{
+          const { data, error } = await sb.rpc('wallet_unlock_with_pin', { p_pin: pin });
+          if(error || !data?.ok){ msg(data?.message || error?.message || 'PIN မမှန်ပါ'); inp.value = ''; inp.focus(); return; }
+          success('PIN မှန်ပါသည်');
+        }finally{ b.disabled = false; }
+      };
+      $('[data-a="pinok"]').onclick = pinGo;
+      $('.cp-auth-pin input').addEventListener('keydown', e => { if(e.key === 'Enter') pinGo(); });
+      $('.cp-auth-pin input').addEventListener('input', e => { if(e.target.value.length === 4) pinGo(); });
+      $('.cp-auth-cancel').onclick = () => close(false);
+    });
+  }
+  window.cpAuthSheet = authSheet;
+
+  function patchRpc(){
+    if(typeof sb === 'undefined' || !sb || sb.__cpPatched) return;
+    sb.__cpPatched = true;
+    const _rpc = sb.rpc.bind(sb);
+    sb.rpc = function(fn, args, opts){
+      if(fn !== 'debit_wallet') return _rpc(fn, args, opts);
+      return (async () => {
+        window.__cpAuthMsg = null;
+        let r = await _rpc(fn, args, opts);
+        if(r && r.error && /AUTH_REQUIRED/.test(r.error.message || '')){
+          const ok = await authSheet(args && args.p_amount);
+          if(!ok) return { data:false, error:{ message:'AUTH_CANCELLED' } };
+          r = await _rpc(fn, args, opts);
+        }
+        return r;
+      })();
+    };
+  }
+  patchRpc();
+
+  // ငွေဖြတ်တာ ပယ်ဖျက်ရင် "ငွေ မလုံလောက်ပါ" မပြဘဲ အမှန်တကယ် အကြောင်းရင်းကို ပြ
+  const authMsg = () => { const a = window.__cpAuthMsg; return a && Date.now() - a.t < 8000 ? a.m : null; };
+  if(typeof showSiteToast === 'function'){
+    const _t = showSiteToast;
+    showSiteToast = function(m, d){ const a = authMsg(); if(a && /မလုံလောက်/.test(String(m))) m = a; return _t.call(this, m, d); };
+  }
+  if(typeof prepaidPayAnim === 'object' && prepaidPayAnim){
+    const wrapCtl = (c) => { if(!c || !c.fail) return c; const f = c.fail; c.fail = (m) => { const a = authMsg(); return f(a ? '🔐 အတည်ပြုချက် မရှိ — ငွေမဖြတ်ပါ' : m); }; return c; };
+    ['start', 'confirm'].forEach(k => { const o = prepaidPayAnim[k]; if(typeof o !== 'function') return;
+      prepaidPayAnim[k] = function(){ const r = o.apply(this, arguments); return (r && typeof r.then === 'function') ? r.then(wrapCtl) : wrapCtl(r); }; });
+  }
+  if(typeof friendlyOrderError === 'function'){
+    const _f = friendlyOrderError;
+    friendlyOrderError = function(m){ m = String(m || ''); if(m.includes('AUTH_REQUIRED') || m.includes('AUTH_CANCELLED')) return '🔐 ' + bioWord() + ' (သို့) Card PIN အတည်ပြုမှ Prepaid နဲ့ ဝယ်လို့ရပါမည်'; return _f(m); };
+  }
+  // ခွဲချေ (Split) မှာ ပြတဲ့ Error စာ ပြင်
+  new MutationObserver(() => { const a = authMsg(); if(!a) return;
+    document.querySelectorAll('[id^="co-error"], .form-error').forEach(n => { if(/လက်ကျန် မလုံလောက်/.test(n.textContent)) n.textContent = a; });
+  }).observe(document.documentElement, { childList:true, subtree:true, characterData:true });
 })();
 
 // SUWATI MEN FASHION — Gift Card
