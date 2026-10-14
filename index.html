@@ -1780,6 +1780,16 @@ html[data-theme="dark"] .pcr-am.plus{ color:var(--acid); }
 .cp-auth-pin input{ width:150px; text-align:center; font:700 22px 'Space Mono',monospace; letter-spacing:.4em; padding:8px; border:2px solid #E9E4D8; border-radius:10px; background:#141412; color:#E9E4D8; }
 .cp-auth-cancel{ display:block; width:100%; margin-top:10px; padding:10px; background:none; border:none; border-top:1px solid rgba(255,255,255,.12); color:#fff; font:600 13.5px 'Noto Sans Myanmar',sans-serif; cursor:pointer; }
 @media (prefers-reduced-motion: reduce){ .pc-stage.cp-on, .pc-stage.cp-on .pc-inner, .cp-auth-box, .pc-sec.cp-flash{ animation:none !important; transition:none !important; } }
+
+/* ===== 📳 Notification စမ်းပို့ ===== */
+.pt-btn{ display:block; width:100%; margin-top:10px; padding:10px 12px; border:2px dashed var(--ink); background:transparent; color:var(--ink); font:700 13px 'Noto Sans Myanmar',sans-serif; cursor:pointer; }
+.pt-btn:disabled{ opacity:.6; }
+.pt-rep{ margin-top:8px; display:grid; gap:6px; font-size:12.5px; line-height:1.6; }
+.pt-rep > div{ padding:7px 10px; border:1.5px solid var(--ink); background:var(--paper); }
+.pt-rep .pt-bad{ border-color:var(--rust); color:var(--rust); }
+.pt-rep .pt-ok{ border-color:#2f7d1e; color:#2f7d1e; }
+html[data-theme="dark"] .pt-rep .pt-ok{ border-color:var(--acid); color:var(--acid); }
+.pt-rep .pt-tip{ border-style:dashed; color:var(--text2, var(--ink)); }
 </style>
 </head>
 <body>
@@ -7955,6 +7965,83 @@ function handlePushOpen(url){
 }
 window.addEventListener('load', () => handlePushOpen());
 try{ navigator.serviceWorker?.addEventListener('message', e => { if(e.data?.type === 'suwati-push-open') handlePushOpen(e.data.url); }); }catch(e){}
+
+// SUWATI MEN FASHION — 🔔 Notification စစ်ဆေးရေး
+//   📳 "Server ကနေ စမ်းပို့" — send-push ကို တကယ်ခေါ်ပြီး ဘယ်အဆင့်မှာ ပျက်နေလဲ ပြ
+//   🔄 App ဖွင့်တိုင်း ဒီဖုန်းရဲ့ Subscription ကို Database ထဲ ပြန်သိမ်း (ပျောက်သွားရင် ပြန်ရ)
+(function(){
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  async function callTest(){
+    let sub = null;
+    try{ const reg = await navigator.serviceWorker.getRegistration(); sub = reg && await reg.pushManager.getSubscription(); }catch(e){}
+    const { data } = await sb.auth.getSession();
+    let res;
+    try{
+      res = await fetch(SUPABASE_URL + '/functions/v1/send-push', { method:'POST',
+        headers:{ 'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + (data?.session?.access_token || '') },
+        body: JSON.stringify({ source:'test', vapid:VAPID_PUBLIC_KEY, endpoint: sub ? sub.endpoint : null, url:'/' }) });
+    }catch(e){ return { net:true }; }
+    let j = {}; try{ j = await res.json(); }catch(e){}
+    return { status: res.status, j, hasSub: !!sub };
+  }
+
+  window.pushTestReport = function(r){
+    const L = [];
+    if(r.net) L.push(['bad', 'send-push ကို ခေါ်မရပါ — Supabase › Edge Functions မှာ "send-push" Deploy လုပ်ထားလား၊ နာမည် အတိအကျ ဟုတ်လား စစ်ပါ']);
+    else if(r.status === 404) L.push(['bad', 'send-push Function မရှိသေးပါ — Deploy လုပ်ပါ (နာမည် send-push အတိအကျ)']);
+    else if(r.status === 401) L.push(['bad', 'Login သက်တမ်းကုန်နေပါသည် — Logout › Login ပြန်ဝင်ပြီး ထပ်စမ်းပါ']);
+    else if(!r.j || r.j.ok === false) L.push(['bad', (r.j && r.j.error) ? r.j.error : ('Server Error (' + r.status + ')')]);
+    else if(!Array.isArray(r.j.results)) L.push(['bad', 'send-push က Version အဟောင်း ဖြစ်နေပါသည် — send-push.ts အသစ်ကို Deploy ပါ']);
+    else{
+      (r.j.problems || []).forEach(p => L.push(['bad', p]));
+      if(!r.hasSub) L.push(['bad', 'ဒီဖုန်းမှာ Notification Subscription မရှိပါ — Switch ပိတ်ပြီး ပြန်ဖွင့်ပါ']);
+      if(!r.j.results.length) L.push(['bad', 'ဒီ Account အတွက် ဖုန်း တစ်လုံးမှ မှတ်ထားတာ မရှိပါ — Switch ပိတ်ပြီး ပြန်ဖွင့်ပါ']);
+      r.j.results.forEach(x => L.push([x.ok ? 'ok' : 'bad', (x.current ? '📱 ဒီဖုန်း' : '📱 ' + x.device) + ' — ' + (x.ok ? 'Server ကနေ ပို့ပြီး ✅' : x.why)]));
+      const okHere = r.j.results.some(x => x.ok && x.current);
+      if(okHere) L.push(['tip', '၅–၁၀ စက္ကန့်အတွင်း Notification မပေါ်ရင် — ဖုန်း Settings › Notifications › SUWATI › Allow ဖွင့်ထားလား၊ Focus / Do Not Disturb ပိတ်ထားလား စစ်ပါ']);
+    }
+    return '<div class="pt-rep">' + L.map(([k, t]) => `<div class="pt-${k}">${k === 'ok' ? '✅' : k === 'tip' ? '💡' : '❌'} ${esc(t)}</div>`).join('') + '</div>';
+  };
+
+  window.runPushTest = async function(btn){
+    const out = document.getElementById('pt-out'); if(!out) return;
+    btn.disabled = true; const t = btn.textContent; btn.textContent = '⏳ စစ်နေသည်...';
+    try{ out.innerHTML = pushTestReport(await callTest()); }
+    catch(e){ out.innerHTML = pushTestReport({ j:{ ok:false, error:String(e?.message || e) } }); }
+    btn.disabled = false; btn.textContent = t;
+  };
+
+  // Profile › 🔔 Notification ထဲ "စမ်းပို့" ခလုတ်
+  if(typeof renderPushSection === 'function'){
+    const _rps = renderPushSection;
+    renderPushSection = async function(){
+      const r = await _rps.apply(this, arguments);
+      try{
+        const sec = document.getElementById('notify-section');
+        if(sec && !sec.querySelector('.pt-btn') && await pushState() === 'on'){
+          sec.insertAdjacentHTML('beforeend', '<button type="button" class="pt-btn" onclick="runPushTest(this)">📳 Server ကနေ စမ်းပို့ကြည့်မည်</button><div id="pt-out"></div>');
+        }
+      }catch(e){}
+      return r;
+    };
+  }
+
+  // App ဖွင့်တိုင်း Subscription ကို Database ထဲ ပြန်သိမ်း
+  let synced = null;
+  async function resync(){
+    try{
+      if(!currentUser || synced === currentUser.id || !pushSupported() || Notification.permission !== 'granted') return;
+      synced = currentUser.id;
+      const reg = await navigator.serviceWorker.getRegistration(); const sub = reg && await reg.pushManager.getSubscription();
+      if(sub) await savePushSub(sub);
+    }catch(e){}
+  }
+  if(typeof updateAuthUI === 'function'){
+    const _u = updateAuthUI;
+    updateAuthUI = function(){ const r = _u.apply(this, arguments); setTimeout(resync, 1500); return r; };
+  }
+})();
 
 // =====================================================================
 // ★ HEADER — ☰ ဘေး Menu (ဖုန်း) + Logo + 🛒 + 👤 Account Menu

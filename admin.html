@@ -951,6 +951,13 @@ body.no-refund .refund-btn{ display:none !important; }
 .ll-row em{ font-style:normal; color:var(--acid-text); font-size:11px; }
 .ll-row i{ font-style:normal; color:var(--warn-text); font-size:11px; font-weight:700; }
 .ll-row.new{ background:color-mix(in srgb, var(--warn-text) 8%, transparent); }
+
+/* ===== 📳 Notification စမ်းပို့ ရလဒ် ===== */
+.pt-rep{ margin-top:10px; display:grid; gap:6px; font-size:12.5px; line-height:1.6; }
+.pt-rep > div{ padding:7px 10px; border:1.5px solid currentColor; }
+.pt-rep .pt-bad{ color:#C13B1F; }
+.pt-rep .pt-ok{ color:#2f7d1e; }
+.pt-rep .pt-tip{ border-style:dashed; opacity:.85; }
 </style>
 </head>
 <body>
@@ -8710,7 +8717,7 @@ async function renderAdminPushCard(){
     'ios-install': '📲 iPhone မှာ — Safari › Share › "Add to Home Screen" လုပ်ပြီး Home Screen က Admin App ကနေ ဖွင့်မှ ရပါမည် (iOS 16.4+)',
     'unsupported': '⚠️ ဒီ Browser က Notification မရပါ',
   }[st];
-  body.innerHTML = `<div class="hint">${msg}</div>` + (st === 'on' ? '<button type="button" class="secondary" id="apush-off" style="width:100%; margin-top:8px;">🔕 ပိတ်မည်</button><button type="button" class="secondary" id="apush-test" style="width:100%; margin-top:8px;">📳 စမ်းပို့ကြည့်မည်</button>'
+  body.innerHTML = `<div class="hint">${msg}</div>` + (st === 'on' ? '<button type="button" class="secondary" id="apush-off" style="width:100%; margin-top:8px;">🔕 ပိတ်မည်</button><button type="button" class="secondary" id="apush-test" style="width:100%; margin-top:8px;">📳 Server ကနေ စမ်းပို့ကြည့်မည်</button>'
     : st === 'off' ? '<button type="button" class="acid" id="apush-on" style="width:100%; margin-top:8px;">🔔 ဒီဖုန်းမှာ ဖွင့်မည်</button>' : '');
   document.getElementById('apush-on')?.addEventListener('click', enableAdminPush);
   document.getElementById('apush-off')?.addEventListener('click', async () => {
@@ -8718,10 +8725,47 @@ async function renderAdminPushCard(){
       if(sub){ await sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint); await sub.unsubscribe(); } }catch(e){}
     showToast('🔕 ပိတ်လိုက်ပါပြီ'); renderAdminPushCard();
   });
-  document.getElementById('apush-test')?.addEventListener('click', async () => {
-    try{ const reg = await navigator.serviceWorker.getRegistration(); await reg.showNotification('📉 Stock နည်းနေပြီ (စမ်းသပ်)', { body: '"BLACK ICON TEE" — 2 ခုပဲ ကျန်တော့သည်', icon: '/admin-icon-192.png', data: { url: '/admin' } }); }
-    catch(e){ showToast('⚠️ ' + (e.message || e)); }
-  });
+  document.getElementById('apush-test')?.addEventListener('click', (e) => adminPushServerTest(e.currentTarget));
+  if(st === 'on') adminPushResync();
+}
+// 🔄 Subscription ကို Database ထဲ ပြန်သိမ်း (ပျောက်သွားရင် Notification မရောက်တော့လို့)
+let __apSynced = false;
+async function adminPushResync(){
+  if(__apSynced || !currentAdminUserId) return; __apSynced = true;
+  try{ const reg = await navigator.serviceWorker.getRegistration(); const sub = reg && await reg.pushManager.getSubscription(); if(!sub) return;
+    const j = sub.toJSON();
+    await sb.from('push_subscriptions').upsert({ user_id: currentAdminUserId, endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth,
+      user_agent: ('ADMIN · ' + navigator.userAgent).slice(0, 200), last_used_at: new Date().toISOString() }, { onConflict: 'endpoint' });
+  }catch(e){}
+}
+// 📳 Server ကနေ တကယ် စမ်းပို့ — ဘယ်အဆင့်မှာ ပျက်နေလဲ ပြ
+async function adminPushServerTest(btn){
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let out = document.getElementById('apush-out');
+  if(!out){ out = document.createElement('div'); out.id = 'apush-out'; out.className = 'pt-rep'; btn.insertAdjacentElement('afterend', out); }
+  btn.disabled = true; const t0 = btn.textContent; btn.textContent = '⏳ စစ်နေသည်...';
+  const L = [];
+  try{
+    let sub = null; try{ const reg = await navigator.serviceWorker.getRegistration(); sub = reg && await reg.pushManager.getSubscription(); }catch(e){}
+    const { data } = await sb.auth.getSession();
+    let res = null;
+    try{ res = await fetch(`${SUPABASE_URL}/functions/v1/send-push`, { method:'POST', headers:{ 'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + (data?.session?.access_token || '') },
+      body: JSON.stringify({ source:'test', vapid:ADMIN_VAPID_KEY, endpoint: sub ? sub.endpoint : null, url:'/admin' }) }); }catch(e){}
+    let j = {}; try{ j = res ? await res.json() : {}; }catch(e){}
+    if(!res) L.push(['bad', 'send-push ကို ခေါ်မရပါ — Supabase › Edge Functions မှာ "send-push" Deploy လုပ်ထားလား စစ်ပါ']);
+    else if(res.status === 404) L.push(['bad', 'send-push Function မရှိသေးပါ — Deploy လုပ်ပါ (နာမည် send-push အတိအကျ)']);
+    else if(res.status === 401) L.push(['bad', 'Login သက်တမ်းကုန် — Logout › Login ပြန်ဝင်ပါ']);
+    else if(j.ok === false) L.push(['bad', j.error || ('Server Error (' + res.status + ')')]);
+    else if(!Array.isArray(j.results)) L.push(['bad', 'send-push က Version အဟောင်း — send-push.ts အသစ်ကို Deploy ပါ']);
+    else{
+      (j.problems || []).forEach(p => L.push(['bad', p]));
+      if(!j.results.length) L.push(['bad', 'ဒီ Account အတွက် ဖုန်း မှတ်ထားတာ မရှိပါ — 🔕 ပိတ်ပြီး 🔔 ပြန်ဖွင့်ပါ']);
+      j.results.forEach(x => L.push([x.ok ? 'ok' : 'bad', (x.current ? '📱 ဒီဖုန်း' : '📱 ' + x.device) + ' — ' + (x.ok ? 'Server ကနေ ပို့ပြီး ✅' : x.why)]));
+      if(j.results.some(x => x.ok && x.current)) L.push(['tip', '၅–၁၀ စက္ကန့်အတွင်း မပေါ်ရင် — ဖုန်း Settings › Notifications › SUWATI Admin › Allow + Focus / Do Not Disturb ပိတ်ထားလား စစ်ပါ']);
+    }
+  }catch(e){ L.push(['bad', String(e?.message || e)]); }
+  out.innerHTML = L.map(([k, t]) => `<div class="pt-${k}">${k === 'ok' ? '✅' : k === 'tip' ? '💡' : '❌'} ${esc(t)}</div>`).join('');
+  btn.disabled = false; btn.textContent = t0;
 }
 async function enableAdminPush(){
   try{
