@@ -39,8 +39,8 @@ self.addEventListener('push', (e) => {
   const title = d.title || 'SUWATI MEN FASHION';
   e.waitUntil(self.registration.showNotification(title, {
     body: d.body || '',
-    icon: '/app-icon-192.png',
-    badge: '/app-icon-192.png',
+    icon: /^\/admin/.test(d.url || '') ? '/admin-icon-192.png' : '/app-icon-192.png',
+    badge: /^\/admin/.test(d.url || '') ? '/admin-icon-192.png' : '/app-icon-192.png',
     tag: d.tag || undefined,
     renotify: !!d.tag,
     data: { url: d.url || '/' }

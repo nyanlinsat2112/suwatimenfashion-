@@ -813,6 +813,144 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .bs-row i{ font-style:normal; color:var(--acid-text); font:11px 'Space Mono',monospace; text-align:right; }
 .bs-row button{ min-height:36px; padding:4px 12px; margin:0 !important; }
 .bs-stop-all{ width:100%; margin-top:12px !important; min-height:46px; background:none !important; border:2px solid var(--rust) !important; color:var(--rust) !important; }
+
+/* ===== 🛍️ SHOP PLUS / 🔐 SECURITY PLUS ===== */
+.panel .rva-tabs{ display:grid !important; grid-template-columns:repeat(3, minmax(0,1fr)) !important; gap:6px !important; margin:10px 0; }
+.rva-tabs button{ width:100%; margin:0 !important; min-height:42px; font-size:12px; padding:4px; }
+.rva-tabs button.on{ background:var(--acid) !important; color:#141412 !important; border-color:var(--acid) !important; }
+.rva-item{ border:2px solid var(--bd); padding:12px; margin-top:10px; background:var(--s2); }
+.rva-top{ display:flex; justify-content:space-between; gap:8px; align-items:center; }
+.rva-stars{ color:#f2a900; letter-spacing:1px; white-space:nowrap; }
+.rva-text{ margin:8px 0 0; font-size:13.5px; line-height:1.7; white-space:pre-wrap; word-break:break-word; }
+.rva-photo{ width:90px; height:90px; object-fit:cover; margin-top:8px; border:2px solid var(--bd); cursor:zoom-in; }
+.rva-reply{ width:100%; margin-top:8px; font-size:13px; }
+.panel .rva-actions{ display:grid !important; grid-template-columns:repeat(3, minmax(0,1fr)) !important; gap:6px !important; margin-top:8px; }
+.rva-actions button{ width:100%; margin:0 !important; min-height:42px; font-size:12px; padding:4px; }
+.rva-del{ color:var(--rust) !important; border-color:var(--rust) !important; }
+.cr-row{ display:grid; grid-template-columns:1fr auto; gap:8px; }
+.cr-row button{ margin:0 !important; min-height:46px; padding:0 18px; }
+.mfa-on{ border:2px solid var(--acid); color:var(--acid-text); padding:10px 12px; font-weight:700; margin-bottom:8px; }
+.mfa-steps{ margin-top:12px; border:2px dashed var(--bd); padding:12px; font-size:13px; line-height:1.8; }
+.mfa-qr{ display:block; width:200px; height:200px; margin:10px auto; background:#fff; padding:8px; }
+.mfa-secret{ display:block; word-break:break-all; background:var(--s2); border:1px solid var(--bd); padding:8px; font-family:'Space Mono',monospace; font-size:12px; cursor:copy; }
+.mfa-code{ width:100%; text-align:center; font:700 26px 'Space Mono',monospace !important; letter-spacing:.4em; margin:10px 0 !important; }
+.mfa-login{ width:100%; max-width:360px; display:flex; flex-direction:column; gap:10px; animation:psOpen .4s ease both; }
+.mfa-login button{ width:100%; min-height:50px; }
+.mfa-lock{ font-size:44px; text-align:center; animation:mfaLock 1.6s ease-in-out infinite; }
+@keyframes mfaLock{ 50%{ transform:translateY(-4px) rotate(-6deg); } }
+.mfa-h{ text-align:center; font:700 18px 'Noto Sans Myanmar',sans-serif; }
+.mfa-err{ min-height:20px; text-align:center; color:var(--rust); font-size:13px; }
+.mfa-login.shake{ animation:mfaShake .45s; }
+@keyframes mfaShake{ 20%,60%{ transform:translateX(-8px); } 40%,80%{ transform:translateX(8px); } }
+.sm-row{ display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center; padding:10px 0; border-bottom:1px solid var(--bd); }
+.sm-ic{ font-size:20px; }
+.sm-main b{ font-size:13.5px; }
+.sm-main small{ display:block; color:var(--muted-text); font-size:11px; margin-top:2px; line-height:1.5; }
+.sm-qty{ font:700 15px 'Space Mono',monospace; text-align:right; }
+.sm-qty small{ display:block; font-size:10px; color:var(--muted-text); font-weight:400; }
+.sm-qty.up{ color:var(--acid-text); } .sm-qty.down{ color:var(--rust); }
+#sm-search{ width:100%; margin-top:8px; }
+.sa-boxes{ display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.sa-opt{ display:inline-flex !important; align-items:center; gap:7px; border:1.5px solid var(--bd); padding:8px 12px; font-size:12.5px; margin:0 !important; cursor:pointer; }
+.sa-opt input{ width:16px !important; height:16px; min-height:0 !important; margin:0 !important; accent-color:var(--acid); }
+/* လုပ်ပိုင်ခွင့် မရှိရင် ဖျောက် */
+body.no-edit-product .pf-card, body.no-edit-product #bulk-import-card, body.no-edit-product #products-list .edit-btn, body.no-edit-product #products-list .pin-btn{ display:none !important; }
+body.no-edit-price #ps-box, body.no-edit-price #bulk-sale-card{ display:none !important; }
+body.no-delete-product #products-list .del-btn{ display:none !important; }
+body.no-edit-stock #stockin-card{ display:none !important; }
+body.no-refund .refund-btn{ display:none !important; }
+
+/* ===== 🧩 ADMIN EXTRA ===== */
+.pre-badge{ display:inline-block; background:#2e86de; color:#fff; font:700 10px 'Space Mono',monospace; padding:1px 6px; margin-left:4px; }
+/* 📣 */
+.bc-count{ margin:10px 0 4px; padding:10px 12px; border:2px dashed var(--bd); font-size:13px; }
+.panel .bc-tpl{ display:grid !important; grid-template-columns:repeat(4, minmax(0,1fr)) !important; gap:6px !important; margin-bottom:8px; }
+.bc-tpl button{ width:100%; margin:0 !important; min-height:40px; font-size:12px; padding:4px; }
+@media (max-width:480px){ .panel .bc-tpl{ grid-template-columns:repeat(2, minmax(0,1fr)) !important; } }
+#bc-msg{ width:100%; font-size:15px; }
+.bc-len{ text-align:right; font:11px 'Space Mono',monospace; color:var(--muted-text); }
+.bc-preview{ margin-top:8px; }
+.bc-bubble{ display:inline-block; max-width:85%; background:#E9E4D8; color:#141412; padding:10px 12px; border-radius:14px 14px 14px 4px; font-size:13.5px; line-height:1.6; white-space:pre-wrap; animation:psOpen .3s ease both; }
+.bc-preview small{ display:block; color:var(--muted-text); font-size:11px; margin-top:4px; }
+.bc-row{ padding:8px 0; border-bottom:1px solid var(--bd); font-size:13px; }
+.bc-row small{ display:block; color:var(--muted-text); font-size:11px; margin-top:2px; }
+/* 📊 ဒီနေ့ */
+.td-hero{ text-align:center; overflow:hidden; position:relative; }
+.td-greet{ font-size:15px; font-weight:700; }
+.td-date{ font:11px 'Space Mono','Noto Sans Myanmar',monospace; color:var(--muted-text); margin-top:2px; }
+.td-big{ margin-top:14px; }
+.td-big small{ display:block; font-size:12px; color:var(--muted-text); }
+.td-big b{ display:block; font:400 46px/1.1 'Anton',sans-serif; color:var(--acid-text); letter-spacing:.01em; }
+.td-big span{ font-size:12px; color:var(--muted-text); }
+.td-diff{ display:inline-block; margin-top:6px; font:700 13px 'Space Mono',monospace; padding:3px 10px; border:1.5px solid var(--bd); }
+.td-diff.up{ color:var(--acid-text); border-color:var(--acid-text); } .td-diff.down{ color:var(--rust); border-color:var(--rust); }
+.td-diff small{ font:11px 'Noto Sans Myanmar',sans-serif; color:var(--muted-text); font-weight:400; }
+.td-split{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+.td-split div{ border:2px solid var(--bd); padding:10px; cursor:pointer; background:var(--s2); }
+.td-split small{ display:block; font-size:12px; color:var(--muted-text); }
+.td-split b{ display:block; font:700 17px 'Space Mono',monospace; margin-top:2px; }
+.td-split em{ font-style:normal; font-size:11px; color:var(--muted-text); }
+.td-hours{ display:grid; grid-template-columns:repeat(24, 1fr); gap:2px; align-items:end; height:56px; margin-top:16px; }
+.td-hours i{ display:block; height:max(3px, var(--h)); background:var(--bd); border-radius:2px 2px 0 0; animation:tdGrow .7s cubic-bezier(.2,.8,.3,1) both; transform-origin:bottom; }
+.td-hours i.now{ background:var(--acid); } .td-hours i.fut{ opacity:.35; }
+.td-hours i:not(.fut):not(.now){ background:color-mix(in srgb, var(--acid) 55%, var(--bd)); }
+@keyframes tdGrow{ from{ transform:scaleY(0); } }
+.td-hl{ display:flex; justify-content:space-between; font:10px 'Space Mono',monospace; color:var(--muted-text); margin-top:3px; }
+.td-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+@media (min-width:760px){ .td-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
+.td-grid .form-card{ margin:0 !important; }
+.td-tile{ cursor:pointer; text-align:center; padding:14px 10px !important; transition:transform .15s; animation:psOpen .4s ease both; }
+.td-tile:active{ transform:scale(.96); }
+.td-tile b{ display:block; font:400 34px/1 'Anton',sans-serif; }
+.td-tile span{ display:block; font-size:12px; margin-top:6px; color:var(--muted-text); }
+.td-tile.hot{ border-color:var(--acid) !important; } .td-tile.hot b{ color:var(--acid-text); }
+.td-tile.warn{ border-color:var(--rust) !important; } .td-tile.warn b{ color:var(--rust); }
+.td-week{ display:grid; grid-template-columns:repeat(7, 1fr); gap:6px; align-items:end; height:150px; margin-top:8px; }
+.td-week div{ display:flex; flex-direction:column; justify-content:flex-end; align-items:center; height:100%; gap:4px; }
+.td-week i{ display:block; width:100%; height:max(4px, calc(var(--h) * .75)); background:var(--acid); animation:tdGrow .8s cubic-bezier(.2,.8,.3,1) both; transform-origin:bottom; }
+.td-week div:last-child i{ background:var(--rust); }
+.td-week b{ font:700 10px 'Space Mono',monospace; }
+.td-week small{ font-size:10px; color:var(--muted-text); }
+.td-top{ display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--bd); font-size:13.5px; }
+.td-rank{ width:24px; height:24px; display:grid; place-items:center; background:var(--acid); color:#141412; font:700 12px 'Space Mono',monospace; flex:0 0 auto; }
+.td-name{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.td-top b{ font-family:'Space Mono',monospace; }
+.td-out{ color:var(--rust); } .td-low{ color:var(--warn-text); }
+/* 📷 Scan */
+.scan-ov{ position:fixed; inset:0; z-index:10050; background:rgba(0,0,0,.82); display:flex; align-items:center; justify-content:center; padding:16px; }
+.scan-box{ width:100%; max-width:420px; background:var(--s1, #1E1D1A); border:2px solid var(--acid); padding:14px; display:flex; flex-direction:column; gap:10px; animation:psOpen .3s ease both; }
+.scan-h{ font-weight:700; font-size:15px; }
+.scan-view{ position:relative; width:100%; aspect-ratio:4/3; background:#000; overflow:hidden; }
+.scan-view video{ width:100%; height:100%; object-fit:cover; }
+.scan-line{ position:absolute; left:8%; right:8%; top:50%; height:2px; background:var(--acid); box-shadow:0 0 12px var(--acid); animation:scanLine 1.6s ease-in-out infinite; pointer-events:none; }
+@keyframes scanLine{ 50%{ transform:translateY(-36px); } }
+.scan-last{ min-height:40px; font-size:13px; line-height:1.6; }
+.scan-box input{ width:100%; font-family:'Space Mono',monospace; }
+.scan-box button{ width:100%; min-height:46px; }
+#pos-scan-btn{ width:100%; margin-top:8px; min-height:46px; }
+/* 🏷️ Label · 📋 ရေတွက် */
+.lbl-list, .st-list{ margin-top:10px; border:2px solid var(--bd); max-height:340px; overflow:auto; }
+.lbl-row, .st-row{ display:grid; align-items:center; gap:8px; padding:8px 10px; border-bottom:1px solid var(--bd); font-size:13px; }
+.lbl-row{ grid-template-columns:1fr 70px; }
+.lbl-row small{ display:block; font:10.5px 'Space Mono',monospace; color:var(--muted-text); }
+.lbl-row input, .st-row input{ width:100% !important; min-height:40px !important; text-align:center; padding:4px !important; margin:0 !important; }
+.st-row{ grid-template-columns:1fr auto 64px 34px; }
+.st-row small{ display:block; font-size:11px; color:var(--muted-text); }
+.st-row em{ font-style:normal; font-size:11px; color:var(--muted-text); white-space:nowrap; }
+.st-row i{ font-style:normal; font:700 13px 'Space Mono',monospace; text-align:right; }
+.st-row.ok i{ color:var(--acid-text); } .st-row.bad{ background:color-mix(in srgb, var(--rust) 10%, transparent); } .st-row.bad i{ color:var(--rust); }
+.panel .st-tools{ display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px !important; margin:10px 0 8px; }
+.st-tools button{ width:100%; margin:0 !important; min-height:44px; }
+#st-search, #st-note{ width:100%; margin-top:6px; }
+.st-only{ display:flex !important; align-items:center; gap:8px; font-size:12.5px; margin:8px 0 0 !important; }
+.st-only input{ width:18px !important; height:18px; min-height:0 !important; margin:0 !important; }
+/* 🔍 Login */
+.ll-row{ display:flex; gap:10px; align-items:flex-start; padding:9px 0; border-bottom:1px solid var(--bd); font-size:13px; }
+.ll-ic{ font-size:20px; }
+.ll-row small{ display:block; color:var(--muted-text); font-size:11px; margin-top:2px; }
+.ll-row em{ font-style:normal; color:var(--acid-text); font-size:11px; }
+.ll-row i{ font-style:normal; color:var(--warn-text); font-size:11px; font-weight:700; }
+.ll-row.new{ background:color-mix(in srgb, var(--warn-text) 8%, transparent); }
 </style>
 </head>
 <body>
@@ -868,6 +1006,7 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
   <div class="tabs-group">
     <div class="tabs-group-label">📊 အစီရင်ခံစာ & ဖောက်သည်</div>
     <div class="tabs-group-row">
+      <button class="tab-btn" data-tab="today-panel" id="today-tab-btn"><span class="mt-icon">📊</span><span class="nt">ဒီနေ့ အကျဉ်းချုပ်</span><span class="ns">ဒီနေ့</span></button>
       <button class="tab-btn" data-tab="salesreport-panel"><span class="mt-icon">📈</span><span class="nt">Sales Report</span><span class="ns">Sales</span></button>
       <button class="tab-btn" data-tab="profit-panel" id="profit-tab-btn"><span class="mt-icon">💹</span><span class="nt">အမြတ်စာရင်း</span><span class="ns">အမြတ်</span></button>
       <button class="tab-btn" data-tab="salehistory-panel" id="salehistory-tab-btn"><span class="mt-icon">🧾</span><span class="nt">Sale History</span><span class="ns">History</span></button>
@@ -886,6 +1025,9 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
   </div>
   </nav>
   <div id="admin-bbar" class="admin-bbar" role="tablist" aria-label="အဓိက Menu"><span class="bb-pill" aria-hidden="true"></span></div>
+
+  <!-- 📊 ဒီနေ့ အကျဉ်းချုပ် -->
+  <div class="panel" id="today-panel"></div>
 
   <!-- POS (IN-STORE SALE) -->
   <div class="panel" id="pos-panel">
@@ -2279,6 +2421,7 @@ productForm.addEventListener('submit', async (e)=>{
   const salePl = readSalePayload(payload.price);
   if(salePl === false) return;
   Object.assign(payload, salePl);
+  if(typeof readPreorderPayload === 'function') Object.assign(payload, readPreorderPayload());
 
   let error;
   const save = async (pl) => id ? await sb.from('products').update(pl).eq('id', id) : await sb.from('products').insert(pl);
@@ -2288,6 +2431,12 @@ productForm.addEventListener('submit', async (e)=>{
     delete payload.sale_price; delete payload.sale_start; delete payload.sale_end;
     ({ error } = await save(payload));
     if(!error && hadSale) setTimeout(() => showToast('⚠️ Sale မသိမ်းရသေးပါ — Supabase မှာ SALE.sql ကို Run ပါ'), 1800);
+  }
+  if(error && /preorder/.test(error.message || '')){
+    const hadPre = !!payload.preorder;
+    delete payload.preorder; delete payload.preorder_eta; delete payload.preorder_note;
+    ({ error } = await save(payload));
+    if(!error && hadPre) setTimeout(() => showToast('⚠️ Pre-order မသိမ်းရသေးပါ — Supabase မှာ SHOP-EXTRA.sql ကို Run ပါ'), 2200);
   }
   if(error && /color_images/.test(error.message || '')){
     // COLOR-IMAGES.sql မ Run ရသေးရင် — အရောင်ပုံ မပါဘဲ သိမ်းပြီး သတိပေး
@@ -2405,6 +2554,7 @@ function resetProductForm(){
   document.querySelectorAll('.tag-toggle-btn').forEach(b=>b.classList.remove('active'));
   toggleGiftCardFormMode();
   if(typeof resetSaleFields === 'function') resetSaleFields();
+  if(typeof resetPreorderFields === 'function') resetPreorderFields();
 }
 
 let productsListCache = [];
@@ -2480,6 +2630,7 @@ async function editProduct(p){
   Object.entries(p.color_images || {}).forEach(([c, url]) => { const it = productImageList.find(x => x.url === url); if(it) productColorImageMap[c] = it; });
   renderProductImagePreview();
   if(typeof fillSaleFields === 'function') fillSaleFields(p);
+  if(typeof fillPreorderFields === 'function') fillPreorderFields(p);
 
   document.getElementById('product-form-title').textContent='ပစ္စည်း ပြင်ဆင်ရန်';
   document.getElementById('product-cancel').style.display='inline-block';
@@ -3281,7 +3432,7 @@ async function loadOrders(){
         <div style="display:flex; gap:12px; margin-top:8px;">
           <img src="${productImg}" style="width:56px; height:56px; object-fit:cover; border:2px solid var(--concrete); flex-shrink:0; cursor:zoom-in;" onclick="openLightbox('${productImg}')">
           <div class="details" style="margin-top:0;">
-            🛍️ ${o.product_name} ${o.size?'· Size: '+o.size:''} ${o.color?'· Color: '+o.color:''} · x${o.quantity}<br>
+            🛍️ ${o.product_name}${o.is_preorder ? ' <span class="pre-badge">⏳ PRE-ORDER</span>' : ''} ${o.size?'· Size: '+o.size:''} ${o.color?'· Color: '+o.color:''} · x${o.quantity}<br>
             ${Number(o.total_amount).toLocaleString()} ကျပ်
           </div>
         </div>`;
@@ -3666,7 +3817,7 @@ async function deleteCb(i){
 }
 
 // ---------- DATA BACKUP (Owner ချည်းသာ) ----------
-const BACKUP_TABLES = ['orders','products','categories','subcategories','wallets','wallet_transactions','wallet_topups','gift_cards','promo_codes','promo_redemptions','cashback_campaigns','chat_messages','activity_logs','admins','settings','banners','posts','hidden_customers','cash_closings','product_costs','order_costs','shop_expenses','stock_alerts'];
+const BACKUP_TABLES = ['orders','products','categories','subcategories','wallets','wallet_transactions','wallet_topups','gift_cards','promo_codes','promo_redemptions','cashback_campaigns','chat_messages','activity_logs','admins','settings','banners','posts','hidden_customers','cash_closings','product_costs','order_costs','shop_expenses','stock_alerts','product_reviews','bundle_deals','stock_movements','customer_addresses','broadcasts','admin_logins'];
 const BACKUP_LABELS = { orders:'Orders', products:'Products', categories:'Categories', subcategories:'Subcategories', wallets:'Prepaid Cards', wallet_transactions:'Wallet Transactions', wallet_topups:'Wallet Topups', gift_cards:'Gift Cards', chat_messages:'Chat Messages', activity_logs:'Activity Logs', admins:'Staff', settings:'Settings', banners:'Banners', posts:'Posts', hidden_customers:'Hidden Customers', promo_codes:'Promo Codes', promo_redemptions:'Promo Usage', cashback_campaigns:'Cashback Campaigns', cash_closings:'Cash Closings', product_costs:'Cost Prices', order_costs:'Order Costs', shop_expenses:'Shop Expenses', stock_alerts:'Stock Alerts' };
 
 function setBackupProgress(t){ const el=document.getElementById('backup-progress'); if(el) el.textContent = t; }
@@ -7467,6 +7618,1143 @@ async function bulkImport(){
   try{ loadProducts(); loadInventory(); refreshLowStockBadge(); }catch(e){}
   try{ if(typeof loadCategories === 'function') loadCategories(); }catch(e){}
 }
+
+// =====================================================================
+// 🛍️ SHOP PLUS (Admin) — ⭐ Review စစ်ရန် · 📦 Bundle Deal · 🛒 ခြင်းသတိပေး Setting
+//   Supabase မှာ SHOP-PLUS.sql Run ထားရန်
+// =====================================================================
+const spEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const spStars = n => '★'.repeat(n) + '☆'.repeat(5 - n);
+function spMissing(err){ return err && /relation .* does not exist|schema cache|Could not find the table/i.test(err.message || ''); }
+
+// ---------- ⭐ REVIEW စစ်ရန် ----------
+let rvAdminTab = 'pending', rvAdminCache = [];
+(function injectReviewCard(){
+  const panel = document.getElementById('products-panel'); if(!panel || document.getElementById('rv-admin-card')) return;
+  const card = document.createElement('details');
+  card.className = 'form-card bulk-card'; card.id = 'rv-admin-card';
+  card.innerHTML = `
+    <summary><h3 style="display:inline;">⭐ Customer Review များ <span class="bs-count" id="rv-admin-count"></span></h3></summary>
+    <div class="hint" style="margin-top:10px;">ပစ္စည်းရောက်ပြီးသူတွေ ရေးတဲ့ Review — "ပြမည်" နှိပ်မှ Website မှာ ပေါ်မည်</div>
+    <div class="rva-tabs"><button type="button" class="secondary on" data-t="pending">⏳ စစ်ရန်</button><button type="button" class="secondary" data-t="approved">✅ ပြထားသည်</button><button type="button" class="secondary" data-t="hidden">🙈 ဖျောက်ထားသည်</button></div>
+    <div id="rv-admin-list"></div>`;
+  const anchor = document.getElementById('bulk-sale-card') || document.getElementById('bulk-import-card') || panel.firstElementChild;
+  anchor.insertAdjacentElement('afterend', card);
+  card.querySelectorAll('.rva-tabs button').forEach(b => b.addEventListener('click', () => {
+    rvAdminTab = b.dataset.t; card.querySelectorAll('.rva-tabs button').forEach(x => x.classList.toggle('on', x === b)); renderAdminReviews();
+  }));
+  card.addEventListener('toggle', () => { if(card.open) loadAdminReviews(); });
+})();
+async function loadAdminReviews(){
+  const { data, error } = await sb.from('product_reviews').select('*').order('created_at', { ascending: false }).limit(300);
+  const card = document.getElementById('rv-admin-card');
+  if(error){ if(spMissing(error) && card) card.style.display = 'none'; return; }
+  rvAdminCache = data || [];
+  const n = rvAdminCache.filter(r => r.status === 'pending').length;
+  const c = document.getElementById('rv-admin-count'); if(c) c.textContent = n ? `· ${n} စစ်ရန်` : '';
+  renderAdminReviews();
+}
+function renderAdminReviews(){
+  const box = document.getElementById('rv-admin-list'); if(!box) return;
+  const list = rvAdminCache.filter(r => r.status === rvAdminTab);
+  if(!list.length){ box.innerHTML = `<p class="hint" style="margin-top:12px;">${rvAdminTab === 'pending' ? 'စစ်ရန် Review မရှိပါ ✨' : 'မရှိပါ'}</p>`; return; }
+  box.innerHTML = list.map(r => `
+    <div class="rva-item" data-id="${r.id}">
+      <div class="rva-top"><b>${spEsc(r.product_name)}</b><span class="rva-stars">${spStars(r.rating)}</span></div>
+      <div class="hint" style="margin:2px 0 0;">${spEsc(r.reviewer_name || 'Customer')}${r.size_bought ? ' · Size ' + spEsc(r.size_bought) : ''} · ${new Date(r.created_at).toLocaleString()}</div>
+      ${r.comment ? `<p class="rva-text">${spEsc(r.comment)}</p>` : ''}
+      ${r.photo_url ? `<img class="rva-photo" src="${spEsc(r.photo_url)}" onclick="openLightbox(this.src)" alt="">` : ''}
+      <textarea class="rva-reply" rows="2" placeholder="💬 ဆိုင်ဘက်က ပြန်စာ (Optional) — Website မှာ Review အောက်မှာ ပေါ်မည်">${spEsc(r.admin_reply || '')}</textarea>
+      <div class="rva-actions">
+        ${r.status !== 'approved' ? '<button type="button" class="acid" data-a="approve">✅ ပြမည်</button>' : '<button type="button" class="secondary" data-a="reply">💾 ပြန်စာ သိမ်း</button>'}
+        ${r.status !== 'hidden' ? '<button type="button" class="secondary" data-a="hide">🙈 ဖျောက်မည်</button>' : ''}
+        <button type="button" class="secondary rva-del" data-a="del">🗑 ဖျက်</button>
+      </div>
+    </div>`).join('');
+  box.querySelectorAll('.rva-item').forEach(el => el.querySelectorAll('[data-a]').forEach(b => b.addEventListener('click', () => adminReviewAction(el.dataset.id, b.dataset.a, el))));
+}
+async function adminReviewAction(id, act, el){
+  const reply = (el.querySelector('.rva-reply')?.value || '').trim() || null;
+  let error;
+  if(act === 'del'){
+    if(!await adminConfirm('ဒီ Review ကို ဖျက်မှာ သေချာပါသလား?')) return;
+    ({ error } = await sb.from('product_reviews').delete().eq('id', id));
+  } else {
+    const upd = { admin_reply: reply };
+    if(act === 'approve') upd.status = 'approved';
+    if(act === 'hide') upd.status = 'hidden';
+    ({ error } = await sb.from('product_reviews').update(upd).eq('id', id));
+  }
+  if(error){ showToast('Error: ' + error.message); return; }
+  showToast(act === 'approve' ? '✅ Website မှာ ပြပြီးပါပြီ' : act === 'hide' ? '🙈 ဖျောက်ပြီးပါပြီ' : act === 'del' ? '🗑 ဖျက်ပြီးပါပြီ' : '💾 သိမ်းပြီးပါပြီ');
+  logActivity('review_' + act, id);
+  loadAdminReviews();
+}
+
+// ---------- 📦 BUNDLE DEAL ----------
+(function injectBundleCard(){
+  const panel = document.getElementById('promo-panel'); if(!panel || document.getElementById('bundle-card')) return;
+  const card = document.createElement('div');
+  card.className = 'form-card'; card.id = 'bundle-card';
+  card.innerHTML = `
+    <h3>📦 Bundle Deal — အများကြီးဝယ်ရင် လျှော့</h3>
+    <div class="hint">ဥပမာ "Top Wear ၃ ထည်ဝယ် 10% off" — ခြင်းထဲ ထည်အရေအတွက် ပြည့်တာနဲ့ Website က အလိုအလျောက် လျှော့ပေးမည် (Sale ဈေးပေါ်ကနေ ထပ်လျှော့)</div>
+    <div class="ps-dates">
+      <div><label class="ps-lbl" for="bd-cat">ဘယ်ပစ္စည်းတွေ</label><select id="bd-cat"><option value="">ပစ္စည်းအားလုံး (ရောဝယ်လည်း ရ)</option></select></div>
+      <div><label class="ps-lbl" for="bd-min">အနည်းဆုံး ထည်</label><input type="number" id="bd-min" inputmode="numeric" min="2" value="3"></div>
+    </div>
+    <label class="ps-lbl" for="bd-pct">လျှော့မည့် %</label><input type="number" id="bd-pct" inputmode="numeric" min="1" max="89" placeholder="ဥပမာ 10">
+    <div class="ps-dates">
+      <div><label class="ps-lbl" for="bd-start">စမည့်အချိန် (အလွတ် = ချက်ချင်း)</label><input type="datetime-local" id="bd-start"></div>
+      <div><label class="ps-lbl" for="bd-end">ပြီးမည့်အချိန် (အလွတ် = အမြဲ)</label><input type="datetime-local" id="bd-end"></div>
+    </div>
+    <div class="ps-calc" id="bd-preview"></div>
+    <button type="button" class="acid bs-apply" id="bd-save">📦 Bundle Deal ထည့်မည်</button>
+    <div id="bd-list" style="margin-top:12px;"></div>`;
+  panel.insertAdjacentElement('afterbegin', card);
+  ['bd-cat', 'bd-min', 'bd-pct'].forEach(id => document.getElementById(id).addEventListener('input', bundlePreview));
+  document.getElementById('bd-save').addEventListener('click', saveBundleDeal);
+  loadBundleAdmin();
+})();
+function bundlePreview(){
+  const cat = document.getElementById('bd-cat').value, min = Number(document.getElementById('bd-min').value) || 0, pct = Number(document.getElementById('bd-pct').value) || 0;
+  const out = document.getElementById('bd-preview');
+  if(!(min >= 2 && pct > 0)){ out.innerHTML = ''; return; }
+  const ex = 18000, np = Math.round(ex * (100 - pct) / 100);
+  out.innerHTML = `Website မှာ: <b class="ps-acid">📦 ${cat ? cat + ' ' : ''}${min} ထည်ဝယ် ${pct}% off</b><br>ဥပမာ ${ex.toLocaleString()} ကျပ် ပစ္စည်း ${min} ထည် → တစ်ထည် <b class="ps-acid">${np.toLocaleString()}</b> ကျပ် (စုစုပေါင်း ${((ex - np) * min).toLocaleString()} ကျပ် သက်သာ)`;
+}
+async function loadBundleAdmin(){
+  const sel = document.getElementById('bd-cat');
+  try{
+    const { data: cats } = await sb.from('categories').select('name').order('sort_order');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">ပစ္စည်းအားလုံး (ရောဝယ်လည်း ရ)</option>' + (cats || []).map(c => `<option value="${spEsc(c.name)}">${spEsc(c.name)}</option>`).join('');
+    sel.value = cur;
+  }catch(e){}
+  const { data, error } = await sb.from('bundle_deals').select('*').order('created_at', { ascending: false });
+  const box = document.getElementById('bd-list');
+  if(error){ box.innerHTML = spMissing(error) ? '<p class="hint" style="color:var(--warn-text);">⚠️ Supabase မှာ SHOP-PLUS.sql ကို အရင် Run ပါ</p>' : ''; return; }
+  const now = Date.now();
+  box.innerHTML = (data || []).length ? (data || []).map(b => {
+    const st = b.starts_at ? Date.parse(b.starts_at) : null, en = b.ends_at ? Date.parse(b.ends_at) : null;
+    const state = !b.active ? '⏸ ပိတ်ထား' : (st && now < st) ? '⏳ မစသေး' : (en && now >= en) ? '⌛ ပြီးပြီ' : '🟢 ဖွင့်ထား';
+    return `<div class="bs-row"><span>${b.category ? spEsc(b.category) : 'ပစ္စည်းအားလုံး'} ${b.min_qty} ထည် · <b>${Number(b.discount_pct)}% off</b><small>${state}${en ? ' · ' + new Date(en).toLocaleDateString() + ' ထိ' : ''}</small></span>
+      <button type="button" class="secondary" data-tg="${b.id}" data-on="${b.active ? 1 : 0}">${b.active ? '⏸ ပိတ်' : '▶ ဖွင့်'}</button>
+      <button type="button" class="secondary" data-del="${b.id}">🗑</button></div>`;
+  }).join('') : '<p class="hint">Bundle Deal မရှိသေးပါ</p>';
+  box.querySelectorAll('[data-tg]').forEach(b => b.addEventListener('click', async () => {
+    const { error } = await sb.from('bundle_deals').update({ active: b.dataset.on !== '1' }).eq('id', b.dataset.tg);
+    if(error) return showToast('Error: ' + error.message);
+    logActivity('bundle_toggled', b.dataset.tg); loadBundleAdmin();
+  }));
+  box.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
+    if(!await adminConfirm('ဒီ Bundle Deal ကို ဖျက်မှာ သေချာပါသလား?')) return;
+    const { error } = await sb.from('bundle_deals').delete().eq('id', b.dataset.del);
+    if(error) return showToast('Error: ' + error.message);
+    logActivity('bundle_deleted', b.dataset.del); loadBundleAdmin();
+  }));
+}
+async function saveBundleDeal(){
+  const cat = document.getElementById('bd-cat').value || null, min = parseInt(document.getElementById('bd-min').value) || 0, pct = Number(document.getElementById('bd-pct').value) || 0;
+  const st = document.getElementById('bd-start').value, en = document.getElementById('bd-end').value;
+  if(min < 2) return showToast('⚠️ အနည်းဆုံး ၂ ထည် ဖြစ်ရပါမည်');
+  if(!(pct > 0 && pct < 90)) return showToast('⚠️ % ကို 1 – 89 ထည့်ပါ');
+  if(st && en && new Date(en) <= new Date(st)) return showToast('⚠️ ပြီးမည့်အချိန်က စမည့်အချိန်ထက် နောက်ကျရပါမည်');
+  const row = { name: `${cat || 'All'} ${min}+ ${pct}%`, category: cat, min_qty: min, discount_pct: pct, active: true,
+    starts_at: st ? new Date(st).toISOString() : null, ends_at: en ? new Date(en).toISOString() : null };
+  const { error } = await sb.from('bundle_deals').insert(row);
+  if(error) return showToast(spMissing(error) ? '⚠️ Supabase မှာ SHOP-PLUS.sql ကို အရင် Run ပါ' : 'Error: ' + error.message);
+  showToast(`📦 ${cat || 'ပစ္စည်းအားလုံး'} ${min} ထည်ဝယ် ${pct}% off — ဖွင့်ပြီးပါပြီ`);
+  logActivity('bundle_created', row.name);
+  ['bd-pct', 'bd-start', 'bd-end'].forEach(id => document.getElementById(id).value = '');
+  bundlePreview(); loadBundleAdmin();
+}
+
+// ---------- 🛒 ခြင်းထဲ ကျန်နေရင် သတိပေး (Settings) ----------
+(function injectCartReminder(){
+  const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('cart-remind-card')) return;
+  const card = document.createElement('div');
+  card.className = 'form-card'; card.id = 'cart-remind-card';
+  card.innerHTML = `
+    <h3>🛒 ခြင်းထဲ ကျန်နေရင် Customer ကို သတိပေး</h3>
+    <div class="hint">Login ဝင်ထားတဲ့ Customer က ခြင်းထဲ ထည့်ပြီး မဝယ်ဘဲ ထားရင် — သတ်မှတ်ထားတဲ့ နာရီ ကြာတာနဲ့ Chat + ဖုန်း Notification တစ်ခါ ပို့မည် (0 = ပိတ်)</div>
+    <label class="ps-lbl" for="cart-remind-hours">ဘယ်နှစ်နာရီ ကြာရင်</label>
+    <div class="cr-row"><input type="number" id="cart-remind-hours" inputmode="numeric" min="0" max="168" placeholder="24"><button type="button" class="acid" id="cart-remind-save">သိမ်းမည်</button></div>`;
+  const anchor = document.getElementById('backup-card');
+  if(anchor) anchor.insertAdjacentElement('afterend', card); else panel.appendChild(card);
+  document.getElementById('cart-remind-save').addEventListener('click', async () => {
+    const v = Math.max(0, Math.min(168, parseInt(document.getElementById('cart-remind-hours').value) || 0));
+    const { error } = await sb.from('settings').update({ cart_reminder_hours: v }).eq('id', 1);
+    if(error) return showToast(/cart_reminder_hours/.test(error.message) ? '⚠️ Supabase မှာ SHOP-PLUS.sql ကို အရင် Run ပါ' : 'Error: ' + error.message);
+    showToast(v ? `✅ ${v} နာရီ ကြာရင် သတိပေးမည်` : '⏸ ခြင်းသတိပေးချက် ပိတ်လိုက်ပါပြီ');
+    logActivity('cart_reminder_updated', String(v));
+  });
+  sb.from('settings').select('cart_reminder_hours').eq('id', 1).maybeSingle().then(({ data }) => {
+    if(data && data.cart_reminder_hours != null) document.getElementById('cart-remind-hours').value = data.cart_reminder_hours;
+    else if(data) document.getElementById('cart-remind-hours').value = 24;
+  });
+})();
+
+// Review / Bundle ကို Login ဝင်ပြီးမှ Load
+(function(){
+  const _cs = checkSession;
+  checkSession = async function(){
+    const r = await _cs.apply(this, arguments);
+    try{ if(document.getElementById('dashboard').style.display === 'block'){ loadAdminReviews(); loadBundleAdmin(); } }catch(e){}
+    return r;
+  };
+})();
+
+// =====================================================================
+// 🧩 ADMIN EXTRA — SHOP-EXTRA.sql Run ထားရန်
+//   ⏳ Pre-order · 📣 Customer များဆီ သတင်းပို့ · 📊 ဒီနေ့ အကျဉ်းချုပ်
+//   🏷️ Barcode Label + POS Scan · 📋 Stock ရေတွက် · 🔍 Admin Login မှတ်တမ်း
+// =====================================================================
+const axEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const axMoney = n => Math.round(Number(n || 0)).toLocaleString();
+const axMissing = e => e && /does not exist|schema cache|Could not find/i.test(e.message || '');
+const axSplit = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean);
+function axLoadScript(src, test){
+  return new Promise((res, rej) => {
+    if(test && test()) return res();
+    const s = document.createElement('script'); s.src = src; s.onload = () => res(); s.onerror = () => rej(new Error('Library Load မရပါ — Internet စစ်ပါ'));
+    document.head.appendChild(s);
+  });
+}
+
+// =====================================================================
+// ⏳ PRE-ORDER — ပစ္စည်း Form
+// =====================================================================
+(function injectPreorder(){
+  const anchor = document.getElementById('ps-box') || document.getElementById('product-price');
+  if(!anchor || document.getElementById('pre-box')) return;
+  const box = document.createElement('div'); box.className = 'full ps-box'; box.id = 'pre-box';
+  box.innerHTML = `
+    <label class="ps-head"><span><b>⏳ Pre-order လက်ခံမည်</b><small>Stock မရှိသေးလည်း Customer က ကြိုမှာလို့ရ — Stock မလျော့ပါ</small></span>
+      <input type="checkbox" id="pre-on" class="ps-switch"></label>
+    <div class="ps-body" id="pre-body">
+      <div class="ps-dates">
+        <div><label class="ps-lbl" for="pre-eta">ရောက်မည့်ရက် (ခန့်မှန်း)</label><input type="date" id="pre-eta"></div>
+        <div><label class="ps-lbl" for="pre-note">မှတ်ချက် (Optional)</label><input type="text" id="pre-note" maxlength="120" placeholder="ဥပမာ ထိုင်းက တိုက်ရိုက်မှာ"></div>
+      </div>
+    </div>`;
+  anchor.insertAdjacentElement('afterend', box);
+  document.getElementById('pre-on').addEventListener('change', e => document.getElementById('pre-body').classList.toggle('open', e.target.checked));
+  document.getElementById('product-is-giftcard')?.addEventListener('change', e => { box.style.display = e.target.checked ? 'none' : ''; });
+})();
+function readPreorderPayload(){
+  const on = !!document.getElementById('pre-on')?.checked && !document.getElementById('product-is-giftcard')?.checked;
+  return { preorder: on, preorder_eta: on ? (document.getElementById('pre-eta').value || null) : null, preorder_note: on ? ((document.getElementById('pre-note').value || '').trim() || null) : null };
+}
+function fillPreorderFields(p){
+  const on = document.getElementById('pre-on'); if(!on) return;
+  on.checked = !!p.preorder; document.getElementById('pre-body').classList.toggle('open', on.checked);
+  document.getElementById('pre-eta').value = p.preorder_eta || ''; document.getElementById('pre-note').value = p.preorder_note || '';
+  document.getElementById('pre-box').style.display = p.is_gift_card ? 'none' : '';
+}
+function resetPreorderFields(){
+  const on = document.getElementById('pre-on'); if(!on) return;
+  on.checked = false; document.getElementById('pre-body').classList.remove('open');
+  document.getElementById('pre-eta').value = ''; document.getElementById('pre-note').value = '';
+  document.getElementById('pre-box').style.display = '';
+}
+
+// =====================================================================
+// 📣 Customer များဆီ သတင်းပို့ (Owner)
+// =====================================================================
+(function injectBroadcast(){
+  const panel = document.getElementById('customers-panel'); if(!panel || document.getElementById('bc-card')) return;
+  const card = document.createElement('div'); card.className = 'form-card owner-only'; card.id = 'bc-card';
+  card.innerHTML = `
+    <h3>📣 Customer များဆီ သတင်းပို့မည်</h3>
+    <div class="hint">Customer တွေရဲ့ Chat ထဲ ရောက်ပြီး Notification ဖွင့်ထားသူတွေ ဖုန်းကိုပါ ချက်ချင်း အသိပေးမည်</div>
+    <label class="ps-lbl" for="bc-seg">ဘယ်သူတွေဆီ</label>
+    <select id="bc-seg">
+      <option value="all">👥 Customer အားလုံး</option>
+      <option value="buyers">🛍️ ဝယ်ဖူးသူ အားလုံး</option>
+      <option value="vip">⭐ VIP — ဝယ်ငွေ စုစုပေါင်း သတ်မှတ်ထားတာထက် များသူ</option>
+      <option value="inactive">😴 ကြာပြီ မဝယ်တော့သူ</option>
+      <option value="never">🆕 Account ဖွင့်ပြီး မဝယ်ရသေးသူ</option>
+    </select>
+    <div id="bc-vip-wrap" style="display:none;"><label class="ps-lbl" for="bc-min">ဝယ်ငွေ စုစုပေါင်း (ကျပ်) ထက်များသူ</label><input type="number" id="bc-min" inputmode="numeric" value="200000"></div>
+    <div id="bc-days-wrap" style="display:none;"><label class="ps-lbl" for="bc-days">ဘယ်နှရက် မဝယ်တော့သူ</label><input type="number" id="bc-days" inputmode="numeric" value="60"></div>
+    <div class="bc-count" id="bc-count">—</div>
+    <label class="ps-lbl" for="bc-msg">စာ</label>
+    <div class="bc-tpl">${[['🆕 Drop အသစ်', '🆕 ပစ္စည်းအသစ်တွေ ရောက်ပါပြီ! Website မှာ အရင်ဆုံး ကြည့်လိုက်ပါ 👉 suwatimenfashion.vercel.app'],
+      ['🔥 Sale', '🔥 SALE စပါပြီ! ရွေးချယ်ထားတဲ့ ပစ္စည်းတွေ အထိ လျှော့ဈေး — ကုန်ခင် အမြန်ဝယ်ပါ'],
+      ['🎟️ Promo', '🎟️ သင့်အတွက် Promo Code — CODE ကို Checkout မှာ ထည့်ပြီး လျှော့ဈေးရယူပါ'],
+      ['🙏 ကျေးဇူး', '🙏 SUWATI ကို အားပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်']].map(([l, t]) => `<button type="button" class="secondary" data-t="${axEsc(t)}">${l}</button>`).join('')}</div>
+    <textarea id="bc-msg" rows="4" maxlength="580" placeholder="ဥပမာ — 🆕 ဆောင်းရာသီ Jacket အသစ်တွေ ရောက်ပါပြီ"></textarea>
+    <div class="bc-len" id="bc-len">0 / 580</div>
+    <div class="bc-preview" id="bc-preview" style="display:none;"><div class="bc-bubble"></div><small>Customer Chat ထဲမှာ ဒီလိုပေါ်မည်</small></div>
+    <button type="button" class="acid bs-apply" id="bc-send" disabled>📣 ပို့မည်</button>
+    <div id="bc-history"></div>`;
+  panel.insertAdjacentElement('afterbegin', card);
+  const seg = document.getElementById('bc-seg');
+  const upd = () => {
+    document.getElementById('bc-vip-wrap').style.display = seg.value === 'vip' ? '' : 'none';
+    document.getElementById('bc-days-wrap').style.display = seg.value === 'inactive' ? '' : 'none';
+    broadcastCount();
+  };
+  seg.addEventListener('change', upd);
+  ['bc-min', 'bc-days'].forEach(id => document.getElementById(id).addEventListener('change', broadcastCount));
+  const msg = document.getElementById('bc-msg');
+  const onMsg = () => {
+    const t = msg.value.trim();
+    document.getElementById('bc-len').textContent = `${msg.value.length} / 580`;
+    document.getElementById('bc-preview').style.display = t ? '' : 'none';
+    document.querySelector('#bc-preview .bc-bubble').textContent = (t.startsWith('📣') ? '' : '📣 ') + t;
+    document.getElementById('bc-send').disabled = t.length < 2;
+  };
+  msg.addEventListener('input', onMsg);
+  card.querySelectorAll('.bc-tpl button').forEach(b => b.addEventListener('click', () => { msg.value = b.dataset.t; onMsg(); msg.focus(); }));
+  document.getElementById('bc-send').addEventListener('click', sendBroadcast);
+})();
+let __bcCount = null;
+async function broadcastCount(){
+  const out = document.getElementById('bc-count'); if(!out || currentAdminRole !== 'owner') return;
+  out.textContent = 'တွက်နေသည်...';
+  const { data, error } = await sb.rpc('broadcast_count', { p_segment: document.getElementById('bc-seg').value,
+    p_min_spend: Number(document.getElementById('bc-min').value) || 0, p_days: parseInt(document.getElementById('bc-days').value) || 60 });
+  if(error){ out.innerHTML = axMissing(error) || /broadcast_count/.test(error.message) ? '⚠️ Supabase မှာ SHOP-EXTRA.sql ကို အရင် Run ပါ' : '⚠️ ' + axEsc(error.message); __bcCount = null; return; }
+  __bcCount = data;
+  out.innerHTML = `👥 <b>${data.total}</b> ယောက်ဆီ ရောက်မည် · 🔔 <b>${data.with_push}</b> ယောက် ဖုန်း Notification ရမည်`;
+}
+async function sendBroadcast(){
+  const msg = document.getElementById('bc-msg').value.trim(); if(msg.length < 2) return;
+  const segEl = document.getElementById('bc-seg'), segText = segEl.options[segEl.selectedIndex].text;
+  if(!__bcCount || !__bcCount.total) return showToast('⚠️ ပို့စရာ Customer မရှိပါ');
+  if(!await adminConfirm(`${segText}\n👥 ${__bcCount.total} ယောက်ဆီ ပို့မှာ သေချာပါသလား?\n\n${msg.slice(0, 160)}`)) return;
+  const btn = document.getElementById('bc-send'); btn.disabled = true; btn.textContent = 'ပို့နေသည်...';
+  const { data, error } = await sb.rpc('broadcast_send', { p_message: msg, p_segment: segEl.value,
+    p_min_spend: Number(document.getElementById('bc-min').value) || 0, p_days: parseInt(document.getElementById('bc-days').value) || 60 });
+  btn.textContent = '📣 ပို့မည်'; btn.disabled = false;
+  if(error) return showToast(/TOO_MANY/.test(error.message) ? '⏳ ၁၀ မိနစ်အတွင်း ၃ ကြိမ်ထက် ပို့လို့မရပါ — ခဏစောင့်ပါ' : 'Error: ' + error.message);
+  showToast(`📣 ${data} ယောက်ဆီ ပို့ပြီးပါပြီ`);
+  logActivity('broadcast_sent', `${segEl.value} · ${data} · ${msg.slice(0, 60)}`);
+  try{ if(typeof flushCustomerPush === 'function') flushCustomerPush(300); }catch(e){}
+  document.getElementById('bc-msg').value = ''; document.getElementById('bc-msg').dispatchEvent(new Event('input'));
+  loadBroadcastHistory();
+}
+async function loadBroadcastHistory(){
+  const box = document.getElementById('bc-history'); if(!box || currentAdminRole !== 'owner') return;
+  const { data, error } = await sb.from('broadcasts').select('*').order('created_at', { ascending: false }).limit(10);
+  if(error || !data || !data.length){ box.innerHTML = ''; return; }
+  const segName = { all: 'အားလုံး', buyers: 'ဝယ်ဖူးသူ', vip: 'VIP', inactive: 'ကြာပြီမဝယ်', never: 'မဝယ်ရသေး' };
+  box.innerHTML = '<div class="hint" style="margin:16px 0 4px;">ပို့ခဲ့သော သတင်းများ</div>' + data.map(b => `
+    <div class="bc-row"><span>${axEsc(b.message.slice(0, 90))}${b.message.length > 90 ? '…' : ''}</span>
+      <small>${new Date(b.created_at).toLocaleString()} · ${segName[b.segment.split(':')[0]] || axEsc(b.segment)} · 👥 ${b.recipients}</small></div>`).join('');
+}
+// Admin Chat စာရင်းထဲ သတင်းပို့ စာတွေ မရောအောင်
+(function(){
+  if(typeof loadMessages !== 'function') return;
+  const _lm = loadMessages;
+  loadMessages = async function(){
+    const r = await _lm.apply(this, arguments);
+    try{ if(Array.isArray(messagesCache) && messagesCache.some(m => m.is_broadcast)){ messagesCache = messagesCache.filter(m => !m.is_broadcast); renderMessageThreads(); } }catch(e){}
+    return r;
+  };
+})();
+
+// =====================================================================
+// 📊 ဒီနေ့ အကျဉ်းချုပ်
+// =====================================================================
+try{ RESTRICTABLE_TABS.unshift({ id: 'today-panel', label: 'ဒီနေ့' }); }catch(e){}
+function axGo(tab){ document.querySelector(`.tab-btn[data-tab="${tab}"]`)?.click(); }
+async function renderTodayPanel(){
+  const panel = document.getElementById('today-panel'); if(!panel) return;
+  const now = new Date(), d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const y0 = new Date(d0.getTime() - 86400000), w0 = new Date(d0.getTime() - 6 * 86400000);
+  if(!panel.dataset.ready){ panel.innerHTML = '<div class="form-card"><p class="hint">Load လုပ်နေသည်...</p></div>'; panel.dataset.ready = '1'; }
+  const sel = 'id, order_group_id, total_amount, order_status, sale_channel, product_name, quantity, created_at, payment_status';
+  const [wk, open, prods, rv, tu] = await Promise.all([
+    sb.from('orders').select(sel).gte('created_at', w0.toISOString()).limit(5000),
+    sb.from('orders').select('order_group_id, order_status').in('order_status', ['pending_verification', 'awaiting_payment', 'confirmed', 'processing']).limit(3000),
+    sb.from('products').select('name, stock_qty, status, is_gift_card, preorder').limit(2000),
+    sb.from('product_reviews').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+    sb.from('wallet_topups').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+  ]);
+  const rows = (wk.data || []).filter(o => o.order_status !== 'cancelled');
+  const isItem = o => !['🏷️ Promo Code', '🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု'].includes(o.product_name);
+  const inRange = (o, a, b) => { const t = new Date(o.created_at); return t >= a && t < b; };
+  const today = rows.filter(o => inRange(o, d0, new Date(d0.getTime() + 86400000)));
+  const ySame = rows.filter(o => inRange(o, y0, new Date(now.getTime() - 86400000)));   // မနေ့က ဒီအချိန်အထိ
+  const sum = a => a.reduce((s, o) => s + Number(o.total_amount || 0), 0);
+  const grp = a => new Set(a.map(o => o.order_group_id || o.id)).size;
+  const tOn = today.filter(o => (o.sale_channel || 'online') === 'online'), tShop = today.filter(o => o.sale_channel === 'in_store');
+  const tSum = sum(today), ySum = sum(ySame);
+  const diff = ySum ? Math.round((tSum - ySum) / ySum * 100) : null;
+  const openRows = open.data || [];
+  const cnt = st => new Set(openRows.filter(o => o.order_status === st).map(o => o.order_group_id)).size;
+  const toVerify = cnt('pending_verification'), unpaid = cnt('awaiting_payment'), toShip = new Set(openRows.filter(o => ['confirmed', 'processing'].includes(o.order_status)).map(o => o.order_group_id)).size;
+  const thr = typeof lowStockThreshold !== 'undefined' ? lowStockThreshold : 2;
+  const low = (prods.data || []).filter(p => !p.is_gift_card && !p.preorder && Number(p.stock_qty || 0) <= thr).sort((a, b) => (a.stock_qty || 0) - (b.stock_qty || 0));
+  const top = {}; rows.filter(isItem).forEach(o => top[o.product_name] = (top[o.product_name] || 0) + Number(o.quantity || 0));
+  const topList = Object.entries(top).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const hours = Array(24).fill(0); today.forEach(o => hours[new Date(o.created_at).getHours()] += Number(o.total_amount || 0));
+  const hMax = Math.max(1, ...hours), curH = now.getHours();
+  const days = []; for(let i = 6; i >= 0; i--){ const a = new Date(d0.getTime() - i * 86400000); days.push({ a, v: sum(rows.filter(o => inRange(o, a, new Date(a.getTime() + 86400000)))) }); }
+  const dMax = Math.max(1, ...days.map(d => d.v));
+  const greet = curH < 12 ? '🌅 မင်္ဂလာနံနက်ခင်းပါ' : curH < 17 ? '☀️ မင်္ဂလာနေ့လယ်ခင်းပါ' : '🌙 မင်္ဂလာညနေခင်းပါ';
+  panel.innerHTML = `
+    <div class="form-card td-hero">
+      <div class="td-greet">${greet}</div>
+      <div class="td-date">${now.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</div>
+      <div class="td-big"><small>ဒီနေ့ ရောင်းရငွေ</small><b data-count="${tSum}">0</b><span>ကျပ်</span></div>
+      ${diff !== null ? `<div class="td-diff ${diff >= 0 ? 'up' : 'down'}">${diff >= 0 ? '▲' : '▼'} ${Math.abs(diff)}% <small>မနေ့က ဒီအချိန်ထက်</small></div>` : '<div class="td-diff"><small>မနေ့က ဒီအချိန်အထိ အရောင်း မရှိ</small></div>'}
+      <div class="td-split"><div onclick="axGo('orders-panel')"><small>🌐 Online</small><b>${axMoney(sum(tOn))}</b><em>${grp(tOn)} Order</em></div><div onclick="axGo('pos-panel')"><small>🏪 ဆိုင်</small><b>${axMoney(sum(tShop))}</b><em>${grp(tShop)} ကြိမ်</em></div></div>
+      <div class="td-hours" aria-label="နာရီအလိုက်">${hours.map((v, h) => `<i class="${h === curH ? 'now' : ''}${h > curH ? ' fut' : ''}" style="--h:${Math.round(v / hMax * 100)}%" title="${h}:00 — ${axMoney(v)}"></i>`).join('')}</div>
+      <div class="td-hl"><span>0</span><span>6</span><span>12</span><span>18</span><span>24</span></div>
+    </div>
+    <div class="td-grid">
+      <div class="form-card td-tile ${toVerify ? 'hot' : ''}" onclick="axGo('orders-panel')"><b>${toVerify}</b><span>⏳ ငွေစစ်ရန် Order</span></div>
+      <div class="form-card td-tile" onclick="axGo('orders-panel')"><b>${toShip}</b><span>📦 ပို့ရန် Order</span></div>
+      <div class="form-card td-tile" onclick="axGo('orders-panel')"><b>${unpaid}</b><span>⏰ ငွေမလွှဲရသေး</span></div>
+      <div class="form-card td-tile ${low.length ? 'warn' : ''}" onclick="axGo('inventory-panel')"><b>${low.length}</b><span>📉 Stock နည်း/ကုန်</span></div>
+      ${tu.error ? '' : `<div class="form-card td-tile ${tu.count ? 'hot' : ''}" onclick="axGo('wallet-panel')"><b>${tu.count || 0}</b><span>🎫 ငွေဖြည့် စစ်ရန်</span></div>`}
+      ${rv.error ? '' : `<div class="form-card td-tile" onclick="axGo('products-panel'); setTimeout(()=>{const d=document.getElementById('rv-admin-card'); if(d){ d.open=true; d.dispatchEvent(new Event('toggle')); d.scrollIntoView({behavior:'smooth'}); }},300)"><b>${rv.count || 0}</b><span>⭐ Review စစ်ရန်</span></div>`}
+    </div>
+    <div class="form-card">
+      <h3>📈 ၇ ရက် အရောင်း</h3>
+      <div class="td-week">${days.map(d => `<div><i style="--h:${Math.round(d.v / dMax * 100)}%"></i><b>${d.v >= 100000 ? Math.round(d.v / 1000) + 'K' : axMoney(d.v)}</b><small>${d.a.toLocaleDateString(undefined, { weekday: 'short' })}</small></div>`).join('')}</div>
+    </div>
+    <div class="form-card">
+      <h3>🔥 ရောင်းအားအကောင်းဆုံး (၇ ရက်)</h3>
+      ${topList.length ? topList.map(([n, q], i) => `<div class="td-top"><span class="td-rank">${i + 1}</span><span class="td-name">${axEsc(n)}</span><b>${q} ထည်</b></div>`).join('') : '<p class="hint">အရောင်း မရှိသေးပါ</p>'}
+    </div>
+    ${low.length ? `<div class="form-card"><h3>📉 Stock နည်း/ကုန် (${low.length})</h3>${low.slice(0, 10).map(p => `<div class="td-top"><span class="td-name">${axEsc(p.name)}</span><b class="${(p.stock_qty || 0) <= 0 ? 'td-out' : 'td-low'}">${(p.stock_qty || 0) <= 0 ? 'ကုန်' : p.stock_qty + ' ခု'}</b></div>`).join('')}
+      <button type="button" class="secondary" style="width:100%; margin-top:10px;" onclick="axGo('inventory-panel'); setTimeout(()=>{const d=document.getElementById('stockin-card'); if(d){ d.open=true; d.scrollIntoView({behavior:'smooth'}); }},300)">📥 ပစ္စည်းအဝင် သွင်းမည်</button></div>` : ''}
+    <div class="hint" style="text-align:center;">🔄 ၁ မိနစ်တစ်ခါ အလိုအလျောက် Update · ည ၁၁ နာရီ Backup Email ထဲမှာလည်း ဒီအကျဉ်းချုပ် ပါသည်</div>`;
+  // ငွေပမာဏ ရေတွက်တက်သွားသည့် Animation
+  const b = panel.querySelector('.td-big b'); const target = Number(b.dataset.count) || 0; const t0 = performance.now();
+  const step = t => { const k = Math.min(1, (t - t0) / 900); b.textContent = axMoney(target * (1 - Math.pow(1 - k, 3))); if(k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+(function(){
+  document.querySelector('.tab-btn[data-tab="today-panel"]')?.addEventListener('click', () => renderTodayPanel());
+  setInterval(() => { if(document.getElementById('today-panel')?.classList.contains('active')) renderTodayPanel(); }, 60000);
+})();
+
+// =====================================================================
+// 🏷️ BARCODE — Label ထုတ် · POS / ရေတွက် Scan
+// =====================================================================
+function skuCode(p, size, color){
+  const sizes = axSplit(p.sizes), colors = axSplit(p.colors);
+  const si = size ? sizes.indexOf(size) : -1, ci = color ? colors.indexOf(color) : -1;
+  return `S${p.sku_code}` + (sizes.length ? '-' + (si < 0 ? 'x' : si) : '') + (colors.length ? (sizes.length ? '' : '-x') + '-' + (ci < 0 ? 'x' : ci) : '');
+}
+function parseSku(code, list){
+  const m = String(code || '').trim().toUpperCase().match(/^S(\d+)(?:-(\d+|X))?(?:-(\d+|X))?$/); if(!m) return null;
+  const p = (list || []).find(x => String(x.sku_code) === m[1]); if(!p) return { notFound: true };
+  const sizes = axSplit(p.sizes), colors = axSplit(p.colors);
+  const pick = (arr, v) => v == null || v === 'X' ? null : arr[parseInt(v)] ?? null;
+  return { p, size: pick(sizes, m[2]), color: pick(colors, m[3]) };
+}
+function axVariants(p){
+  const sizes = axSplit(p.sizes), colors = axSplit(p.colors), out = [];
+  (sizes.length ? sizes : [null]).forEach(s => (colors.length ? colors : [null]).forEach(c => out.push({ size: s, color: c })));
+  return out;
+}
+function axVarQty(p, size, color){
+  const vs = p.variant_stock;
+  if(vs && typeof vs === 'object' && Object.keys(vs).length) return parseInt((vs[size || '_'] || {})[color || '_']) || 0;
+  const cs = p.color_stock;
+  if(color && cs && typeof cs === 'object' && Object.keys(cs).length) return parseInt(cs[color]) || 0;
+  return parseInt(p.stock_qty) || 0;
+}
+// ---- Scan (ကင်မရာ) ----
+let __scan = null;
+async function openScanner(onCode, opts){
+  opts = opts || {};
+  closeScanner();
+  const ov = document.createElement('div'); ov.className = 'scan-ov'; ov.id = 'scan-ov';
+  ov.innerHTML = `<div class="scan-box"><div class="scan-h">${axEsc(opts.title || '📷 Barcode Scan')}</div>
+    <div id="scan-view" class="scan-view"><video id="scan-video" playsinline muted></video><div class="scan-line"></div></div>
+    <div class="scan-last" id="scan-last">Barcode ကို ဘောင်ထဲ ထားပါ</div>
+    <input type="text" id="scan-manual" placeholder="(သို့) Code ရိုက်ထည့်ပါ — ဥပမာ S1001-0-0" autocapitalize="characters">
+    <button type="button" class="secondary" id="scan-close">ပိတ်မည်</button></div>`;
+  document.body.appendChild(ov);
+  document.getElementById('scan-close').onclick = closeScanner;
+  const man = document.getElementById('scan-manual');
+  man.addEventListener('keydown', e => { if(e.key === 'Enter' && man.value.trim()){ handle(man.value.trim()); man.value = ''; } });
+  let last = '', lastAt = 0;
+  const handle = code => {
+    if(code === last && Date.now() - lastAt < 1800) return;
+    last = code; lastAt = Date.now();
+    const msg = onCode(code);
+    const el = document.getElementById('scan-last'); if(el) el.innerHTML = msg || axEsc(code);
+    try{ const ac = new (window.AudioContext || window.webkitAudioContext)(); const o = ac.createOscillator(); o.frequency.value = 1180; o.connect(ac.destination); o.start(); setTimeout(() => { o.stop(); ac.close(); }, 90); }catch(e){}
+    try{ navigator.vibrate && navigator.vibrate(60); }catch(e){}
+    if(!opts.continuous) setTimeout(closeScanner, 500);
+  };
+  __scan = { handle };
+  try{
+    if('BarcodeDetector' in window){
+      const det = new BarcodeDetector({ formats: ['code_128', 'qr_code', 'ean_13', 'code_39'] });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      const v = document.getElementById('scan-video'); v.srcObject = stream; await v.play();
+      __scan.stream = stream;
+      const tick = async () => {
+        if(!__scan || !__scan.stream) return;
+        try{ const r = await det.detect(v); if(r && r[0]) handle(r[0].rawValue); }catch(e){}
+        __scan.raf = setTimeout(tick, 180);
+      };
+      tick();
+    } else {
+      await axLoadScript('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js', () => window.Html5Qrcode);
+      document.getElementById('scan-video').remove();
+      const q = new Html5Qrcode('scan-view', { formatsToSupport: [Html5QrcodeSupportedFormats.CODE_128, Html5QrcodeSupportedFormats.QR_CODE], verbose: false });
+      __scan.q = q;
+      await q.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 260, height: 110 } }, txt => handle(txt), () => {});
+    }
+  }catch(e){
+    const el = document.getElementById('scan-last'); if(el) el.innerHTML = `⚠️ ကင်မရာ ဖွင့်မရပါ (${axEsc(e.message || e)}) — Code ကို အောက်မှာ ရိုက်ထည့်ပါ (သို့) USB/Bluetooth Scanner သုံးပါ`;
+    setTimeout(() => man.focus(), 100);
+  }
+}
+function closeScanner(){
+  if(__scan){
+    clearTimeout(__scan.raf);
+    try{ __scan.stream && __scan.stream.getTracks().forEach(t => t.stop()); }catch(e){}
+    try{ __scan.q && __scan.q.stop().catch(() => {}); }catch(e){}
+    __scan.stream = null; __scan = null;
+  }
+  document.getElementById('scan-ov')?.remove();
+}
+// ---- POS မှာ Scan ----
+function posAddByCode(code){
+  const r = parseSku(code, posProductsCache);
+  if(!r) return '❓ SUWATI Barcode မဟုတ်ပါ';
+  if(r.notFound){ showToast('❓ ဒီ Barcode နဲ့ ပစ္စည်း မတွေ့ပါ'); return '❓ ပစ္စည်း မတွေ့ပါ'; }
+  selectPosProduct(r.p.name);
+  posSelectedSize = r.size; posSelectedColor = r.color;
+  renderPosSelectedProduct();
+  const before = posCart.length;
+  addPosCartItem();
+  if(posCart.length > before){ showToast(`✅ ${r.p.name}${r.size ? ' · ' + r.size : ''}${r.color ? ' · ' + r.color : ''}`); return `✅ <b>${axEsc(r.p.name)}</b>${r.size ? ' · ' + axEsc(r.size) : ''}${r.color ? ' · ' + axEsc(r.color) : ''} — ခြင်းထဲ ရောက်ပြီ (${posCart.length})`; }
+  return `⚠️ ${axEsc(r.p.name)} — Stock မလုံလောက်ပါ`;
+}
+(function injectPosScan(){
+  const inp = document.getElementById('pos-product-search'); if(!inp || document.getElementById('pos-scan-btn')) return;
+  inp.insertAdjacentHTML('afterend', '<button type="button" class="acid full" id="pos-scan-btn">📷 Barcode Scan (အဆက်မပြတ်)</button>');
+  document.getElementById('pos-scan-btn').addEventListener('click', () => openScanner(posAddByCode, { continuous: true, title: '📷 POS — Scan လိုက်တိုင်း ခြင်းထဲ ထည့်မည်' }));
+  // USB / Bluetooth Scanner — Code ရိုက်ပြီး Enter
+  inp.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    const v = inp.value.trim();
+    if(/^S\d+(-(\d+|x)){0,2}$/i.test(v)){ e.preventDefault(); posAddByCode(v); inp.value = ''; document.getElementById('pos-product-results').innerHTML = ''; }
+  });
+})();
+// ---- Label ထုတ် ----
+(function injectLabels(){
+  const panel = document.getElementById('inventory-panel'); if(!panel || document.getElementById('lbl-card')) return;
+  const card = document.createElement('details'); card.className = 'form-card bulk-card'; card.id = 'lbl-card';
+  card.innerHTML = `
+    <summary><h3 style="display:inline;">🏷️ Barcode Label ထုတ်မည်</h3></summary>
+    <div class="hint" style="margin-top:10px;">ပစ္စည်းမှာ ကပ်ဖို့ Label — POS မှာ Scan လိုက်ရုံနဲ့ ခြင်းထဲ ဝင်မည်။ Size/အရောင် နာမည်ပြောင်းရင် Label ပြန်ထုတ်ပါ</div>
+    <label class="ps-lbl" for="lbl-product">ပစ္စည်း</label><select id="lbl-product"></select>
+    <div class="ps-dates">
+      <div><label class="ps-lbl" for="lbl-mode">အရေအတွက်</label><select id="lbl-mode"><option value="stock">လက်ကျန် Stock အတိုင်း</option><option value="one">တစ်မျိုး ၁ ခုစီ</option><option value="custom">ကိုယ်တိုင် ရိုက်မည်</option></select></div>
+      <div><label class="ps-lbl" for="lbl-size">Label အရွယ်</label><select id="lbl-size"><option value="50x30">50 × 30 mm (Label Printer)</option><option value="40x25">40 × 25 mm</option><option value="a4">A4 စာရွက် (တစ်ရွက် ၂၄ ခု)</option></select></div>
+    </div>
+    <div id="lbl-list" class="lbl-list"></div>
+    <button type="button" class="acid bs-apply" id="lbl-print">🖨️ Label ထုတ်မည်</button>`;
+  const anchor = document.getElementById('stockmove-card') || panel.firstElementChild;
+  anchor.insertAdjacentElement('afterend', card);
+  ['lbl-product', 'lbl-mode'].forEach(id => document.getElementById(id).addEventListener('change', renderLabelList));
+  document.getElementById('lbl-print').addEventListener('click', printLabels);
+  card.addEventListener('toggle', () => { if(card.open) fillLabelProducts(); });
+})();
+let lblProducts = [];
+async function fillLabelProducts(){
+  const { data } = await sb.from('products').select('*').order('name');
+  lblProducts = (data || []).filter(p => !p.is_gift_card);
+  const sel = document.getElementById('lbl-product'), cur = sel.value;
+  sel.innerHTML = '<option value="__all">ပစ္စည်းအားလုံး (Stock ရှိတာ)</option>' + lblProducts.map(p => `<option value="${axEsc(p.name)}">${axEsc(p.name)}</option>`).join('');
+  if(cur) sel.value = cur;
+  if(lblProducts.length && lblProducts.every(p => !p.sku_code)) document.getElementById('lbl-list').innerHTML = '<p class="hint" style="color:var(--warn-text);">⚠️ Supabase မှာ SHOP-EXTRA.sql ကို အရင် Run ပါ (ပစ္စည်း နံပါတ် မရှိသေး)</p>';
+  else renderLabelList();
+}
+function renderLabelList(){
+  const box = document.getElementById('lbl-list'); if(!box) return;
+  const v = document.getElementById('lbl-product').value, mode = document.getElementById('lbl-mode').value;
+  const prods = v === '__all' ? lblProducts.filter(p => (p.stock_qty || 0) > 0 && p.sku_code) : lblProducts.filter(p => p.name === v && p.sku_code);
+  const rows = [];
+  prods.forEach(p => axVariants(p).forEach(x => {
+    const st = axVarQty(p, x.size, x.color);
+    if(v === '__all' && mode === 'stock' && st <= 0) return;
+    rows.push({ p, ...x, n: mode === 'stock' ? Math.max(st, 0) : 1 });
+  }));
+  box.innerHTML = rows.length ? rows.slice(0, 300).map((r, i) => `
+    <div class="lbl-row"><span><b>${axEsc(r.p.name)}</b>${r.size || r.color ? ` · ${[r.size, r.color].filter(Boolean).map(axEsc).join(' · ')}` : ''}<small>${skuCode(r.p, r.size, r.color)}</small></span>
+      <input type="number" min="0" max="500" value="${r.n}" data-i="${i}" ${mode === 'custom' ? '' : ''} inputmode="numeric"></div>`).join('') +
+    `<div class="hint" style="margin-top:8px;">စုစုပေါင်း <b id="lbl-total">${rows.reduce((s, r) => s + r.n, 0)}</b> ခု</div>` : '<p class="hint">Label ထုတ်စရာ မရှိပါ</p>';
+  box._rows = rows;
+  box.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    rows[inp.dataset.i].n = Math.max(0, Math.min(500, parseInt(inp.value) || 0));
+    const t = document.getElementById('lbl-total'); if(t) t.textContent = rows.reduce((s, r) => s + r.n, 0);
+  }));
+}
+function printLabels(){
+  const rows = (document.getElementById('lbl-list')._rows || []).filter(r => r.n > 0);
+  const total = rows.reduce((s, r) => s + r.n, 0);
+  if(!total) return showToast('⚠️ Label အရေအတွက် ထည့်ပါ');
+  if(total > 1000) return showToast('⚠️ တစ်ခါ ၁၀၀၀ ခုအထိသာ');
+  const size = document.getElementById('lbl-size').value;
+  const dims = size === 'a4' ? null : size.split('x').map(Number);
+  const labels = [];
+  rows.forEach(r => { for(let i = 0; i < r.n; i++) labels.push(r); });
+  const price = p => (typeof saleEffPrice === 'function' ? saleEffPrice(p) : Number(p.price)) || 0;
+  const w = window.open('', '_blank');
+  if(!w) return showToast('⚠️ Pop-up ပိတ်ထားပါတယ် — ခွင့်ပြုပြီး ပြန်နှိပ်ပါ');
+  const css = dims
+    ? `@page{ size:${dims[0]}mm ${dims[1]}mm; margin:0; } .lb{ width:${dims[0]}mm; height:${dims[1]}mm; page-break-after:always; }`
+    : `@page{ size:A4; margin:8mm; } body{ display:grid; grid-template-columns:repeat(3, 1fr); gap:2mm; } .lb{ height:33mm; border:1px dashed #bbb; }`;
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>SUWATI Labels</title>
+    <style>*{ box-sizing:border-box; margin:0; } body{ font-family:Arial,sans-serif; } ${css}
+    .lb{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.5mm 2mm; overflow:hidden; text-align:center; }
+    .n{ font-weight:bold; font-size:${dims && dims[0] < 45 ? 7 : 8.5}pt; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+    .v{ font-size:7pt; } .p{ font-weight:bold; font-size:9pt; } svg{ max-width:100%; height:auto; }
+    .tip{ position:fixed; top:0; left:0; right:0; background:#D6FF3F; padding:8px; font-size:13px; text-align:center; } @media print{ .tip{ display:none; } }</style></head><body>
+    <div class="tip">Label ${labels.length} ခု — Print ပေါ်မလာရင် Browser Menu › Print နှိပ်ပါ</div>
+    ${labels.map(r => `<div class="lb"><div class="n">${axEsc(r.p.name)}</div><div class="v">${[r.size, r.color].filter(Boolean).map(axEsc).join(' · ')}</div><svg class="bc" data-c="${skuCode(r.p, r.size, r.color)}"></svg><div class="p">${axMoney(price(r.p))} Ks</div></div>`).join('')}
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script>
+    <script>document.querySelectorAll('svg.bc').forEach(s=>{ try{ JsBarcode(s, s.dataset.c, { format:'CODE128', width:1.3, height:${dims && dims[1] < 28 ? 26 : 34}, fontSize:10, margin:0 }); }catch(e){} }); setTimeout(()=>window.print(), 600);<\/script>
+    </body></html>`);
+  w.document.close();
+  logActivity('labels_printed', `${labels.length}`);
+}
+
+// =====================================================================
+// 📋 STOCK ရေတွက် စစ်ဆေးခြင်း
+// =====================================================================
+const ST_KEY = 'suwati_stocktake';
+let stRows = [];
+(function injectStocktake(){
+  const panel = document.getElementById('inventory-panel'); if(!panel || document.getElementById('st-card')) return;
+  const card = document.createElement('details'); card.className = 'form-card bulk-card'; card.id = 'st-card';
+  card.innerHTML = `
+    <summary><h3 style="display:inline;">📋 Stock ရေတွက် စစ်ဆေးမည် <span class="bs-count" id="st-badge"></span></h3></summary>
+    <div class="hint" style="margin-top:10px;">ဆိုင်ထဲက ပစ္စည်းကို တကယ်ရေတွက်ပြီး ဂဏန်းထည့်ပါ (သို့) 📷 Scan လိုက်တိုင်း +1 — ပြီးရင် ကွာတာကို တစ်ချက်တည်း ပြင်ပါ။ ရေတွက်နေတုန်း App ပိတ်လည်း မပျောက်ပါ</div>
+    <div class="st-tools"><button type="button" class="secondary" id="st-start">🔄 စာရင်း အသစ်ယူမည်</button><button type="button" class="acid" id="st-scan">📷 Scan နဲ့ ရေတွက်</button></div>
+    <input type="text" id="st-search" placeholder="🔍 ပစ္စည်းအမည်ဖြင့် ရှာ">
+    <label class="st-only"><input type="checkbox" id="st-diff-only"> ကွာတာပဲ ပြမည်</label>
+    <div id="st-sum" class="ps-calc"></div>
+    <div id="st-list" class="st-list"></div>
+    <input type="text" id="st-note" placeholder="မှတ်ချက် (ဥပမာ အောက်တိုဘာ လကုန် စစ်ဆေးမှု)">
+    <button type="button" class="acid bs-apply" id="st-apply" disabled>✅ ကွာခြားချက်ကို Stock ထဲ ပြင်မည်</button>
+    <button type="button" class="secondary" id="st-clear" style="width:100%; margin-top:8px;">🗑 ရေတွက်ထားတာ ရှင်းမည်</button>`;
+  const anchor = document.getElementById('lbl-card') || panel.firstElementChild;
+  anchor.insertAdjacentElement('afterend', card);
+  document.getElementById('st-start').addEventListener('click', () => stocktakeLoad(true));
+  document.getElementById('st-scan').addEventListener('click', () => openScanner(stocktakeScan, { continuous: true, title: '📷 ရေတွက်ရန် — Scan တိုင်း +1' }));
+  document.getElementById('st-search').addEventListener('input', renderStocktake);
+  document.getElementById('st-diff-only').addEventListener('change', renderStocktake);
+  document.getElementById('st-apply').addEventListener('click', stocktakeApply);
+  document.getElementById('st-clear').addEventListener('click', async () => { if(!await adminConfirm('ရေတွက်ထားသမျှ ရှင်းမှာ သေချာပါသလား?')) return; stRows.forEach(r => r.counted = null); stocktakeSave(); renderStocktake(); });
+  card.addEventListener('toggle', () => { if(card.open && !stRows.length) stocktakeLoad(false); });
+})();
+function stKey(r){ return `${r.name}|${r.size || ''}|${r.color || ''}`; }
+function stocktakeSave(){ try{ localStorage.setItem(ST_KEY, JSON.stringify(stRows.filter(r => r.counted != null).map(r => [stKey(r), r.counted]))); }catch(e){} }
+async function stocktakeLoad(fresh){
+  const { data } = await sb.from('products').select('*').order('name');
+  let saved = {}; try{ (JSON.parse(localStorage.getItem(ST_KEY) || '[]')).forEach(([k, v]) => saved[k] = v); }catch(e){}
+  if(fresh && Object.keys(saved).length && !await adminConfirm('ရေတွက်ထားတာတွေ ဆက်ထားမလား?\n(OK = ဆက်ထား · Cancel = အသစ်စ)')) saved = {};
+  stRows = [];
+  (data || []).filter(p => !p.is_gift_card && !p.preorder).forEach(p => axVariants(p).forEach(x => {
+    const r = { p, name: p.name, size: x.size, color: x.color, expected: axVarQty(p, x.size, x.color), counted: null };
+    if(saved[stKey(r)] != null) r.counted = saved[stKey(r)];
+    stRows.push(r);
+  }));
+  stocktakeSave(); renderStocktake();
+}
+function stocktakeScan(code){
+  const r = parseSku(code, stRows.map(x => x.p));
+  if(!r) return '❓ SUWATI Barcode မဟုတ်ပါ';
+  if(r.notFound) return '❓ ပစ္စည်း မတွေ့ပါ';
+  const row = stRows.find(x => x.name === r.p.name && (x.size || null) === (r.size || null) && (x.color || null) === (r.color || null));
+  if(!row) return '❓ စာရင်းထဲ မပါပါ — "စာရင်း အသစ်ယူမည်" နှိပ်ပါ';
+  row.counted = (row.counted || 0) + 1; stocktakeSave(); renderStocktake();
+  return `✅ <b>${axEsc(row.name)}</b>${row.size ? ' · ' + axEsc(row.size) : ''}${row.color ? ' · ' + axEsc(row.color) : ''} — ရေတွက်ပြီး <b>${row.counted}</b> / စာရင်း ${row.expected}`;
+}
+function renderStocktake(){
+  const box = document.getElementById('st-list'); if(!box) return;
+  const q = (document.getElementById('st-search').value || '').trim().toLowerCase(), only = document.getElementById('st-diff-only').checked;
+  const done = stRows.filter(r => r.counted != null), diffs = done.filter(r => r.counted !== r.expected);
+  const net = diffs.reduce((s, r) => s + (r.counted - r.expected), 0);
+  document.getElementById('st-badge').textContent = done.length ? `· ${done.length}/${stRows.length}` : '';
+  document.getElementById('st-sum').innerHTML = stRows.length ? `ရေတွက်ပြီး <b>${done.length}</b> / ${stRows.length} မျိုး · ကွာ <b class="${diffs.length ? 'ps-warn' : 'ps-acid'}">${diffs.length}</b> မျိုး${diffs.length ? ` (စုစုပေါင်း ${net > 0 ? '+' : ''}${net} ထည်)` : ''}` : '';
+  document.getElementById('st-apply').disabled = !diffs.length;
+  const list = stRows.map((r, i) => ({ r, i })).filter(({ r }) => (!q || r.name.toLowerCase().includes(q)) && (!only || (r.counted != null && r.counted !== r.expected)));
+  box.innerHTML = list.slice(0, 300).map(({ r, i }) => {
+    const d = r.counted == null ? null : r.counted - r.expected;
+    return `<div class="st-row ${d == null ? '' : d === 0 ? 'ok' : 'bad'}"><span><b>${axEsc(r.name)}</b>${r.size || r.color ? `<small>${[r.size, r.color].filter(Boolean).map(axEsc).join(' · ')}</small>` : ''}</span>
+      <em>စာရင်း ${r.expected}</em>
+      <input type="number" min="0" inputmode="numeric" placeholder="?" value="${r.counted == null ? '' : r.counted}" data-i="${i}">
+      <i>${d == null ? '' : d === 0 ? '✓' : (d > 0 ? '+' : '') + d}</i></div>`;
+  }).join('') || '<p class="hint">ပစ္စည်း မရှိပါ</p>';
+  box.querySelectorAll('input').forEach(inp => inp.addEventListener('change', () => {
+    const r = stRows[inp.dataset.i]; r.counted = inp.value === '' ? null : Math.max(0, parseInt(inp.value) || 0); stocktakeSave(); renderStocktake();
+  }));
+}
+async function stocktakeApply(){
+  const diffs = stRows.filter(r => r.counted != null && r.counted !== r.expected);
+  if(!diffs.length) return;
+  if(!await adminConfirm(`ပစ္စည်း ${diffs.length} မျိုးရဲ့ Stock ကို ရေတွက်ထားတဲ့ ဂဏန်းအတိုင်း ပြင်မှာ သေချာပါသလား?`)) return;
+  const btn = document.getElementById('st-apply'); btn.disabled = true;
+  const { data, error } = await sb.rpc('stocktake_apply', { p_items: diffs.map(r => ({ name: r.name, size: r.size, color: r.color, counted: r.counted })), p_note: document.getElementById('st-note').value || null });
+  if(error){ btn.disabled = false; return showToast(/NO_PERMISSION/.test(error.message) ? '🚫 Stock ပြင်ခွင့် မရှိပါ' : /stocktake_apply|function/.test(error.message) ? '⚠️ Supabase မှာ SHOP-EXTRA.sql ကို အရင် Run ပါ' : 'Error: ' + error.message); }
+  showToast(`✅ ${data.changed} မျိုး Stock ပြင်ပြီးပါပြီ`);
+  logActivity('stocktake_applied', `${data.changed} items · diff ${data.diff}`);
+  try{ localStorage.removeItem(ST_KEY); }catch(e){}
+  try{ loadProducts(); loadInventory(); refreshLowStockBadge(); loadStockMoves(); }catch(e){}
+  stocktakeLoad(false);
+}
+
+// =====================================================================
+// 🔍 ADMIN LOGIN မှတ်တမ်း
+// =====================================================================
+function axDeviceLabel(){
+  const ua = navigator.userAgent;
+  const os = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android' : /Windows/.test(ua) ? 'Windows' : /Mac OS X/.test(ua) ? 'Mac' : /Linux/.test(ua) ? 'Linux' : 'Device';
+  const br = /Edg\//.test(ua) ? 'Edge' : /CriOS|Chrome\//.test(ua) ? 'Chrome' : /FxiOS|Firefox\//.test(ua) ? 'Firefox' : /Safari\//.test(ua) ? 'Safari' : 'Browser';
+  const app = (navigator.standalone || (window.matchMedia && matchMedia('(display-mode: standalone)').matches)) ? ' (App)' : '';
+  return `${os} · ${br}${app}`;
+}
+function axDeviceId(){
+  let id = null; try{ id = localStorage.getItem('suwati_admin_device'); }catch(e){}
+  if(!id){ id = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)); try{ localStorage.setItem('suwati_admin_device', id); }catch(e){} }
+  return id;
+}
+async function recordAdminLogin(){
+  try{
+    if(sessionStorage.getItem('suwati_login_logged') === (currentAdminUserId || '')) return;
+    const { error } = await sb.rpc('record_admin_login', { p_device_id: axDeviceId(), p_label: axDeviceLabel(), p_ua: navigator.userAgent.slice(0, 300) });
+    if(!error) sessionStorage.setItem('suwati_login_logged', currentAdminUserId || '');
+  }catch(e){}
+}
+(function injectLoginLog(){
+  const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('ll-card')) return;
+  const card = document.createElement('details'); card.className = 'form-card bulk-card'; card.id = 'll-card';
+  card.innerHTML = `<summary><h3 style="display:inline;">🔍 Admin Login မှတ်တမ်း</h3></summary>
+    <div class="hint" style="margin-top:10px;">ဘယ်သူ ဘယ်ဖုန်း/ကွန်ပျူတာကနေ ဝင်လဲ — မသိတဲ့ Device ကနေ ဝင်ရင် Owner ဖုန်းကို ချက်ချင်း အသိပေးမည် (📉 Notification ဖွင့်ထားရန်)</div>
+    <div class="hint">ဒီ Device: <b>${axEsc(axDeviceLabel())}</b></div>
+    <div id="ll-list"></div>`;
+  const anchor = document.getElementById('apush-card') || document.getElementById('mfa-card');
+  if(anchor) anchor.insertAdjacentElement('afterend', card); else panel.appendChild(card);
+  card.addEventListener('toggle', () => { if(card.open) loadLoginLog(); });
+})();
+async function loadLoginLog(){
+  const box = document.getElementById('ll-list'); if(!box) return;
+  const { data, error } = await sb.from('admin_logins').select('*').order('created_at', { ascending: false }).limit(50);
+  if(error){ box.innerHTML = axMissing(error) ? '<p class="hint" style="color:var(--warn-text);">⚠️ Supabase မှာ SHOP-EXTRA.sql ကို အရင် Run ပါ</p>' : ''; return; }
+  const me = axDeviceId();
+  box.innerHTML = (data || []).length ? data.map(l => `
+    <div class="ll-row${l.is_new_device ? ' new' : ''}"><span class="ll-ic">${/iPhone|Android|iPad/.test(l.device_label || '') ? '📱' : '💻'}</span>
+      <span><b>${axEsc((l.email || '').split('@')[0])}</b> · ${axEsc(l.device_label || '?')}${l.device_id === me ? ' <em>(ဒီ Device)</em>' : ''}${l.is_new_device ? ' <i>🆕 Device အသစ်</i>' : ''}
+      <small>${new Date(l.created_at).toLocaleString()}</small></span></div>`).join('') : '<p class="hint">မှတ်တမ်း မရှိသေးပါ</p>';
+}
+
+// =====================================================================
+// Login ဝင်ပြီးချိန် — Owner ကို "ဒီနေ့" မှာ စဖွင့် · Login မှတ် · Broadcast Load
+// =====================================================================
+(function(){
+  const _cs = checkSession;
+  checkSession = async function(){
+    const r = await _cs.apply(this, arguments);
+    try{
+      if(document.getElementById('dashboard').style.display !== 'block') return r;
+      document.querySelectorAll('.owner-only').forEach(el => el.style.display = currentAdminRole === 'owner' ? '' : 'none');
+      recordAdminLogin();
+      if(currentAdminRole === 'owner'){ broadcastCount(); loadBroadcastHistory(); }
+      const canToday = currentAdminRole === 'owner' || (currentAdminAllowedTabs || []).includes('today-panel');
+      if(canToday && !sessionStorage.getItem('suwati_today_shown')){
+        sessionStorage.setItem('suwati_today_shown', '1');
+        setTimeout(() => axGo('today-panel'), 50);
+      }
+    }catch(e){}
+    return r;
+  };
+})();
+
+// =====================================================================
+// 🔐 SECURITY PLUS (Admin)
+//   ① 2FA — Login ဝင်ရင် ဖုန်း App (Google Authenticator စသည်) ထဲက Code ပါ လို
+//   ② 📥 ပစ္စည်းအဝင် စာရင်းသွင်း + Stock ပြောင်းလဲမှု မှတ်တမ်း
+//   ③ 📉 Stock နည်း/ကုန်ရင် ဒီဖုန်းကို Notification
+//   ④ 👥 Staff လုပ်ပိုင်ခွင့် (ဈေး / Stock / ဖျက် / Refund)
+//   Supabase မှာ SHOP-PLUS.sql Run ထားရန်
+// =====================================================================
+const secEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const mfaReady = () => !!(sb.auth && sb.auth.mfa && typeof sb.auth.mfa.getAuthenticatorAssuranceLevel === 'function');
+
+// ---------- ① 2FA — Login မှာ Code တောင်း ----------
+function showMfaPrompt(){
+  const scr = document.getElementById('login-screen'), form = document.getElementById('login-form');
+  document.getElementById('dashboard').style.display = 'none';
+  scr.style.display = 'flex';
+  form.style.display = 'none';
+  let box = document.getElementById('mfa-login-box');
+  if(!box){
+    box = document.createElement('div'); box.id = 'mfa-login-box'; box.className = 'mfa-login';
+    form.insertAdjacentElement('afterend', box);
+  }
+  box.style.display = '';
+  box.innerHTML = `
+    <div class="mfa-lock">🔐</div>
+    <div class="mfa-h">၂ ဆင့် အတည်ပြုခြင်း</div>
+    <div class="hint" style="text-align:center;">ဖုန်းထဲက Authenticator App မှာ ပေါ်နေတဲ့ ဂဏန်း ၆ လုံး ရိုက်ပါ</div>
+    <input type="text" id="mfa-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" class="mfa-code">
+    <button type="button" class="acid" id="mfa-verify-btn">အတည်ပြုမည်</button>
+    <button type="button" class="secondary" id="mfa-cancel-btn">Logout</button>
+    <div id="mfa-err" class="mfa-err"></div>`;
+  const inp = document.getElementById('mfa-code');
+  setTimeout(() => inp.focus(), 100);
+  inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g, '').slice(0, 6); if(inp.value.length === 6) verifyMfaLogin(); });
+  document.getElementById('mfa-verify-btn').addEventListener('click', verifyMfaLogin);
+  document.getElementById('mfa-cancel-btn').addEventListener('click', async () => { await sb.auth.signOut(); hideMfaPrompt(); location.reload(); });
+}
+function hideMfaPrompt(){
+  const box = document.getElementById('mfa-login-box'); if(box) box.style.display = 'none';
+  document.getElementById('login-form').style.display = '';
+}
+async function verifyMfaLogin(){
+  const code = (document.getElementById('mfa-code').value || '').trim(), err = document.getElementById('mfa-err'), btn = document.getElementById('mfa-verify-btn');
+  if(code.length !== 6){ err.textContent = 'ဂဏန်း ၆ လုံး ရိုက်ပါ'; return; }
+  btn.disabled = true; btn.textContent = 'စစ်နေသည်...';
+  try{
+    const { data: f } = await sb.auth.mfa.listFactors();
+    const factor = (f?.totp || []).find(x => x.status === 'verified') || (f?.totp || [])[0];
+    if(!factor) throw new Error('2FA မတွေ့ပါ');
+    const { error } = await sb.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
+    if(error) throw error;
+    hideMfaPrompt();
+    checkSession();
+  }catch(e){
+    err.textContent = /invalid|expired/i.test(e.message || '') ? '❌ Code မှားနေပါသည် (သို့) သက်တမ်းကုန်သွားပါပြီ — အသစ်ရိုက်ပါ' : '❌ ' + (e.message || e);
+    document.getElementById('mfa-code').value = '';
+    const b = document.getElementById('mfa-login-box'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+  }finally{ btn.disabled = false; btn.textContent = 'အတည်ပြုမည်'; }
+}
+
+// ---------- ④ Staff လုပ်ပိုင်ခွင့် (Client ဘက် ဖျောက်ရန် — Server က အမှန် စစ်သည်) ----------
+const STAFF_ACTIONS = [
+  { id: 'edit_product', label: '👕 ပစ္စည်း ထည့်/ပြင်' },
+  { id: 'edit_price', label: '💰 ဈေး ပြင် / 🔥 Sale ချ' },
+  { id: 'edit_stock', label: '📦 Stock ပြင် / ပစ္စည်းအဝင်' },
+  { id: 'delete_product', label: '🗑 ပစ္စည်း ဖျက်' },
+  { id: 'refund', label: '↩️ Refund / Void' },
+];
+let currentAdminActions = null;
+function adminCan(a){
+  if(currentAdminRole === 'owner') return true;
+  if(currentAdminRole === 'delivery') return false;
+  return currentAdminActions == null ? a === 'refund' : currentAdminActions.includes(a);
+}
+function applyActionPermissions(){
+  const cls = document.body.classList;
+  STAFF_ACTIONS.forEach(a => cls.toggle('no-' + a.id.replace('_', '-'), !adminCan(a.id)));
+  const priceEl = document.getElementById('product-price');
+  if(priceEl){ priceEl.readOnly = !adminCan('edit_price'); priceEl.title = priceEl.readOnly ? 'ဈေးပြင်ခွင့် မရှိပါ' : ''; }
+  const pfCard = document.getElementById('product-form')?.closest('.form-card'); if(pfCard) pfCard.classList.add('pf-card');
+}
+
+// ---------- checkSession — 2FA စစ် + လုပ်ပိုင်ခွင့် ----------
+(function(){
+  const _cs = checkSession;
+  checkSession = async function(){
+    try{
+      if(mfaReady()){
+        const { data: { session } } = await sb.auth.getSession();
+        if(session){
+          const { data } = await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+          if(data && data.nextLevel === 'aal2' && data.currentLevel !== 'aal2'){ showMfaPrompt(); return; }
+        }
+      }
+    }catch(e){}
+    const r = await _cs.apply(this, arguments);
+    try{
+      if(currentAdminUserId){
+        const { data } = await sb.from('admins').select('*').eq('user_id', currentAdminUserId).maybeSingle();
+        currentAdminActions = data && Array.isArray(data.allowed_actions) ? data.allowed_actions : null;
+      }
+      applyActionPermissions();
+      if(document.getElementById('dashboard').style.display === 'block'){ render2faCard(); renderAdminPushCard(); loadStockMoves(); fillStockInProducts(); }
+    }catch(e){}
+    return r;
+  };
+})();
+
+// ---------- ① 2FA — Settings Card ----------
+(function inject2fa(){
+  const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('mfa-card')) return;
+  const card = document.createElement('div'); card.className = 'form-card'; card.id = 'mfa-card';
+  card.innerHTML = '<h3>🔐 ၂ ဆင့် Login (2FA)</h3><div id="mfa-body"><p class="hint">Load လုပ်နေသည်...</p></div>';
+  panel.insertAdjacentElement('afterbegin', card);
+})();
+async function render2faCard(){
+  const body = document.getElementById('mfa-body'); if(!body) return;
+  if(!mfaReady()){ body.innerHTML = '<p class="hint">ဒီ Browser မှာ 2FA မရနိုင်ပါ</p>'; return; }
+  const { data, error } = await sb.auth.mfa.listFactors();
+  if(error){ body.innerHTML = `<p class="hint">⚠️ ${secEsc(error.message)}</p>`; return; }
+  const on = (data?.totp || []).filter(f => f.status === 'verified');
+  if(on.length){
+    body.innerHTML = `
+      <div class="mfa-on">✅ ဖွင့်ထားပါသည် — Login ဝင်တိုင်း ဖုန်း App ထဲက Code လိုပါမည်</div>
+      <div class="hint">ဖုန်းပျောက်ရင်: Supabase Dashboard › Authentication › Users › ကိုယ့် Email › MFA Factors မှာ ဖျက်ပြီး ပြန်ဖွင့်ပါ</div>
+      <button type="button" class="secondary" id="mfa-off-btn" style="width:100%; margin-top:8px;">2FA ပိတ်မည်</button>`;
+    document.getElementById('mfa-off-btn').addEventListener('click', async () => {
+      if(!await adminConfirm('2FA ပိတ်ရင် Password တစ်ခုတည်းနဲ့ ဝင်လို့ရသွားမည် — သေချာပါသလား?')) return;
+      for(const f of on){ const { error } = await sb.auth.mfa.unenroll({ factorId: f.id }); if(error){ showToast('Error: ' + error.message); return; } }
+      showToast('2FA ပိတ်ပြီးပါပြီ'); logActivity('mfa_disabled', currentAdminEmail); render2faCard();
+    });
+    return;
+  }
+  body.innerHTML = `
+    <div class="hint">Password ပေါက်သွားရင်တောင် <b>သင့်ဖုန်း</b> မရှိရင် Admin App ဝင်လို့ မရအောင် ကာကွယ်ပေးပါသည်။ ဖုန်းမှာ <b>Google Authenticator</b> (သို့) <b>Microsoft Authenticator</b> App အရင် Install လုပ်ထားပါ။</div>
+    <button type="button" class="acid" id="mfa-start-btn" style="width:100%; margin-top:8px;">🔐 2FA ဖွင့်မည်</button>
+    <div id="mfa-enroll"></div>`;
+  document.getElementById('mfa-start-btn').addEventListener('click', startMfaEnroll);
+}
+async function startMfaEnroll(){
+  const box = document.getElementById('mfa-enroll'), btn = document.getElementById('mfa-start-btn');
+  btn.disabled = true;
+  try{
+    // အရင် မပြီးခဲ့တဲ့ ကြိုးစားမှု ရှင်း
+    const { data: lf } = await sb.auth.mfa.listFactors();
+    for(const f of (lf?.all || []).filter(x => x.status !== 'verified')) await sb.auth.mfa.unenroll({ factorId: f.id });
+    const { data, error } = await sb.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'SUWATI Admin ' + new Date().toISOString().slice(0, 16) });
+    if(error) throw error;
+    box.innerHTML = `
+      <div class="mfa-steps">
+        <div><b>၁)</b> Authenticator App › <b>+</b> › QR Code Scan</div>
+        <img class="mfa-qr" src="${data.totp.qr_code}" alt="QR">
+        <div class="hint">Scan မရရင် ဒီ Key ကို ရိုက်ထည့်ပါ:</div>
+        <code class="mfa-secret" onclick="navigator.clipboard && navigator.clipboard.writeText(this.textContent).then(()=>showToast('Copy ပြီး'))">${secEsc(data.totp.secret)}</code>
+        <div style="margin-top:10px;"><b>၂)</b> App မှာ ပေါ်လာတဲ့ ဂဏန်း ၆ လုံး ရိုက်ပါ</div>
+        <input type="text" id="mfa-enroll-code" inputmode="numeric" maxlength="6" placeholder="000000" class="mfa-code">
+        <button type="button" class="acid" id="mfa-enroll-verify" style="width:100%;">✅ အတည်ပြုပြီး ဖွင့်မည်</button>
+      </div>`;
+    const inp = document.getElementById('mfa-enroll-code');
+    inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g, '').slice(0, 6); });
+    document.getElementById('mfa-enroll-verify').addEventListener('click', async () => {
+      const code = inp.value.trim(); if(code.length !== 6) return showToast('ဂဏန်း ၆ လုံး ရိုက်ပါ');
+      const { error: ve } = await sb.auth.mfa.challengeAndVerify({ factorId: data.id, code });
+      if(ve) return showToast('❌ Code မှားနေပါသည် — App ထဲက နောက်ဆုံး Code ကို ရိုက်ပါ');
+      showToast('🔐 2FA ဖွင့်ပြီးပါပြီ — နောက်တစ်ခါ Login ဝင်ရင် Code လိုပါမည်');
+      logActivity('mfa_enabled', currentAdminEmail);
+      render2faCard();
+    });
+  }catch(e){ showToast('Error: ' + (e.message || e)); btn.disabled = false; }
+}
+
+// ---------- ② 📥 ပစ္စည်းအဝင် + မှတ်တမ်း ----------
+(function injectStockIn(){
+  const panel = document.getElementById('inventory-panel'); if(!panel || document.getElementById('stockin-card')) return;
+  const card = document.createElement('details');
+  card.className = 'form-card bulk-card'; card.id = 'stockin-card';
+  card.innerHTML = `
+    <summary><h3 style="display:inline;">📥 ပစ္စည်းအဝင် စာရင်းသွင်းမည်</h3></summary>
+    <div class="hint" style="margin-top:10px;">ပစ္စည်း ဝယ်ထည့်တိုင်း ဒီမှာ သွင်းပါ — Stock တိုးပေးပြီး ဘယ်နေ့ ဘယ်နှထည် ဝင်လဲ မှတ်ထားမည်</div>
+    <label class="ps-lbl" for="si-product">ပစ္စည်း</label><select id="si-product"></select>
+    <div class="ps-dates">
+      <div><label class="ps-lbl" for="si-size">Size</label><select id="si-size"></select></div>
+      <div><label class="ps-lbl" for="si-color">အရောင်</label><select id="si-color"></select></div>
+    </div>
+    <div class="ps-dates">
+      <div><label class="ps-lbl" for="si-qty">အရေအတွက်</label><input type="number" id="si-qty" inputmode="numeric" min="1" placeholder="ဥပမာ 10"></div>
+      <div class="si-cost-wrap"><label class="ps-lbl" for="si-cost">တစ်ထည် ဝယ်ဈေး (Owner သာ မြင်)</label><input type="number" id="si-cost" inputmode="numeric" placeholder="Optional"></div>
+    </div>
+    <label class="ps-lbl" for="si-supplier">ဘယ်ကဝယ် (Supplier)</label><input type="text" id="si-supplier" placeholder="Optional — ဥပမာ ဘုရင့်နောင် ဈေး">
+    <label class="ps-lbl" for="si-note">မှတ်ချက်</label><input type="text" id="si-note" placeholder="Optional">
+    <div class="ps-calc" id="si-preview"></div>
+    <button type="button" class="acid bs-apply" id="si-save">📥 Stock ထဲ ထည့်မည်</button>`;
+  const hist = document.createElement('details');
+  hist.className = 'form-card bulk-card'; hist.id = 'stockmove-card';
+  hist.innerHTML = `
+    <summary><h3 style="display:inline;">🧾 Stock ပြောင်းလဲမှု မှတ်တမ်း</h3></summary>
+    <div class="hint" style="margin-top:10px;">📥 = ပစ္စည်းအဝင် · ✏️ = Admin က လက်နဲ့ ပြင်ခဲ့သည် (ဘယ်သူ ဘယ်အချိန်) — Order ကြောင့် လျော့တာ မပါ</div>
+    <input type="text" id="sm-search" placeholder="🔍 ပစ္စည်းအမည်ဖြင့် ရှာ">
+    <div id="sm-list"></div>`;
+  panel.insertAdjacentElement('afterbegin', hist);
+  panel.insertAdjacentElement('afterbegin', card);
+  document.getElementById('si-product').addEventListener('change', fillStockInVariants);
+  ['si-size', 'si-color', 'si-qty', 'si-cost'].forEach(id => document.getElementById(id).addEventListener('input', stockInPreview));
+  document.getElementById('si-save').addEventListener('click', saveStockIn);
+  document.getElementById('sm-search').addEventListener('input', renderStockMoves);
+  hist.addEventListener('toggle', () => { if(hist.open) loadStockMoves(); });
+})();
+let siProducts = [];
+async function fillStockInProducts(){
+  const sel = document.getElementById('si-product'); if(!sel) return;
+  const { data } = await sb.from('products').select('*').order('name');
+  siProducts = (data || []).filter(p => !p.is_gift_card);
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">-- ပစ္စည်း ရွေးပါ --</option>' + siProducts.map(p => `<option value="${secEsc(p.name)}">${secEsc(p.name)} (လက်ကျန် ${p.stock_qty ?? 0})</option>`).join('');
+  if(cur) sel.value = cur;
+  fillStockInVariants();
+  document.querySelector('.si-cost-wrap').style.display = currentAdminRole === 'owner' ? '' : 'none';
+}
+function fillStockInVariants(){
+  const p = siProducts.find(x => x.name === document.getElementById('si-product').value);
+  const sizes = p ? (p.sizes || '').split(',').map(s => s.trim()).filter(Boolean) : [];
+  const colors = p ? (p.colors || '').split(',').map(s => s.trim()).filter(Boolean) : [];
+  const opt = (arr, none) => (arr.length ? '' : `<option value="">${none}</option>`) + arr.map(v => `<option value="${secEsc(v)}">${secEsc(v)}</option>`).join('');
+  document.getElementById('si-size').innerHTML = opt(sizes, '— Size မရှိ —');
+  document.getElementById('si-color').innerHTML = opt(colors, '— အရောင် မရှိ —');
+  stockInPreview();
+}
+function stockInVariantQty(p, size, color){
+  const vs = p.variant_stock;
+  if(vs && typeof vs === 'object' && Object.keys(vs).length) return parseInt((vs[size] || {})[color]) || 0;
+  const cs = p.color_stock;
+  if(cs && typeof cs === 'object' && Object.keys(cs).length) return parseInt(cs[color]) || 0;
+  return parseInt(p.stock_qty) || 0;
+}
+function stockInPreview(){
+  const out = document.getElementById('si-preview'); if(!out) return;
+  const p = siProducts.find(x => x.name === document.getElementById('si-product').value);
+  const qty = parseInt(document.getElementById('si-qty').value) || 0;
+  if(!p || qty <= 0){ out.innerHTML = ''; return; }
+  const size = document.getElementById('si-size').value, color = document.getElementById('si-color').value;
+  const cur = stockInVariantQty(p, size, color), cost = Number(document.getElementById('si-cost').value) || 0;
+  out.innerHTML = `${secEsc(p.name)}${size ? ' · ' + secEsc(size) : ''}${color ? ' · ' + secEsc(color) : ''}: <b>${cur}</b> → <b class="ps-acid">${cur + qty}</b> ထည်` +
+    (cost && currentAdminRole === 'owner' ? `<br>စုစုပေါင်း ဝယ်ငွေ <b>${(cost * qty).toLocaleString()} ကျပ်</b> · ဝယ်ဈေး ပျမ်းမျှကို အလိုအလျောက် ပြန်တွက်မည်` : '');
+}
+async function saveStockIn(){
+  const name = document.getElementById('si-product').value, qty = parseInt(document.getElementById('si-qty').value) || 0;
+  if(!name) return showToast('⚠️ ပစ္စည်း ရွေးပါ');
+  if(qty <= 0) return showToast('⚠️ အရေအတွက် ထည့်ပါ');
+  const btn = document.getElementById('si-save'); btn.disabled = true;
+  const { data, error } = await sb.rpc('stock_receive', {
+    p_name: name, p_qty: qty, p_size: document.getElementById('si-size').value || null, p_color: document.getElementById('si-color').value || null,
+    p_unit_cost: Number(document.getElementById('si-cost').value) || null, p_supplier: document.getElementById('si-supplier').value || null, p_note: document.getElementById('si-note').value || null,
+  });
+  btn.disabled = false;
+  if(error) return showToast(/NO_PERMISSION/.test(error.message) ? '🚫 Stock ပြင်ခွင့် မရှိပါ — Owner ကို ခွင့်တောင်းပါ' : /stock_receive|function/.test(error.message) ? '⚠️ Supabase မှာ SHOP-PLUS.sql ကို အရင် Run ပါ' : 'Error: ' + error.message);
+  showToast(`📥 ${name} +${qty} ထည် — လက်ကျန် ${data?.stock ?? ''}`);
+  logActivity('stock_received', `${name} +${qty}`);
+  ['si-qty', 'si-cost', 'si-note'].forEach(id => document.getElementById(id).value = '');
+  try{ loadProducts(); loadInventory(); refreshLowStockBadge(); }catch(e){}
+  await fillStockInProducts(); loadStockMoves();
+}
+let smCache = [];
+async function loadStockMoves(){
+  const { data, error } = await sb.from('stock_movements').select('*').order('created_at', { ascending: false }).limit(200);
+  if(error){ const c = document.getElementById('stockmove-card'); if(c && /does not exist|schema cache/i.test(error.message)) c.style.display = 'none'; return; }
+  smCache = data || [];
+  let costs = {};
+  if(currentAdminRole === 'owner' && smCache.some(m => m.kind === 'in')){
+    const { data: cs } = await sb.from('stock_in_costs').select('*').in('movement_id', smCache.filter(m => m.kind === 'in').map(m => m.id));
+    (cs || []).forEach(c => costs[c.movement_id] = Number(c.unit_cost));
+  }
+  smCache.forEach(m => m._cost = costs[m.id]);
+  renderStockMoves();
+}
+function renderStockMoves(){
+  const box = document.getElementById('sm-list'); if(!box) return;
+  const q = (document.getElementById('sm-search')?.value || '').trim().toLowerCase();
+  const list = smCache.filter(m => !q || m.product_name.toLowerCase().includes(q));
+  box.innerHTML = list.length ? list.slice(0, 100).map(m => `
+    <div class="sm-row ${m.kind}">
+      <div class="sm-ic">${m.kind === 'in' ? '📥' : '✏️'}</div>
+      <div class="sm-main"><b>${secEsc(m.product_name)}</b>${m.size || m.color ? ` <span class="hint" style="margin:0;">${[m.size, m.color].filter(Boolean).map(secEsc).join(' · ')}</span>` : ''}
+        <small>${new Date(m.created_at).toLocaleString()} · ${secEsc((m.created_by_email || '').split('@')[0] || '—')}${m.supplier ? ' · 🏪 ' + secEsc(m.supplier) : ''}${m._cost ? ' · ဝယ်ဈေး ' + m._cost.toLocaleString() : ''}${m.note ? ' · ' + secEsc(m.note) : ''}</small></div>
+      <div class="sm-qty ${m.qty_change > 0 ? 'up' : 'down'}">${m.qty_change > 0 ? '+' : ''}${m.qty_change}<small>→ ${m.stock_after ?? ''}</small></div>
+    </div>`).join('') : '<p class="hint" style="margin-top:10px;">မှတ်တမ်း မရှိသေးပါ</p>';
+}
+
+// ---------- ③ 📉 Stock နည်းရင် ဒီဖုန်းကို Notification ----------
+const ADMIN_VAPID_KEY = 'BHmiPgtonZtvliQ7skU3dj50TnhRoLf9XggD_O-4GSjyZX9n7wQWY8HNoniYv7DEoVnE4FcxNhVGItrmGUlBPmk';
+function adminB64(b){ const p = '='.repeat((4 - b.length % 4) % 4); const s = atob((b + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from([...s].map(c => c.charCodeAt(0))); }
+const adminPushOk = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window && location.protocol.indexOf('http') === 0;
+(function injectPushCard(){
+  const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('apush-card')) return;
+  const card = document.createElement('div'); card.className = 'form-card'; card.id = 'apush-card';
+  card.innerHTML = '<h3>📉 Stock နည်း/ကုန်ရင် ဒီဖုန်းကို အသိပေး</h3><div id="apush-body"></div>';
+  const mfa = document.getElementById('mfa-card');
+  if(mfa) mfa.insertAdjacentElement('afterend', card); else panel.insertAdjacentElement('afterbegin', card);
+})();
+async function adminPushState(){
+  if(!adminPushOk()) return /iPhone|iPad|iPod/.test(navigator.userAgent) && !(navigator.standalone || matchMedia('(display-mode: standalone)').matches) ? 'ios-install' : 'unsupported';
+  if(Notification.permission === 'denied') return 'denied';
+  try{ const reg = await navigator.serviceWorker.getRegistration(); const sub = reg && await reg.pushManager.getSubscription(); return sub && Notification.permission === 'granted' ? 'on' : 'off'; }catch(e){ return 'off'; }
+}
+async function renderAdminPushCard(){
+  const body = document.getElementById('apush-body'); if(!body) return;
+  if(currentAdminRole === 'delivery'){ document.getElementById('apush-card').style.display = 'none'; return; }
+  const st = await adminPushState();
+  const msg = {
+    'on': '✅ ဖွင့်ထားပါသည် — ပစ္စည်း Stock နည်း/ကုန်တာနဲ့ ဒီဖုန်းကို အသိပေးပါမည်',
+    'off': 'ပစ္စည်းတစ်ခု Stock သတ်မှတ်ထားတာထက် နည်းသွားရင် (သို့) ကုန်သွားရင် ဒီဖုန်းကို ချက်ချင်း အသိပေးမည်',
+    'denied': '🔕 Notification ကို ပိတ်ထားပါတယ် — ဖုန်း Settings မှာ Allow ပေးပြီးမှ ပြန်ဖွင့်ပါ',
+    'ios-install': '📲 iPhone မှာ — Safari › Share › "Add to Home Screen" လုပ်ပြီး Home Screen က Admin App ကနေ ဖွင့်မှ ရပါမည် (iOS 16.4+)',
+    'unsupported': '⚠️ ဒီ Browser က Notification မရပါ',
+  }[st];
+  body.innerHTML = `<div class="hint">${msg}</div>` + (st === 'on' ? '<button type="button" class="secondary" id="apush-off" style="width:100%; margin-top:8px;">🔕 ပိတ်မည်</button><button type="button" class="secondary" id="apush-test" style="width:100%; margin-top:8px;">📳 စမ်းပို့ကြည့်မည်</button>'
+    : st === 'off' ? '<button type="button" class="acid" id="apush-on" style="width:100%; margin-top:8px;">🔔 ဒီဖုန်းမှာ ဖွင့်မည်</button>' : '');
+  document.getElementById('apush-on')?.addEventListener('click', enableAdminPush);
+  document.getElementById('apush-off')?.addEventListener('click', async () => {
+    try{ const reg = await navigator.serviceWorker.getRegistration(); const sub = reg && await reg.pushManager.getSubscription();
+      if(sub){ await sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint); await sub.unsubscribe(); } }catch(e){}
+    showToast('🔕 ပိတ်လိုက်ပါပြီ'); renderAdminPushCard();
+  });
+  document.getElementById('apush-test')?.addEventListener('click', async () => {
+    try{ const reg = await navigator.serviceWorker.getRegistration(); await reg.showNotification('📉 Stock နည်းနေပြီ (စမ်းသပ်)', { body: '"BLACK ICON TEE" — 2 ခုပဲ ကျန်တော့သည်', icon: '/admin-icon-192.png', data: { url: '/admin' } }); }
+    catch(e){ showToast('⚠️ ' + (e.message || e)); }
+  });
+}
+async function enableAdminPush(){
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm !== 'granted') return showToast('🔕 ခွင့်မပြုခဲ့ပါ');
+    let reg = await navigator.serviceWorker.getRegistration(); if(!reg) reg = await navigator.serviceWorker.register('/sw.js');
+    reg = await Promise.race([navigator.serviceWorker.ready, new Promise(r => setTimeout(() => r(reg), 4000))]);
+    const opts = { userVisibleOnly: true, applicationServerKey: adminB64(ADMIN_VAPID_KEY) };
+    const sub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe(opts);
+    const j = sub.toJSON();
+    const { error } = await sb.from('push_subscriptions').upsert({ user_id: currentAdminUserId, endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth,
+      user_agent: ('ADMIN · ' + navigator.userAgent).slice(0, 200), last_used_at: new Date().toISOString() }, { onConflict: 'endpoint' });
+    if(error) throw error;
+    showToast('🔔 ဖွင့်ပြီးပါပြီ'); logActivity('admin_push_enabled', currentAdminEmail);
+  }catch(e){ showToast('⚠️ ဖွင့်မရပါ — ' + (e.message || e)); }
+  renderAdminPushCard();
+}
+
+// ---------- ④ Staff Form — လုပ်ပိုင်ခွင့် Checkbox ----------
+function renderStaffActionCheckboxes(actions){
+  const area = document.getElementById('manager-permissions-area'); if(!area) return;
+  let box = document.getElementById('staff-action-checkboxes');
+  if(!box){
+    area.insertAdjacentHTML('beforeend', '<div class="hint" style="margin-top:14px;">လုပ်ပိုင်ခွင့် (ပိတ်ထားရင် Server ကပါ ငြင်းမည်)</div><div id="staff-action-checkboxes" class="sa-boxes"></div>');
+    box = document.getElementById('staff-action-checkboxes');
+  }
+  const cur = Array.isArray(actions) ? actions : ['refund'];
+  box.innerHTML = STAFF_ACTIONS.map(a => `<label class="sa-opt"><input type="checkbox" class="staff-action-cb" value="${a.id}" ${cur.includes(a.id) ? 'checked' : ''}><span>${a.label}</span></label>`).join('');
+}
+(function(){
+  if(typeof renderManagerPermCheckboxes !== 'function') return;
+  const _r = renderManagerPermCheckboxes;
+  renderManagerPermCheckboxes = function(tabs){
+    const r = _r.apply(this, arguments);
+    const editId = document.getElementById('staff-edit-id')?.value;
+    const a = editId && window.staffListCache ? window.staffListCache.find(x => x.user_id === editId) : null;
+    renderStaffActionCheckboxes(a ? a.allowed_actions : null);
+    return r;
+  };
+  // သိမ်းပြီးတာနဲ့ allowed_actions ကို သီးသန့် Update (Column မရှိသေးလည်း Staff သိမ်းတာ မပျက်)
+  document.getElementById('staff-form')?.addEventListener('submit', () => {
+    const role = document.getElementById('staff-role').value;
+    const uid = document.getElementById('staff-edit-id').value || document.getElementById('staff-uid').value.trim();
+    const actions = (role === 'manager' || role === 'staff') ? [...document.querySelectorAll('.staff-action-cb:checked')].map(c => c.value) : null;
+    setTimeout(async () => {
+      if(!uid) return;
+      const { error } = await sb.from('admins').update({ allowed_actions: actions }).eq('user_id', uid);
+      if(error && /allowed_actions/.test(error.message)) showToast('⚠️ လုပ်ပိုင်ခွင့် မသိမ်းရသေးပါ — SHOP-PLUS.sql ကို Run ပါ');
+      else if(!error) loadStaffList();
+    }, 900);
+  }, true);
+})();
 
 // ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
 (function(){
