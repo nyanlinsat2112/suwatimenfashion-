@@ -7916,7 +7916,7 @@ async function broadcastCount(){
   out.textContent = 'တွက်နေသည်...';
   const { data, error } = await sb.rpc('broadcast_count', { p_segment: document.getElementById('bc-seg').value,
     p_min_spend: Number(document.getElementById('bc-min').value) || 0, p_days: parseInt(document.getElementById('bc-days').value) || 60 });
-  if(error){ out.innerHTML = axMissing(error) || /broadcast_count/.test(error.message) ? '⚠️ Supabase မှာ SHOP-EXTRA.sql ကို အရင် Run ပါ' : '⚠️ ' + axEsc(error.message); __bcCount = null; return; }
+  if(error || !data){ out.innerHTML = !error ? '—' : axMissing(error) || /broadcast_count/.test(error.message) ? '⚠️ Supabase မှာ SHOP-EXTRA.sql ကို အရင် Run ပါ' : '⚠️ ' + axEsc(error.message); __bcCount = null; return; }
   __bcCount = data;
   out.innerHTML = `👥 <b>${data.total}</b> ယောက်ဆီ ရောက်မည် · 🔔 <b>${data.with_push}</b> ယောက် ဖုန်း Notification ရမည်`;
 }
@@ -8195,33 +8195,44 @@ function renderLabelList(){
     const t = document.getElementById('lbl-total'); if(t) t.textContent = rows.reduce((s, r) => s + r.n, 0);
   }));
 }
-function printLabels(){
+async function printLabels(){
   const rows = (document.getElementById('lbl-list')._rows || []).filter(r => r.n > 0);
   const total = rows.reduce((s, r) => s + r.n, 0);
   if(!total) return showToast('⚠️ Label အရေအတွက် ထည့်ပါ');
   if(total > 1000) return showToast('⚠️ တစ်ခါ ၁၀၀၀ ခုအထိသာ');
+  const btn = document.getElementById('lbl-print'); btn.disabled = true; btn.textContent = '⏳ Label ပြင်ဆင်နေသည်...';
+  try{
+    await axLoadScript('https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js', () => window.JsBarcode);
+  }catch(e){ btn.disabled = false; btn.textContent = '🖨️ Label ထုတ်မည်'; return showToast('⚠️ ' + e.message); }
   const size = document.getElementById('lbl-size').value;
   const dims = size === 'a4' ? null : size.split('x').map(Number);
-  const labels = [];
-  rows.forEach(r => { for(let i = 0; i < r.n; i++) labels.push(r); });
   const price = p => (typeof saleEffPrice === 'function' ? saleEffPrice(p) : Number(p.price)) || 0;
-  const w = window.open('', '_blank');
-  if(!w) return showToast('⚠️ Pop-up ပိတ်ထားပါတယ် — ခွင့်ပြုပြီး ပြန်နှိပ်ပါ');
+  // Barcode ကို Admin ထဲမှာပဲ SVG အဖြစ် ကြိုဆွဲ (Print ထုတ်ရင် ပုံ ပျောက်မသွားအောင်)
+  const svgCache = {};
+  const svgOf = code => {
+    if(svgCache[code]) return svgCache[code];
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    try{ JsBarcode(el, code, { format: 'CODE128', width: 1.3, height: dims && dims[1] < 28 ? 26 : 34, fontSize: 10, margin: 0 }); }catch(e){}
+    return (svgCache[code] = el.outerHTML);
+  };
+  const labels = [];
+  rows.forEach(r => { const code = skuCode(r.p, r.size, r.color); for(let i = 0; i < r.n; i++) labels.push({ r, code }); });
   const css = dims
-    ? `@page{ size:${dims[0]}mm ${dims[1]}mm; margin:0; } .lb{ width:${dims[0]}mm; height:${dims[1]}mm; page-break-after:always; }`
-    : `@page{ size:A4; margin:8mm; } body{ display:grid; grid-template-columns:repeat(3, 1fr); gap:2mm; } .lb{ height:33mm; border:1px dashed #bbb; }`;
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>SUWATI Labels</title>
-    <style>*{ box-sizing:border-box; margin:0; } body{ font-family:Arial,sans-serif; } ${css}
-    .lb{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.5mm 2mm; overflow:hidden; text-align:center; }
+    ? `@page{ size:${dims[0]}mm ${dims[1]}mm; margin:0; } .lb{ width:${dims[0]}mm; height:${dims[1]}mm; page-break-after:always; break-after:page; margin:0 auto 6px; }
+       @media print{ .lb{ margin:0; } }`
+    : `@page{ size:A4; margin:8mm; } .sheet{ display:grid; grid-template-columns:repeat(3, 1fr); gap:2mm; } .lb{ height:33mm; border:1px dashed #bbb; break-inside:avoid; }`;
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>SUWATI Labels</title>
+    <style>*{ box-sizing:border-box; margin:0; } body{ font-family:Arial,sans-serif; padding:10px; } ${css}
+    .lb{ display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1.5mm 2mm; overflow:hidden; text-align:center; background:#fff; color:#000; }
     .n{ font-weight:bold; font-size:${dims && dims[0] < 45 ? 7 : 8.5}pt; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
-    .v{ font-size:7pt; } .p{ font-weight:bold; font-size:9pt; } svg{ max-width:100%; height:auto; }
-    .tip{ position:fixed; top:0; left:0; right:0; background:#D6FF3F; padding:8px; font-size:13px; text-align:center; } @media print{ .tip{ display:none; } }</style></head><body>
-    <div class="tip">Label ${labels.length} ခု — Print ပေါ်မလာရင် Browser Menu › Print နှိပ်ပါ</div>
-    ${labels.map(r => `<div class="lb"><div class="n">${axEsc(r.p.name)}</div><div class="v">${[r.size, r.color].filter(Boolean).map(axEsc).join(' · ')}</div><svg class="bc" data-c="${skuCode(r.p, r.size, r.color)}"></svg><div class="p">${axMoney(price(r.p))} Ks</div></div>`).join('')}
-    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"><\/script>
-    <script>document.querySelectorAll('svg.bc').forEach(s=>{ try{ JsBarcode(s, s.dataset.c, { format:'CODE128', width:1.3, height:${dims && dims[1] < 28 ? 26 : 34}, fontSize:10, margin:0 }); }catch(e){} }); setTimeout(()=>window.print(), 600);<\/script>
-    </body></html>`);
-  w.document.close();
+    .v{ font-size:7pt; } .p{ font-weight:bold; font-size:9pt; } svg{ max-width:100%; height:auto; display:block; }
+    .sum{ color:#E9E4D8; font-size:12px; text-align:center; margin-bottom:8px; } @media print{ .sum{ display:none; } body{ padding:0; } }</style></head><body>
+    <div class="sum">🏷️ Label ${labels.length} ခု — အပေါ်က 🖨️ Print နှိပ်ပါ</div>
+    <div class="sheet">${labels.map(({ r, code }) => `<div class="lb"><div class="n">${axEsc(r.p.name)}</div><div class="v">${[r.size, r.color].filter(Boolean).map(axEsc).join(' · ')}</div>${svgOf(code)}<div class="p">${axMoney(price(r.p))} Ks</div></div>`).join('')}</div>
+    </body></html>`;
+  btn.disabled = false; btn.textContent = '🖨️ Label ထုတ်မည်';
+  // Receipt လိုပဲ — ✕ ပိတ်မည် / 🖨️ Print ခလုတ်ပါတဲ့ Overlay
+  showReceiptOverlay(html);
   logActivity('labels_printed', `${labels.length}`);
 }
 
@@ -8516,6 +8527,14 @@ async function render2faCard(){
     <div id="mfa-enroll"></div>`;
   document.getElementById('mfa-start-btn').addEventListener('click', startMfaEnroll);
 }
+// Supabase က QR ကို SVG စာသား (သို့) data: URL နဲ့ ပြန်ပေးတတ်လို့ — ၂ မျိုးလုံး ပုံအဖြစ် ပြရန်
+function mfaQrSrc(q){
+  q = String(q || '').trim();
+  if(/^data:[^,]*;base64,/i.test(q)) return q;
+  if(/^data:/i.test(q)){ const i = q.indexOf(','); let body = q.slice(i + 1); try{ body = decodeURIComponent(body); }catch(e){} return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(body); }
+  if(/^<svg|^<\?xml/i.test(q)) return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(q);
+  return q;
+}
 async function startMfaEnroll(){
   const box = document.getElementById('mfa-enroll'), btn = document.getElementById('mfa-start-btn');
   btn.disabled = true;
@@ -8528,7 +8547,7 @@ async function startMfaEnroll(){
     box.innerHTML = `
       <div class="mfa-steps">
         <div><b>၁)</b> Authenticator App › <b>+</b> › QR Code Scan</div>
-        <img class="mfa-qr" src="${data.totp.qr_code}" alt="QR">
+        <img class="mfa-qr" src="${mfaQrSrc(data.totp.qr_code)}" alt="QR">
         <div class="hint">Scan မရရင် ဒီ Key ကို ရိုက်ထည့်ပါ:</div>
         <code class="mfa-secret" onclick="navigator.clipboard && navigator.clipboard.writeText(this.textContent).then(()=>showToast('Copy ပြီး'))">${secEsc(data.totp.secret)}</code>
         <div style="margin-top:10px;"><b>၂)</b> App မှာ ပေါ်လာတဲ့ ဂဏန်း ၆ လုံး ရိုက်ပါ</div>
