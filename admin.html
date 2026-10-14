@@ -770,6 +770,49 @@ input[type="datetime-local"]{width:100%; min-width:0; max-width:100%; box-sizing
 .ord-actions{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
 .ord-actions > select{ grid-column:1 / -1; width:100%; margin:0; }
 .ord-actions > button{ width:100%; margin:0 !important; min-height:46px; display:flex; align-items:center; justify-content:center; }
+
+/* ===== 🔥 SALE ===== */
+.ps-box{ border:2px solid var(--bd); background:var(--s2); padding:0; margin:4px 0; }
+.ps-head{ display:flex !important; align-items:center; justify-content:space-between; gap:12px; padding:12px; cursor:pointer; margin:0 !important; }
+.ps-head b{ display:block; font-size:14px; }
+.ps-head small{ display:block; font-size:11px; color:var(--muted-text); margin-top:2px; line-height:1.5; font-family:'Noto Sans Myanmar',sans-serif; }
+.ps-switch{ -webkit-appearance:none; appearance:none; flex:0 0 auto; width:52px !important; height:30px !important; min-height:0 !important; border-radius:20px !important; background:#666 !important; border:none !important; position:relative; cursor:pointer; transition:background .25s; padding:0 !important; margin:0 !important; }
+.ps-switch::after{ content:""; position:absolute; top:3px; left:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:transform .25s cubic-bezier(.3,1.4,.5,1); }
+.ps-switch:checked{ background:var(--acid) !important; }
+.ps-switch:checked::after{ transform:translateX(22px); background:#141412; }
+.ps-body{ display:none; padding:0 12px 12px; }
+.ps-body.open{ display:block; animation:psOpen .35s ease both; }
+@keyframes psOpen{ from{ opacity:0; transform:translateY(-6px); } }
+.panel .ps-mode{ display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px !important; margin-bottom:6px; }
+.ps-mode button{ width:100%; margin:0 !important; min-height:46px; }
+.ps-mode button.on{ background:var(--acid) !important; color:#141412 !important; border-color:var(--acid) !important; }
+.ps-lbl{ display:block; font:10.5px 'Space Mono','Noto Sans Myanmar',monospace; color:var(--muted-text); margin:10px 0 4px; letter-spacing:.03em; }
+.ps-box input[type=number], #bulk-sale-card input[type=number]{ width:100%; }
+.panel .ps-quick{ display:grid !important; grid-template-columns:repeat(5, minmax(0,1fr)) !important; gap:6px !important; margin-top:8px; }
+.ps-quick button{ width:100%; margin:0 !important; min-height:40px; padding:4px 0; font-family:'Space Mono',monospace; }
+.ps-dates{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+@media (max-width:480px){ .ps-dates{ grid-template-columns:1fr; } }
+.ps-calc{ margin-top:12px; border:2px dashed var(--bd); padding:10px 12px; font-size:12.5px; line-height:1.9; }
+.ps-calc:empty{ display:none; }
+.ps-acid{ color:var(--acid-text); } .ps-warn{ color:var(--warn-text); } .ps-dim{ color:var(--muted-text); }
+.ps-list-badge{ color:var(--muted-text); font-weight:700; }
+.ps-list-badge.on{ color:var(--rust); }
+.bs-count{ color:var(--rust); font-family:'Space Mono',monospace; }
+.bs-list{ margin-top:8px; border:2px solid var(--bd); max-height:240px; overflow:auto; }
+.bs-list label{ display:flex !important; align-items:center; gap:10px; padding:10px; border-bottom:1px solid var(--bd); font-size:13px; margin:0 !important; cursor:pointer; }
+.bs-list input{ width:20px !important; height:20px; min-height:0 !important; flex:0 0 auto; accent-color:var(--acid); margin:0 !important; }
+.bs-list span{ flex:1; min-width:0; }
+.bs-list em{ font-style:normal; color:var(--rust); font-size:11px; }
+.bs-list small{ color:var(--muted-text); font-family:'Space Mono',monospace; }
+.panel .bs-tools{ display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px !important; margin-top:8px; }
+.bs-tools button{ width:100%; margin:0 !important; min-height:42px; }
+.bs-apply{ width:100%; margin-top:14px !important; min-height:50px; }
+.bs-apply:disabled{ opacity:.5; }
+.bs-row{ display:grid; grid-template-columns:1fr auto auto; align-items:center; gap:8px; padding:9px 0; border-bottom:1px solid var(--bd); font-size:13px; }
+.bs-row small{ display:block; color:var(--muted-text); font-family:'Space Mono',monospace; font-size:11px; }
+.bs-row i{ font-style:normal; color:var(--acid-text); font:11px 'Space Mono',monospace; text-align:right; }
+.bs-row button{ min-height:36px; padding:4px 12px; margin:0 !important; }
+.bs-stop-all{ width:100%; margin-top:12px !important; min-height:46px; background:none !important; border:2px solid var(--rust) !important; color:var(--rust) !important; }
 </style>
 </head>
 <body>
@@ -2232,10 +2275,20 @@ productForm.addEventListener('submit', async (e)=>{
   // 🎨 အရောင် → ပုံ တွဲထားချက်
   const colorImgs = buildColorImagesPayload(payload.colors);
   if(colorImgs) payload.color_images = colorImgs;
+  // 🔥 Sale
+  const salePl = readSalePayload(payload.price);
+  if(salePl === false) return;
+  Object.assign(payload, salePl);
 
   let error;
   const save = async (pl) => id ? await sb.from('products').update(pl).eq('id', id) : await sb.from('products').insert(pl);
   ({ error } = await save(payload));
+  if(error && /sale_(price|start|end)/.test(error.message || '')){
+    const hadSale = !!payload.sale_price;
+    delete payload.sale_price; delete payload.sale_start; delete payload.sale_end;
+    ({ error } = await save(payload));
+    if(!error && hadSale) setTimeout(() => showToast('⚠️ Sale မသိမ်းရသေးပါ — Supabase မှာ SALE.sql ကို Run ပါ'), 1800);
+  }
   if(error && /color_images/.test(error.message || '')){
     // COLOR-IMAGES.sql မ Run ရသေးရင် — အရောင်ပုံ မပါဘဲ သိမ်းပြီး သတိပေး
     delete payload.color_images;
@@ -2351,6 +2404,7 @@ function resetProductForm(){
   document.querySelectorAll('.size-chip-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tag-toggle-btn').forEach(b=>b.classList.remove('active'));
   toggleGiftCardFormMode();
+  if(typeof resetSaleFields === 'function') resetSaleFields();
 }
 
 let productsListCache = [];
@@ -2380,6 +2434,7 @@ function renderProductsList(){
         ${p.sizes ? `<p>Size: ${String(p.sizes).split(',').map(s=>s.trim()).filter(Boolean).join(' / ')}</p>` : ''}
         ${p.colors ? `<p>အရောင်: ${String(p.colors).split(',').map(s=>s.trim()).filter(Boolean).join(' / ')}</p>` : ''}
         ${p.tags ? `<p style="color:var(--warn-text);">🏷️ ${p.tags}</p>` : ''}
+        ${typeof saleBadgeText === 'function' && saleBadgeText(p) ? `<p class="ps-list-badge${saleState(p).on ? ' on' : ''}">${saleBadgeText(p)}</p>` : ''}
       </div>
       <div class="actions" style="flex-wrap:wrap;">
         <button class="secondary pin-btn" style="${p.pinned?'background:var(--acid); color:#141412; border-color:var(--acid);':''}">${p.pinned?'📌 Unpin':'📌 Pin'}</button>
@@ -2424,6 +2479,7 @@ async function editProduct(p){
   productColorImageMap = {};
   Object.entries(p.color_images || {}).forEach(([c, url]) => { const it = productImageList.find(x => x.url === url); if(it) productColorImageMap[c] = it; });
   renderProductImagePreview();
+  if(typeof fillSaleFields === 'function') fillSaleFields(p);
 
   document.getElementById('product-form-title').textContent='ပစ္စည်း ပြင်ဆင်ရန်';
   document.getElementById('product-cancel').style.display='inline-block';
@@ -2589,6 +2645,251 @@ async function loadInventory(){
     });
   });
 }
+
+// =====================================================================
+// 🔥 SALE — ပစ္စည်း ဈေးလျှော့ (ပစ္စည်းတစ်ခုချင်း + အစုလိုက်)
+//   Supabase မှာ SALE.sql Run ထားရန် (sale_price / sale_start / sale_end + product_price())
+// =====================================================================
+function saleState(p){
+  const price = Number(p?.price) || 0, sp = Number(p?.sale_price) || 0, now = Date.now();
+  const st = p?.sale_start ? Date.parse(p.sale_start) : null, en = p?.sale_end ? Date.parse(p.sale_end) : null;
+  const valid = !!p && !p.is_gift_card && sp > 0 && sp < price;
+  const on = valid && (!st || now >= st) && (!en || now < en);
+  return { valid, on, upcoming: valid && !!st && now < st, ended: valid && !!en && now >= en,
+           price: on ? sp : price, orig: price, sp, pct: valid ? Math.round((1 - sp / price) * 100) : 0, st, en };
+}
+function saleEffPrice(p){ return saleState(p).price; }
+const saleRound = n => Math.max(0, Math.round(n / 100) * 100);
+const saleMoney = n => Number(n || 0).toLocaleString();
+function saleToLocal(iso){ if(!iso) return ''; const d = new Date(iso); if(isNaN(d)) return ''; const z = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())}T${z(d.getHours())}:${z(d.getMinutes())}`; }
+function saleFromLocal(v){ if(!v) return null; const d = new Date(v); return isNaN(d) ? null : d.toISOString(); }
+function saleShortDate(ms){ const d = new Date(ms); return d.toLocaleDateString('en-US', { month:'short', day:'numeric' }) + ' ' + d.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' }); }
+// စာရင်းမှာ ပြမယ့် တိုတို
+function saleBadgeText(p){
+  const s = saleState(p); if(!s.valid) return '';
+  if(s.on) return `🔥 -${s.pct}% → ${saleMoney(s.sp)} ကျပ်${s.en ? ' · ' + saleShortDate(s.en) + ' ထိ' : ' · အမြဲ'}`;
+  if(s.upcoming) return `⏳ ${saleShortDate(s.st)} မှ -${s.pct}% စမည်`;
+  if(s.ended) return `⌛ Sale ပြီးသွားပြီ (-${s.pct}%)`;
+  return '';
+}
+
+// ---------- ① ပစ္စည်း Form ထဲက 🔥 Sale ----------
+let saleMode = 'pct', saleCostCache = {};
+(function injectSaleForm(){
+  const priceEl = document.getElementById('product-price'); if(!priceEl || document.getElementById('ps-box')) return;
+  const box = document.createElement('div');
+  box.className = 'full ps-box'; box.id = 'ps-box';
+  box.innerHTML = `
+    <label class="ps-head"><span><b>🔥 Sale ချမည်</b><small>ဖွင့်ထားရင် Website + POS မှာ Sale ဈေးနဲ့ ရောင်းမည်</small></span>
+      <input type="checkbox" id="ps-on" class="ps-switch"></label>
+    <div class="ps-body" id="ps-body">
+      <div class="ps-mode"><button type="button" class="secondary on" data-m="pct">% လျှော့</button><button type="button" class="secondary" data-m="amt">ဈေးအသစ် ရိုက်</button></div>
+      <div id="ps-pct-wrap"><label class="ps-lbl" for="ps-pct">လျှော့မည့် %</label><input type="number" id="ps-pct" inputmode="numeric" min="1" max="95" placeholder="ဥပမာ 20">
+        <div class="ps-quick">${[10, 15, 20, 30, 50].map(q => `<button type="button" class="secondary" data-q="${q}">${q}%</button>`).join('')}</div></div>
+      <div id="ps-amt-wrap" style="display:none;"><label class="ps-lbl" for="ps-amt">Sale ဈေး (ကျပ်)</label><input type="number" id="ps-amt" inputmode="numeric" placeholder="ဥပမာ 14400"></div>
+      <div class="ps-dates">
+        <div><label class="ps-lbl" for="ps-start">စမည့်အချိန် (အလွတ် = ချက်ချင်း)</label><input type="datetime-local" id="ps-start"></div>
+        <div><label class="ps-lbl" for="ps-end">ပြီးမည့်အချိန် (အလွတ် = အမြဲ)</label><input type="datetime-local" id="ps-end"></div>
+      </div>
+      <div class="ps-calc" id="ps-calc"></div>
+    </div>`;
+  priceEl.insertAdjacentElement('afterend', box);
+  const on = document.getElementById('ps-on');
+  on.addEventListener('change', () => { document.getElementById('ps-body').classList.toggle('open', on.checked); saleCalc(); });
+  box.querySelectorAll('.ps-mode button').forEach(b => b.addEventListener('click', () => {
+    // မုဒ်ပြောင်းရင် လက်ရှိတန်ဖိုးကို တစ်ဖက်ကို ကူးပေး
+    const price = Number(priceEl.value) || 0, cur = saleReadPrice();
+    saleMode = b.dataset.m;
+    box.querySelectorAll('.ps-mode button').forEach(x => x.classList.toggle('on', x === b));
+    document.getElementById('ps-pct-wrap').style.display = saleMode === 'pct' ? '' : 'none';
+    document.getElementById('ps-amt-wrap').style.display = saleMode === 'amt' ? '' : 'none';
+    if(cur && price){ if(saleMode === 'amt') document.getElementById('ps-amt').value = cur; else document.getElementById('ps-pct').value = Math.round((1 - cur / price) * 100); }
+    saleCalc();
+  }));
+  box.querySelectorAll('.ps-quick button').forEach(b => b.addEventListener('click', () => { document.getElementById('ps-pct').value = b.dataset.q; saleCalc(); }));
+  ['ps-pct', 'ps-amt', 'ps-start', 'ps-end'].forEach(id => document.getElementById(id).addEventListener('input', saleCalc));
+  priceEl.addEventListener('input', saleCalc);
+  document.getElementById('product-name')?.addEventListener('change', () => saleLoadCost());
+  document.getElementById('product-is-giftcard')?.addEventListener('change', e => { box.style.display = e.target.checked ? 'none' : ''; });
+})();
+
+function saleReadPrice(){
+  const price = Number(document.getElementById('product-price').value) || 0;
+  if(saleMode === 'amt') return Number(document.getElementById('ps-amt').value) || 0;
+  const pct = Number(document.getElementById('ps-pct').value) || 0;
+  return pct > 0 ? saleRound(price * (100 - pct) / 100) : 0;
+}
+async function saleLoadCost(){
+  const name = (document.getElementById('product-name').value || '').trim();
+  if(!name || currentAdminRole !== 'owner') return;
+  if(!(name in saleCostCache)){
+    try{ const { data } = await sb.from('product_costs').select('cost_price').eq('product_name', name).maybeSingle(); saleCostCache[name] = data ? Number(data.cost_price) : null; }
+    catch(e){ saleCostCache[name] = null; }
+  }
+  saleCalc();
+}
+function saleCalc(){
+  const out = document.getElementById('ps-calc'); if(!out) return;
+  if(!document.getElementById('ps-on').checked){ out.innerHTML = ''; return; }
+  const price = Number(document.getElementById('product-price').value) || 0, sp = saleReadPrice();
+  if(!price){ out.innerHTML = '<span class="ps-warn">⚠️ အပေါ်မှာ ပုံမှန်ဈေး အရင်ထည့်ပါ</span>'; return; }
+  if(!sp){ out.innerHTML = '<span class="ps-dim">% (သို့) Sale ဈေး ထည့်ပါ</span>'; return; }
+  const pct = Math.round((1 - sp / price) * 100);
+  const lines = [`ဈေးဟောင်း <s>${saleMoney(price)}</s> → Sale ဈေး <b class="ps-acid">${saleMoney(sp)} ကျပ်</b> (-${pct}%)`];
+  if(sp >= price) lines.push('<span class="ps-warn">⚠️ Sale ဈေးက ပုံမှန်ဈေးထက် နည်းရပါမည်</span>');
+  const name = (document.getElementById('product-name').value || '').trim(), cost = saleCostCache[name];
+  if(cost != null && cost > 0){
+    const prof = sp - cost;
+    lines.push(`ဝယ်ဈေး ${saleMoney(cost)} · တစ်ထည်မြတ် <b style="color:${prof < 0 ? 'var(--rust)' : 'var(--acid-text)'}">${saleMoney(prof)} ကျပ်</b>`);
+    if(prof < 0) lines.push('<span class="ps-warn">⚠️ ဝယ်ဈေးထက် နိမ့်နေပါတယ် — အရှုံးနဲ့ ရောင်းမှာပါ</span>');
+  }
+  const st = document.getElementById('ps-start').value, en = document.getElementById('ps-end').value;
+  if(st && en && new Date(en) <= new Date(st)) lines.push('<span class="ps-warn">⚠️ ပြီးမည့်အချိန်က စမည့်အချိန်ထက် နောက်ကျရပါမည်</span>');
+  else if(en && new Date(en) <= new Date()) lines.push('<span class="ps-warn">⚠️ ပြီးမည့်အချိန် ကျော်သွားပြီ — Sale မပြပါ</span>');
+  else lines.push(`<span class="ps-dim">Website မှာ ${st ? saleShortDate(new Date(st)) : 'ချက်ချင်း'} – ${en ? saleShortDate(new Date(en)) : 'ရပ်တဲ့အထိ'} Sale ပြမည်</span>`);
+  out.innerHTML = lines.join('<br>');
+}
+// သိမ်းခါနီး — false ပြန်ရင် မသိမ်း
+function readSalePayload(price){
+  if(document.getElementById('product-is-giftcard')?.checked || !document.getElementById('ps-on').checked)
+    return { sale_price: null, sale_start: null, sale_end: null };
+  const sp = saleReadPrice();
+  if(!sp || sp <= 0){ showToast('⚠️ Sale % (သို့) Sale ဈေး ထည့်ပါ'); return false; }
+  if(sp >= price){ showToast('⚠️ Sale ဈေးက ပုံမှန်ဈေးထက် နည်းရပါမည်'); return false; }
+  const st = saleFromLocal(document.getElementById('ps-start').value), en = saleFromLocal(document.getElementById('ps-end').value);
+  if(st && en && new Date(en) <= new Date(st)){ showToast('⚠️ ပြီးမည့်အချိန်က စမည့်အချိန်ထက် နောက်ကျရပါမည်'); return false; }
+  return { sale_price: sp, sale_start: st, sale_end: en };
+}
+function fillSaleFields(p){
+  const s = saleState(p), on = document.getElementById('ps-on'); if(!on) return;
+  on.checked = s.valid && !s.ended;
+  document.getElementById('ps-body').classList.toggle('open', on.checked);
+  saleMode = 'pct';
+  document.querySelectorAll('#ps-box .ps-mode button').forEach(x => x.classList.toggle('on', x.dataset.m === 'pct'));
+  document.getElementById('ps-pct-wrap').style.display = ''; document.getElementById('ps-amt-wrap').style.display = 'none';
+  document.getElementById('ps-pct').value = s.valid ? s.pct : '';
+  document.getElementById('ps-amt').value = s.valid ? s.sp : '';
+  // % က ၁၀၀ ကျပ် အလုံးမကျရင် ဈေးအသစ် မုဒ်နဲ့ ပြ
+  if(s.valid && saleRound(s.orig * (100 - s.pct) / 100) !== s.sp) document.querySelector('#ps-box .ps-mode button[data-m="amt"]').click();
+  document.getElementById('ps-start').value = s.valid && !s.ended ? saleToLocal(p.sale_start) : '';
+  document.getElementById('ps-end').value = s.valid && !s.ended ? saleToLocal(p.sale_end) : '';
+  document.getElementById('ps-box').style.display = p.is_gift_card ? 'none' : '';
+  saleLoadCost(); saleCalc();
+}
+function resetSaleFields(){
+  const on = document.getElementById('ps-on'); if(!on) return;
+  on.checked = false; document.getElementById('ps-body').classList.remove('open');
+  ['ps-pct', 'ps-amt', 'ps-start', 'ps-end'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('ps-box').style.display = '';
+  saleCalc();
+}
+
+// ---------- ② အစုလိုက် Sale ----------
+(function injectBulkSale(){
+  const panel = document.getElementById('products-panel'); if(!panel || document.getElementById('bulk-sale-card')) return;
+  const card = document.createElement('details');
+  card.className = 'form-card bulk-card'; card.id = 'bulk-sale-card';
+  card.innerHTML = `
+    <summary><h3 style="display:inline;">🔥 Sale အစုလိုက် ချမည် <span id="bs-count" class="bs-count"></span></h3></summary>
+    <div class="hint" style="margin-top:10px;">Category တစ်ခုလုံး (သို့) ရွေးထားတဲ့ ပစ္စည်းတွေကို တစ်ချက်တည်း — ဈေးကို ၁၀၀ ကျပ် အလုံးလိုက် ညှိပေးမည်</div>
+    <label class="ps-lbl" for="bs-scope">ဘယ်ပစ္စည်းတွေ</label>
+    <select id="bs-scope"></select>
+    <div class="bs-list" id="bs-list"></div>
+    <div class="bs-tools"><button type="button" class="secondary" id="bs-all">အားလုံး ရွေး</button><button type="button" class="secondary" id="bs-none">အားလုံး ဖြုတ်</button></div>
+    <label class="ps-lbl" for="bs-pct">လျှော့မည့် %</label>
+    <input type="number" id="bs-pct" inputmode="numeric" min="1" max="95" placeholder="ဥပမာ 20">
+    <div class="ps-quick" id="bs-quick">${[10, 15, 20, 30, 50].map(q => `<button type="button" class="secondary" data-q="${q}">${q}%</button>`).join('')}</div>
+    <div class="ps-dates">
+      <div><label class="ps-lbl" for="bs-start">စမည့်အချိန် (အလွတ် = ချက်ချင်း)</label><input type="datetime-local" id="bs-start"></div>
+      <div><label class="ps-lbl" for="bs-end">ပြီးမည့်အချိန် (အလွတ် = အမြဲ)</label><input type="datetime-local" id="bs-end"></div>
+    </div>
+    <button type="button" class="acid bs-apply" id="bs-apply">Sale ချမည်</button>
+    <div class="bs-active" id="bs-active"></div>`;
+  const anchor = document.getElementById('bulk-import-card') || panel.firstElementChild;
+  anchor.insertAdjacentElement('afterend', card);
+  document.getElementById('bs-scope').addEventListener('change', bulkSaleRenderList);
+  document.getElementById('bs-all').addEventListener('click', () => { card.querySelectorAll('#bs-list input').forEach(i => i.checked = true); bulkSaleUpdateBtn(); });
+  document.getElementById('bs-none').addEventListener('click', () => { card.querySelectorAll('#bs-list input').forEach(i => i.checked = false); bulkSaleUpdateBtn(); });
+  document.getElementById('bs-pct').addEventListener('input', bulkSaleUpdateBtn);
+  card.querySelectorAll('#bs-quick button').forEach(b => b.addEventListener('click', () => { document.getElementById('bs-pct').value = b.dataset.q; bulkSaleUpdateBtn(); }));
+  document.getElementById('bs-apply').addEventListener('click', bulkSaleApply);
+})();
+
+function bulkSaleProducts(){ return (productsListCache || []).filter(p => !p.is_gift_card); }
+function bulkSaleRender(){
+  const sel = document.getElementById('bs-scope'); if(!sel) return;
+  const prods = bulkSaleProducts(), cur = sel.value;
+  const cats = [...new Set(prods.map(p => p.category || 'Top Wear'))];
+  sel.innerHTML = `<option value="__all">ပစ္စည်းအားလုံး (${prods.length})</option>` +
+    cats.map(c => `<option value="cat:${c.replace(/"/g, '&quot;')}">${c} — အားလုံး (${prods.filter(p => (p.category || 'Top Wear') === c).length})</option>`).join('') +
+    `<option value="__pick">ကိုယ်တိုင် ရွေးမည်</option>`;
+  if(cur && [...sel.options].some(o => o.value === cur)) sel.value = cur;
+  bulkSaleRenderList();
+  bulkSaleRenderActive();
+}
+function bulkSaleRenderList(){
+  const sel = document.getElementById('bs-scope'), list = document.getElementById('bs-list'); if(!sel || !list) return;
+  const v = sel.value, prods = bulkSaleProducts();
+  const scoped = v === '__all' || v === '__pick' ? prods : prods.filter(p => 'cat:' + (p.category || 'Top Wear') === v);
+  list.innerHTML = scoped.map(p => {
+    const s = saleState(p);
+    return `<label><input type="checkbox" data-id="${p.id}" ${v === '__pick' ? '' : 'checked'}><span>${p.name}${s.valid && !s.ended ? ` <em>${s.on ? '🔥' : '⏳'} -${s.pct}%</em>` : ''}</span><small>${saleMoney(p.price)}</small></label>`;
+  }).join('') || '<p class="hint" style="padding:10px;">ပစ္စည်း မရှိပါ</p>';
+  list.querySelectorAll('input').forEach(i => i.addEventListener('change', bulkSaleUpdateBtn));
+  bulkSaleUpdateBtn();
+}
+function bulkSaleUpdateBtn(){
+  const n = document.querySelectorAll('#bs-list input:checked').length, pct = Number(document.getElementById('bs-pct').value) || 0;
+  const b = document.getElementById('bs-apply'); if(!b) return;
+  b.textContent = n && pct ? `ရွေးထားတဲ့ ${n} ခုကို ${pct}% Sale ချမည်` : n ? `ရွေးထားတဲ့ ${n} ခု — % ထည့်ပါ` : 'ပစ္စည်း ရွေးပါ';
+  b.disabled = !(n && pct > 0 && pct < 96);
+}
+async function bulkSaleApply(){
+  const ids = [...document.querySelectorAll('#bs-list input:checked')].map(i => i.dataset.id);
+  const pct = Number(document.getElementById('bs-pct').value) || 0;
+  const st = saleFromLocal(document.getElementById('bs-start').value), en = saleFromLocal(document.getElementById('bs-end').value);
+  if(!ids.length || !(pct > 0 && pct < 96)) return;
+  if(st && en && new Date(en) <= new Date(st)){ showToast('⚠️ ပြီးမည့်အချိန်က စမည့်အချိန်ထက် နောက်ကျရပါမည်'); return; }
+  if(!await adminConfirm(`ပစ္စည်း ${ids.length} ခုကို ${pct}% Sale ချမှာ သေချာပါသလား?${en ? '\n' + saleShortDate(new Date(en)) + ' မှာ အလိုအလျောက် ပြီးမည်' : ''}`)) return;
+  const btn = document.getElementById('bs-apply'); btn.disabled = true; btn.textContent = 'သိမ်းနေသည်...';
+  const prods = bulkSaleProducts().filter(p => ids.includes(String(p.id)));
+  let ok = 0, fail = '';
+  await Promise.all(prods.map(async p => {
+    const sp = saleRound(Number(p.price) * (100 - pct) / 100);
+    if(!(sp > 0 && sp < Number(p.price))) return;
+    const { error } = await sb.from('products').update({ sale_price: sp, sale_start: st, sale_end: en }).eq('id', p.id);
+    if(error) fail = error.message; else ok++;
+  }));
+  if(fail){ showToast(/sale_/.test(fail) ? '⚠️ Supabase မှာ SALE.sql ကို အရင် Run ပါ' : 'Error: ' + fail); }
+  if(ok){ showToast(`🔥 ပစ္စည်း ${ok} ခု ${pct}% Sale ချပြီးပါပြီ`); logActivity('bulk_sale', `${ok} items -${pct}%${en ? ' until ' + en : ''}`); }
+  await loadProducts();
+}
+function bulkSaleRenderActive(){
+  const box = document.getElementById('bs-active'); if(!box) return;
+  const list = bulkSaleProducts().filter(p => { const s = saleState(p); return s.valid && !s.ended; });
+  const cnt = document.getElementById('bs-count'); if(cnt) cnt.textContent = list.length ? `· ${list.length}` : '';
+  if(!list.length){ box.innerHTML = '<div class="hint" style="margin-top:14px;">လက်ရှိ Sale ဖြစ်နေသော ပစ္စည်း မရှိပါ</div>'; return; }
+  box.innerHTML = `<div class="hint" style="margin:16px 0 4px;">လက်ရှိ Sale ပစ္စည်းများ (${list.length})</div>` +
+    list.map(p => { const s = saleState(p);
+      return `<div class="bs-row"><span>${p.name}<small>${saleMoney(s.orig)} → ${saleMoney(s.sp)}</small></span><i>${s.on ? `-${s.pct}% · ${s.en ? saleShortDate(s.en) : 'အမြဲ'}` : `⏳ ${saleShortDate(s.st)} မှ`}</i><button type="button" class="secondary bs-stop1" data-id="${p.id}">ရပ်</button></div>`; }).join('') +
+    `<button type="button" class="bs-stop-all" id="bs-stop-all">⏹ Sale အားလုံး ရပ်မည်</button>`;
+  box.querySelectorAll('.bs-stop1').forEach(b => b.addEventListener('click', () => bulkSaleStop([b.dataset.id])));
+  document.getElementById('bs-stop-all').addEventListener('click', () => bulkSaleStop(list.map(p => String(p.id)), true));
+}
+async function bulkSaleStop(ids, all){
+  if(all && !await adminConfirm(`Sale ပစ္စည်း ${ids.length} ခုလုံးကို ပုံမှန်ဈေး ပြန်ထားမှာ သေချာပါသလား?`)) return;
+  const { error } = await sb.from('products').update({ sale_price: null, sale_start: null, sale_end: null }).in('id', ids);
+  if(error){ showToast('Error: ' + error.message); return; }
+  showToast(all ? '⏹ Sale အားလုံး ရပ်ပြီးပါပြီ' : '⏹ Sale ရပ်ပြီးပါပြီ');
+  logActivity('sale_stopped', `${ids.length} items`);
+  await loadProducts();
+}
+// ပစ္စည်းစာရင်း Load တိုင်း အစုလိုက် Card ကိုပါ ပြန်ဆွဲ
+(function(){
+  const _r = renderProductsList;
+  renderProductsList = function(){ const r = _r.apply(this, arguments); try{ bulkSaleRender(); }catch(e){} return r; };
+})();
 
 // ---------- POSTS ----------
 const postForm = document.getElementById('post-form');
@@ -4127,7 +4428,7 @@ async function loadPosQuickTapTiles(){
   grid.innerHTML = tiles.map(p=>`
     <div class="pos-quick-tile" data-name="${p.name.replace(/"/g,'&quot;')}">
       <div class="pqt-name">${p.name}</div>
-      <div class="pqt-count">${Number(p.price).toLocaleString()} ကျပ် · ${freq[p.name]} ရောင်းရ</div>
+      <div class="pqt-count">${saleEffPrice(p).toLocaleString()} ကျပ် · ${freq[p.name]} ရောင်းရ</div>
     </div>`).join('');
   grid.querySelectorAll('.pos-quick-tile').forEach(el=>{
     el.addEventListener('click', ()=>selectPosProduct(el.dataset.name));
@@ -4142,7 +4443,7 @@ document.getElementById('pos-product-search').addEventListener('input', (e)=>{
   results.innerHTML = matches.map(p=>`
     <div class="pos-result-item" data-name="${p.name.replace(/"/g,'&quot;')}">
       <span>${p.name} ${p.status==='sold_out'?'<span class="mono" style="color:var(--rust);">(Sold Out)</span>':''}</span>
-      <span class="mono">${Number(p.price).toLocaleString()} ကျပ်</span>
+      <span class="mono">${saleEffPrice(p).toLocaleString()} ကျပ်${saleState(p).on ? ` <b style="color:var(--rust);">🔥-${saleState(p).pct}%</b>` : ''}</span>
     </div>`).join('');
   results.querySelectorAll('.pos-result-item').forEach(el=>{
     el.addEventListener('click', ()=>selectPosProduct(el.dataset.name));
@@ -4200,7 +4501,7 @@ function renderPosSelectedProduct(){
 
   area.innerHTML = `
     <div class="pos-selected-box">
-      <h4 style="font-family:'Anton',sans-serif;">${p.name} — ${Number(p.price).toLocaleString()} ကျပ်</h4>
+      <h4 style="font-family:'Anton',sans-serif;">${p.name} — ${saleEffPrice(p).toLocaleString()} ကျပ်${saleState(p).on ? ` <s style="font-size:.7em; opacity:.6;">${Number(p.price).toLocaleString()}</s> 🔥` : ''}</h4>
       ${sizes.length ? `<div class="hint" style="margin:8px 0 4px;">Size <span style="color:var(--warn-text);">*</span></div>
         <div style="display:flex; flex-wrap:wrap; gap:6px;">
           ${sizes.map(s=>`<button type="button" class="size-chip-btn pos-size-btn ${s===posSelectedSize?'active':''}" data-size="${s}">${s}</button>`).join('')}
@@ -4235,7 +4536,7 @@ function addPosCartItem(){
   if(qty > stock){ showToast(`လက်ကျန် ${stock} ခုပဲ ရှိပါတယ်`); return; }
 
   posCart.push({
-    name: p.name, price: Number(p.price), size: posSelectedSize, color: posSelectedColor, quantity: qty,
+    name: p.name, price: saleEffPrice(p), size: posSelectedSize, color: posSelectedColor, quantity: qty,
   });
   posSelectedProduct = null; posSelectedSize = null; posSelectedColor = null;
   document.getElementById('pos-selected-product-area').innerHTML = '';
