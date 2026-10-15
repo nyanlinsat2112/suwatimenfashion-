@@ -1037,6 +1037,71 @@ html, body{ overscroll-behavior-y:none; }
   header > div{ gap:4px !important; flex-shrink:0; }
   header button.secondary{ width:34px !important; height:34px !important; font-size:13px !important; }
 }
+.bc-note{ margin-top:6px; font-size:12px; line-height:1.6; opacity:.85; }
+.apk{ margin-top:10px; border:1.5px solid var(--bd); padding:8px 10px; }
+.apk summary{ cursor:pointer; font-weight:700; font-size:13px; padding:4px 0; }
+.apk-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:6px; margin-top:8px; }
+.apk-opt{ display:flex !important; align-items:center; gap:8px; font-size:12.5px; padding:6px 8px; border:1px solid var(--bd); cursor:pointer; margin:0 !important; }
+.apk-opt input{ width:18px !important; height:18px; margin:0 !important; accent-color:var(--acid); flex:0 0 auto; }
+
+/* ===== 🧰 Biz Tools ===== */
+.bt-sheet{ position:fixed; inset:0; z-index:100200; display:flex; align-items:flex-end; justify-content:center; }
+.bt-back{ position:absolute; inset:0; background:rgba(0,0,0,.6); opacity:0; transition:opacity .25s; }
+.bt-box{ position:relative; width:100%; max-width:560px; max-height:88vh; overflow-y:auto; background:var(--s1, #1f1e1a); color:var(--concrete); border:2px solid var(--concrete); border-bottom:none;
+  padding:0 16px calc(18px + env(safe-area-inset-bottom)); transform:translateY(100%); transition:transform .35s cubic-bezier(.2,.9,.25,1); }
+.bt-sheet.show .bt-back{ opacity:1; } .bt-sheet.show .bt-box{ transform:none; }
+.bt-hd{ position:sticky; top:0; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 0 10px; background:inherit; border-bottom:1px solid var(--bd); margin-bottom:10px; z-index:1; }
+.bt-hd b{ font-size:16px; }
+.bt-x{ width:36px !important; height:36px; padding:0 !important; background:none !important; border:none !important; color:inherit; font-size:18px; cursor:pointer; box-shadow:none !important; }
+html[data-theme="light"] .bt-box{ background:#fff; color:#141412; border-color:#141412; }
+
+.ins-seg{ display:grid; grid-template-columns:repeat(auto-fit, minmax(70px, 1fr)); gap:6px; margin:6px 0 12px; }
+.ins-seg button{ padding:8px 6px !important; font-size:12.5px !important; margin:0 !important; }
+.ins-seg button.on{ background:var(--acid) !important; color:#141412 !important; border-color:var(--acid) !important; }
+.ins-kpi{ display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-bottom:6px; }
+.ins-kpi > div{ border:1.5px solid var(--bd); padding:10px 6px; text-align:center; }
+.ins-kpi b{ display:block; font:700 18px 'Space Mono',monospace; color:var(--acid-text, var(--acid)); line-height:1.2; word-break:break-all; }
+.ins-kpi span{ font-size:11px; opacity:.75; }
+.ins-h{ margin:16px 0 6px; font-size:14px; } .ins-h small{ font-weight:400; opacity:.7; font-size:11.5px; }
+.ins-row{ display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px dashed var(--bd); }
+.ins-row img, .ins-row > i{ width:40px; height:40px; object-fit:cover; flex:0 0 auto; border:1.5px solid var(--bd); display:grid; place-items:center; font-style:normal; }
+.ins-rk{ width:22px; font:700 14px 'Space Mono',monospace; text-align:center; flex:0 0 auto; color:var(--acid-text, var(--acid)); }
+.ins-nm{ flex:1; min-width:0; } .ins-nm b{ display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ins-nm small{ display:block; font-size:11.5px; opacity:.75; line-height:1.5; }
+.ins-bar{ display:block; height:6px; background:var(--s3, #2a2924); margin-top:5px; } .ins-bar i{ display:block; height:100%; background:var(--acid); }
+.ins-v{ text-align:right; flex:0 0 auto; font-size:12px; } .ins-v b{ font:700 15px 'Space Mono',monospace; } .ins-v small{ display:block; font-size:10.5px; opacity:.7; }
+.ins-row.warn .ins-v b{ color:#ff8a5c; } .ins-row.dead{ opacity:.85; }
+
+.crm-strip{ display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:8px; }
+.crm-tag{ font-size:11px; border:1.5px solid var(--acid); color:var(--acid-text, var(--acid)); padding:2px 8px; border-radius:12px; }
+.crm-black{ font:700 11px 'Space Mono',monospace; background:#C13B1F; color:#fff; padding:3px 8px; }
+.crm-note{ font-size:11.5px; opacity:.8; flex-basis:100%; }
+.crm-strip .crm-open{ margin:0 0 0 auto !important; padding:7px 10px !important; font-size:12px !important; width:auto !important; }
+.customer-card.is-black, .order-card.is-black{ border-color:#C13B1F !important; box-shadow:inset 4px 0 0 #C13B1F; }
+.crm-warn{ margin-top:6px; background:#C13B1F; color:#fff; font-weight:700; font-size:12.5px; padding:6px 10px; }
+.crm-warn.soft{ background:transparent; color:var(--acid-text, var(--acid)); border:1.5px dashed var(--acid); font-weight:600; }
+.crm-id{ font-size:12.5px; line-height:1.8; opacity:.85; margin-bottom:10px; }
+.crm-facts{ display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 12px; } .crm-facts span{ font-size:11.5px; border:1px solid var(--bd); padding:3px 8px; } .crm-facts .bad{ color:#ff8a5c; border-color:#ff8a5c; }
+.crm-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px; }
+.crm-t{ width:auto !important; margin:0 !important; padding:7px 10px !important; font-size:12.5px !important; border:1.5px solid var(--bd) !important; background:transparent !important; color:inherit !important; border-radius:16px; cursor:pointer; }
+.crm-t.on{ background:var(--acid) !important; color:#141412 !important; border-color:var(--acid) !important; }
+.crm-bl{ display:flex !important; align-items:center; gap:8px; margin:12px 0 8px !important; font-weight:700; color:#ff8a5c; cursor:pointer; }
+.crm-bl input{ width:20px !important; height:20px; margin:0 !important; accent-color:#C13B1F; }
+#crm-note{ width:100%; }
+
+.bc-when{ margin:12px 0 8px; } .bc-quick{ margin-top:6px; }
+.bc-srow{ display:flex; align-items:center; gap:10px; border:1.5px dashed var(--acid); padding:8px 10px; margin-top:6px; }
+.bc-srow > div{ flex:1; min-width:0; } .bc-srow b{ display:block; font:700 12.5px 'Space Mono',monospace; } .bc-srow span{ display:block; font-size:12px; opacity:.8; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bc-srow button{ width:auto !important; padding:6px 10px !important; margin:0 !important; font-size:12px !important; }
+
+.tr-row{ display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px dashed var(--bd); }
+.tr-k{ flex:0 0 auto; font-size:11px; border:1px solid var(--bd); padding:3px 6px; white-space:nowrap; }
+.tr-m{ flex:1; min-width:0; } .tr-m b{ display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .tr-m em{ font-style:normal; opacity:.7; font-size:11px; }
+.tr-m small{ display:block; font-size:10.5px; opacity:.7; }
+.tr-row button{ width:auto !important; padding:8px 10px !important; margin:0 !important; font-size:12px !important; flex:0 0 auto; }
+#ins-seg{ grid-template-columns:repeat(3, 1fr); }
+.panel .bc-quick{ grid-template-columns:repeat(3, 1fr) !important; }
+.panel .bc-quick button{ font-size:12px !important; padding:9px 4px !important; line-height:1.35; white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -3519,6 +3584,7 @@ async function loadOrders(){
   groups.forEach(g=>{
     const div = document.createElement('div');
     div.className='order-card';
+    div.dataset.phone = g.phone || '';
     const itemsHtml = g.rows.map(o=>{
       const productImg = imgMap[o.product_name] || 'https://placehold.co/70x70/141412/E9E4D8?text=IMG';
       return `
@@ -4470,6 +4536,7 @@ function renderCustomersList(){
   customers.forEach((c, idx)=>{
     const div = document.createElement('div');
     div.className = 'customer-card';
+    div.dataset.key = c.key;
     div.innerHTML = `
       <div class="row1">
         <h4>${c.name} <span class="mono" style="font-size:10px; color:${c.isRegistered?'var(--acid)':(c.channel==='in_store'?'#4da3ff':'var(--grey)')};">[${c.isRegistered?'Website Member':(c.channel==='in_store'?'In-Store':'Online Guest')}]</span></h4>
@@ -8029,6 +8096,7 @@ function resetPreorderFields(){
     <textarea id="bc-msg" rows="4" maxlength="580" placeholder="ဥပမာ — 🆕 ဆောင်းရာသီ Jacket အသစ်တွေ ရောက်ပါပြီ"></textarea>
     <div class="bc-len" id="bc-len">0 / 580</div>
     <div class="bc-preview" id="bc-preview" style="display:none;"><div class="bc-bubble"></div><small>Customer Chat ထဲမှာ ဒီလိုပေါ်မည်</small></div>
+    <button type="button" class="secondary bs-apply" id="bc-test" disabled style="margin-bottom:8px;">🧪 ကိုယ့်ဖုန်းကို အရင် စမ်းပို့မည်</button>
     <button type="button" class="acid bs-apply" id="bc-send" disabled>📣 ပို့မည်</button>
     <div id="bc-history"></div>`;
   panel.insertAdjacentElement('afterbegin', card);
@@ -8047,11 +8115,23 @@ function resetPreorderFields(){
     document.getElementById('bc-preview').style.display = t ? '' : 'none';
     document.querySelector('#bc-preview .bc-bubble').textContent = (t.startsWith('📣') ? '' : '📣 ') + t;
     document.getElementById('bc-send').disabled = t.length < 2;
+    document.getElementById('bc-test').disabled = t.length < 2;
   };
   msg.addEventListener('input', onMsg);
   card.querySelectorAll('.bc-tpl button').forEach(b => b.addEventListener('click', () => { msg.value = b.dataset.t; onMsg(); msg.focus(); }));
   document.getElementById('bc-send').addEventListener('click', sendBroadcast);
+  document.getElementById('bc-test').addEventListener('click', testBroadcast);
 })();
+// 🧪 ကိုယ့်ဖုန်း (Website App) ကို အရင် စမ်းပို့
+async function testBroadcast(){
+  const msg = document.getElementById('bc-msg').value.trim(); if(msg.length < 2) return;
+  const btn = document.getElementById('bc-test'); btn.disabled = true;
+  const { data, error } = await sb.rpc('broadcast_test', { p_message: msg });
+  btn.disabled = false;
+  if(error) return showToast(/broadcast_test|function/.test(error.message) ? '⚠️ Supabase မှာ ADMIN-NOTI2.sql ကို အရင် Run ပါ' : 'Error: ' + error.message);
+  try{ if(typeof flushCustomerPush === 'function') flushCustomerPush(200); }catch(e){}
+  showToast(data > 0 ? '🧪 ကိုယ့်ဖုန်း (Website App) ဆီ ပို့လိုက်ပါပြီ — Notification + Chat ထဲ ကြည့်ပါ' : '🧪 Chat ထဲ ရောက်ပါပြီ — ဒါပေမဲ့ ကိုယ့်ဖုန်း Website App မှာ 🔔 Notification မဖွင့်ရသေးလို့ ဖုန်းကို မတက်ပါ', 6000);
+}
 let __bcCount = null;
 async function broadcastCount(){
   const out = document.getElementById('bc-count'); if(!out || currentAdminRole !== 'owner') return;
@@ -8060,7 +8140,8 @@ async function broadcastCount(){
     p_min_spend: Number(document.getElementById('bc-min').value) || 0, p_days: parseInt(document.getElementById('bc-days').value) || 60 });
   if(error || !data){ out.innerHTML = !error ? '—' : axMissing(error) || /broadcast_count/.test(error.message) ? '⚠️ Supabase မှာ SHOP-EXTRA.sql ကို အရင် Run ပါ' : '⚠️ ' + axEsc(error.message); __bcCount = null; return; }
   __bcCount = data;
-  out.innerHTML = `👥 <b>${data.total}</b> ယောက်ဆီ ရောက်မည် · 🔔 <b>${data.with_push}</b> ယောက် ဖုန်း Notification ရမည်`;
+  out.innerHTML = `👥 <b>${data.total}</b> ယောက်ဆီ ရောက်မည် · 🔔 <b>${data.with_push}</b> ယောက် ဖုန်း Notification ရမည်` +
+    (data.total > data.with_push ? `<div class="bc-note">💡 ကျန်တဲ့ ${data.total - data.with_push} ယောက်က Website Chat ထဲမှာ ဝင်ကြည့်မှ မြင်ရပါမည် (ဖုန်း Notification မဖွင့်ထားလို့)။ Admin / Owner အကောင့်တွေကို ဒီစာရင်းထဲ မထည့်ပါ — ကိုယ့်ဖုန်းကို စမ်းချင်ရင် 🧪 ခလုတ်ကို သုံးပါ</div>` : '');
 }
 async function sendBroadcast(){
   const msg = document.getElementById('bc-msg').value.trim(); if(msg.length < 2) return;
@@ -8832,7 +8913,7 @@ const adminPushOk = () => 'serviceWorker' in navigator && 'PushManager' in windo
 (function injectPushCard(){
   const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('apush-card')) return;
   const card = document.createElement('div'); card.className = 'form-card'; card.id = 'apush-card';
-  card.innerHTML = '<h3>📉 Stock နည်း/ကုန်ရင် ဒီဖုန်းကို အသိပေး</h3><div id="apush-body"></div>';
+  card.innerHTML = '<h3>🔔 ဒီဖုန်းကို Notification ပို့ရန်</h3><div id="apush-body"></div>';
   const mfa = document.getElementById('mfa-card');
   if(mfa) mfa.insertAdjacentElement('afterend', card); else panel.insertAdjacentElement('afterbegin', card);
 })();
@@ -8846,8 +8927,8 @@ async function renderAdminPushCard(){
   if(currentAdminRole === 'delivery'){ document.getElementById('apush-card').style.display = 'none'; return; }
   const st = await adminPushState();
   const msg = {
-    'on': '✅ ဖွင့်ထားပါသည် — ပစ္စည်း Stock နည်း/ကုန်တာနဲ့ ဒီဖုန်းကို အသိပေးပါမည်',
-    'off': 'ပစ္စည်းတစ်ခု Stock သတ်မှတ်ထားတာထက် နည်းသွားရင် (သို့) ကုန်သွားရင် ဒီဖုန်းကို ချက်ချင်း အသိပေးမည်',
+    'on': '✅ ဖွင့်ထားပါသည် — Order အသစ်၊ Customer စာ၊ ငွေဖြည့်၊ Stock နည်း စတာတွေ ဒီဖုန်းကို ချက်ချင်း အသိပေးပါမည်',
+    'off': 'Order အသစ်ဝင်တာ၊ Customer စာပို့တာ၊ ငွေဖြည့် Request၊ Stock နည်း/ကုန် စတာတွေကို ဒီဖုန်းကို ချက်ချင်း အသိပေးမည်',
     'denied': '🔕 Notification ကို ပိတ်ထားပါတယ် — ဖုန်း Settings မှာ Allow ပေးပြီးမှ ပြန်ဖွင့်ပါ',
     'ios-install': '📲 iPhone မှာ — Safari › Share › "Add to Home Screen" လုပ်ပြီး Home Screen က Admin App ကနေ ဖွင့်မှ ရပါမည် (iOS 16.4+)',
     'unsupported': '⚠️ ဒီ Browser က Notification မရပါ',
@@ -8861,7 +8942,33 @@ async function renderAdminPushCard(){
     showToast('🔕 ပိတ်လိုက်ပါပြီ'); renderAdminPushCard();
   });
   document.getElementById('apush-test')?.addEventListener('click', (e) => adminPushServerTest(e.currentTarget));
-  if(st === 'on') adminPushResync();
+  if(st === 'on'){ adminPushResync(); renderAdminPushKinds(); }
+}
+// 🔔 ဒီဖုန်းမှာ ဘာတွေ အသိပေးမလဲ — တစ်ခုချင်း ဖွင့်/ပိတ်
+const ADMIN_PUSH_KINDS = [
+  ['new_order', '🛒 Order အသစ်'], ['pay_proof', '🧾 ငွေလွှဲ Screenshot ရောက်'], ['chat', '💬 Customer စာ'],
+  ['order_cancel', '❌ Customer က Order ပယ်'], ['topup', '💰 ငွေဖြည့် Request'], ['gift', '🎁 Gift Card ဝယ်ယူမှု'],
+  ['low_stock', '📉 Stock နည်း'], ['sold_out', '⚫ Stock ကုန်'], ['review', '⭐ Review အသစ်'],
+  ['card_lock', '🔒 Card PIN မှား ၅ ကြိမ်'], ['new_login', '🔐 Admin Login (Owner)'],
+];
+async function renderAdminPushKinds(){
+  const body = document.getElementById('apush-body'); if(!body || document.getElementById('apush-kinds')) return;
+  let sub = null; try{ const reg = await navigator.serviceWorker.getRegistration(); sub = reg && await reg.pushManager.getSubscription(); }catch(e){}
+  if(!sub) return;
+  const { data, error } = await sb.from('push_subscriptions').select('mute_kinds').eq('endpoint', sub.endpoint).maybeSingle();
+  if(error && /mute_kinds/.test(error.message)) return;   // ADMIN-NOTI2.sql မ Run ရသေး
+  const muted = new Set((data && data.mute_kinds) || []);
+  const kinds = ADMIN_PUSH_KINDS.filter(([k]) => k !== 'new_login' || currentAdminRole === 'owner');
+  const box = document.createElement('details'); box.id = 'apush-kinds'; box.className = 'apk';
+  box.innerHTML = `<summary>⚙️ ဒီဖုန်းမှာ ဘာတွေ အသိပေးမလဲ (${kinds.length - kinds.filter(([k]) => muted.has(k)).length}/${kinds.length})</summary>
+    <div class="apk-grid">${kinds.map(([k, l]) => `<label class="apk-opt"><input type="checkbox" value="${k}" ${muted.has(k) ? '' : 'checked'}><span>${l}</span></label>`).join('')}</div>`;
+  body.appendChild(box);
+  box.addEventListener('change', async () => {
+    const off = [...box.querySelectorAll('input')].filter(i => !i.checked).map(i => i.value);
+    const { error: e2 } = await sb.from('push_subscriptions').update({ mute_kinds: off }).eq('endpoint', sub.endpoint);
+    box.querySelector('summary').textContent = `⚙️ ဒီဖုန်းမှာ ဘာတွေ အသိပေးမလဲ (${kinds.length - off.filter(k => kinds.some(([x]) => x === k)).length}/${kinds.length})`;
+    showToast(e2 ? '⚠️ သိမ်းမရပါ — ' + e2.message : '✅ သိမ်းပြီးပါပြီ');
+  });
 }
 // 🔄 Subscription ကို Database ထဲ ပြန်သိမ်း (ပျောက်သွားရင် Notification မရောက်တော့လို့)
 let __apSynced = false;
@@ -8953,6 +9060,273 @@ function renderStaffActionCheckboxes(actions){
     }, 900);
   }, true);
 })();
+
+// SUWATI MEN FASHION — 🧰 Admin Biz Tools
+//   ⑨ 📊 ပစ္စည်း ရောင်းအား (ရောင်းအကောင်းဆုံး · မရောင်းရ · ပြန်ဖြည့်သင့်)
+//   ⑩ 👤 Customer မှတ်တမ်း (မှတ်ချက် · Tag · Blacklist)
+//   ⑪ ⏰ သတင်းပို့ အချိန်ဇယား
+//   ⑫ 🗑️ ဖျက်ထားသည်များ ပြန်ယူ (၃၀ ရက်)
+//   Supabase မှာ BIZ-TOOLS.sql Run ထားရန်
+const btEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const btMoney = n => Math.round(Number(n) || 0).toLocaleString();
+const btMissing = e => e && /does not exist|schema cache|could not find/i.test(e.message || '') ? '⚠️ Supabase မှာ BIZ-TOOLS.sql ကို အရင် Run ပါ' : null;
+const BT_ADDON = new Set(['🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု', '🏷️ Promo Code']);
+
+// 📄 အောက်ကနေ တက်လာတဲ့ Sheet
+function btSheet(title, html){
+  document.getElementById('bt-sheet')?.remove();
+  const el = document.createElement('div'); el.id = 'bt-sheet'; el.className = 'bt-sheet';
+  el.innerHTML = `<div class="bt-back"></div><div class="bt-box" role="dialog" aria-modal="true"><div class="bt-hd"><b>${title}</b><button type="button" class="bt-x" aria-label="ပိတ်ရန်">✕</button></div><div class="bt-body">${html}</div></div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  const close = () => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); };
+  el.querySelector('.bt-x').onclick = close; el.querySelector('.bt-back').onclick = close;
+  return { el, close };
+}
+
+// =====================================================================
+// ⑨ 📊 ပစ္စည်း ရောင်းအား
+// =====================================================================
+(function(){
+  const panel = document.getElementById('salesreport-panel'); if(!panel || document.getElementById('ins-card')) return;
+  const card = document.createElement('div'); card.className = 'form-card ins-card'; card.id = 'ins-card';
+  card.innerHTML = `<h3>📊 ပစ္စည်း ရောင်းအား</h3>
+    <div class="ins-seg" id="ins-seg">${[[7, '၇ ရက်'], [30, '၃၀ ရက်'], [90, '၉၀ ရက်']].map(([d, l]) => `<button type="button" class="secondary${d === 30 ? ' on' : ''}" data-d="${d}">${l}</button>`).join('')}</div>
+    <div id="ins-body"><p class="hint">Load လုပ်နေသည်...</p></div>`;
+  panel.insertAdjacentElement('afterbegin', card);
+  card.querySelectorAll('#ins-seg button').forEach(b => b.addEventListener('click', () => {
+    card.querySelectorAll('#ins-seg button').forEach(x => x.classList.toggle('on', x === b)); loadInsights(Number(b.dataset.d));
+  }));
+  document.querySelector('[data-tab="salesreport-panel"]')?.addEventListener('click', () => loadInsights());
+})();
+let __insDays = 30;
+async function loadInsights(days){
+  if(days) __insDays = days; days = __insDays;
+  const body = document.getElementById('ins-body'); if(!body) return;
+  const since = new Date(Date.now() - days * 864e5).toISOString();
+  const [{ data: orders, error }, { data: prods }] = await Promise.all([
+    sb.from('orders').select('product_name, quantity, total_amount, created_at, order_status').gte('created_at', since).neq('order_status', 'cancelled').limit(10000),
+    sb.from('products').select('id, name, stock_qty, price, image_url, created_at, is_gift_card, status'),
+  ]);
+  if(error){ body.innerHTML = `<p class="hint">⚠️ ${btEsc(error.message)}</p>`; return; }
+  const P = {}; (prods || []).filter(p => !p.is_gift_card).forEach(p => P[p.name] = p);
+  const agg = {};
+  (orders || []).forEach(o => { if(BT_ADDON.has(o.product_name) || !P[o.product_name]) return;
+    const a = agg[o.product_name] ||= { name:o.product_name, qty:0, rev:0 }; a.qty += Number(o.quantity) || 1; a.rev += Number(o.total_amount) || 0; });
+  const rows = Object.values(agg);
+  const top = rows.slice().sort((a, b) => b.qty - a.qty || b.rev - a.rev).slice(0, 10);
+  const totalQty = rows.reduce((s, r) => s + r.qty, 0), totalRev = rows.reduce((s, r) => s + r.rev, 0);
+  const sinceT = Date.now() - days * 864e5;
+  const dead = Object.values(P).filter(p => (Number(p.stock_qty) || 0) > 0 && !agg[p.name] && Date.parse(p.created_at || 0) < sinceT)
+    .sort((a, b) => (b.stock_qty * b.price) - (a.stock_qty * a.price)).slice(0, 10);
+  const refill = rows.map(r => { const p = P[r.name]; const perDay = r.qty / days; const stock = Number(p.stock_qty) || 0;
+      return { ...r, stock, perDay, left: perDay > 0 ? stock / perDay : Infinity, need: Math.max(0, Math.ceil(perDay * 30 - stock)) }; })
+    .filter(r => r.left < 14).sort((a, b) => a.left - b.left).slice(0, 10);
+  const max = top[0]?.qty || 1;
+  const img = n => P[n]?.image_url ? `<img src="${btEsc(P[n].image_url)}" alt="" loading="lazy">` : '<i>👕</i>';
+  body.innerHTML = `
+    <div class="ins-kpi"><div><b>${totalQty.toLocaleString()}</b><span>ထည် ရောင်းရ</span></div><div><b>${btMoney(totalRev)}</b><span>ကျပ်</span></div><div><b>${rows.length}</b><span>မျိုး ရောင်းရ</span></div></div>
+    <h4 class="ins-h">🏆 ရောင်းအကောင်းဆုံး</h4>
+    ${top.length ? top.map((r, i) => `<div class="ins-row"><span class="ins-rk">${i + 1}</span>${img(r.name)}<span class="ins-nm"><b>${btEsc(r.name)}</b><span class="ins-bar"><i style="width:${Math.max(4, r.qty / max * 100)}%"></i></span></span><span class="ins-v"><b>${r.qty}</b> ထည်<small>${btMoney(r.rev)}</small></span></div>`).join('') : '<p class="hint">ဒီကာလအတွင်း ရောင်းရတာ မရှိသေးပါ</p>'}
+    <h4 class="ins-h">⚠️ ပြန်ဖြည့်သင့် <small>(၁၄ ရက်အတွင်း ကုန်မည်)</small></h4>
+    ${refill.length ? refill.map(r => `<div class="ins-row warn">${img(r.name)}<span class="ins-nm"><b>${btEsc(r.name)}</b><small>ကျန် ${r.stock} · တစ်ရက် ~${r.perDay.toFixed(1)} ထည် · ${r.left < 1 ? 'ဒီနေ့/မနက်ဖြန်' : '~' + Math.round(r.left) + ' ရက်'} ကုန်မည်</small></span><span class="ins-v"><b>+${r.need}</b><small>ဖြည့်ရန်</small></span></div>`).join('') : '<p class="hint">✅ မကြာခင် ကုန်မယ့် ပစ္စည်း မရှိပါ</p>'}
+    <h4 class="ins-h">🐢 မရောင်းရသေး <small>(${days} ရက်အတွင်း တစ်ထည်မှ)</small></h4>
+    ${dead.length ? dead.map(p => `<div class="ins-row dead">${img(p.name)}<span class="ins-nm"><b>${btEsc(p.name)}</b><small>Stock ${p.stock_qty} · ${btMoney(p.stock_qty * p.price)} ကျပ်ဖိုး ထိုင်နေ</small></span><span class="ins-v"><small>Sale ချ / Post တင်ကြည့်</small></span></div>`).join('') : '<p class="hint">✅ မရောင်းရတဲ့ ပစ္စည်း မရှိပါ</p>'}`;
+}
+
+// =====================================================================
+// ⑩ 👤 Customer မှတ်တမ်း (CRM)
+// =====================================================================
+const btCkey = p => { let d = String(p || '').replace(/\D/g, ''); if(!d) return null; if(d.startsWith('959')) d = '0' + d.slice(2); else if(d.startsWith('9') && d.length >= 8 && d.length <= 11) d = '0' + d; return d; };
+let __crm = null;
+async function crmLoad(force){
+  if(__crm && !force) return __crm;
+  const { data, error } = await sb.from('customer_crm').select('*');
+  __crm = {}; if(!error) (data || []).forEach(r => __crm[r.ckey] = r);
+  __crm.__err = error || null;
+  return __crm;
+}
+const CRM_TAGS = ['⭐ VIP', '🔁 ပုံမှန်ဝယ်', '📦 လက်ကား', '🎂 မွေးနေ့', '⚠️ ပြဿနာရှိ', '📵 ဖုန်းမကိုင်'];
+
+if(typeof renderCustomersList === 'function'){
+  const _rcl = renderCustomersList;
+  renderCustomersList = function(){
+    const r = _rcl.apply(this, arguments);
+    crmLoad().then(crm => {
+      document.querySelectorAll('#customers-list .customer-card').forEach(card => {
+        const c = allCustomers.find(x => x.key === card.dataset.key); if(!c || card.querySelector('.crm-strip')) return;
+        const k = btCkey(c.phone) || (c.email || '').toLowerCase() || null; const m = k && crm[k];
+        const strip = document.createElement('div'); strip.className = 'crm-strip';
+        strip.innerHTML = `${m?.blacklisted ? '<span class="crm-black">⛔ BLACKLIST</span>' : ''}${(m?.tags || []).map(t => `<span class="crm-tag">${btEsc(t)}</span>`).join('')}
+          ${m?.note ? `<span class="crm-note">📝 ${btEsc(m.note.slice(0, 60))}${m.note.length > 60 ? '…' : ''}</span>` : ''}
+          <button type="button" class="secondary crm-open">👤 Profile / မှတ်ချက်</button>`;
+        card.querySelector('.cdetails')?.after(strip);
+        card.classList.toggle('is-black', !!m?.blacklisted);
+        strip.querySelector('.crm-open').onclick = () => crmOpen(c);
+      });
+    });
+    return r;
+  };
+}
+
+function crmStats(c){
+  const ok = c.orders.filter(o => o.order_status !== 'cancelled');
+  const dates = c.orders.map(o => Date.parse(o.created_at)).sort((a, b) => a - b);
+  const sizes = {}; ok.forEach(o => String(o.items || '').replace(/\(([^,)]+)/g, (_, s) => { sizes[s.trim()] = (sizes[s.trim()] || 0) + 1; }));
+  const favSize = Object.entries(sizes).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const cancel = c.orders.length - ok.length;
+  return { count: ok.length, spent: c.totalSpent, avg: ok.length ? c.totalSpent / ok.length : 0,
+    first: dates[0], last: dates[dates.length - 1], favSize, cancel };
+}
+async function crmOpen(c){
+  const crm = await crmLoad();
+  if(crm.__err){ showToast(btMissing(crm.__err) || ('⚠️ ' + crm.__err.message)); return; }
+  const k = btCkey(c.phone) || (c.email || '').toLowerCase();
+  if(!k){ showToast('⚠️ ဖုန်း / Email မရှိလို့ မှတ်လို့ မရပါ'); return; }
+  const m = crm[k] || { tags:[], note:'', blacklisted:false, black_reason:'' };
+  const s = crmStats(c); const d = t => t ? new Date(t).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) : '-';
+  const days = s.last ? Math.floor((Date.now() - s.last) / 864e5) : null;
+  const sh = btSheet('👤 ' + btEsc(c.name || 'Customer'), `
+    <div class="crm-id">📞 ${btEsc(c.phone || '-')}${c.email ? ' · ✉️ ' + btEsc(c.email) : ''}<br>📍 ${btEsc(c.address || '-')}</div>
+    <div class="ins-kpi crm-kpi"><div><b>${btMoney(s.spent)}</b><span>စုစုပေါင်း ကျပ်</span></div><div><b>${s.count}</b><span>Order</span></div><div><b>${btMoney(s.avg)}</b><span>ပျမ်းမျှ</span></div></div>
+    <div class="crm-facts"><span>🗓️ ပထမ ${d(s.first)}</span><span>🕒 နောက်ဆုံး ${d(s.last)}${days !== null ? ` (${days} ရက်)` : ''}</span>${s.favSize ? `<span>📏 Size ${btEsc(s.favSize)}</span>` : ''}${s.cancel ? `<span class="bad">❌ ပယ်ဖျက် ${s.cancel}</span>` : ''}</div>
+    <label class="ps-lbl">🏷️ Tag</label>
+    <div class="crm-tags">${CRM_TAGS.map(t => `<button type="button" class="crm-t${(m.tags || []).includes(t) ? ' on' : ''}" data-t="${btEsc(t)}">${btEsc(t)}</button>`).join('')}</div>
+    <label class="ps-lbl" for="crm-note">📝 မှတ်ချက် (Admin တွေပဲ မြင်ရ)</label>
+    <textarea id="crm-note" rows="3" maxlength="2000" placeholder="ဥပမာ — L size ပဲဝတ်၊ ညနေ ၅ နာရီနောက် ပို့ပေး">${btEsc(m.note || '')}</textarea>
+    <label class="crm-bl"><input type="checkbox" id="crm-black" ${m.blacklisted ? 'checked' : ''}><span>⛔ Blacklist — Order ဝင်ရင် ⚠️ သတိပေး</span></label>
+    <input type="text" id="crm-reason" placeholder="အကြောင်းရင်း (ဥပမာ — COD ၃ ခါ မယူ)" value="${btEsc(m.black_reason || '')}" style="${m.blacklisted ? '' : 'display:none;'}">
+    <button type="button" class="acid bs-apply" id="crm-save">💾 သိမ်းမည်</button>`);
+  const box = sh.el;
+  box.querySelectorAll('.crm-t').forEach(b => b.onclick = () => b.classList.toggle('on'));
+  box.querySelector('#crm-black').onchange = e => { box.querySelector('#crm-reason').style.display = e.target.checked ? '' : 'none'; };
+  box.querySelector('#crm-save').onclick = async () => {
+    const row = { ckey:k, display_name:c.name || null, note: box.querySelector('#crm-note').value.trim() || null,
+      tags: [...box.querySelectorAll('.crm-t.on')].map(b => b.dataset.t), blacklisted: box.querySelector('#crm-black').checked,
+      black_reason: box.querySelector('#crm-reason').value.trim() || null, updated_at: new Date().toISOString(), updated_by: currentAdminEmail };
+    const { error } = await sb.from('customer_crm').upsert(row, { onConflict:'ckey' });
+    if(error){ showToast(btMissing(error) || 'Error: ' + error.message); return; }
+    if(row.blacklisted !== !!m.blacklisted) logActivity(row.blacklisted ? 'customer_blacklisted' : 'customer_unblacklisted', `${c.name} · ${c.phone || ''}${row.black_reason ? ' · ' + row.black_reason : ''}`);
+    __crm[k] = row; showToast('✅ သိမ်းပြီးပါပြီ'); sh.close();
+    document.querySelectorAll('#customers-list .crm-strip').forEach(x => x.remove()); renderCustomersList();
+  };
+}
+// 📦 Order ထဲမှာ Blacklist ဖုန်းဆိုရင် ⚠️ ပြ
+if(typeof loadOrders === 'function'){
+  const _lo = loadOrders;
+  loadOrders = async function(){
+    const r = await _lo.apply(this, arguments);
+    try{
+      const crm = await crmLoad(true);
+      document.querySelectorAll('#orders-list .order-card, .order-card').forEach(card => {
+        const m = crm[btCkey(card.dataset.phone)]; card.querySelector('.crm-warn')?.remove();
+        if(m?.blacklisted){ card.classList.add('is-black'); card.querySelector('.row1')?.insertAdjacentHTML('afterend', `<div class="crm-warn">⛔ BLACKLIST Customer${m.black_reason ? ' — ' + btEsc(m.black_reason) : ''}</div>`); }
+        else if((m?.tags || []).length){ card.querySelector('.row1')?.insertAdjacentHTML('afterend', `<div class="crm-warn soft">${m.tags.map(btEsc).join(' · ')}</div>`); }
+      });
+    }catch(e){}
+    return r;
+  };
+}
+
+// =====================================================================
+// ⑪ ⏰ သတင်းပို့ — အချိန်ဇယား
+// =====================================================================
+(function(){
+  const send = document.getElementById('bc-send'); if(!send || document.getElementById('bc-when')) return;
+  send.insertAdjacentHTML('beforebegin', `<div class="bc-when" id="bc-when">
+      <label class="ps-lbl" for="bc-at">⏰ အချိန်သတ်မှတ်ပြီး ပို့မည် (အလွတ် = ချက်ချင်း)</label>
+      <input type="datetime-local" id="bc-at">
+      <div class="ps-quick bc-quick">${[['မနက် ၉ နာရီ', 9], ['နေ့လည် ၁၂ နာရီ', 12], ['ည ၇ နာရီ', 19]].map(([l, h]) => `<button type="button" class="secondary" data-h="${h}">${l}</button>`).join('')}</div>
+    </div>`);
+  send.insertAdjacentHTML('afterend', '<div id="bc-sched"></div>');
+  const at = document.getElementById('bc-at');
+  const pad = n => String(n).padStart(2, '0');
+  const toLocal = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  document.querySelectorAll('.bc-quick button').forEach(b => b.onclick = () => { const d = new Date(); d.setHours(Number(b.dataset.h), 0, 0, 0); if(d < new Date(Date.now() + 5 * 6e4)) d.setDate(d.getDate() + 1); at.value = toLocal(d); at.dispatchEvent(new Event('input')); });
+  const label = () => { send.textContent = at.value ? '⏰ အချိန်ဇယားဖြင့် ပို့မည်' : '📣 ပို့မည်'; };
+  at.addEventListener('input', label); at.addEventListener('change', label);
+  // ⏰ ရွေးထားရင် ချက်ချင်းမပို့ဘဲ Schedule
+  document.addEventListener('click', async (e) => {
+    if(!e.target.closest || !e.target.closest('#bc-send') || !at.value) return;
+    e.stopPropagation(); e.preventDefault();
+    const msg = document.getElementById('bc-msg').value.trim(); if(msg.length < 2) return;
+    const when = new Date(at.value);
+    const segEl = document.getElementById('bc-seg');
+    if(!await adminConfirm(`⏰ ${when.toLocaleString()} မှာ\n${segEl.options[segEl.selectedIndex].text} ဆီ အလိုလို ပို့ပါမည်\n\n${msg.slice(0, 160)}`)) return;
+    send.disabled = true;
+    const { error } = await sb.rpc('broadcast_schedule', { p_message: msg, p_segment: segEl.value,
+      p_min_spend: Number(document.getElementById('bc-min').value) || 0, p_days: parseInt(document.getElementById('bc-days').value) || 60, p_at: when.toISOString() });
+    send.disabled = false;
+    if(error){ showToast(btMissing(error) || (/INVALID_TIME/.test(error.message) ? '⚠️ ၂ မိနစ်နောက်ပိုင်း ~ ရက် ၆၀ အတွင်း ရွေးပါ' : 'Error: ' + error.message)); return; }
+    logActivity('broadcast_scheduled', `${when.toLocaleString()} · ${msg.slice(0, 60)}`);
+    showToast('⏰ အချိန်ဇယား သိမ်းပြီးပါပြီ');
+    document.getElementById('bc-msg').value = ''; document.getElementById('bc-msg').dispatchEvent(new Event('input')); at.value = ''; label();
+    loadSchedules();
+  }, true);
+  document.querySelector('[data-tab="customers-panel"]')?.addEventListener('click', () => setTimeout(loadSchedules, 300));
+  setTimeout(loadSchedules, 2500);
+})();
+async function loadSchedules(){
+  const box = document.getElementById('bc-sched'); if(!box || currentAdminRole !== 'owner') return;
+  const { data, error } = await sb.from('scheduled_broadcasts').select('*').is('sent_at', null).eq('cancelled', false).order('send_at');
+  if(error || !data || !data.length){ box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="ps-lbl" style="margin-top:12px;">⏰ ပို့ရန် စောင့်နေသည် (${data.length})</div>` + data.map(s => `
+    <div class="bc-srow"><div><b>${new Date(s.send_at).toLocaleString()}</b><span>${btEsc(s.message.slice(0, 70))}</span></div><button type="button" class="secondary" data-id="${s.id}">✕ ဖျက်</button></div>`).join('');
+  box.querySelectorAll('button[data-id]').forEach(b => b.onclick = async () => {
+    if(!await adminConfirm('ဒီ အချိန်ဇယား သတင်းကို ဖျက်မလား?')) return;
+    const { error: e2 } = await sb.rpc('broadcast_schedule_cancel', { p_id: b.dataset.id });
+    if(e2) return showToast('Error: ' + e2.message); showToast('ဖျက်ပြီးပါပြီ'); loadSchedules();
+  });
+}
+
+// =====================================================================
+// ⑫ 🗑️ ဖျက်ထားသည်များ (၃၀ ရက်) — Owner
+// =====================================================================
+(function(){
+  const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('trash-card')) return;
+  const card = document.createElement('details'); card.className = 'form-card trash-card'; card.id = 'trash-card';
+  card.innerHTML = `<summary><h3 style="display:inline;">🗑️ ဖျက်ထားသည်များ — ပြန်ယူရန်</h3></summary>
+    <div class="hint" style="margin-top:8px;">ပစ္စည်း၊ Order၊ Category၊ Banner၊ Post၊ Promo Code ဖျက်မိရင် ၃၀ ရက်အတွင်း ပြန်ယူလို့ရပါတယ်</div>
+    <div class="ins-seg" id="trash-f">${[['', 'အားလုံး'], ['products', '👕 ပစ္စည်း'], ['orders', '📦 Order'], ['other', '📁 အခြား']].map(([v, l], i) => `<button type="button" class="secondary${i ? '' : ' on'}" data-f="${v}">${l}</button>`).join('')}</div>
+    <div id="trash-list"></div>`;
+  panel.appendChild(card);
+  card.addEventListener('toggle', () => { if(card.open) loadTrash(); });
+  card.querySelectorAll('#trash-f button').forEach(b => b.onclick = () => { card.querySelectorAll('#trash-f button').forEach(x => x.classList.toggle('on', x === b)); __trashF = b.dataset.f; renderTrash(); });
+  const hide = () => { card.style.display = currentAdminRole === 'owner' ? '' : 'none'; };
+  hide(); setTimeout(hide, 2000);
+})();
+let __trash = [], __trashF = '';
+const BT_TBL = { products:'👕 ပစ္စည်း', orders:'📦 Order', categories:'📁 Category', subcategories:'📂 Sub-Category', banners:'🖼️ Banner', posts:'📝 Post', promo_codes:'🎟️ Promo', bundle_deals:'🎁 Bundle' };
+async function loadTrash(){
+  const box = document.getElementById('trash-list'); if(!box) return;
+  box.innerHTML = '<p class="hint">Load လုပ်နေသည်...</p>';
+  const { data, error } = await sb.rpc('trash_list');
+  if(error){ box.innerHTML = `<p class="hint">${btMissing(error) || '⚠️ ' + btEsc(error.message)}</p>`; return; }
+  __trash = data || []; renderTrash();
+}
+function renderTrash(){
+  const box = document.getElementById('trash-list'); if(!box) return;
+  let list = __trash.filter(t => !__trashF || (__trashF === 'other' ? !['products', 'orders'].includes(t.tbl) : t.tbl === __trashF));
+  // Order — ပစ္စည်းအများကြီးပါတဲ့ Order ကို တစ်ခုတည်း ပြ
+  const seen = new Set(); list = list.filter(t => { if(!t.grp) return true; if(seen.has(t.grp)) return false; seen.add(t.grp); return true; });
+  if(!list.length){ box.innerHTML = '<p class="hint" style="margin-top:10px;">🗑️ ဖျက်ထားတာ မရှိပါ</p>'; return; }
+  box.innerHTML = list.map(t => {
+    const n = t.grp ? __trash.filter(x => x.grp === t.grp).length : 1;
+    const left = 30 - Math.floor((Date.now() - Date.parse(t.deleted_at)) / 864e5);
+    return `<div class="tr-row"><span class="tr-k">${BT_TBL[t.tbl] || t.tbl}</span>
+      <span class="tr-m"><b>${btEsc(t.label || '-')}${n > 1 ? ` <em>+${n - 1}</em>` : ''}</b><small>${new Date(t.deleted_at).toLocaleString()} · ${btEsc(t.deleted_by || '')} · ${left} ရက်ကျန်</small></span>
+      <button type="button" class="acid" data-id="${t.id}">↩️ ပြန်ယူ</button></div>`;
+  }).join('');
+  box.querySelectorAll('button[data-id]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const { data, error } = await sb.rpc('trash_restore', { p_id: b.dataset.id });
+    b.disabled = false;
+    if(error) return showToast('Error: ' + error.message);
+    showToast(data?.message || 'OK');
+    if(data?.ok){ const t = __trash.find(x => x.id === b.dataset.id); logActivity('trash_restored', `${t?.tbl} · ${t?.label}`); loadTrash();
+      try{ if(t?.tbl === 'products') loadProducts(); if(t?.tbl === 'orders') loadOrders(); }catch(e){} }
+  });
+}
 
 // ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
 (function(){
@@ -9268,6 +9642,9 @@ function renderStaffActionCheckboxes(actions){
     const run = async () => {
       if((typeof currentAdminUserId === 'undefined' || !currentAdminUserId) && n++ < 40){ setTimeout(run, 250); return; }
       if(open === 'orders'){ document.getElementById('orders-tab-btn')?.click(); return; }
+      if(open === 'wallet'){ document.getElementById('wallet-tab-btn')?.click(); return; }
+      if(open === 'products'){ document.querySelector('[data-tab="products-panel"]')?.click();
+        setTimeout(() => { const d = document.getElementById('rv-admin-card'); if(d){ d.open = true; d.dispatchEvent(new Event('toggle')); d.scrollIntoView({ behavior:'smooth' }); } }, 400); return; }
       if(open === 'chat'){
         document.getElementById('messages-tab-btn')?.click();
         const uid = q.get('uid');
