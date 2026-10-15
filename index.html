@@ -7978,19 +7978,26 @@ function buildInvoiceHtml(rows){
   .inv-box{ border:2px solid var(--ink); padding:10px 12px; font-size:12.5px; line-height:1.75; }
   .inv-box h4{ margin:0 0 4px; font:700 10px 'Space Mono',monospace; letter-spacing:.18em; color:var(--grey); }
   table.inv-t{ width:100%; border-collapse:collapse; font-size:12.5px; }
-  .inv-t th{ background:var(--ink); color:#fff; font:700 10.5px 'Space Mono',monospace; letter-spacing:.08em; padding:8px 6px; text-align:left; }
+  .inv-t{ table-layout:fixed; }
+  .inv-t th{ background:var(--ink); color:#fff; font:700 11px 'Noto Sans Myanmar','Space Mono',sans-serif; padding:8px 6px; text-align:left; white-space:nowrap; }
+  .inv-t td b{ display:block; word-break:break-word; line-height:1.35; }
+  .inv-nm{ font-weight:700; font-size:14px; margin-bottom:4px; }
+  .inv-dl{ display:grid; grid-template-columns:22px 1fr; gap:3px 6px; margin:0; } .inv-dl dt{ margin:0; } .inv-dl dd{ margin:0; word-break:break-word; }
+  .inv-dl.kv{ grid-template-columns:auto 1fr; gap:4px 12px; } .inv-dl.kv dt{ color:var(--grey); }
   .inv-t td{ padding:9px 6px; border-bottom:1px solid #ddd; vertical-align:top; }
   .inv-t .c{ text-align:center; } .inv-t .r{ text-align:right; font-family:'Space Mono',monospace; white-space:nowrap; }
   .inv-t th.c{ text-align:center; } .inv-t th.r{ text-align:right; }
   .inv-t .v{ font-size:11px; color:var(--grey); } .pre{ font:700 9px 'Space Mono',monospace; background:#fff3d6; padding:1px 5px; border:1px solid #c90; }
-  .inv-sum{ margin-left:auto; width:min(320px, 100%); margin-top:12px; font-size:12.5px; }
-  .inv-sum div{ display:flex; justify-content:space-between; padding:5px 0; } .inv-sum span:last-child{ font-family:'Space Mono',monospace; }
+  .inv-sum{ margin-left:auto; width:min(340px, 100%); margin-top:12px; font-size:12.5px; }
+  .inv-sum div{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:6px 6px; }
+  .inv-sum span:last-child{ font-family:'Space Mono',monospace; text-align:right; min-width:90px; }
   .inv-sum .neg span:last-child{ color:var(--rust); }
-  .inv-sum .tot{ border-top:3px solid var(--ink); border-bottom:3px solid var(--ink); margin-top:4px; padding:8px 0; font-weight:700; font-size:15px; }
+  .inv-sum .tot{ border-top:3px solid var(--ink); border-bottom:3px solid var(--ink); margin:4px 0; padding:9px 6px; font-weight:700; font-size:15px; }
   .inv-note{ margin-top:14px; font-size:11.5px; color:var(--grey); line-height:1.8; border-left:3px solid var(--acid); padding-left:10px; }
   .inv-foot{ margin-top:18px; padding-top:10px; border-top:1.5px dashed #aaa; display:flex; justify-content:space-between; gap:10px; font:10.5px 'Space Mono',monospace; color:var(--grey); flex-wrap:wrap; }
   .inv-void{ position:absolute; top:42%; left:50%; transform:translate(-50%,-50%) rotate(-24deg); font-family:'Anton',sans-serif; font-size:90px; color:rgba(193,59,31,.28); border:8px solid rgba(193,59,31,.28); padding:0 24px; pointer-events:none; }
-  @media (max-width:560px){ .inv{ padding:18px 14px; margin:8px auto; } .inv-top{ flex-direction:column; } .inv-title{ text-align:left; } .inv-parties{ grid-template-columns:1fr; } .inv-logo{ font-size:28px; } .inv-t{ font-size:11.5px; } }
+  @media (max-width:560px){ .inv{ padding:18px 14px; margin:8px auto; } .inv-top{ flex-direction:column; } .inv-title{ text-align:left; } .inv-parties{ grid-template-columns:1fr; } .inv-logo{ font-size:28px; }
+    .inv-t{ font-size:11.5px; } .inv-t col:nth-child(4){ width:66px !important; } .inv-t col:nth-child(5){ width:74px !important; } .inv-sum{ width:100%; } }
   @media print{ @page{ size:A4; margin:12mm; } .inv{ box-shadow:none; margin:0 auto; max-width:none; padding:0; } }
 </style></head><body style="margin:0; padding:0 8px; background:transparent;">
 <div class="inv receipt-box">
@@ -8003,10 +8010,13 @@ function buildInvoiceHtml(rows){
       <span class="inv-tag ${cancelled ? 'void' : paid ? 'paid' : 'due'}">${cancelled ? 'CANCELLED' : paid ? 'PAID' : 'PAYMENT DUE'}</span></div>
   </div>
   <div class="inv-parties">
-    <div class="inv-box"><h4>BILL TO · ဝယ်သူ</h4><b>${esc(f.customer_name)}</b><br>📞 ${esc(f.phone || '-')}${f.email ? '<br>✉️ ' + esc(f.email) : ''}<br>📍 ${esc(f.address || '-')}</div>
-    <div class="inv-box"><h4>ORDER · အချက်အလက်</h4>အခြေအနေ — <b>${esc(st)}</b><br>ငွေပေးချေမှု — <b>${esc(method)}</b>${f.delivery_zone ? `<br>ပို့ဆောင်ရေး — ${esc(f.delivery_zone)}` : ''}${f.promo_code ? `<br>Promo — ${esc(f.promo_code)}` : ''}</div>
+    <div class="inv-box"><h4>BILL TO · ဝယ်သူ</h4><div class="inv-nm">${esc(f.customer_name)}</div>
+      <dl class="inv-dl"><dt>📞</dt><dd>${esc(f.phone || '-')}</dd>${f.email ? `<dt>✉️</dt><dd>${esc(f.email)}</dd>` : ''}<dt>📍</dt><dd>${esc(f.address || '-')}</dd></dl></div>
+    <div class="inv-box"><h4>ORDER · အချက်အလက်</h4>
+      <dl class="inv-dl kv"><dt>အခြေအနေ</dt><dd><b>${esc(st)}</b></dd><dt>ငွေပေးချေ</dt><dd><b>${esc(method)}</b></dd>${f.delivery_zone ? `<dt>ပို့ဆောင်</dt><dd>${esc(f.delivery_zone)}</dd>` : ''}${f.promo_code ? `<dt>Promo</dt><dd>${esc(f.promo_code)}</dd>` : ''}</dl></div>
   </div>
-  <table class="inv-t"><thead><tr><th class="c">#</th><th>ပစ္စည်း</th><th class="c">အရေ</th><th class="r">တစ်ခုဈေး</th><th class="r">ကျပ်</th></tr></thead><tbody>${lines}</tbody></table>
+  <table class="inv-t"><colgroup><col style="width:26px"><col><col style="width:38px"><col style="width:78px"><col style="width:84px"></colgroup>
+    <thead><tr><th class="c">#</th><th>ပစ္စည်း</th><th class="c">ခု</th><th class="r">တစ်ခုဈေး</th><th class="r">ကျပ်</th></tr></thead><tbody>${lines}</tbody></table>
   <div class="inv-sum">
     <div><span>Subtotal</span><span>${m(gross)}</span></div>
     ${lineDisc > 0 ? `<div class="neg"><span>လျှော့ဈေး</span><span>-${m(lineDisc)}</span></div>` : ''}

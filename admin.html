@@ -1102,6 +1102,46 @@ html[data-theme="light"] .bt-box{ background:#fff; color:#141412; border-color:#
 #ins-seg{ grid-template-columns:repeat(3, 1fr); }
 .panel .bc-quick{ grid-template-columns:repeat(3, 1fr) !important; }
 .panel .bc-quick button{ font-size:12px !important; padding:9px 4px !important; line-height:1.35; white-space:nowrap; }
+
+/* ===== 🔘 Checkbox → Pill Switch ===== */
+input.pill-sw{ -webkit-appearance:none; appearance:none; flex:0 0 auto; width:46px !important; height:26px !important; min-height:0 !important; border-radius:20px !important;
+  background:#5a5850 !important; border:none !important; position:relative; cursor:pointer; transition:background .25s; padding:0 !important; margin:0 !important; box-shadow:none !important; vertical-align:middle; }
+input.pill-sw::after{ content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .28s cubic-bezier(.3,1.4,.5,1); box-shadow:0 1px 3px rgba(0,0,0,.3); }
+input.pill-sw:checked{ background:var(--acid) !important; }
+input.pill-sw:checked::after{ transform:translateX(20px); background:#141412; }
+input.pill-sw:disabled{ opacity:.45; cursor:not-allowed; }
+input.pill-sw:focus-visible{ outline:2px solid var(--acid); outline-offset:2px; }
+input.pill-sw.pill-pop::after, input.ps-switch.pill-pop::after{ animation:pillPop .35s ease; }
+@keyframes pillPop{ 50%{ width:26px; } }
+html[data-theme="light"] input.pill-sw{ background:#c9c4b8 !important; }
+html[data-theme="light"] input.pill-sw:checked{ background:#141412 !important; } html[data-theme="light"] input.pill-sw:checked::after{ background:var(--acid); }
+label.pill-lbl{ display:flex !important; align-items:center; gap:10px; cursor:pointer; line-height:1.5; }
+label.pill-lbl > span, label.pill-lbl{ text-align:left; }
+
+/* ===== 📈 Graph — တက်လာ Animation ===== */
+.td-hours i{ animation-delay:calc(var(--i, 0) * 22ms); }
+.ins-bar i{ transform-origin:left; animation:insGrow .8s cubic-bezier(.2,.85,.25,1) both; animation-delay:calc(var(--i, 0) * 70ms + .1s); }
+@keyframes insGrow{ from{ transform:scaleX(0); } }
+.ins-kpi > div{ animation:insUp .5s cubic-bezier(.2,.9,.3,1.2) both; } .ins-kpi > div:nth-child(2){ animation-delay:.08s; } .ins-kpi > div:nth-child(3){ animation-delay:.16s; }
+.ins-row{ animation:insUp .45s ease both; } .ins-row:nth-child(n){ animation-delay:calc(var(--d, 0) * 1ms); }
+@keyframes insUp{ from{ opacity:0; transform:translateY(10px); } }
+@media (prefers-reduced-motion: reduce){ .td-hours i, .ins-bar i, .ins-kpi > div, .ins-row{ animation:none !important; } }
+
+/* ===== ⬛ ခလုတ် အမြင့်ညီ (Row ထဲက Input / Select / Button) ===== */
+.zone-row, .bonus-tier-row, .cb-tier-row, .pf-cost-row{ align-items:center !important; }
+.zone-row > input, .zone-row > select, .zone-row > button,
+.bonus-tier-row > input, .bonus-tier-row > select, .bonus-tier-row > button,
+.cb-tier-row > input, .cb-tier-row > select, .cb-tier-row > button,
+.pf-cost-row > input, .pf-cost-row > button{ height:44px !important; min-height:44px !important; margin-top:0 !important; margin-bottom:0 !important; box-sizing:border-box; }
+.zone-row > button, .bonus-tier-row > button, .cb-tier-row > button{ min-width:44px; padding:0 12px !important; display:grid; place-items:center; }
+.pf-cost-row > button{ padding:0 14px !important; }
+/* Customer Card — ခလုတ်တွေ အကွက်ညီ */
+.customer-card > div[style*="display:flex"]{ display:grid !important; grid-template-columns:1fr 1fr; gap:8px !important; }
+.customer-card > div[style*="display:flex"] > button{ min-width:0 !important; margin:0 !important; height:44px; }
+.customer-card > div[style*="display:flex"] > button.delete-customer-btn{ grid-column:1 / -1; }
+.crm-strip .crm-open{ flex-basis:100%; margin:4px 0 0 !important; width:100% !important; height:44px; padding:0 10px !important; }
+.form-card button, .form-card .bulk-file{ box-sizing:border-box; }
+#closing-report-btn{ align-self:stretch; height:auto !important; margin-top:0 !important; margin-bottom:0 !important; } #closing-date-input{ margin:0 !important; }
 </style>
 </head>
 <body>
@@ -1159,11 +1199,21 @@ html[data-theme="light"] .bt-box{ background:#fff; color:#141412; border-color:#
     <div class="tabs-group-row">
       <button class="tab-btn" data-tab="today-panel" id="today-tab-btn"><span class="mt-icon">📊</span><span class="nt">ဒီနေ့ အကျဉ်းချုပ်</span><span class="ns">ဒီနေ့</span></button>
       <button class="tab-btn" data-tab="salesreport-panel"><span class="mt-icon">📈</span><span class="nt">Sales Report</span><span class="ns">Sales</span></button>
+      <button class="tab-btn" data-tab="insights-panel" id="insights-tab-btn"><span class="mt-icon">🏆</span><span class="nt">ပစ္စည်း ရောင်းအား</span><span class="ns">ရောင်းအား</span></button>
       <button class="tab-btn" data-tab="profit-panel" id="profit-tab-btn"><span class="mt-icon">💹</span><span class="nt">အမြတ်စာရင်း</span><span class="ns">အမြတ်</span></button>
       <button class="tab-btn" data-tab="salehistory-panel" id="salehistory-tab-btn"><span class="mt-icon">🧾</span><span class="nt">Sale History</span><span class="ns">History</span></button>
       <button class="tab-btn" data-tab="customers-panel"><span class="mt-icon">👥</span><span class="nt">Customers</span><span class="ns">Customer</span></button>
       <button class="tab-btn" data-tab="activitylog-panel"><span class="mt-icon">📋</span><span class="nt">Activity Log</span><span class="ns">Log</span></button>
+    </div>
+  </div>
+
+  <div class="tabs-group">
+    <div class="tabs-group-label">🛍️ အရောင်းမြှင့်</div>
+    <div class="tabs-group-row">
+      <button class="tab-btn" data-tab="sale-panel" id="sale-tab-btn"><span class="mt-icon">🔥</span><span class="nt">Sale & Bundle</span><span class="ns">Sale</span></button>
       <button class="tab-btn" data-tab="promo-panel"><span class="mt-icon">🎟️</span><span class="nt">Promo & Cashback</span><span class="ns">Promo</span></button>
+      <button class="tab-btn" data-tab="giftcard-panel" id="giftcard-tab-btn"><span class="mt-icon">🎁</span><span class="nt">Gift Card</span><span class="ns">Gift Card</span><span id="giftcard-tab-badge" class="tab-count-badge" style="display:none;"></span></button>
+      <button class="tab-btn" data-tab="reviews-panel" id="reviews-tab-btn"><span class="mt-icon">⭐</span><span class="nt">Customer Review</span><span class="ns">Review</span><span id="reviews-tab-badge" class="tab-count-badge" style="display:none;"></span></button>
     </div>
   </div>
 
@@ -1901,16 +1951,6 @@ html[data-theme="light"] .bt-box{ background:#fff; color:#141412; border-color:#
         <div class="hint">Approve/Reject ဖြစ်ပြီးသား မှတ်တမ်းများ + ဘယ် Admin က လုပ်ခဲ့လဲ ကြည့်ရန်</div>
       </div>
 
-      <div class="form-card wallet-nav-box" onclick="showWalletSection('giftcard-requests')" style="cursor:pointer;">
-        <h3>🎁 Gift Card Purchase Requests <span class="mono" id="giftcard-pending-badge" style="font-size:13px; color:var(--rust);"></span></h3>
-        <div class="hint">Online ကနေ ဝယ်ယူထားသူများ — ဝင်ကြည့်ပြီး Approve/Reject လုပ်ရန်</div>
-      </div>
-
-      <div class="form-card wallet-nav-box" onclick="showWalletSection('giftcard-history')" style="cursor:pointer;">
-        <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
-        <div class="hint">Online + POS ရောင်းထားသမျှ Gift Card မှတ်တမ်းများ ကြည့်ရန်</div>
-      </div>
-
       <div class="form-card wallet-nav-box" onclick="showWalletSection('reconcile')" style="cursor:pointer;">
         <h3>🧮 ငွေစာရင်း ညှိစစ် Report</h3>
         <div class="hint">Prepaid Card လက်ကျန်များ နှင့် ငွေဖြည့်/သုံးစွဲ မှတ်တမ်းများ ကိုက်ညီမှု စစ်ဆေးရန်</div>
@@ -1927,6 +1967,35 @@ html[data-theme="light"] .bt-box{ background:#fff; color:#141412; border-color:#
       <div id="wallet-section-content"></div>
     </div>
   </div>
+
+  <!-- 🎁 GIFT CARD -->
+  <div class="panel" id="giftcard-panel">
+    <div id="gc-menu">
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('giftcard-requests')" style="cursor:pointer;">
+        <h3>🎁 Gift Card Purchase Requests <span class="mono" id="giftcard-pending-badge" style="font-size:13px; color:var(--rust);"></span></h3>
+        <div class="hint">Online ကနေ ဝယ်ယူထားသူများ — ဝင်ကြည့်ပြီး Approve/Reject လုပ်ရန်</div>
+      </div>
+
+      <div class="form-card wallet-nav-box" onclick="showWalletSection('giftcard-history')" style="cursor:pointer;">
+        <h3>🎁 Gift Card မှတ်တမ်း အားလုံး</h3>
+        <div class="hint">Online + POS ရောင်းထားသမျှ Gift Card မှတ်တမ်းများ ကြည့်ရန်</div>
+      </div>
+
+    </div>
+    <div id="gc-section-detail" style="display:none;">
+      <button type="button" class="secondary" onclick="backToGiftMenu()" style="margin-bottom:16px;">← Gift Card ပြန်သွားရန်</button>
+      <div id="gc-section-content"></div>
+    </div>
+  </div>
+
+  <!-- 🔥 SALE & BUNDLE -->
+  <div class="panel" id="sale-panel"></div>
+
+  <!-- ⭐ CUSTOMER REVIEW -->
+  <div class="panel" id="reviews-panel"></div>
+
+  <!-- 🏆 ပစ္စည်း ရောင်းအား -->
+  <div class="panel" id="insights-panel"></div>
 </div>
 
 <div id="toast"></div>
@@ -2072,6 +2141,10 @@ const RESTRICTABLE_TABS = [
   { id:'salehistory-panel', label:'Sale History' },
   { id:'wallet-panel', label:'Wallet' },
   { id:'promo-panel', label:'Promo & Cashback' },
+  { id:'sale-panel', label:'Sale & Bundle' },
+  { id:'giftcard-panel', label:'Gift Card' },
+  { id:'reviews-panel', label:'Customer Review' },
+  { id:'insights-panel', label:'ပစ္စည်း ရောင်းအား' },
 ];
 
 function applyRolePermissions(){
@@ -2100,6 +2173,11 @@ function applyRolePermissions(){
     if(currentAdminRole === 'manager' || currentAdminRole === 'staff'){
       // Manager/Staff — Owner ကရွေးပေးထားတဲ့ allowed_tabs ကိုသာ ခွင့်ပြု (POS/Orders/Inventory/Messages အမြဲရ)
       const allowed = new Set(currentAdminAllowedTabs || []);
+      // Tab အသစ်ခွဲထုတ်ထားလို့ — အရင်က ခွင့်ရှိတဲ့ Tab ထဲ ပါခဲ့တာတွေ ဆက်ရအောင်
+      if(allowed.has('products-panel')){ allowed.add('sale-panel'); allowed.add('reviews-panel'); }
+      if(allowed.has('wallet-panel')) allowed.add('giftcard-panel');
+      if(allowed.has('salesreport-panel')) allowed.add('insights-panel');
+      if(allowed.has('promo-panel')) allowed.add('sale-panel');
       RESTRICTABLE_TABS.forEach(t=>{
         const btn = document.querySelector(`.tab-btn[data-tab="${t.id}"]`);
         if(btn) btn.style.display = allowed.has(t.id) ? '' : 'none';
@@ -2245,6 +2323,10 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     if(btn.id === 'wallet-tab-btn'){
       backToWalletMenu();
     }
+    if(btn.dataset.tab === 'giftcard-panel' && typeof backToGiftMenu === 'function') backToGiftMenu();
+    if(btn.dataset.tab === 'sale-panel'){ try{ bulkSaleRender(); }catch(e){} }
+    if(btn.dataset.tab === 'reviews-panel'){ try{ const c = document.getElementById('rv-admin-card'); if(c){ c.open = true; } loadAdminReviews(); }catch(e){} }
+    if(btn.dataset.tab === 'insights-panel'){ try{ loadInsights(); }catch(e){} }
   });
 });
 
@@ -2291,8 +2373,12 @@ async function refreshAllAttentionStates(){
     // Prepaid Card System — Approve/Reject မလုပ်ရသေးသည့် Top-up (သို့) Gift Card ရှိနေသလား
     const { count: topupPending } = await sb.from('wallet_topups').select('id', { count:'exact', head:true }).eq('status','pending');
     const { count: giftPending } = await sb.from('gift_cards').select('id', { count:'exact', head:true }).eq('status','pending');
-    const totalWalletPending = (topupPending||0) + (giftPending||0);
+    const totalWalletPending = (topupPending||0);
     setTabAttention('wallet-tab-btn', totalWalletPending > 0);
+    // 🎁 Gift Card Tab သီးသန့်
+    setTabAttention('giftcard-tab-btn', (giftPending||0) > 0);
+    const gcBadge = document.getElementById('giftcard-tab-badge');
+    if(gcBadge){ gcBadge.textContent = giftPending > 9 ? '9+' : (giftPending || ''); gcBadge.style.display = giftPending ? 'flex' : 'none'; }
 
     const walletBadge = document.getElementById('wallet-pending-badge');
     if(walletBadge){
@@ -3096,9 +3182,9 @@ function resetSaleFields(){
 
 // ---------- ② အစုလိုက် Sale ----------
 (function injectBulkSale(){
-  const panel = document.getElementById('products-panel'); if(!panel || document.getElementById('bulk-sale-card')) return;
+  const panel = document.getElementById('sale-panel') || document.getElementById('products-panel'); if(!panel || document.getElementById('bulk-sale-card')) return;
   const card = document.createElement('details');
-  card.className = 'form-card bulk-card'; card.id = 'bulk-sale-card';
+  card.className = 'form-card bulk-card'; card.id = 'bulk-sale-card'; if(panel.id === 'sale-panel') card.open = true;
   card.innerHTML = `
     <summary><h3 style="display:inline;">🔥 Sale အစုလိုက် ချမည် <span id="bs-count" class="bs-count"></span></h3></summary>
     <div class="hint" style="margin-top:10px;">Category တစ်ခုလုံး (သို့) ရွေးထားတဲ့ ပစ္စည်းတွေကို တစ်ချက်တည်း — ဈေးကို ၁၀၀ ကျပ် အလုံးလိုက် ညှိပေးမည်</div>
@@ -3115,8 +3201,8 @@ function resetSaleFields(){
     </div>
     <button type="button" class="acid bs-apply" id="bs-apply">Sale ချမည်</button>
     <div class="bs-active" id="bs-active"></div>`;
-  const anchor = document.getElementById('bulk-import-card') || panel.firstElementChild;
-  anchor.insertAdjacentElement('afterend', card);
+  if(panel.id === 'sale-panel') panel.prepend(card);
+  else (document.getElementById('bulk-import-card') || panel.firstElementChild).insertAdjacentElement('afterend', card);
   document.getElementById('bs-scope').addEventListener('change', bulkSaleRenderList);
   document.getElementById('bs-all').addEventListener('click', () => { card.querySelectorAll('#bs-list input').forEach(i => i.checked = true); bulkSaleUpdateBtn(); });
   document.getElementById('bs-none').addEventListener('click', () => { card.querySelectorAll('#bs-list input').forEach(i => i.checked = false); bulkSaleUpdateBtn(); });
@@ -6719,9 +6805,10 @@ async function loadReconciliation(){
 }
 
 function showWalletSection(section){
-  document.getElementById('wallet-menu').style.display = 'none';
-  document.getElementById('wallet-section-detail').style.display = 'block';
-  const content = document.getElementById('wallet-section-content');
+  const gift = String(section).startsWith('giftcard');   // 🎁 Gift Card — သီးသန့် Tab
+  document.getElementById(gift ? 'gc-menu' : 'wallet-menu').style.display = 'none';
+  document.getElementById(gift ? 'gc-section-detail' : 'wallet-section-detail').style.display = 'block';
+  const content = document.getElementById(gift ? 'gc-section-content' : 'wallet-section-content');
 
   if(section === 'topup-requests'){
     content.innerHTML = `
@@ -6789,6 +6876,11 @@ function showWalletSection(section){
   }
 }
 
+function backToGiftMenu(){
+  const d = document.getElementById('gc-section-detail'), m = document.getElementById('gc-menu');
+  if(d) d.style.display = 'none'; if(m) m.style.display = 'block';
+  updateWalletPendingBadges();
+}
 function backToWalletMenu(){
   document.getElementById('wallet-section-detail').style.display = 'none';
   document.getElementById('wallet-menu').style.display = 'block';
@@ -7839,7 +7931,7 @@ function spMissing(err){ return err && /relation .* does not exist|schema cache|
 // ---------- ⭐ REVIEW စစ်ရန် ----------
 let rvAdminTab = 'pending', rvAdminCache = [];
 (function injectReviewCard(){
-  const panel = document.getElementById('products-panel'); if(!panel || document.getElementById('rv-admin-card')) return;
+  const panel = document.getElementById('reviews-panel') || document.getElementById('products-panel'); if(!panel || document.getElementById('rv-admin-card')) return;
   const card = document.createElement('details');
   card.className = 'form-card bulk-card'; card.id = 'rv-admin-card';
   card.innerHTML = `
@@ -7847,8 +7939,8 @@ let rvAdminTab = 'pending', rvAdminCache = [];
     <div class="hint" style="margin-top:10px;">ပစ္စည်းရောက်ပြီးသူတွေ ရေးတဲ့ Review — "ပြမည်" နှိပ်မှ Website မှာ ပေါ်မည်</div>
     <div class="rva-tabs"><button type="button" class="secondary on" data-t="pending">⏳ စစ်ရန်</button><button type="button" class="secondary" data-t="approved">✅ ပြထားသည်</button><button type="button" class="secondary" data-t="hidden">🙈 ဖျောက်ထားသည်</button></div>
     <div id="rv-admin-list"></div>`;
-  const anchor = document.getElementById('bulk-sale-card') || document.getElementById('bulk-import-card') || panel.firstElementChild;
-  anchor.insertAdjacentElement('afterend', card);
+  if(panel.id === 'reviews-panel'){ card.open = true; panel.prepend(card); }
+  else (document.getElementById('bulk-sale-card') || document.getElementById('bulk-import-card') || panel.firstElementChild).insertAdjacentElement('afterend', card);
   card.querySelectorAll('.rva-tabs button').forEach(b => b.addEventListener('click', () => {
     rvAdminTab = b.dataset.t; card.querySelectorAll('.rva-tabs button').forEach(x => x.classList.toggle('on', x === b)); renderAdminReviews();
   }));
@@ -7902,7 +7994,7 @@ async function adminReviewAction(id, act, el){
 
 // ---------- 📦 BUNDLE DEAL ----------
 (function injectBundleCard(){
-  const panel = document.getElementById('promo-panel'); if(!panel || document.getElementById('bundle-card')) return;
+  const panel = document.getElementById('sale-panel') || document.getElementById('promo-panel'); if(!panel || document.getElementById('bundle-card')) return;
   const card = document.createElement('div');
   card.className = 'form-card'; card.id = 'bundle-card';
   card.innerHTML = `
@@ -7920,7 +8012,7 @@ async function adminReviewAction(id, act, el){
     <div class="ps-calc" id="bd-preview"></div>
     <button type="button" class="acid bs-apply" id="bd-save">📦 Bundle Deal ထည့်မည်</button>
     <div id="bd-list" style="margin-top:12px;"></div>`;
-  panel.insertAdjacentElement('afterbegin', card);
+  if(panel.id === 'sale-panel') panel.appendChild(card); else panel.insertAdjacentElement('afterbegin', card);
   ['bd-cat', 'bd-min', 'bd-pct'].forEach(id => document.getElementById(id).addEventListener('input', bundlePreview));
   document.getElementById('bd-save').addEventListener('click', saveBundleDeal);
   loadBundleAdmin();
@@ -8226,7 +8318,7 @@ async function renderTodayPanel(){
       <div class="td-big"><small>ဒီနေ့ ရောင်းရငွေ</small><b data-count="${tSum}">0</b><span>ကျပ်</span></div>
       ${diff !== null ? `<div class="td-diff ${diff >= 0 ? 'up' : 'down'}">${diff >= 0 ? '▲' : '▼'} ${Math.abs(diff)}% <small>မနေ့က ဒီအချိန်ထက်</small></div>` : '<div class="td-diff"><small>မနေ့က ဒီအချိန်အထိ အရောင်း မရှိ</small></div>'}
       <div class="td-split"><div onclick="axGo('orders-panel')"><small>🌐 Online</small><b>${axMoney(sum(tOn))}</b><em>${grp(tOn)} Order</em></div><div onclick="axGo('pos-panel')"><small>🏪 ဆိုင်</small><b>${axMoney(sum(tShop))}</b><em>${grp(tShop)} ကြိမ်</em></div></div>
-      <div class="td-hours" aria-label="နာရီအလိုက်">${hours.map((v, h) => `<i class="${h === curH ? 'now' : ''}${h > curH ? ' fut' : ''}" style="--h:${Math.round(v / hMax * 100)}%" title="${h}:00 — ${axMoney(v)}"></i>`).join('')}</div>
+      <div class="td-hours" aria-label="နာရီအလိုက်">${hours.map((v, h) => `<i class="${h === curH ? 'now' : ''}${h > curH ? ' fut' : ''}" style="--h:${Math.round(v / hMax * 100)}%; --i:${h}" title="${h}:00 — ${axMoney(v)}"></i>`).join('')}</div>
       <div class="td-hl"><span>0</span><span>6</span><span>12</span><span>18</span><span>24</span></div>
     </div>
     <div class="td-grid">
@@ -8235,7 +8327,7 @@ async function renderTodayPanel(){
       <div class="form-card td-tile" onclick="axGo('orders-panel')"><b>${unpaid}</b><span>⏰ ငွေမလွှဲရသေး</span></div>
       <div class="form-card td-tile ${low.length ? 'warn' : ''}" onclick="axGo('inventory-panel')"><b>${low.length}</b><span>📉 Stock နည်း/ကုန်</span></div>
       ${tu.error ? '' : `<div class="form-card td-tile ${tu.count ? 'hot' : ''}" onclick="axGo('wallet-panel')"><b>${tu.count || 0}</b><span>🎫 ငွေဖြည့် စစ်ရန်</span></div>`}
-      ${rv.error ? '' : `<div class="form-card td-tile" onclick="axGo('products-panel'); setTimeout(()=>{const d=document.getElementById('rv-admin-card'); if(d){ d.open=true; d.dispatchEvent(new Event('toggle')); d.scrollIntoView({behavior:'smooth'}); }},300)"><b>${rv.count || 0}</b><span>⭐ Review စစ်ရန်</span></div>`}
+      ${rv.error ? '' : `<div class="form-card td-tile" onclick="axGo('reviews-panel'); setTimeout(()=>{const d=document.getElementById('rv-admin-card'); if(d){ d.open=true; d.dispatchEvent(new Event('toggle')); d.scrollIntoView({behavior:'smooth'}); }},300)"><b>${rv.count || 0}</b><span>⭐ Review စစ်ရန်</span></div>`}
     </div>
     <div class="form-card">
       <h3>📈 ၇ ရက် အရောင်း</h3>
@@ -9088,7 +9180,7 @@ function btSheet(title, html){
 // ⑨ 📊 ပစ္စည်း ရောင်းအား
 // =====================================================================
 (function(){
-  const panel = document.getElementById('salesreport-panel'); if(!panel || document.getElementById('ins-card')) return;
+  const panel = document.getElementById('insights-panel') || document.getElementById('salesreport-panel'); if(!panel || document.getElementById('ins-card')) return;
   const card = document.createElement('div'); card.className = 'form-card ins-card'; card.id = 'ins-card';
   card.innerHTML = `<h3>📊 ပစ္စည်း ရောင်းအား</h3>
     <div class="ins-seg" id="ins-seg">${[[7, '၇ ရက်'], [30, '၃၀ ရက်'], [90, '၉၀ ရက်']].map(([d, l]) => `<button type="button" class="secondary${d === 30 ? ' on' : ''}" data-d="${d}">${l}</button>`).join('')}</div>
@@ -9097,7 +9189,7 @@ function btSheet(title, html){
   card.querySelectorAll('#ins-seg button').forEach(b => b.addEventListener('click', () => {
     card.querySelectorAll('#ins-seg button').forEach(x => x.classList.toggle('on', x === b)); loadInsights(Number(b.dataset.d));
   }));
-  document.querySelector('[data-tab="salesreport-panel"]')?.addEventListener('click', () => loadInsights());
+
 })();
 let __insDays = 30;
 async function loadInsights(days){
@@ -9127,7 +9219,7 @@ async function loadInsights(days){
   body.innerHTML = `
     <div class="ins-kpi"><div><b>${totalQty.toLocaleString()}</b><span>ထည် ရောင်းရ</span></div><div><b>${btMoney(totalRev)}</b><span>ကျပ်</span></div><div><b>${rows.length}</b><span>မျိုး ရောင်းရ</span></div></div>
     <h4 class="ins-h">🏆 ရောင်းအကောင်းဆုံး</h4>
-    ${top.length ? top.map((r, i) => `<div class="ins-row"><span class="ins-rk">${i + 1}</span>${img(r.name)}<span class="ins-nm"><b>${btEsc(r.name)}</b><span class="ins-bar"><i style="width:${Math.max(4, r.qty / max * 100)}%"></i></span></span><span class="ins-v"><b>${r.qty}</b> ထည်<small>${btMoney(r.rev)}</small></span></div>`).join('') : '<p class="hint">ဒီကာလအတွင်း ရောင်းရတာ မရှိသေးပါ</p>'}
+    ${top.length ? top.map((r, i) => `<div class="ins-row"><span class="ins-rk">${i + 1}</span>${img(r.name)}<span class="ins-nm"><b>${btEsc(r.name)}</b><span class="ins-bar"><i style="width:${Math.max(4, r.qty / max * 100)}%; --i:${i}"></i></span></span><span class="ins-v"><b>${r.qty}</b> ထည်<small>${btMoney(r.rev)}</small></span></div>`).join('') : '<p class="hint">ဒီကာလအတွင်း ရောင်းရတာ မရှိသေးပါ</p>'}
     <h4 class="ins-h">⚠️ ပြန်ဖြည့်သင့် <small>(၁၄ ရက်အတွင်း ကုန်မည်)</small></h4>
     ${refill.length ? refill.map(r => `<div class="ins-row warn">${img(r.name)}<span class="ins-nm"><b>${btEsc(r.name)}</b><small>ကျန် ${r.stock} · တစ်ရက် ~${r.perDay.toFixed(1)} ထည် · ${r.left < 1 ? 'ဒီနေ့/မနက်ဖြန်' : '~' + Math.round(r.left) + ' ရက်'} ကုန်မည်</small></span><span class="ins-v"><b>+${r.need}</b><small>ဖြည့်ရန်</small></span></div>`).join('') : '<p class="hint">✅ မကြာခင် ကုန်မယ့် ပစ္စည်း မရှိပါ</p>'}
     <h4 class="ins-h">🐢 မရောင်းရသေး <small>(${days} ရက်အတွင်း တစ်ထည်မှ)</small></h4>
@@ -9643,7 +9735,8 @@ function renderTrash(){
       if((typeof currentAdminUserId === 'undefined' || !currentAdminUserId) && n++ < 40){ setTimeout(run, 250); return; }
       if(open === 'orders'){ document.getElementById('orders-tab-btn')?.click(); return; }
       if(open === 'wallet'){ document.getElementById('wallet-tab-btn')?.click(); return; }
-      if(open === 'products'){ document.querySelector('[data-tab="products-panel"]')?.click();
+      if(open === 'giftcard'){ document.getElementById('giftcard-tab-btn')?.click(); return; }
+      if(open === 'products' || open === 'reviews'){ document.querySelector('[data-tab="reviews-panel"]')?.click();
         setTimeout(() => { const d = document.getElementById('rv-admin-card'); if(d){ d.open = true; d.dispatchEvent(new Event('toggle')); d.scrollIntoView({ behavior:'smooth' }); } }, 400); return; }
       if(open === 'chat'){
         document.getElementById('messages-tab-btn')?.click();
@@ -9655,6 +9748,44 @@ function renderTrash(){
   }
   window.addEventListener('load', () => go());
   try{ navigator.serviceWorker?.addEventListener('message', e => { if(e.data?.type === 'suwati-push-open') go(e.data.url); }); }catch(e){}
+})();
+
+// SUWATI MEN FASHION — 🔘 အမှန်ခြစ် (Checkbox) အားလုံး → Pill Switch + ဖွင့်/ပိတ် အတည်ပြု Box
+//   + 📈 Graph တွေ Tab ဖွင့်တိုင်း အောက်ကနေ ပြန်တက်
+(function(){
+  // ရွေးချယ်ရုံ / Filter သာ — အတည်ပြု မမေး
+  const NO_CONFIRM = '#bs-list input, #st-diff-only, #pf-cost-missing, .no-confirm, [data-no-confirm]';
+  const pillify = root => (root || document).querySelectorAll('input[type="checkbox"]:not(.ps-switch):not(.pill-sw)').forEach(cb => {
+    cb.classList.add('pill-sw'); cb.style.removeProperty('width'); cb.style.removeProperty('height');
+    cb.closest('label')?.classList.add('pill-lbl');
+  });
+  pillify();
+  new MutationObserver(ms => { for(const m of ms) for(const n of m.addedNodes) if(n.nodeType === 1){ if(n.matches?.('input[type="checkbox"]')) pillify(n.parentElement); else if(n.querySelector?.('input[type="checkbox"]')) pillify(n); } })
+    .observe(document.body, { childList:true, subtree:true });
+
+  const labelOf = cb => {
+    const t = (cb.closest('label')?.innerText || cb.getAttribute('aria-label') || cb.title || cb.parentElement?.innerText || '').replace(/\s+/g, ' ').trim();
+    return t.length > 70 ? t.slice(0, 68) + '…' : t;
+  };
+  document.addEventListener('click', async (e) => {
+    const cb = e.target;
+    if(!(cb instanceof HTMLInputElement) || cb.type !== 'checkbox' || cb.disabled) return;
+    if(cb.matches(NO_CONFIRM) || !cb.closest('#dashboard, .bt-sheet')) return;
+    const on = cb.checked;           // Click ချိန်မှာ ပြောင်းပြီးသား တန်ဖိုး
+    e.preventDefault(); e.stopPropagation();
+    const name = labelOf(cb);
+    const ok = await adminConfirm(`${name ? '“' + name + '”\n\n' : ''}${on ? '✅ ဖွင့်' : '⛔ ပိတ်'}မှာ သေချာပါသလား?`, { icon: on ? '✓' : '⏻', danger: false });
+    if(!ok) return;
+    cb.checked = on;
+    cb.dispatchEvent(new Event('input', { bubbles:true }));
+    cb.dispatchEvent(new Event('change', { bubbles:true }));
+    cb.classList.remove('pill-pop'); void cb.offsetWidth; cb.classList.add('pill-pop');
+  }, true);
+
+  // 📈 Sales Report Graph — Tab ဖွင့်ပြီး မြင်ရမှ အသစ်ဆွဲ (Bar တွေ တစ်ခုချင်း တက်လာ)
+  document.querySelector('.tab-btn[data-tab="salesreport-panel"]')?.addEventListener('click', () => {
+    setTimeout(() => { try{ if(typeof renderSalesChart === 'function' && Array.isArray(currentSalesBuckets) && currentSalesBuckets.length) renderSalesChart(); }catch(e){} }, 160);
+  });
 })();
 
 // =====================================================================
