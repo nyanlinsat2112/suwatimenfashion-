@@ -33,6 +33,9 @@ async function imageInfo(url){
 }
 
 module.exports = async (req, res) => {
+  // ⚠️ Facebook/Messenger က "http-equiv refresh" ကို လိုက်သွားပြီး ဆိုင် Home ကို ဖတ်မိလို့ ပုံ/နာမည် မှားတာ — Redirect ကို လူအတွက် JS နဲ့သာ
+  const ua = String(req.headers["user-agent"] || "");
+  const isBot = /facebookexternalhit|facebot|meta-externalagent|twitterbot|telegrambot|whatsapp|viber|slackbot|discordbot|linkedinbot|skypeuripreview|pinterest|googlebot|bingbot|line-poker|kakaotalk|embedly|redditbot|applebot/i.test(ua);
   const id = String((req.query && req.query.id) || "").slice(0, 200);
   const host = req.headers["x-forwarded-host"] || req.headers.host || "suwatimenfashion.vercel.app";
   const site = "https://" + host;
@@ -83,9 +86,8 @@ ${p ? `<meta property="product:price:amount" content="${esc(p.price)}"><meta pro
 <meta name="twitter:title" content="${esc(title)}">
 <meta name="twitter:description" content="${esc(desc)}">
 <meta name="twitter:image" content="${esc(image)}">
-<link rel="canonical" href="${esc(target)}">
-<meta http-equiv="refresh" content="0;url=${esc(target)}">
+<link rel="canonical" href="${esc(site + reqPath)}">
 <style>body{background:#141412;color:#E9E4D8;font-family:sans-serif;display:grid;place-items:center;min-height:100vh;margin:0}a{color:#D6FF3F}</style>
 </head><body><p>SUWATI MEN FASHION — <a href="${esc(target)}">${esc(p ? p.name : "ဆိုင်သို့ သွားရန်")}</a></p>
-<script>location.replace(${JSON.stringify(target)});</script></body></html>`);
+${isBot ? "" : `<script>location.replace(${JSON.stringify(target)});</script>`}</body></html>`);
 };
