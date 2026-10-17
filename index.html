@@ -1840,9 +1840,13 @@ html[data-theme="dark"] .msgr-b.them{ background:#2c2b27 !important; color:#E9E4
 .faq-grid .faq-chip{ display:flex; align-items:center; justify-content:center; margin:0; min-height:42px; padding:6px 4px; text-align:center; line-height:1.3; }
 
 /* ===== 💬 Chat ခလုတ်ကနေ ဆွဲပွင့် / ပြန်ဝင် ===== */
-.modal-overlay.chat-mode.open:not(.closing) .modal-box{ animation:chatGrow .46s cubic-bezier(.2,.95,.25,1.06); }
+.modal-overlay.chat-mode.open:not(.closing) .modal-box{ animation:chatGrow .52s cubic-bezier(.2,1.1,.3,1); }
 @keyframes chatGrow{ 0%{ transform:scale(.05); opacity:0; border-radius:48px; } 35%{ opacity:1; } 100%{ transform:none; border-radius:0; } }
-.modal-overlay.chat-mode.closing .modal-box{ animation:chatShrink .17s cubic-bezier(.5,0,.75,0) forwards; }
+.modal-overlay.chat-mode.closing .modal-box{ animation:chatShrink .3s cubic-bezier(.55,0,.75,.2) forwards; }
+.modal-overlay.chat-mode.closing{ animation:fadeOut .3s ease forwards; }
+.modal-overlay.chat-mode.open:not(.closing) .modal-box > *{ animation:chatItem .4s ease both; }
+.modal-overlay.chat-mode.open:not(.closing) .modal-box > *:nth-child(2){ animation-delay:.12s; } .modal-overlay.chat-mode.open:not(.closing) .modal-box > *:nth-child(3){ animation-delay:.2s; } .modal-overlay.chat-mode.open:not(.closing) .modal-box > *:nth-child(4){ animation-delay:.28s; }
+@keyframes chatItem{ from{ opacity:0; transform:translateY(14px); } }
 @keyframes chatShrink{ to{ transform:scale(.05); opacity:0; border-radius:48px; } }
 .modal-overlay.chat-mode.open:not(.closing){ animation:fadeIn .3s ease; }
 .chat-fab .fab-x{ display:none; stroke:var(--concrete); fill:none; }
@@ -1897,6 +1901,56 @@ html[data-theme="dark"] .msgr-b.them{ background:#2c2b27 !important; color:#E9E4
 .sp-dym{ margin-top:10px; font-size:13px; } .sp-dym button, .sp-reset{ display:inline-block; margin:6px 6px 0 0; padding:7px 12px; border:2px solid var(--ink); background:var(--acid); color:#141412; font:700 12.5px 'Noto Sans Myanmar',sans-serif; cursor:pointer; }
 .sp-reset{ background:transparent; color:var(--ink); }
 html[data-theme="dark"] .sp-box{ background:#1E1D1A; }
+
+/* ===== 🖼️ Chat ပုံ — အသေးလေး · Album · ပုံအများကြီး ===== */
+.msgr-b img.msgr-img{ width:auto; max-width:min(200px, 100%); max-height:220px; object-fit:cover; border-radius:14px; }
+.msgr-b.msgr-album{ display:grid !important; gap:3px; width:min(246px, 72vw); max-width:none !important; padding:0 !important; border-radius:18px; overflow:hidden; position:relative; background:transparent !important; }
+.msgr-album.n1{ grid-template-columns:1fr; width:auto; max-width:min(200px, 60vw) !important; }
+.msgr-album.n2{ grid-template-columns:1fr 1fr; } .msgr-album.n3{ grid-template-columns:1fr 1fr 1fr; }
+.msgr-album img{ display:block; width:100% !important; max-width:none !important; height:auto !important; max-height:none !important; aspect-ratio:1; object-fit:cover; border-radius:0 !important; cursor:zoom-in; background:rgba(128,128,128,.15); }
+.msgr-album.n1 img{ aspect-ratio:auto; max-height:220px !important; border-radius:14px !important; }
+.msgr-more{ position:absolute; right:0; bottom:0; width:calc((100% - 6px) / 3); aspect-ratio:1; display:grid; place-items:center; background:rgba(0,0,0,.55); color:#fff; font:700 18px 'Space Mono',monospace; cursor:pointer; }
+.msgr-prev .mp-strip{ display:flex; gap:8px; overflow-x:auto; padding:10px 2px 4px; scrollbar-width:none; }
+.msgr-prev .mp-strip::-webkit-scrollbar{ display:none; }
+.mp-th{ position:relative; flex:0 0 64px; height:64px; border-radius:14px; overflow:hidden; border:1.5px solid rgba(128,128,128,.35); animation:mpIn .3s cubic-bezier(.3,1.5,.5,1); }
+.mp-th img{ width:100%; height:100%; object-fit:cover; display:block; }
+.mp-x{ position:absolute; top:4px; right:4px; width:22px !important; height:22px !important; padding:0 !important; margin:0 !important; border-radius:50% !important; border:none !important; background:rgba(20,20,18,.78) !important; color:#fff !important; font:700 11px/22px sans-serif; cursor:pointer; box-shadow:none !important; }
+.mp-add{ flex:0 0 64px; height:64px; border:2px dashed rgba(128,128,128,.55); border-radius:14px; display:grid; place-items:center; font-size:26px; cursor:pointer; opacity:.75; }
+.mp-n{ font-size:11px; padding:0 2px 4px; opacity:.65; }
+@keyframes mpIn{ from{ transform:scale(.5); opacity:0; } }
+
+/* ===== 🖌️ Order တင်ပြီး — စုတ်တံနဲ့ ✓ ဆွဲ ===== */
+.bd-wrap{ position:relative; width:160px; height:150px; margin:0 auto 6px; }
+.bd-svg{ display:block; overflow:visible; }
+.bd-ring{ fill:none; stroke:var(--ink); stroke-width:2; stroke-dasharray:6 7; opacity:0; transform-origin:80px 78px; }
+.bd-check, .bd-check-sh{ fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:240; stroke-dashoffset:240; }
+.bd-check{ stroke:#D6FF3F; stroke-width:22; }
+.bd-check-sh{ stroke:#141412; stroke-width:30; transform:translate(4px, 5px); opacity:.9; }
+.bd-dot{ fill:#C13B1F; opacity:0; transform-box:fill-box; transform-origin:center; }
+.bd-dot:nth-of-type(even){ fill:#D6FF3F; stroke:#141412; stroke-width:1.5; }
+.bd-brush{ position:absolute; left:0; top:0; font-size:34px; line-height:1; offset-path:path('M24 84 C36 92 48 106 60 122 C80 92 104 62 136 34'); offset-rotate:0deg; offset-anchor:18% 85%; offset-distance:0%; opacity:0; pointer-events:none; filter:drop-shadow(2px 3px 0 rgba(0,0,0,.25)); }
+.bd-go .bd-ring{ animation:bdRing .6s ease .05s forwards, bdSpin 14s linear .6s infinite; }
+.bd-go .bd-check-sh{ animation:bdDraw .7s cubic-bezier(.55,.1,.35,1) .15s forwards; }
+.bd-go .bd-check{ animation:bdDraw .7s cubic-bezier(.55,.1,.35,1) .1s forwards; }
+.bd-go .bd-brush{ animation:bdBrush .72s cubic-bezier(.55,.1,.35,1) .1s forwards; }
+.bd-go .bd-dot{ animation:bdDot .45s cubic-bezier(.3,1.8,.5,1) forwards; animation-delay:calc(.75s + var(--i) * 60ms); }
+.bd-h{ position:relative; display:inline-block; padding-bottom:10px; }
+.bd-swash{ position:absolute; left:-4%; right:-4%; bottom:-6px; width:108%; height:18px; overflow:visible; }
+.bd-swash path{ fill:none; stroke:#C13B1F; stroke-width:7; stroke-linecap:round; stroke-dasharray:260; stroke-dashoffset:260; }
+.bd-go .bd-swash path{ animation:bdDraw .5s cubic-bezier(.5,.1,.3,1) .85s forwards; }
+.bd-go .order-id, .bd-go > p, .bd-go .submit-order-btn, .bd-go .paylater-due-box{ animation:bdUp .45s ease both; animation-delay:1.1s; }
+@keyframes bdDraw{ to{ stroke-dashoffset:0; } }
+@keyframes bdRing{ from{ opacity:0; transform:scale(.6) rotate(-40deg); } to{ opacity:.35; transform:none; } }
+@keyframes bdSpin{ to{ transform:rotate(360deg); } }
+@keyframes bdDot{ 0%{ opacity:0; transform:scale(0); } 100%{ opacity:1; transform:scale(1); } }
+@keyframes bdBrush{ 0%{ offset-distance:0%; opacity:0; transform:rotate(-20deg); } 10%{ opacity:1; } 85%{ opacity:1; } 100%{ offset-distance:100%; opacity:0; transform:rotate(10deg) translateY(-6px); } }
+@keyframes bdUp{ from{ opacity:0; transform:translateY(10px); } }
+.bd-static .bd-check, .bd-static .bd-check-sh, .bd-static .bd-swash path{ stroke-dashoffset:0; } .bd-static .bd-dot{ opacity:1; } .bd-static .bd-ring{ opacity:.35; }
+@media (prefers-reduced-motion: reduce){ .bd-go *{ animation:none !important; } .bd-brush{ display:none; } }
+html[data-theme="dark"] .bd-check-sh{ stroke:#000; } html[data-theme="dark"] .bd-ring{ stroke:var(--ink); }
+.msgr-log > *, .admin-chat-log > *{ flex-shrink:0; }
+.msgr-album.n1{ max-width:min(170px, 50vw) !important; } .msgr-album.n1 img{ max-height:200px !important; } .msgr-b img.msgr-img{ max-width:min(170px, 100%); max-height:200px; }
+.snd-row{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--grey); }
 </style>
 </head>
 <body>
@@ -2659,7 +2713,7 @@ function initAutoRefreshSystem(){
     loadProducts();
     loadBanners();
     loadPosts();
-  }, 60000);
+  }, 300000); // ၅ မိနစ် (Realtime က ချက်ချင်း ပြောင်းပေးပြီးသား — ဒါက အရန်သာ)
 
   // Customer တစ်ခြား Tab သွားပြီး ပြန်လာတဲ့အခါ (ဥပမာ - ခဏနားပြီးမှ ပြန်ဖွင့်တာမျိုး) Data အသစ်ပြန် Load
   document.addEventListener('visibilitychange', ()=>{
@@ -6646,7 +6700,7 @@ async function renderChatWidget(){
           <div id="chat-image-preview" class="msgr-prev"></div>
           <div class="msgr-bar">
             <label for="chat-image-input" class="msgr-ib" title="ပုံပို့ရန်" aria-label="ပုံပို့ရန်">${MSGR_IMG}</label>
-            <input type="file" id="chat-image-input" accept="image/*" style="display:none;">
+            <input type="file" id="chat-image-input" accept="image/*" multiple style="display:none;">
             <textarea id="chat-input" class="msgr-in" rows="1" placeholder="Message ရေးပါ..." enterkeyhint="send"></textarea>
             <button type="button" class="msgr-send" id="chat-send-btn" aria-label="ပို့မည်" disabled>${MSGR_ARROW}</button>
           </div>
@@ -6680,6 +6734,7 @@ async function renderChatWidget(){
     const ci = document.getElementById('chat-input');
     ci.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendChatMessage(); } });
     ci.addEventListener('input', ()=>{ msgrGrow(ci); msgrSendState(); sendCustomerTyping(); });
+    chatPics.render();
     subscribeToChatRealtime();
   }
 }
@@ -6709,46 +6764,80 @@ async function loadChatMessages(){
   log.scrollTop = log.scrollHeight;
 }
 
-let pendingChatImageFile = null;
+// ---------- 🖼️ ပုံ အများကြီး တစ်ခါတည်း (Max 10) · အသေးလေး Preview · ✕ ဖြင့် ဖယ် · ပို့ခါနီး ချုံ့ ----------
+function mpCompress(file, max = 1600, q = .82){
+  return new Promise(res => {
+    if(!/^image\/(jpeg|png|webp|heic|heif)/i.test(file.type) || file.size < 250 * 1024) return res(file);
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { try{
+        const k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight));
+        const c = document.createElement('canvas'); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(b => res(b && b.size < file.size ? new File([b], (file.name || 'photo').replace(/\.\w+$/, '') + '.jpg', { type:'image/jpeg' }) : file), 'image/jpeg', q);
+      }catch(e){ res(file); } };
+    im.onerror = () => { URL.revokeObjectURL(url); res(file); };
+    im.src = url;
+  });
+}
+function mpPicker(previewId, inputId, onChange, toast){
+  const st = { files: [] };
+  const box = () => document.getElementById(previewId);
+  st.render = () => {
+    const b = box(); if(!b) return;
+    b.querySelectorAll('img').forEach(i => { try{ URL.revokeObjectURL(i.src); }catch(e){} });
+    b.innerHTML = st.files.length ? `<div class="mp-strip">${st.files.map((f, i) => `<div class="mp-th"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" class="mp-x" data-i="${i}" aria-label="ဖယ်ရန်">✕</button></div>`).join('')}${st.files.length < 10 ? `<label for="${inputId}" class="mp-add" aria-label="ပုံထပ်ထည့်ရန်">＋</label>` : ''}</div><div class="mp-n">🖼️ ${st.files.length} ပုံ${st.files.length >= 10 ? ' (အများဆုံး)' : ''}</div>` : '';
+    onChange && onChange();
+  };
+  st.add = (list) => {
+    list = [...(list || [])].filter(f => /^image\//.test(f.type));
+    const room = 10 - st.files.length;
+    if(list.length > room){ toast && toast('📷 ပုံ ၁၀ ပုံအထိသာ တစ်ခါတည်း ပို့လို့ရပါသည်'); list = list.slice(0, Math.max(0, room)); }
+    st.files.push(...list); st.render();
+  };
+  st.clear = () => { st.files = []; st.render(); };
+  document.addEventListener('click', e => { const x = e.target.closest && e.target.closest(`#${previewId} .mp-x`); if(!x) return; e.preventDefault(); st.files.splice(Number(x.dataset.i), 1); st.render(); });
+  document.addEventListener('change', e => { if(e.target && e.target.id === inputId){ st.add(e.target.files); e.target.value = ''; } });
+  return st;
+}
+// ပုံတွေ တင်ပြီး Public URL ပြန်ပေး (တစ်ပြိုင်နက် ၃ ပုံ)
+async function mpUpload(files, prefix, onProgress){
+  const urls = new Array(files.length); let done = 0, i = 0, fail = null;
+  const work = async () => { while(i < files.length && !fail){ const k = i++;
+      const f = await mpCompress(files[k]); const ext = (f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+      const path = `${prefix}/${Date.now()}-${k}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      const { error } = await sb.storage.from('chat-images').upload(path, f, { contentType: f.type || 'image/jpeg' });
+      if(error){ fail = error; return; }
+      urls[k] = sb.storage.from('chat-images').getPublicUrl(path).data.publicUrl; done++; onProgress && onProgress(done, files.length); } };
+  await Promise.all([work(), work(), work()]);
+  if(fail) throw fail;
+  return urls;
+}
 
-document.addEventListener('change', (e)=>{
-  if(e.target && e.target.id === 'chat-image-input'){
-    const file = e.target.files[0];
-    if(!file) return;
-    pendingChatImageFile = file;
-    const preview = document.getElementById('chat-image-preview');
-    const url = URL.createObjectURL(file);
-    setTimeout(msgrSendState, 0);
-    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingChatImageFile=null; document.getElementById('chat-image-preview').innerHTML=''; msgrSendState(); return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
-  }
-});
+const chatPics = mpPicker('chat-image-preview', 'chat-image-input', () => msgrSendState(), m => showSiteToast(m));
 
 async function sendChatMessage(){
-  const input = document.getElementById('chat-input');
-  const text = input.value.trim();
-  if(!text && !pendingChatImageFile) return;
-
-  let image_url = null;
-  if(pendingChatImageFile){
-    const ext = pendingChatImageFile.name.split('.').pop();
-    const path = `${currentUser.id}/${Date.now()}.${ext}`;
-    const { error: upErr } = await sb.storage.from('chat-images').upload(path, pendingChatImageFile);
-    if(upErr){
-      showSiteToast('ပုံ ပို့၍ မရပါ — ' + upErr.message);
-      return;
-    }
-    const { data: urlData } = sb.storage.from('chat-images').getPublicUrl(path);
-    image_url = urlData.publicUrl;
+  const input = document.getElementById('chat-input'), btn = document.getElementById('chat-send-btn');
+  const text = input.value.trim(); const files = chatPics.files.slice();
+  if(!text && !files.length) return;
+  if(btn) btn.disabled = true;
+  let urls = [];
+  if(files.length){
+    try{ urls = await mpUpload(files, currentUser.id, (d, n) => { if(n > 1) showSiteToast(`📤 ပုံ ${d}/${n} တင်နေသည်...`); }); }
+    catch(e){ showSiteToast('ပုံ ပို့၍ မရပါ — ' + (e.message || e)); msgrSendState(); return; }
   }
-
-  input.value = ''; msgrGrow(input);
-  pendingChatImageFile = null;
-  document.getElementById('chat-image-preview').innerHTML = '';
-  msgrSendState(); msgrFly(document.getElementById('chat-send-btn'));
-
+  input.value = ''; msgrGrow(input); chatPics.clear();
+  msgrFly(btn);
+  try{ suwatiSfx && suwatiSfx.send(); }catch(e){}
   const displayName = getCustomerDisplayName(currentUser);
-  const { error } = await sb.from('chat_messages').insert({ user_id: currentUser.id, customer_name: displayName, sender:'customer', message:text, image_url, read_by_customer:true, read_by_admin:false });
-  if(error){ showSiteToast('Message ပို့၍မရပါ — ' + error.message); return; }
+  const base = { user_id: currentUser.id, customer_name: displayName, sender:'customer', read_by_customer:true, read_by_admin:false };
+  // ပုံတစ်ပုံ = Message တစ်ခု (Album အဖြစ် စုပြမည်) · စာ နောက်ဆုံး
+  const rows = urls.map(u => ({ ...base, message:'', image_url:u }));
+  if(text) rows.push({ ...base, message:text, image_url:null });
+  for(const r of rows){
+    const { error } = await sb.from('chat_messages').insert(r);
+    if(error){ showSiteToast('Message ပို့၍မရပါ — ' + error.message); break; }
+  }
+  msgrSendState();
   loadChatMessages();
 }
 
@@ -6813,18 +6902,36 @@ function msgrDay(d){ const t = new Date(d), n = new Date(); if(t.toDateString() 
 // me = 'customer' (Website) / 'admin' (Admin App)
 function msgrLogHtml(list, me, popFrom, opts){
   opts = opts || {};
-  let h = '', lastDay = '';
-  const lastMine = (() => { for(let i = list.length - 1; i >= 0; i--) if(list[i].sender === me) return i; return -1; })();
+  const lb = opts.lightbox || 'openSiteLightbox';
+  // 🖼️ ဆက်တိုက်ပို့ထားတဲ့ ပုံတွေကို Album တစ်ခုအဖြစ် စု (၂ မိနစ်အတွင်း · စာမပါ)
+  const items = [];
   list.forEach((m, i) => {
+    const imgOnly = m.image_url && !m.message;
+    const prev = items[items.length - 1];
+    if(imgOnly && prev && prev.album && prev.sender === m.sender && Math.abs(new Date(m.created_at) - new Date(prev.created_at)) < 2*60e3){
+      prev.album.push(m.image_url); prev.idx = i; prev.created_at = m.created_at; prev.read_by_admin = m.read_by_admin; prev.read_by_customer = m.read_by_customer; return;
+    }
+    items.push(Object.assign({}, m, { idx:i, album: imgOnly ? [m.image_url] : null }));
+  });
+  let h = '', lastDay = '';
+  const lastMine = (() => { for(let i = items.length - 1; i >= 0; i--) if(items[i].sender === me) return i; return -1; })();
+  items.forEach((m, i) => {
     const day = new Date(m.created_at).toDateString();
     if(day !== lastDay){ h += `<div class="msgr-day">${msgrDay(m.created_at)}</div>`; lastDay = day; }
     const mine = m.sender === me;
-    const prev = list[i-1], next = list[i+1];
+    const prev = items[i-1], next = items[i+1];
     const close = (a, b) => a && b && a.sender === b.sender && new Date(b.created_at).toDateString() === new Date(a.created_at).toDateString() && Math.abs(new Date(b.created_at) - new Date(a.created_at)) < 5*60e3;
     const first = !close(prev, m), last = !close(m, next);
-    const pop = popFrom !== null && popFrom !== undefined && i >= popFrom ? ' fx-pop' : '';
-    const img = m.image_url ? `<img src="${msgrEsc(m.image_url)}" alt="" onclick="${opts.lightbox || 'openSiteLightbox'}(this.src)">` : '';
-    h += `<div class="chat-bubble msgr-b ${mine ? 'me' : 'them'} ${m.sender === 'admin' ? 'admin' : 'customer'}${first ? ' first' : ''}${last ? ' last' : ''}${img && !m.message ? ' only-img' : ''}${pop}" data-id="${msgrEsc(m.id)}">${img}${m.message ? `<span>${msgrEsc(m.message)}</span>` : ''}</div>`;
+    const pop = popFrom !== null && popFrom !== undefined && m.idx >= popFrom ? ' fx-pop' : '';
+    const cls = `chat-bubble msgr-b ${mine ? 'me' : 'them'} ${m.sender === 'admin' ? 'admin' : 'customer'}${first ? ' first' : ''}${last ? ' last' : ''}${pop}`;
+    if(m.album){
+      const n = m.album.length, shown = m.album.slice(0, 9);
+      h += `<div class="${cls} only-img msgr-album n${Math.min(n, 3)}" data-id="${msgrEsc(m.id)}">${shown.map((u, k) =>
+        `<img src="${msgrEsc(u)}" alt="" loading="lazy" onclick="${lb}(this.src)">${k === 8 && n > 9 ? `<b class="msgr-more" onclick="${lb}('${msgrEsc(m.album[9])}')">+${n - 9}</b>` : ''}`).join('')}</div>`;
+    } else {
+      const img = m.image_url ? `<img class="msgr-img" src="${msgrEsc(m.image_url)}" alt="" loading="lazy" onclick="${lb}(this.src)">` : '';
+      h += `<div class="${cls}" data-id="${msgrEsc(m.id)}">${img}${m.message ? `<span>${msgrEsc(m.message)}</span>` : ''}</div>`;
+    }
     if(last){
       const seen = mine && i === lastMine ? (m[me === 'customer' ? 'read_by_admin' : 'read_by_customer'] ? ' · ✓ ဖတ်ပြီး' : ' · ပို့ပြီး') : '';
       h += `<div class="msgr-meta ${mine ? 'r' : 'l'}">${msgrTime(m.created_at)}${seen}</div>`;
@@ -6833,7 +6940,7 @@ function msgrLogHtml(list, me, popFrom, opts){
   return h;
 }
 function msgrGrow(t){ if(!t) return; t.style.height = 'auto'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; }
-function msgrSendState(){ const b = document.getElementById('chat-send-btn'), i = document.getElementById('chat-input'); if(b && i) b.disabled = !(i.value.trim() || pendingChatImageFile); }
+function msgrSendState(){ const b = document.getElementById('chat-send-btn'), i = document.getElementById('chat-input'); if(b && i) b.disabled = !(i.value.trim() || (typeof chatPics !== 'undefined' && chatPics.files.length)); }
 function msgrFly(b){ if(!b) return; b.classList.remove('fly'); void b.offsetWidth; b.classList.add('fly'); }
 
 // SUWATI MEN FASHION — Guest order tracking
@@ -9272,13 +9379,21 @@ if(siteLang === 'en'){
     const r = _open.apply(this, arguments);
     ov.scrollTop = 0; setOrigin();
     fab.classList.add('is-open');
+    if(!wasOpen){ try{ suwatiSfx.pop(); }catch(e){} }
     return r;
   };
   window.openChatWidget = openChatWidget;
 
   const _close = closeCheckout;
   closeCheckout = function(){
-    if(ov.classList.contains('chat-mode')) setOrigin();
+    const args = arguments, self = this;
+    // 💬 Chat — Icon ထဲ ပြန်ဝင်သွား (ကိုယ်တိုင် Animation လုပ်ပြီးမှ ပိတ်)
+    if(ov.classList.contains('chat-mode') && ov.classList.contains('open') && !ov.classList.contains('closing') && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){
+      setOrigin(); ov.classList.add('closing'); fab.classList.remove('is-open');
+      try{ suwatiSfx.send(); }catch(e){}
+      setTimeout(() => { _close.apply(self, args); ov.classList.remove('closing'); clear(); }, 300);
+      return;
+    }
     const r = _close.apply(this, arguments);
     setTimeout(() => { if(!ov.classList.contains('open')) clear(); }, 230);
     return r;
@@ -9290,6 +9405,38 @@ if(siteLang === 'en'){
     new MutationObserver(() => { if(ov.classList.contains('chat-mode') && !document.getElementById('faq-log')) { fab.classList.remove('is-open'); ov.classList.remove('chat-mode'); } })
       .observe(document.getElementById('checkout-modal-content'), { childList:true });
   }catch(e){}
+})();
+
+// SUWATI MEN FASHION — 🖌️ Order တင်ပြီးရင် စုတ်တံနဲ့ ✓ ဆွဲ + ခေါင်းစဉ်အောက် Brush မျဉ်း + ဆေးစက်
+(function(){
+  if(typeof renderCheckoutSuccess !== 'function') return;
+  const CHECK = 'M24 84 C36 92 48 106 60 122 C80 92 104 62 136 34';
+  const SWASH = 'M6 16 C50 6 90 22 130 12 C170 4 200 18 234 10';
+  const _r = renderCheckoutSuccess;
+  renderCheckoutSuccess = function(){
+    const r = _r.apply(this, arguments);
+    try{
+      const box = document.querySelector('#checkout-modal-content .success-box'); if(!box) return r;
+      const old = box.querySelector('.big-check');
+      const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const wrap = document.createElement('div'); wrap.className = 'bd-wrap' + (reduce ? ' bd-static' : '');
+      wrap.innerHTML = `
+        <svg class="bd-svg" width="160" height="150" viewBox="0 0 160 150" aria-hidden="true">
+          <defs><filter id="bd-rough" x="-20%" y="-20%" width="140%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5"/></filter></defs>
+          <circle class="bd-ring" cx="80" cy="78" r="66"/>
+          <path class="bd-check-sh" d="${CHECK}"/>
+          <path class="bd-check" d="${CHECK}" filter="url(#bd-rough)"/>
+          ${[[18, 30, 4], [146, 22, 6], [150, 112, 3.5], [12, 128, 5], [128, 140, 3], [36, 10, 3]].map(([x, y, rr], i) => `<circle class="bd-dot" style="--i:${i}" cx="${x}" cy="${y}" r="${rr}"/>`).join('')}
+        </svg>
+        <span class="bd-brush" aria-hidden="true">🖌️</span>`;
+      if(old) old.replaceWith(wrap); else box.prepend(wrap);
+      const h = box.querySelector('h3');
+      if(h){ h.classList.add('bd-h'); h.insertAdjacentHTML('beforeend', `<svg class="bd-swash" viewBox="0 0 240 24" preserveAspectRatio="none" aria-hidden="true"><path d="${SWASH}"/></svg>`); }
+      box.classList.add('bd-go');
+      if(!reduce){ try{ suwatiSfx.brush(.7); setTimeout(() => suwatiSfx.brush(.45), 820); }catch(e){} }
+    }catch(e){ console.warn(e); }
+    return r;
+  };
 })();
 
 // SUWATI MEN FASHION — 🔊 အသံလေးများ (ဖိုင်မလို — Web Audio နဲ့ ထုတ်)
@@ -9327,12 +9474,33 @@ if(siteLang === 'en'){
     gift: () => play(t => { tone(392, t, .6, { glide:1568, vol:.09 }); [1568, 1975.5, 2349.3, 2637, 3136].forEach((f, i) => tone(f, t + .18 + i * .06, .45, { vol:.07 })); tone(1046.5, t + .5, .9, { type:'triangle', vol:.12 }); }),
     // ❌ မရ
     fail: () => play(t => { tone(311, t, .18, { type:'sawtooth', vol:.06 }); tone(233, t + .16, .3, { type:'sawtooth', vol:.06 }); }),
+    // 💬 စာဝင် — "တင်တင်"
+    msg: () => play(t => { tone(1318.5, t, .16, { type:'sine', vol:.16 }); tone(1760, t + .11, .28, { type:'sine', vol:.14 }); }),
+    // 📤 စာပို့ — "ရှူး"
+    send: () => play(t => { tone(520, t, .16, { glide:1400, vol:.06 }); swish(t, .14, 2500, 6000, .05); }),
+    // 💰 ငွေဝင် — ဒင်္ဂါးကျ
+    coin: () => play(t => { [0, .09, .16].forEach((d, i) => { tone(2093 + i * 220, t + d, .22, { type:'square', vol:.04 }); tone(3136 + i * 180, t + d + .02, .3, { vol:.05 }); }); tone(1568, t + .26, .6, { type:'triangle', vol:.1 }); }),
+  // 🛒 ခြင်းထဲ ထည့် — "ပေါက်"
+    pop: () => play(t => { tone(660, t, .1, { glide:1320, vol:.12 }); tone(1320, t + .05, .12, { vol:.06 }); }),
+    // 🧾 Receipt Print — Thermal Printer သံ (Animation နဲ့ တပြိုင်နက် ~1.5 စက္ကန့်)
+    print: () => play(t => { for(let k = 0; k < 16; k++){ const d = t + k * .093; noise(d, .06, .07, 1800); tone(180 + (k % 2) * 30, d, .05, { type:'square', vol:.025 }); }
+      tone(880, t + 1.55, .08, { type:'square', vol:.04 }); noise(t + 1.6, .12, .09, 4000); }),
+    ok: () => play(t => { tone(880, t, .1, { vol:.1 }); tone(1320, t + .08, .2, { vol:.1 }); }),
+    // 🖌️ စုတ်တံ ဆွဲ — "ဆွမ်း"
+    brush: (dur = .65) => play(t => { swish(t, dur, 900, 3800, .16); }),
   };
+  function swish(t, dur, f1, f2, vol){
+    const c = ctx; const n = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate); const d = n.getChannelData(0);
+    for(let i = 0; i < d.length; i++){ const x = i / d.length; d[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * x) * (0.6 + 0.4 * Math.random()); }
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = n; f.type = 'bandpass'; f.Q.value = 1.4; f.frequency.setValueAtTime(f1, t); f.frequency.exponentialRampToValueAtTime(f2, t + dur);
+    g.gain.value = vol; s.connect(f).connect(g).connect(c.destination); s.start(t);
+  }
 
   // ---------- ချိတ်ဆက် ----------
   if(typeof renderCheckoutSuccess === 'function'){
     const _r = renderCheckoutSuccess;
-    renderCheckoutSuccess = function(){ const r = _r.apply(this, arguments); setTimeout(() => suwatiSfx.order(), 250); return r; };
+    renderCheckoutSuccess = function(){ const r = _r.apply(this, arguments); setTimeout(() => suwatiSfx.order(), 1250); return r; };   // 🖌️ စုတ်တံ ဆွဲပြီးမှ
   }
   if(typeof prepaidPayAnim === 'object' && prepaidPayAnim){
     const wrap = (c) => { if(!c || !c.success) return c; const s = c.success, f = c.fail;
@@ -9344,6 +9512,62 @@ if(siteLang === 'en'){
   if(typeof fxGiftRedeem === 'function'){
     const _g = fxGiftRedeem;
     fxGiftRedeem = function(){ suwatiSfx.gift(); return _g.apply(this, arguments); };
+  }
+
+  // 🔊 Profile › Notification အောက်မှာ အသံ ဖွင့်/ပိတ်
+  window.toggleSiteSound = function(btn){
+    const on = muted(); try{ localStorage.setItem('suwati_sound', on ? 'on' : 'off'); }catch(e){}
+    btn.classList.toggle('on', on); btn.setAttribute('aria-checked', String(on));
+    const t = document.getElementById('snd-txt'); if(t) t.textContent = on ? '🔊 အသံ ဖွင့်ထားသည် — စာဝင် · ငွေဝင် · ငွေရှင်း · Order တင်' : '🔇 အသံ ပိတ်ထားသည်';
+    if(on) suwatiSfx.ok ? suwatiSfx.ok() : suwatiSfx.pop();
+    try{ showSiteToast(on ? '🔊 အသံ ဖွင့်ပြီးပါပြီ' : '🔇 အသံ ပိတ်လိုက်ပါပြီ'); }catch(e){}
+  };
+  if(typeof renderPushSection === 'function'){
+    const _rp = renderPushSection;
+    renderPushSection = async function(){
+      const r = await _rp.apply(this, arguments);
+      const sec = document.getElementById('notify-section');
+      if(sec && !sec.querySelector('.snd-row')){
+        const on = !muted();
+        sec.insertAdjacentHTML('beforeend', `<div class="notify-row snd-row"><div class="notify-txt" id="snd-txt">${on ? '🔊 အသံ ဖွင့်ထားသည် — စာဝင် · ငွေဝင် · ငွေရှင်း · Order တင်' : '🔇 အသံ ပိတ်ထားသည်'}</div>
+          <button type="button" class="pc-switch${on ? ' on' : ''}" role="switch" aria-checked="${on}" aria-label="အသံ" onclick="toggleSiteSound(this)"><span></span></button></div>`);
+      }
+      return r;
+    };
+  }
+
+  // 🛒 ခြင်းထဲ ထည့်
+  if(typeof addToCart === 'function'){ const _a = addToCart; addToCart = function(){ const r = _a.apply(this, arguments); try{ suwatiSfx.pop(); }catch(e){} return r; }; }
+  // 🧾 Receipt / Invoice ထုတ်
+  if(typeof showReceiptOverlay === 'function'){ const _s = showReceiptOverlay; showReceiptOverlay = function(){ const r = _s.apply(this, arguments); suwatiSfx.print(); return r; }; }
+
+  // 💬 Admin စာ ဝင်ရင် အသံ (Chat ပိတ်ထားလည်း) · ငွေဖြည့် အတည်ပြု / ငွေပြန်အမ်း စာဆိုရင် 💰 အသံ
+  const MONEY = /ငွေဖြည့်|Top-?up|Prepaid Card ထဲ|ပြန်ထည့်|ပြန်အမ်း|Cashback|Bonus|💰|🎁 Gift Card/i;
+  let sfxChan = null, sfxUid = null;
+  function watch(){
+    if(typeof currentUser === 'undefined' || !currentUser || sfxUid === currentUser.id) return;
+    try{ if(sfxChan) sb.removeChannel(sfxChan); }catch(e){}
+    sfxUid = currentUser.id;
+    sfxChan = sb.channel('suwati-sfx-' + sfxUid)
+      .on('postgres_changes', { event:'INSERT', schema:'public', table:'chat_messages', filter:`user_id=eq.${sfxUid}` }, (p) => {
+        const m = p.new || {}; if(m.sender !== 'admin') return;
+        if(MONEY.test(m.message || '')) suwatiSfx.coin(); else suwatiSfx.msg();
+        try{ navigator.vibrate && navigator.vibrate([30, 40, 30]); }catch(e){}
+        try{ if(!document.getElementById('chat-log')) updateChatUnreadBadge(); }catch(e){}
+      }).subscribe();
+  }
+  if(typeof updateAuthUI === 'function'){ const _u = updateAuthUI; updateAuthUI = function(){ const r = _u.apply(this, arguments); setTimeout(watch, 800); return r; }; }
+
+  // 💰 Prepaid Card ဖွင့်ရင် — အရင်ကထက် ငွေတိုးလာရင် ဒင်္ဂါးသံ
+  if(typeof openPrepaidCard === 'function'){
+    const _o = openPrepaidCard;
+    openPrepaidCard = async function(){
+      const r = await _o.apply(this, arguments);
+      try{ const el = document.getElementById('pc-bal-num'); const v = Number(el && el.dataset.v) || 0; const k = 'suwati_last_bal_' + (currentUser && currentUser.id);
+        const prev = Number(localStorage.getItem(k)); if(!isNaN(prev) && localStorage.getItem(k) !== null && v > prev) setTimeout(() => suwatiSfx.coin(), 600);
+        localStorage.setItem(k, String(v)); }catch(e){}
+      return r;
+    };
   }
 })();
 

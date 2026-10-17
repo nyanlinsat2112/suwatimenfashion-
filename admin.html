@@ -17,7 +17,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SUWATI Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 <style>
@@ -1142,6 +1142,72 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
 .crm-strip .crm-open{ flex-basis:100%; margin:4px 0 0 !important; width:100% !important; height:44px; padding:0 10px !important; }
 .form-card button, .form-card .bulk-file{ box-sizing:border-box; }
 #closing-report-btn{ align-self:stretch; height:auto !important; margin-top:0 !important; margin-bottom:0 !important; } #closing-date-input{ margin:0 !important; }
+
+/* ===== 🖼️ Chat ပုံ — အသေးလေး · Album · ပုံအများကြီး ===== */
+.msgr-b img.msgr-img{ width:auto; max-width:min(200px, 100%); max-height:220px; object-fit:cover; border-radius:14px; }
+.msgr-b.msgr-album{ display:grid !important; gap:3px; width:min(246px, 72vw); max-width:none !important; padding:0 !important; border-radius:18px; overflow:hidden; position:relative; background:transparent !important; }
+.msgr-album.n1{ grid-template-columns:1fr; width:auto; max-width:min(200px, 60vw) !important; }
+.msgr-album.n2{ grid-template-columns:1fr 1fr; } .msgr-album.n3{ grid-template-columns:1fr 1fr 1fr; }
+.msgr-album img{ display:block; width:100% !important; max-width:none !important; height:auto !important; max-height:none !important; aspect-ratio:1; object-fit:cover; border-radius:0 !important; cursor:zoom-in; background:rgba(128,128,128,.15); }
+.msgr-album.n1 img{ aspect-ratio:auto; max-height:220px !important; border-radius:14px !important; }
+.msgr-more{ position:absolute; right:0; bottom:0; width:calc((100% - 6px) / 3); aspect-ratio:1; display:grid; place-items:center; background:rgba(0,0,0,.55); color:#fff; font:700 18px 'Space Mono',monospace; cursor:pointer; }
+.msgr-prev .mp-strip{ display:flex; gap:8px; overflow-x:auto; padding:10px 2px 4px; scrollbar-width:none; }
+.msgr-prev .mp-strip::-webkit-scrollbar{ display:none; }
+.mp-th{ position:relative; flex:0 0 64px; height:64px; border-radius:14px; overflow:hidden; border:1.5px solid rgba(128,128,128,.35); animation:mpIn .3s cubic-bezier(.3,1.5,.5,1); }
+.mp-th img{ width:100%; height:100%; object-fit:cover; display:block; }
+.mp-x{ position:absolute; top:4px; right:4px; width:22px !important; height:22px !important; padding:0 !important; margin:0 !important; border-radius:50% !important; border:none !important; background:rgba(20,20,18,.78) !important; color:#fff !important; font:700 11px/22px sans-serif; cursor:pointer; box-shadow:none !important; }
+.mp-add{ flex:0 0 64px; height:64px; border:2px dashed rgba(128,128,128,.55); border-radius:14px; display:grid; place-items:center; font-size:26px; cursor:pointer; opacity:.75; }
+.mp-n{ font-size:11px; padding:0 2px 4px; opacity:.65; }
+@keyframes mpIn{ from{ transform:scale(.5); opacity:0; } }
+.msgr-log > *, .admin-chat-log > *{ flex-shrink:0; }
+.msgr-album.n1{ max-width:min(170px, 50vw) !important; } .msgr-album.n1 img{ max-height:200px !important; } .msgr-b img.msgr-img{ max-width:min(170px, 100%); max-height:200px; }
+.asnd-test{ display:grid; grid-template-columns:repeat(4, 1fr); gap:6px; margin-top:10px; } .asnd-test button{ margin:0 !important; padding:9px 4px !important; font-size:12px !important; white-space:nowrap; }
+
+/* ================= 📱 POST ပုံထုတ် ================= */
+.pm .pm-lbl{ font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); letter-spacing:.06em; margin:14px 0 6px; text-transform:uppercase; }
+.pm .pm-seg{ display:grid; gap:6px; } .pm .pm-seg.c2{ grid-template-columns:repeat(2,1fr); } .pm .pm-seg.c3{ grid-template-columns:repeat(3,1fr); } .pm .pm-seg.c4{ grid-template-columns:repeat(4,1fr); }
+.pm .pm-seg button{ background:transparent; color:var(--concrete); border:2px solid var(--bd, #5a564b); padding:9px 3px; font:700 12px 'Noto Sans Myanmar',sans-serif; min-height:46px; line-height:1.35; margin:0; letter-spacing:0; }
+.pm .pm-seg button small{ display:block; font:400 10px 'Space Mono',monospace; color:var(--grey); }
+.pm .pm-seg button.on{ border-color:var(--acid); background:var(--acid); color:#141412; } .pm .pm-seg button.on small{ color:#3d4a10; }
+.pm .pm-prods{ display:grid; grid-auto-flow:column; grid-auto-columns:84px; gap:8px; overflow-x:auto; padding:2px 2px 8px; margin-top:8px; -webkit-overflow-scrolling:touch; scrollbar-width:thin; }
+.pm .pm-prods button{ position:relative; background:var(--s3, #2a2a26); border:2px solid var(--bd, #5a564b); padding:4px; color:var(--concrete); font:500 10px/1.3 'Noto Sans Myanmar',sans-serif; margin:0; letter-spacing:0; text-align:left; }
+.pm .pm-prods button img{ width:100%; aspect-ratio:1; object-fit:cover; display:block; margin-bottom:4px; background:#ddd; }
+.pm .pm-prods button span{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.pm .pm-prods button.on{ border-color:var(--acid); box-shadow:0 0 0 2px var(--acid) inset; }
+.pm .pm-prods button i{ position:absolute; top:6px; left:6px; width:22px; height:22px; border-radius:50%; background:var(--acid); color:#141412; font:700 12px/22px 'Space Mono',monospace; text-align:center; font-style:normal; }
+.pm .pm-pickhint{ font-size:12px; color:var(--acid-text, var(--acid)); min-height:4px; }
+.pm .pm-chips{ display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 2px; }
+.pm .pm-chips button{ background:transparent; color:var(--concrete); border:1.5px solid var(--bd, #5a564b); padding:6px 10px; font:700 11px 'Space Mono',monospace; margin:0; }
+.pm .pm-chips button.on{ background:var(--concrete); color:var(--ink); border-color:var(--concrete); }
+.pm .pm-chk{ display:flex; align-items:center; gap:10px; font-size:13px; padding:7px 0; cursor:pointer; }
+.pm .pm-stage{ position:relative; background:repeating-conic-gradient(#222 0 25%, #1a1a18 0 50%) 0 0/18px 18px; border:2.5px solid var(--concrete); padding:12px; display:flex; justify-content:center; }
+.pm .pm-stage canvas{ width:100%; height:auto; display:block; box-shadow:6px 6px 0 #000; touch-action:auto; }
+.pm .pm-stage.tall canvas{ width:72%; }
+.pm .pm-stage.editing{ border-style:dashed; border-color:var(--acid); animation:pmEd 1.6s ease-in-out infinite; } .pm .pm-stage.editing canvas{ touch-action:none; cursor:grab; }
+@keyframes pmEd{ 50%{ border-color:#5a564b; } }
+.pm .pm-ghint{ position:absolute; left:50%; bottom:20px; transform:translateX(-50%); background:rgba(20,20,18,.85); color:#E9E4D8; font-size:12px; padding:7px 12px; border-radius:20px; white-space:nowrap; pointer-events:none; transition:opacity .4s; }
+.pm .pm-ghint.hide, .pm .pm-stage:not(.editing) .pm-ghint{ opacity:0; }
+.pm .pm-editbar{ display:grid; grid-template-columns:1fr; gap:8px; margin-top:10px; } .pm .pm-editbar.on{ grid-template-columns:1fr auto; }
+.pm .pm-editbar button{ margin:0; font:700 14px 'Noto Sans Myanmar',sans-serif; } .pm .pm-editbar.on #pm-ed-btn{ background:var(--concrete); color:var(--ink); }
+.pm .pm-size{ font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); text-align:center; margin-top:8px; min-height:14px; }
+.pm .pm-acts{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; } .pm .pm-acts button{ margin:0; font:700 14px 'Noto Sans Myanmar',sans-serif; padding:14px 6px; }
+.pm .pm-ai-go{ width:100%; margin-top:14px; background:linear-gradient(100deg, var(--acid), #9dff6a, var(--acid)); background-size:200% 100%; color:#141412; border-color:var(--acid); font:700 15px 'Noto Sans Myanmar',sans-serif; }
+.pm .pm-ai-go.busy{ animation:pmSh 1.1s linear infinite; pointer-events:none; } @keyframes pmSh{ to{ background-position:-200% 0; } }
+.pm .capc{ border:2px solid #5a564b; background:#f2efe6; color:#141412; margin-top:10px; }
+.pm .capc.sel{ border-color:var(--acid); box-shadow:0 0 0 2px var(--acid); }
+.pm .capc .ch{ display:flex; justify-content:space-between; align-items:center; background:#141412; color:#D6FF3F; font:700 11px 'Space Mono',monospace; padding:6px 10px; letter-spacing:.06em; } .pm .capc .ch span{ color:#87806f; }
+.pm .capc .ct{ padding:10px 12px; font:14px/1.75 'Noto Sans Myanmar',sans-serif; white-space:pre-wrap; min-height:60px; outline:none; } .pm .capc .ct:focus{ background:#fff; }
+.pm .capc .ct.typing::after{ content:'▍'; animation:pmBl .7s steps(1) infinite; color:#C13B1F; } @keyframes pmBl{ 50%{ opacity:0; } }
+.pm .capc .cb{ display:grid; grid-template-columns:1fr 1fr; border-top:2px solid #d8d2c2; }
+.pm .capc .cb button{ border:0; background:transparent; padding:11px 4px; font:700 13px 'Noto Sans Myanmar',sans-serif; color:#141412; margin:0; } .pm .capc .cb button + button{ border-left:2px solid #d8d2c2; }
+.list-item .actions .pm-quick{ white-space:nowrap; }
+.pm [hidden]{ display:none !important; }
+.qp .note{ font-size:12px; color:var(--grey); line-height:1.8; margin-top:10px; } .qp .pm-stage{ margin-top:12px; } .qp input{ margin-bottom:4px; }
+/* Post/QR — အထွေထွေ ခလုတ်တန်း Grid ကို မလိုက်စေ */
+.pm .pm-seg.c2{ grid-template-columns:repeat(2,1fr) !important; } .pm .pm-seg.c3{ grid-template-columns:repeat(3,1fr) !important; } .pm .pm-seg.c4{ grid-template-columns:repeat(4,1fr) !important; }
+.pm .pm-acts{ grid-template-columns:1fr 1fr !important; } .pm .pm-editbar{ grid-template-columns:1fr !important; } .pm .pm-editbar.on{ grid-template-columns:1fr auto !important; }
+.pm .pm-chips{ display:flex !important; } .pm .capc .cb{ grid-template-columns:1fr 1fr !important; }
+.pm .pm-seg button{ display:block; text-align:center; }
 </style>
 </head>
 <body>
@@ -1214,6 +1280,14 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
       <button class="tab-btn" data-tab="promo-panel"><span class="mt-icon">🎟️</span><span class="nt">Promo & Cashback</span><span class="ns">Promo</span></button>
       <button class="tab-btn" data-tab="giftcard-panel" id="giftcard-tab-btn"><span class="mt-icon">🎁</span><span class="nt">Gift Card</span><span class="ns">Gift Card</span><span id="giftcard-tab-badge" class="tab-count-badge" style="display:none;"></span></button>
       <button class="tab-btn" data-tab="reviews-panel" id="reviews-tab-btn"><span class="mt-icon">⭐</span><span class="nt">Customer Review</span><span class="ns">Review</span><span id="reviews-tab-badge" class="tab-count-badge" style="display:none;"></span></button>
+    </div>
+  </div>
+
+  <div class="tabs-group">
+    <div class="tabs-group-label">📣 Social Media</div>
+    <div class="tabs-group-row">
+      <button class="tab-btn" data-tab="post-maker-panel" id="postmaker-tab-btn"><span class="mt-icon">📱</span><span class="nt">Post ပုံထုတ်</span><span class="ns">Post ပုံ</span></button>
+      <button class="tab-btn" data-tab="qr-poster-panel" id="qrposter-tab-btn"><span class="mt-icon">🔳</span><span class="nt">QR Poster</span><span class="ns">QR</span></button>
     </div>
   </div>
 
@@ -1994,6 +2068,12 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
   <!-- ⭐ CUSTOMER REVIEW -->
   <div class="panel" id="reviews-panel"></div>
 
+  <!-- 📱 POST ပုံထုတ် -->
+  <div class="panel" id="post-maker-panel"></div>
+
+  <!-- 🔳 QR POSTER -->
+  <div class="panel" id="qr-poster-panel"></div>
+
   <!-- 🏆 ပစ္စည်း ရောင်းအား -->
   <div class="panel" id="insights-panel"></div>
 </div>
@@ -2122,7 +2202,7 @@ async function checkSession(){
     subscribeToAdminAutoRefresh();
     loadLowStockThreshold().then(refreshLowStockBadge);
     refreshAllAttentionStates();
-    setInterval(refreshAllAttentionStates, 25000); // ၂၅ စက္ကန့်တစ်ခါ Independent Safety-Net Check
+    setInterval(refreshAllAttentionStates, 60000); // ၆၀ စက္ကန့်တစ်ခါ Independent Safety-Net Check
   } else {
     document.getElementById('login-screen').style.display='flex';
     document.getElementById('dashboard').style.display='none';
@@ -2144,6 +2224,8 @@ const RESTRICTABLE_TABS = [
   { id:'sale-panel', label:'Sale & Bundle' },
   { id:'giftcard-panel', label:'Gift Card' },
   { id:'reviews-panel', label:'Customer Review' },
+  { id:'post-maker-panel', label:'Post ပုံထုတ်' },
+  { id:'qr-poster-panel', label:'QR Poster' },
   { id:'insights-panel', label:'ပစ္စည်း ရောင်းအား' },
 ];
 
@@ -2174,7 +2256,7 @@ function applyRolePermissions(){
       // Manager/Staff — Owner ကရွေးပေးထားတဲ့ allowed_tabs ကိုသာ ခွင့်ပြု (POS/Orders/Inventory/Messages အမြဲရ)
       const allowed = new Set(currentAdminAllowedTabs || []);
       // Tab အသစ်ခွဲထုတ်ထားလို့ — အရင်က ခွင့်ရှိတဲ့ Tab ထဲ ပါခဲ့တာတွေ ဆက်ရအောင်
-      if(allowed.has('products-panel')){ allowed.add('sale-panel'); allowed.add('reviews-panel'); }
+      if(allowed.has('products-panel')){ allowed.add('sale-panel'); allowed.add('reviews-panel'); allowed.add('post-maker-panel'); allowed.add('qr-poster-panel'); }
       if(allowed.has('wallet-panel')) allowed.add('giftcard-panel');
       if(allowed.has('salesreport-panel')) allowed.add('insights-panel');
       if(allowed.has('promo-panel')) allowed.add('sale-panel');
@@ -2325,6 +2407,8 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     }
     if(btn.dataset.tab === 'giftcard-panel' && typeof backToGiftMenu === 'function') backToGiftMenu();
     if(btn.dataset.tab === 'sale-panel'){ try{ bulkSaleRender(); }catch(e){} }
+    if(btn.dataset.tab === 'qr-poster-panel'){ try{ qrPosterInit(); }catch(e){} }
+    if(btn.dataset.tab === 'post-maker-panel'){ try{ postMakerInit(); postMakerOpen(); }catch(e){} }
     if(btn.dataset.tab === 'reviews-panel'){ try{ const c = document.getElementById('rv-admin-card'); if(c){ c.open = true; } loadAdminReviews(); }catch(e){} }
     if(btn.dataset.tab === 'insights-panel'){ try{ loadInsights(); }catch(e){} }
   });
@@ -6298,12 +6382,13 @@ async function openConversation(userId){
       <div id="admin-chat-image-preview" class="msgr-prev"></div>
       <div class="msgr-bar">
         <label for="admin-chat-image-input" class="msgr-ib" title="ပုံပို့ရန်" aria-label="ပုံပို့ရန်">${MSGR_IMG}</label>
-        <input type="file" id="admin-chat-image-input" accept="image/*" style="display:none;">
+        <input type="file" id="admin-chat-image-input" accept="image/*" multiple style="display:none;">
         <textarea id="admin-chat-input" class="msgr-in" rows="1" placeholder="အဖြေ ရေးပါ..." enterkeyhint="send"></textarea>
         <button type="button" class="msgr-send" id="admin-chat-send-btn" aria-label="ပို့မည်" disabled>${MSGR_ARROW}</button>
       </div>
     </div>`;
   document.getElementById('admin-chat-log').scrollTop = document.getElementById('admin-chat-log').scrollHeight;
+  if(window.__mpUid !== userId){ window.__mpUid = userId; adminPics.files = []; } adminPics.render();
   document.getElementById('back-to-threads-btn').addEventListener('click', ()=>{
     view.style.display = 'none';
     document.getElementById('messages-thread-list').style.display = 'block';
@@ -6313,15 +6398,7 @@ async function openConversation(userId){
   const aci = document.getElementById('admin-chat-input');
   aci.addEventListener('keydown', (e)=>{ if(e.key==='Enter' && !e.shiftKey && !e.isComposing){ e.preventDefault(); sendAdminReply(); } });
   aci.addEventListener('input', ()=>{ msgrGrow(aci); adminSendState(); });
-  document.getElementById('admin-chat-image-input').addEventListener('change', (e)=>{
-    const file = e.target.files[0];
-    if(!file) return;
-    pendingAdminChatImageFile = file;
-    const preview = document.getElementById('admin-chat-image-preview');
-    const url = URL.createObjectURL(file);
-    setTimeout(adminSendState, 0);
-    preview.innerHTML = `<div class="img-preview-thumb"><img src="${url}"><a href="#" onclick="pendingAdminChatImageFile=null; document.getElementById('admin-chat-image-preview').innerHTML=''; adminSendState(); return false;" style="position:absolute; top:-8px; right:-8px; background:var(--rust); color:#fff; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; font-size:11px;">✕</a></div>`;
-  });
+
 
   // Customer ကနေ Message ဖတ်ရသေးသည့်ဟာများကို "ဖတ်ပြီး" အဖြစ် မှတ်တမ်းတင်
   const unreadIds = thread.filter(m=>m.sender==='customer' && !m.read_by_admin).map(m=>m.id);
@@ -6336,32 +6413,81 @@ async function openConversation(userId){
   }
 }
 
-let pendingAdminChatImageFile = null;
+// ---------- 🖼️ ပုံ အများကြီး တစ်ခါတည်း (Max 10) · အသေးလေး Preview · ✕ ဖြင့် ဖယ် · ပို့ခါနီး ချုံ့ ----------
+function mpCompress(file, max = 1600, q = .82){
+  return new Promise(res => {
+    if(!/^image\/(jpeg|png|webp|heic|heif)/i.test(file.type) || file.size < 250 * 1024) return res(file);
+    const url = URL.createObjectURL(file), im = new Image();
+    im.onload = () => { try{
+        const k = Math.min(1, max / Math.max(im.naturalWidth, im.naturalHeight));
+        const c = document.createElement('canvas'); c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+        c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(b => res(b && b.size < file.size ? new File([b], (file.name || 'photo').replace(/\.\w+$/, '') + '.jpg', { type:'image/jpeg' }) : file), 'image/jpeg', q);
+      }catch(e){ res(file); } };
+    im.onerror = () => { URL.revokeObjectURL(url); res(file); };
+    im.src = url;
+  });
+}
+function mpPicker(previewId, inputId, onChange, toast){
+  const st = { files: [] };
+  const box = () => document.getElementById(previewId);
+  st.render = () => {
+    const b = box(); if(!b) return;
+    b.querySelectorAll('img').forEach(i => { try{ URL.revokeObjectURL(i.src); }catch(e){} });
+    b.innerHTML = st.files.length ? `<div class="mp-strip">${st.files.map((f, i) => `<div class="mp-th"><img src="${URL.createObjectURL(f)}" alt=""><button type="button" class="mp-x" data-i="${i}" aria-label="ဖယ်ရန်">✕</button></div>`).join('')}${st.files.length < 10 ? `<label for="${inputId}" class="mp-add" aria-label="ပုံထပ်ထည့်ရန်">＋</label>` : ''}</div><div class="mp-n">🖼️ ${st.files.length} ပုံ${st.files.length >= 10 ? ' (အများဆုံး)' : ''}</div>` : '';
+    onChange && onChange();
+  };
+  st.add = (list) => {
+    list = [...(list || [])].filter(f => /^image\//.test(f.type));
+    const room = 10 - st.files.length;
+    if(list.length > room){ toast && toast('📷 ပုံ ၁၀ ပုံအထိသာ တစ်ခါတည်း ပို့လို့ရပါသည်'); list = list.slice(0, Math.max(0, room)); }
+    st.files.push(...list); st.render();
+  };
+  st.clear = () => { st.files = []; st.render(); };
+  document.addEventListener('click', e => { const x = e.target.closest && e.target.closest(`#${previewId} .mp-x`); if(!x) return; e.preventDefault(); st.files.splice(Number(x.dataset.i), 1); st.render(); });
+  document.addEventListener('change', e => { if(e.target && e.target.id === inputId){ st.add(e.target.files); e.target.value = ''; } });
+  return st;
+}
+// ပုံတွေ တင်ပြီး Public URL ပြန်ပေး (တစ်ပြိုင်နက် ၃ ပုံ)
+async function mpUpload(files, prefix, onProgress){
+  const urls = new Array(files.length); let done = 0, i = 0, fail = null;
+  const work = async () => { while(i < files.length && !fail){ const k = i++;
+      const f = await mpCompress(files[k]); const ext = (f.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg';
+      const path = `${prefix}/${Date.now()}-${k}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+      const { error } = await sb.storage.from('chat-images').upload(path, f, { contentType: f.type || 'image/jpeg' });
+      if(error){ fail = error; return; }
+      urls[k] = sb.storage.from('chat-images').getPublicUrl(path).data.publicUrl; done++; onProgress && onProgress(done, files.length); } };
+  await Promise.all([work(), work(), work()]);
+  if(fail) throw fail;
+  return urls;
+}
+
+const adminPics = mpPicker('admin-chat-image-preview', 'admin-chat-image-input', () => adminSendState(), m => showToast(m));
+
 
 async function sendAdminReply(){
-  const input = document.getElementById('admin-chat-input');
-  const text = input.value.trim();
-  if(!text && !pendingAdminChatImageFile) return;
+  const input = document.getElementById('admin-chat-input'), btn = document.getElementById('admin-chat-send-btn');
+  const text = input.value.trim(); const files = adminPics.files.slice();
+  if(!text && !files.length) return;
   if(!currentMessageUserId) return;
-
-  let image_url = null;
-  if(pendingAdminChatImageFile){
-    const ext = pendingAdminChatImageFile.name.split('.').pop();
-    const path = `admin/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error: upErr } = await sb.storage.from('chat-images').upload(path, pendingAdminChatImageFile);
-    if(upErr){ showToast('ပုံ ပို့၍ မရပါ — ' + upErr.message); return; }
-    const { data: urlData } = sb.storage.from('chat-images').getPublicUrl(path);
-    image_url = urlData.publicUrl;
+  const uid = currentMessageUserId;
+  if(btn) btn.disabled = true;
+  let urls = [];
+  if(files.length){
+    try{ urls = await mpUpload(files, 'admin', (d, n) => { if(n > 1) showToast(`📤 ပုံ ${d}/${n} တင်နေသည်...`); }); }
+    catch(e){ showToast('ပုံ ပို့၍ မရပါ — ' + (e.message || e)); adminSendState(); return; }
   }
-
-  input.value = ''; msgrGrow(input);
-  pendingAdminChatImageFile = null;
-  adminSendState(); msgrFly(document.getElementById('admin-chat-send-btn'));
-  const previewEl = document.getElementById('admin-chat-image-preview');
-  if(previewEl) previewEl.innerHTML = '';
-
-  const { error } = await sb.from('chat_messages').insert({ user_id: currentMessageUserId, sender:'admin', message:text, image_url, read_by_admin:true, read_by_customer:false });
-  if(error){ showToast('Error: '+error.message); return; }
+  input.value = ''; msgrGrow(input); adminPics.clear();
+  msgrFly(btn);
+  try{ adminSfx && adminSfx.send(); }catch(e){}
+  const base = { user_id: uid, sender:'admin', read_by_admin:true, read_by_customer:false };
+  const rows = urls.map(u => ({ ...base, message:'', image_url:u }));
+  if(text) rows.push({ ...base, message:text, image_url:null });
+  for(const r of rows){
+    const { error } = await sb.from('chat_messages').insert(r);
+    if(error){ showToast('Error: ' + error.message); break; }
+  }
+  adminSendState();
   await loadMessages();
   if(currentMessageUserId) openConversation(currentMessageUserId);
 }
@@ -6395,18 +6521,36 @@ function msgrDay(d){ const t = new Date(d), n = new Date(); if(t.toDateString() 
 // me = 'customer' (Website) / 'admin' (Admin App)
 function msgrLogHtml(list, me, popFrom, opts){
   opts = opts || {};
-  let h = '', lastDay = '';
-  const lastMine = (() => { for(let i = list.length - 1; i >= 0; i--) if(list[i].sender === me) return i; return -1; })();
+  const lb = opts.lightbox || 'openSiteLightbox';
+  // 🖼️ ဆက်တိုက်ပို့ထားတဲ့ ပုံတွေကို Album တစ်ခုအဖြစ် စု (၂ မိနစ်အတွင်း · စာမပါ)
+  const items = [];
   list.forEach((m, i) => {
+    const imgOnly = m.image_url && !m.message;
+    const prev = items[items.length - 1];
+    if(imgOnly && prev && prev.album && prev.sender === m.sender && Math.abs(new Date(m.created_at) - new Date(prev.created_at)) < 2*60e3){
+      prev.album.push(m.image_url); prev.idx = i; prev.created_at = m.created_at; prev.read_by_admin = m.read_by_admin; prev.read_by_customer = m.read_by_customer; return;
+    }
+    items.push(Object.assign({}, m, { idx:i, album: imgOnly ? [m.image_url] : null }));
+  });
+  let h = '', lastDay = '';
+  const lastMine = (() => { for(let i = items.length - 1; i >= 0; i--) if(items[i].sender === me) return i; return -1; })();
+  items.forEach((m, i) => {
     const day = new Date(m.created_at).toDateString();
     if(day !== lastDay){ h += `<div class="msgr-day">${msgrDay(m.created_at)}</div>`; lastDay = day; }
     const mine = m.sender === me;
-    const prev = list[i-1], next = list[i+1];
+    const prev = items[i-1], next = items[i+1];
     const close = (a, b) => a && b && a.sender === b.sender && new Date(b.created_at).toDateString() === new Date(a.created_at).toDateString() && Math.abs(new Date(b.created_at) - new Date(a.created_at)) < 5*60e3;
     const first = !close(prev, m), last = !close(m, next);
-    const pop = popFrom !== null && popFrom !== undefined && i >= popFrom ? ' fx-pop' : '';
-    const img = m.image_url ? `<img src="${msgrEsc(m.image_url)}" alt="" onclick="${opts.lightbox || 'openSiteLightbox'}(this.src)">` : '';
-    h += `<div class="chat-bubble msgr-b ${mine ? 'me' : 'them'} ${m.sender === 'admin' ? 'admin' : 'customer'}${first ? ' first' : ''}${last ? ' last' : ''}${img && !m.message ? ' only-img' : ''}${pop}" data-id="${msgrEsc(m.id)}">${img}${m.message ? `<span>${msgrEsc(m.message)}</span>` : ''}</div>`;
+    const pop = popFrom !== null && popFrom !== undefined && m.idx >= popFrom ? ' fx-pop' : '';
+    const cls = `chat-bubble msgr-b ${mine ? 'me' : 'them'} ${m.sender === 'admin' ? 'admin' : 'customer'}${first ? ' first' : ''}${last ? ' last' : ''}${pop}`;
+    if(m.album){
+      const n = m.album.length, shown = m.album.slice(0, 9);
+      h += `<div class="${cls} only-img msgr-album n${Math.min(n, 3)}" data-id="${msgrEsc(m.id)}">${shown.map((u, k) =>
+        `<img src="${msgrEsc(u)}" alt="" loading="lazy" onclick="${lb}(this.src)">${k === 8 && n > 9 ? `<b class="msgr-more" onclick="${lb}('${msgrEsc(m.album[9])}')">+${n - 9}</b>` : ''}`).join('')}</div>`;
+    } else {
+      const img = m.image_url ? `<img class="msgr-img" src="${msgrEsc(m.image_url)}" alt="" loading="lazy" onclick="${lb}(this.src)">` : '';
+      h += `<div class="${cls}" data-id="${msgrEsc(m.id)}">${img}${m.message ? `<span>${msgrEsc(m.message)}</span>` : ''}</div>`;
+    }
     if(last){
       const seen = mine && i === lastMine ? (m[me === 'customer' ? 'read_by_admin' : 'read_by_customer'] ? ' · ✓ ဖတ်ပြီး' : ' · ပို့ပြီး') : '';
       h += `<div class="msgr-meta ${mine ? 'r' : 'l'}">${msgrTime(m.created_at)}${seen}</div>`;
@@ -6417,7 +6561,7 @@ function msgrLogHtml(list, me, popFrom, opts){
 function msgrGrow(t){ if(!t) return; t.style.height = 'auto'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; }
 function msgrGrow(t){ if(!t) return; t.style.height = 'auto'; t.style.height = Math.min(110, t.scrollHeight) + 'px'; }
 function msgrFly(b){ if(!b) return; b.classList.remove('fly'); void b.offsetWidth; b.classList.add('fly'); }
-function adminSendState(){ const b = document.getElementById('admin-chat-send-btn'), i = document.getElementById('admin-chat-input'); if(b && i) b.disabled = !(i.value.trim() || pendingAdminChatImageFile); }
+function adminSendState(){ const b = document.getElementById('admin-chat-send-btn'), i = document.getElementById('admin-chat-input'); if(b && i) b.disabled = !(i.value.trim() || (typeof adminPics !== 'undefined' && adminPics.files.length)); }
 function adminChatLogHtml(thread, popFrom){ return msgrLogHtml(thread, 'admin', popFrom, { lightbox:'openLightbox' }); }
 
 // ---------- DELIVERY QUEUE ----------
@@ -6681,7 +6825,7 @@ setInterval(async ()=>{
   if(fn){
     try{ await fn(); }catch(e){ console.error('Auto-refresh error:', e); }
   }
-}, 45000);
+}, 120000); // ၂ မိနစ်
 
 // ---------- WALLET TOP-UP MANAGEMENT ----------
 // ---------- WALLET SECTION NAVIGATION (Profile Order History ပုံစံအတိုင်း ဝင်ကြည့်မှသာ Load) ----------
@@ -9420,6 +9564,915 @@ function renderTrash(){
   });
 }
 
+// =====================================================================
+// 📱 POST ပုံထုတ် — Facebook / TikTok Poster + Caption (ဖုန်းထဲမှာပဲ ဆွဲ · Supabase ကုန်ကျမှု မရှိ)
+//   Design ၆ မျိုး · 1:1 / 4:5 / 9:16 · ၄ ထည် Collage · ✏️ Edit (လက် ၂ ချောင်း ချဲ့/ရွှေ့) · Caption ၃ မျိုး
+// =====================================================================
+let __pmReady = false;
+function postMakerInit(){
+  if(__pmReady) return; const panel = document.getElementById('post-maker-panel'); if(!panel) return; __pmReady = true;
+  panel.innerHTML = "<div class=\"pm\">\n  <div class=\"form-card\">\n    <h3>📱 Facebook / TikTok Post ပုံထုတ်</h3>\n    <div class=\"hint\">ပစ္စည်းရွေး → Design ရွေး → <b>Save / Share</b> · ဈေး · Sale · Size · Logo အလိုအလျောက် · Caption ပါ ရေးပေး</div>\n    <div class=\"pm-lbl\">① ပစ္စည်း ရွေးပါ</div>\n    <input type=\"text\" id=\"pm-q\" placeholder=\"🔍 ပစ္စည်း နာမည် / Category ရှာရန်\" autocomplete=\"off\">\n    <div class=\"pm-prods\" id=\"pm-prods\"></div>\n    <div class=\"pm-pickhint\" id=\"pm-pickhint\"></div>\n    <div class=\"pm-seg c2\" style=\"margin-top:8px\">\n      <button type=\"button\" id=\"pm-own-btn\">📷 ကိုယ့်ပုံ ထည့်မည်</button>\n      <button type=\"button\" id=\"pm-mode-btn\">📚 ၄ ထည် Collage</button>\n    </div>\n    <input type=\"file\" id=\"pm-own\" accept=\"image/*\" hidden>\n  </div>\n  <div class=\"form-card\">\n    <div class=\"pm-lbl\" style=\"margin-top:0\">② Design</div>\n    <div class=\"pm-seg c3\" id=\"pm-sty\">\n      <button type=\"button\" data-v=\"A\" class=\"on\">Black Card<small>Prepaid ကတ်ပုံစံ</small></button>\n      <button type=\"button\" data-v=\"D\">Hang Tag<small>ဈေးကတ် ချိတ်</small></button>\n      <button type=\"button\" data-v=\"E\">Magazine<small>မဂ္ဂဇင်း Cover</small></button>\n      <button type=\"button\" data-v=\"F\">Receipt<small>ဘောက်ချာ</small></button>\n      <button type=\"button\" data-v=\"G\">Polaroid<small>ဓာတ်ပုံ ကပ်</small></button>\n      <button type=\"button\" data-v=\"H\">Rust Sale<small>အနီ Bold</small></button>\n    </div>\n    <div class=\"pm-lbl\">Size · ဘယ်မှာ တင်မလဲ</div>\n    <div class=\"pm-seg c3\" id=\"pm-fmt\">\n      <button type=\"button\" data-v=\"sq\" class=\"on\">Facebook<small>1:1</small></button>\n      <button type=\"button\" data-v=\"pt\">FB / IG Feed<small>4:5</small></button>\n      <button type=\"button\" data-v=\"st\">TikTok / Story<small>9:16</small></button>\n    </div>\n  </div>\n  <div class=\"form-card\">\n    <div class=\"pm-lbl\" style=\"margin-top:0\">③ စာ ပြင်ချင်ရင်</div>\n    <div class=\"pm-lbl\">🏷️ ခေါင်းစဉ် — ကြိုက်တာ ရေးလို့ရ</div>\n    <input type=\"text\" id=\"pm-t-head\" value=\"NEW DROP\" maxlength=\"24\">\n    <div class=\"pm-chips\" id=\"pm-head-chips\"><button type=\"button\">NEW DROP</button><button type=\"button\">NEW IN</button><button type=\"button\">SALE</button><button type=\"button\">BEST SELLER</button><button type=\"button\">LIMITED</button><button type=\"button\">RESTOCK</button><button type=\"button\">COMING SOON</button><button type=\"button\">THIS WEEK'S PICKS</button></div>\n    <div class=\"pm-lbl\">💸 Sale % (မချရင် 0 · Sale ချထားရင် အလိုအလျောက်)</div>\n    <input type=\"text\" id=\"pm-t-sale\" value=\"0\" inputmode=\"numeric\">\n    <div class=\"pm-lbl\">📝 ပစ္စည်း ဖော်ပြချက်</div>\n    <input type=\"text\" id=\"pm-t-mm\" value=\"\">\n    <div class=\"pm-lbl\">📍 အောက်ခြေစာ</div>\n    <input type=\"text\" id=\"pm-t-foot\" value=\"🛵 အိမ်အရောက် ပို့ပေးပါတယ်နော် · Messenger ကနေ မှာလို့ရပါတယ် 🤍\">\n    <label class=\"pm-chk\"><input type=\"checkbox\" id=\"pm-o-old\" class=\"no-confirm\" checked> ဈေးဟောင်း ခြစ်ပြမည်</label>\n    <label class=\"pm-chk\"><input type=\"checkbox\" id=\"pm-o-size\" class=\"no-confirm\" checked> Size ပြမည်</label>\n    <label class=\"pm-chk\"><input type=\"checkbox\" id=\"pm-o-url\" class=\"no-confirm\" checked> Website လိပ်စာ ပြမည်</label>\n  </div>\n  <div class=\"pm-stage\" id=\"pm-stage\"><canvas id=\"pm-cv\" width=\"1080\" height=\"1080\"></canvas>\n    <div class=\"pm-ghint\" id=\"pm-ghint\">✌️ ချဲ့/ချုံ့ · ☝️ ဆွဲရွှေ့ · 👆👆 ၂ ချက်တို့ = မူလ</div></div>\n  <div class=\"pm-editbar\"><button type=\"button\" class=\"secondary\" id=\"pm-ed-btn\">✏️ Edit — ပုံ နေရာရွှေ့ / ချဲ့</button><button type=\"button\" class=\"secondary\" id=\"pm-ed-reset\" hidden>↺ မူလ</button></div>\n  <div class=\"pm-size\" id=\"pm-size-info\"></div>\n  <div class=\"pm-acts\"><button type=\"button\" class=\"acid\" id=\"pm-share\">📤 Share (FB/TikTok)</button><button type=\"button\" class=\"secondary\" id=\"pm-save\">⬇️ ပုံ Save</button></div>\n  <div class=\"form-card\" style=\"margin-top:18px\">\n    <h3>✨ Caption ရေးခိုင်းမည်</h3>\n    <div class=\"pm-lbl\">လေသံ</div>\n    <div class=\"pm-seg c4\" id=\"pm-tone\">\n      <button type=\"button\" data-v=\"soft\" class=\"on\">🌸<small>နူးညံ့</small></button>\n      <button type=\"button\" data-v=\"happy\">✨<small>ပျော်ရွှင်</small></button>\n      <button type=\"button\" data-v=\"prem\">🤍<small>Premium</small></button>\n      <button type=\"button\" data-v=\"cute\">🥰<small>ချစ်စရာ</small></button>\n    </div>\n    <div class=\"pm-lbl\">ဘာသာ</div>\n    <div class=\"pm-seg c3\" id=\"pm-lang\">\n      <button type=\"button\" data-v=\"mm\" class=\"on\">မြန်မာ</button>\n      <button type=\"button\" data-v=\"mix\">မြန်မာ + Eng</button>\n      <button type=\"button\" data-v=\"en\">English</button>\n    </div>\n    <div class=\"pm-lbl\">ဘယ်မှာ တင်မလဲ</div>\n    <div class=\"pm-seg c2\" id=\"pm-plat\">\n      <button type=\"button\" data-v=\"fb\" class=\"on\">Facebook<small>အပြည့်အစုံ</small></button>\n      <button type=\"button\" data-v=\"tt\">TikTok<small>တိုတို + #fyp</small></button>\n    </div>\n    <button type=\"button\" class=\"pm-ai-go\" id=\"pm-ai-go\">✨ Caption ၃ မျိုး ရေးမည်</button>\n    <div id=\"pm-caps\"></div>\n  </div>\n</div>";
+
+  let P = [], imgs = [], picks = [];
+
+  let cur = 0, own = null, mode = 'one', fmt = 'sq', sty = 'A', tone = 'soft', lang = 'mm', plat = 'fb', selCap = '';
+  const $ = id => document.getElementById('pm-' + id);
+  const cv = $('cv'), ctx = cv.getContext('2d');
+  const K = '#141412', G = '#D6FF3F', R = '#C13B1F', C = '#E9E4D8', MU = '#a39e91';
+  const AN = 'Anton, "Noto Sans Myanmar"', AR = '"Archivo Black", Anton, "Noto Sans Myanmar"', PM = '"IBM Plex Mono", "Space Mono", monospace', MM = '"Noto Sans Myanmar"';
+
+
+  // ---------- ① ပစ္စည်း အစစ် ရွေး (Collage = ၄ ခုအထိ) ----------
+  const SOFT = n => `${n} လေး ရောက်ပါပြီရှင့် — ဝတ်ရတာ သက်တောင့်သက်သာ ရှိပါတယ်နော်`;
+  function descOf(p){ const d = String(p.description || '').split(/\n|။/)[0].trim(); return d ? (d.length > 70 ? d.slice(0, 68) + '…' : d) : SOFT(p.name); }
+  function toItem(p){ let st = { on:false, pct:0, orig:Number(p.price) || 0 }; try{ st = saleState(p); }catch(e){}
+    return { src:p.id, name:p.name || '', mm:descOf(p), price:Number(st.orig || p.price) || 0, pct:st.on ? st.pct : 0, sp:st.on ? st.sp : 0,
+      sizes:String(p.sizes || '').split(/[,\s]+/).map(x => x.trim()).filter(Boolean).join(' ') || 'Free', tag:String(p.category || 'Fashion').replace(/[^A-Za-z0-9]/g, '') || 'Fashion',
+      url:(p.image_url || String(p.images || '').split(',')[0] || '').trim() };
+  }
+  const imgCache = {};
+  function loadImg(url){ if(imgCache[url]) return imgCache[url]; const i = new Image(); i.crossOrigin = 'anonymous';
+    i.onload = () => draw(); i.onerror = () => { if(!i.dataset.retry && url){ i.dataset.retry = 1; i.src = url + (url.includes('?') ? '&' : '?') + 'pm=' + Date.now(); } };
+    if(url) i.src = url + (url.includes('?') ? '&' : '?') + 'pm=1'; else { const c = document.createElement('canvas'); c.width = c.height = 8; c.getContext('2d').fillStyle = '#ccc'; i.src = c.toDataURL(); }
+    return imgCache[url] = i; }
+  const prodList = () => (typeof productsListCache !== 'undefined' ? productsListCache : []).filter(p => !p.is_gift_card);
+  function applyPicks(){ const all = prodList(); P = picks.map(id => all.find(p => p.id === id)).filter(Boolean).map(toItem); imgs = P.map(p => loadImg(p.url)); cur = 0;
+    if(mode === 'one' && P[0]){ $('t-sale').value = P[0].pct || 0; $('t-mm').value = P[0].mm; }
+    $('pickhint').textContent = mode === 'grid' ? `📚 Collage — ပစ္စည်း ${picks.length}/4 ရွေးထားသည် (နှိပ်ပြီး ထည့်/ဖြုတ်)` : '';
+    draw(); }
+  function renderPicker(){ const q = ($('q').value || '').trim().toLowerCase(); const all = prodList().filter(p => !q || (p.name || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q)).slice(0, 60);
+    $('prods').innerHTML = all.length ? all.map(p => { const k = picks.indexOf(p.id), u = (p.image_url || '').trim();
+      return `<button type="button" data-id="${p.id}" class="${k >= 0 ? 'on' : ''}">${k >= 0 && mode === 'grid' ? `<i>${k + 1}</i>` : ''}<img src="${u ? u.replace(/"/g, '') : ''}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span>${String(p.name || '').replace(/[<>&"]/g, '')}</span></button>`; }).join('')
+      : '<p class="hint">ပစ္စည်း မတွေ့ပါ</p>'; }
+  $('prods').addEventListener('click', e => { const b = e.target.closest('button[data-id]'); if(!b) return; const id = b.dataset.id; own = null; resetZ();
+    if(mode === 'grid'){ const k = picks.indexOf(id); if(k >= 0) picks.splice(k, 1); else { if(picks.length >= 4) return toast('📚 ၄ ခုအထိပဲ ရွေးလို့ရပါတယ်'); picks.push(id); } }
+    else picks = [id];
+    renderPicker(); applyPicks(); });
+  $('q').addEventListener('input', renderPicker);
+  window.postMakerOpen = async function(productId){ try{ if(!prodList().length && typeof loadProducts === 'function') await loadProducts(); }catch(e){}
+    if(productId){ if(mode === 'grid'){ mode = 'one'; $('mode-btn').classList.remove('on'); } picks = [productId]; own = null; resetZ(); }
+    else if(!picks.length && prodList()[0]) picks = [prodList()[0].id];
+    renderPicker(); applyPicks(); };
+  $('own-btn').onclick = () => $('own').click();
+  $('own').onchange = e => { const f = e.target.files[0]; if(!f) return; const i = new Image(); i.onload = () => { own = i; resetZ(); mode = 'one'; $('mode-btn').classList.remove('on'); draw(); toast('📷 ပုံ ထည့်ပြီး'); }; i.src = URL.createObjectURL(f); };
+  $('mode-btn').onclick = () => { mode = mode === 'one' ? 'grid' : 'one'; $('mode-btn').classList.toggle('on', mode === 'grid');
+    if(mode === 'grid'){ if(!picks.length && P[0]) picks = [P[0].src]; } else if(picks.length) picks = picks.slice(0, 1); own = null; resetZ(); applyPicks(); renderPicker();
+    const hv = $('t-head').value; if(['NEW DROP', "THIS WEEK'S PICKS", ''].includes(hv)) $('t-head').value = mode === 'grid' ? "THIS WEEK'S PICKS" : 'NEW DROP'; paintChips(); draw(); };
+  const paintChips = () => document.querySelectorAll('#head-chips button').forEach(b => b.classList.toggle('on', b.textContent === $('t-head').value));
+  $('head-chips').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; $('t-head').value = b.textContent; paintChips(); draw(); });
+  $('t-head').addEventListener('input', paintChips); paintChips();
+  // ---------- ✌️ Poster ပေါ်မှာ တိုက်ရိုက် — လက် ၁ ချောင်း ရွှေ့ · ၂ ချောင်း ချဲ့/ချုံ့ (Free) ----------
+  let editing = false;
+  const showReset = () => { $('ed-reset').hidden = !editing; };
+  const resetZ = () => { for(const k in TR) delete TR[k]; };
+  $('ed-reset').onclick = () => { resetZ(); draw(); };
+  // ✏️ Edit → ရွှေ့/ချဲ့ ရ · ✔️ Confirm → သော့ခတ် (မရွှေ့တော့)
+  function setEdit(on){ editing = on; pts.clear(); g0 = null; $('stage').classList.toggle('editing', on); $('ghint').classList.remove('hide');
+    $('ed-btn').textContent = on ? '✔️ Design အတည်ပြုမည်' : '✏️ Edit — ပုံ နေရာရွှေ့ / ချဲ့'; $('ed-btn').parentElement.classList.toggle('on', on); showReset();
+    if(on && mode === 'grid') toast('📚 ရွှေ့ချင်တဲ့ ပုံပေါ်ကို တိုက်ရိုက် ဆွဲပါ'); }
+  $('ed-btn').onclick = () => { const was = editing; setEdit(!editing); if(was) toast('✔️ Design အတည်ပြုပြီး — ရွှေ့ချင်ရင် Edit နှိပ်ပါ'); else $('stage').scrollIntoView({ behavior:'smooth', block:'center' }); };
+  const pts = new Map(); let g0 = null, raf = 0, lastTap = 0;
+  const redraw = () => { if(raf) return; raf = requestAnimationFrame(() => { raf = 0; draw(); showReset(); }); };
+  const scl = () => cv.width / cv.getBoundingClientRect().width;
+  let act = null;
+  const toCanvas = (cx, cy) => { const b = cv.getBoundingClientRect(), k = scl(); return { x:(cx - b.left) * k, y:(cy - b.top) * k }; };
+  const hit = (cx, cy) => { const q = toCanvas(cx, cy); for(let i = boxes.length - 1; i >= 0; i--){ const b = boxes[i]; if(q.x >= b.x0 && q.x <= b.x1 && q.y >= b.y0 && q.y <= b.y1) return b; } return null; };
+  function start(){ const a = [...pts.values()]; g0 = null; if(!act) return; const t = tr(act.key);
+    if(a.length === 1) g0 = { x:a[0].x, y:a[0].y, ox:t.x, oy:t.y, zoom:t.z, d:0 };
+    else if(a.length >= 2){ const [p, q] = a; g0 = { x:(p.x + q.x) / 2, y:(p.y + q.y) / 2, ox:t.x, oy:t.y, zoom:t.z, d:Math.hypot(p.x - q.x, p.y - q.y) || 1 }; } }
+  cv.addEventListener('pointerdown', e => { if(!editing) return; e.preventDefault(); cv.setPointerCapture(e.pointerId);
+    if(!pts.size){ act = hit(e.clientX, e.clientY); } pts.set(e.pointerId, { x:e.clientX, y:e.clientY }); start(); $('ghint').classList.add('hide');
+    const now = Date.now(); if(pts.size === 1 && act && now - lastTap < 300){ delete TR[act.key]; redraw(); } lastTap = now; });
+  cv.addEventListener('pointermove', e => { if(!pts.has(e.pointerId) || !g0 || !act) return; pts.set(e.pointerId, { x:e.clientX, y:e.clientY }); const a = [...pts.values()], s = scl(), t = tr(act.key);
+    let mx = a[0].x, my = a[0].y;
+    if(a.length >= 2 && g0.d){ const [p, q] = a; mx = (p.x + q.x) / 2; my = (p.y + q.y) / 2; t.z = Math.max(.2, Math.min(6, g0.zoom * Math.hypot(p.x - q.x, p.y - q.y) / g0.d)); }
+    t.x = g0.ox + (mx - g0.x) * s / act.w; t.y = g0.oy + (my - g0.y) * s / act.h; redraw(); });
+  ['pointerup','pointercancel'].forEach(t => cv.addEventListener(t, e => { pts.delete(e.pointerId); if(!pts.size) act = null; start(); }));
+  cv.addEventListener('wheel', e => { if(!editing) return; const b = hit(e.clientX, e.clientY); if(!b) return; e.preventDefault(); const t = tr(b.key); t.z = Math.max(.2, Math.min(6, t.z * (e.deltaY < 0 ? 1.08 : .92))); redraw(); }, { passive:false });
+  ['gesturestart','gesturechange'].forEach(t => cv.addEventListener(t, e => { if(editing) e.preventDefault(); }));
+  const seg = (id, set, redraw = true) => $(id).addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return;
+    $(id).querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); set(b.dataset.v); if(redraw) draw(); });
+  seg('fmt', v => fmt = v); seg('sty', v => sty = v);
+  seg('tone', v => tone = v, false); seg('lang', v => lang = v, false); seg('plat', v => plat = v, false);
+  ['t-head','t-sale','t-mm','t-foot'].forEach(id => $(id).addEventListener('input', draw));
+  ['o-old','o-size','o-url'].forEach(id => $(id).addEventListener('change', draw));
+
+  // ---------- Helper ----------
+  const ks = n => Number(n).toLocaleString('en-US');
+  const pctV = () => Math.max(0, Math.min(90, parseInt($('t-sale').value) || 0));
+  const saleP = (p, pct) => (p.sp && pct === p.pct) ? p.sp : Math.round(p.price * (1 - pct / 100) / 100) * 100;
+  function rr(x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  function cover(img, x, y, w, h, r){ const k = Math.max(w / img.width, h / img.height), iw = img.width * k, ih = img.height * k;
+    ctx.save(); if(r){ rr(x, y, w, h, r); } else { ctx.beginPath(); ctx.rect(x, y, w, h); } ctx.clip(); ctx.drawImage(img, x + (w - iw) / 2, y + (h - ih) / 2, iw, ih); ctx.restore(); }
+  const tiny = document.createElement('canvas'); tiny.width = tiny.height = 28; const tctx = tiny.getContext('2d');
+  const TR = {}; const tr = k => TR[k] || (TR[k] = { z:1, x:0, y:0 }); let boxes = [];
+  const edgeCache = new WeakMap();
+  function edgeColor(img){ if(edgeCache.has(img)) return edgeCache.get(img); let c = '#e9e4d8';
+    try{ tctx.clearRect(0, 0, 28, 28); tctx.drawImage(img, 0, 0, 28, 28); const d = tctx.getImageData(0, 0, 28, 28).data; let rr = 0, gg = 0, bb = 0, n = 0;
+      for(let i = 0; i < 28; i++) for(const [x, y] of [[i, 0], [i, 27], [0, i], [27, i]]){ const o = (y * 28 + x) * 4; rr += d[o]; gg += d[o + 1]; bb += d[o + 2]; n++; }
+      c = `rgb(${rr / n | 0},${gg / n | 0},${bb / n | 0})`; }catch(e){}
+    edgeCache.set(img, c); return c; }
+  function fitImg(img, x, y, w, h, r, main){
+    ctx.save(); if(r) rr(x, y, w, h, r); else { ctx.beginPath(); ctx.rect(x, y, w, h); } ctx.clip();
+    // နောက်ခံ — ပုံကိုယ်တိုင်ကို ဝါးဝါးလေး ချဲ့ (ဘေးက ကွက်လပ် မဖြစ်အောင်)
+    ctx.fillStyle = edgeColor(img); ctx.fillRect(x, y, w, h);
+    // ပစ္စည်းပုံ — အပြည့် (မဖြတ်) · Zoom/ရွှေ့ ရ
+    const key = main === true ? 'main' : typeof main === 'number' ? 'c' + main : null, t = key ? tr(key) : { z:1, x:0, y:0 };
+    const k = Math.min(w / img.width, h / img.height) * .94 * t.z, iw = img.width * k, ih = img.height * k, dx = t.x * w, dy = t.y * h;
+        ctx.drawImage(img, x + (w - iw) / 2 + dx, y + (h - ih) / 2 + dy, iw, ih); ctx.restore();
+    if(key){ const m = ctx.getTransform(), c = [[x, y], [x + w, y], [x, y + h], [x + w, y + h]].map(([a, b]) => m.transformPoint(new DOMPoint(a, b)));
+      const sx = Math.hypot(m.a, m.b); boxes.push({ key, x0:Math.min(...c.map(q => q.x)), y0:Math.min(...c.map(q => q.y)), x1:Math.max(...c.map(q => q.x)), y1:Math.max(...c.map(q => q.y)), w:w * sx, h:h * sx }); }
+  }
+  function fit(text, font, size, maxW, min){ let s = size; ctx.font = font.replace('$', s); while(mw(text) > maxW && s > min){ s -= 2; ctx.font = font.replace('$', s); } return s; }
+  // စာကြောင်းခွဲ — မြန်မာစာ (Space မပါ) ကိုလည်း စကားလုံး/စာလုံးအလိုက် ခွဲ · ဘောင်မကျော် · အကြောင်းရေ ပိုရင် "…"
+  const SEG = typeof Intl !== 'undefined' && Intl.Segmenter;
+  const segW = SEG ? new Intl.Segmenter('my', { granularity:'word' }) : null, segG = SEG ? new Intl.Segmenter('my', { granularity:'grapheme' }) : null;
+  const toks = t => segW ? [...segW.segment(t)].map(x => x.segment) : t.split(/(\s+)/);
+  const graph = t => segG ? [...segG.segment(t)].map(x => x.segment) : Array.from(t);
+  // 📏 မြန်မာစာ အကျယ် အမှန် — iPhone Safari က measureText မှားတတ်လို့ တကယ်ဆွဲပြီး Pixel နဲ့ တိုင်း
+  const MYR = /[\u1000-\u109F\uAA60-\uAA7F]/, inkC = document.createElement('canvas'), ictx = inkC.getContext('2d', { willReadFrequently:true }), inkCache = new Map();
+  // iPhone Safari က measureText မြန်မာစာ အကျယ် မှားလို့ — HTML စာသား (DOM) နဲ့ပါ တိုင်း
+  let mspan = null;
+  function domW(t){ try{ if(!mspan){ mspan = document.createElement('span'); mspan.style.cssText = 'position:absolute;left:-99999px;top:0;white-space:pre;visibility:hidden;pointer-events:none'; document.body.appendChild(mspan); }
+    mspan.style.font = ctx.font; mspan.textContent = t; return mspan.getBoundingClientRect().width; }catch(e){ return 0; } }
+  function mw(t){ const m = ctx.measureText(t).width; if(!MYR.test(t)) return m; const key = ctx.font + '|' + t; if(inkCache.has(key)) return inkCache.get(key);
+    const fs = parseFloat((ctx.font.match(/([\d.]+)px/) || [0, 40])[1]), W = Math.min(8000, Math.ceil(Math.max(m * 3, Array.from(t).length * fs * 1.1) + fs * 6 + 20)), H = Math.ceil(fs * 2.6);
+    inkC.width = W; inkC.height = H; ictx.font = ctx.font; ictx.textBaseline = 'middle'; ictx.textAlign = 'left'; ictx.fillStyle = '#000'; ictx.fillText(t, fs, H / 2);
+    let x1 = -1; try{ const d = ictx.getImageData(0, 0, W, H).data; for(let x = W - 1; x >= 0 && x1 < 0; x--) for(let y = 0; y < H; y++) if(d[(y * W + x) * 4 + 3] > 16){ x1 = x; break; } }catch(e){}
+    const r = Math.max(m, x1 > 0 ? x1 - fs + 2 : 0, domW(t)); if(document.fonts && document.fonts.status !== 'loaded') return r; if(inkCache.size > 3000) inkCache.clear(); inkCache.set(key, r); return r; }
+  try{ document.fonts.addEventListener('loadingdone', () => { inkCache.clear(); setTimeout(() => { try{ draw(); }catch(e){} }, 30); }); }catch(e){}
+  function wrap(text, x, y, maxW, lh, maxLines = 3){
+    const lines = []; let line = ''; const push = () => { lines.push(line.trim()); line = ''; };
+    for(let w of toks(String(text || ''))){
+      if(mw(line + w) <= maxW){ line += w; continue; }
+      if(line.trim()){ push(); w = w.trimStart(); }
+      if(mw(w) > maxW){ for(const g of graph(w)){ if(line && mw(line + g) > maxW) push(); line += g; } }
+      else line = w;
+    }
+    if(line.trim()) lines.push(line.trim());
+    const out = lines.slice(0, maxLines);
+    if(lines.length > maxLines){ let l = out[maxLines - 1]; while(l && ctx.measureText(l + '…').width > maxW) l = graph(l).slice(0, -1).join(''); out[maxLines - 1] = l + '…'; }
+    for(const l of out){ ctx.fillText(l, x, y); y += lh; }
+    return y;
+  }
+  function spaced(text, x, y, sp, align = 'left'){ let w = 0; for(const ch of text) w += ctx.measureText(ch).width + sp; w -= sp;
+    let cx = align === 'right' ? x - w : align === 'center' ? x - w / 2 : x; const a = ctx.textAlign; ctx.textAlign = 'left';
+    for(const ch of text){ ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; } ctx.textAlign = a; return w; }
+  function grid(x, y, w, h, cell, color){ ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+    for(let gx = x; gx <= x + w; gx += cell){ ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx, y + h); ctx.stroke(); }
+    for(let gy = y; gy <= y + h; gy += cell){ ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x + w, gy); ctx.stroke(); } ctx.restore(); }
+  // 🏷️ Website Logo — SUWATI.MEN + FASHION
+  function logo(x, y, s, col, subCol, align = 'left', dot = R){
+    ctx.font = `${s}px ${AN}`; const a = ctx.measureText('SUWATI').width, d = ctx.measureText('.').width, m = ctx.measureText('MEN').width, tw = a + d + m;
+    let lx = align === 'center' ? x - tw / 2 : align === 'right' ? x - tw : x; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = col; ctx.fillText('SUWATI', lx, y); ctx.fillStyle = dot; ctx.fillText('.', lx + a, y); ctx.fillStyle = col; ctx.fillText('MEN', lx + a + d, y);
+    ctx.font = `700 ${s * .27}px "Space Mono", monospace`; ctx.fillStyle = subCol;
+    const sp = s * .12; let sw = 0; for(const ch of 'FASHION') sw += ctx.measureText(ch).width + sp; sw -= sp;
+    spaced('FASHION', lx + (tw - sw) / 2, y + s * .42, sp); return tw; }
+  function stripe(x, y, w, h, bg, fg){ ctx.fillStyle = bg; ctx.fillRect(x, y, w, h); ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+    ctx.translate(x + w / 2, y); ctx.rotate(Math.PI / 2); ctx.fillStyle = fg; ctx.font = `${w * .42}px ${AR}`; ctx.textBaseline = 'middle'; ctx.fillText('SUWATI ✕ SUWATI ✕ SUWATI ✕ SUWATI ✕ SUWATI ✕ SUWATI', 10, 0); ctx.restore(); ctx.textBaseline = 'alphabetic'; }
+  function outline(text, x, y, w, col, a){ ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.lineWidth = 2.5; let s = 400; ctx.font = `${s}px ${AR}`;
+    s = s * w / ctx.measureText(text).width; ctx.font = `${s}px ${AR}`; ctx.strokeText(text, x, y); ctx.restore(); }
+  function badge(text, x, y, h, bg, fg, align = 'left', rot = 0){ ctx.save(); ctx.font = `700 ${h * .44}px ${PM}`; const w = ctx.measureText(text).width + h * .7;
+    const bx = align === 'right' ? x - w : x; ctx.translate(bx + w / 2, y + h / 2); ctx.rotate(rot); ctx.fillStyle = bg; ctx.fillRect(-w / 2, -h / 2, w, h);
+    ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; spaced(text, 0, 2, h * .04, 'center'); ctx.restore(); return w; }
+  function label(text, x, y, s, col){ ctx.font = `700 ${s}px ${PM}`; ctx.fillStyle = col; return spaced(text, x, y, s * .16); }
+  // 🔢 PIN အကွက်ပုံ Size
+  function pins(list, x, y, h, border, fg, maxW){ ctx.font = `700 ${h * .46}px ${PM}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; let cx = x;
+    for(const s of list){ const w = Math.max(h * .86, ctx.measureText(s).width + h * .5); if(cx + w > x + maxW) break;
+      ctx.strokeStyle = border; ctx.lineWidth = h * .055; ctx.strokeRect(cx, y, w, h); ctx.fillStyle = fg; ctx.fillText(s, cx + w / 2, y + h / 2 + 2); cx += w + h * .2; }
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; }
+  function barcode(x, y, w, h, col, seed){ ctx.fillStyle = col; let s = seed * 9301 + 49297, cx = x; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+    while(cx < x + w){ const bw = 2 + Math.floor(rnd() * 4) * 2.2; if(rnd() > .38) ctx.fillRect(cx, y, Math.min(bw, x + w - cx), h); cx += bw + 2.5; } }
+  function oldPrice(p, x, y, s, col){ ctx.font = `700 ${s}px ${PM}`; ctx.fillStyle = col; const o = ks(p.price); ctx.fillText(o, x, y);
+    const w = ctx.measureText(o).width; ctx.strokeStyle = R; ctx.lineWidth = s * .13; ctx.beginPath(); ctx.moveTo(x - 3, y - s * .32); ctx.lineTo(x + w + 3, y - s * .32); ctx.stroke(); return w; }
+  function price(v, x, y, s, col, unitCol){ ctx.font = `${s}px ${AR}`; ctx.fillStyle = col; const t = ks(v); ctx.fillText(t, x, y); const w = ctx.measureText(t).width;
+    ctx.font = `700 ${s * .26}px ${PM}`; ctx.fillStyle = unitCol; ctx.fillText('MMK', x + w + s * .12, y); }
+  function footer(x, y, col, sub){ const ft = $('t-foot').value; ctx.fillStyle = col; const s = fit(ft, `700 $px ${MM}`, 30, cv.width - x * 2 - 40, 20); ctx.font = `700 ${s}px ${MM}`; ctx.fillText(ft, x, y);
+    if($('o-url').checked){ ctx.font = `700 21px ${PM}`; ctx.fillStyle = sub; spaced('SUWATIMENFASHION.VERCEL.APP', x, y + 40, 2); } }
+
+  // ---------- Info Block (A / B) ----------
+  function info2(p, x, y, mw, t, pct){
+    const lw = mw * .54, rx = x + mw * .58, rw = mw * .42;
+    label('PRODUCT', x, y, 15, t.mu); ctx.fillStyle = t.ink; const n = p.name.toUpperCase(), ns = fit(n, `$px ${AR}`, 58, lw, 34); ctx.font = `${ns}px ${AR}`;
+    let ly = wrap(n, x, y + 62, lw, ns * 1.05, 2) - ns * .25; ctx.fillStyle = t.mu; ctx.font = `500 26px ${MM}`; wrap($('t-mm').value, x, ly + 8, lw, 44, 2);
+    const l2 = label(pct ? 'SALE PRICE' : 'PRICE', rx, y, 15, t.mu); if(pct && $('o-old').checked) oldPrice(p, rx + l2 + 14, y + 2, 22, t.mu);
+    const ps = fit(ks(pct ? saleP(p, pct) : p.price), `$px ${AR}`, 78, rw - 70, 44); price(pct ? saleP(p, pct) : p.price, rx, y + 82, ps, t.acc, t.ink);
+    if($('o-size').checked){ label('SIZES', rx, y + 134, 15, t.mu); pins(p.sizes.split(' '), rx, y + 152, 52, t.pinB, t.ink, rw); }
+  }
+  function info(p, x, y, mw, sz, t, pct){
+    label('PRODUCT', x, y, sz * .2, t.mu); y += sz * .95;
+    ctx.fillStyle = t.ink; const n = p.name.toUpperCase(), ns = fit(n, `$px ${AR}`, sz, mw, sz * .55); ctx.font = `${ns}px ${AR}`; y = wrap(n, x, y, mw, ns * 1.05, 2) - ns * .2;
+    ctx.fillStyle = t.mu; ctx.font = `500 ${sz * .38}px ${MM}`; y = wrap($('t-mm').value, x, y + sz * .08, mw, sz * .62, 2) + sz * .18;
+    const lw = label(pct ? 'SALE PRICE' : 'PRICE', x, y, sz * .2, t.mu);
+    if(pct && $('o-old').checked) oldPrice(p, x + lw + sz * .3, y + 2, sz * .3, t.mu);
+    y += sz * 1.25; price(pct ? saleP(p, pct) : p.price, x, y, sz * 1.18, t.acc, t.ink);
+    if($('o-size').checked){ y += sz * .5; ctx.fillStyle = t.line; ctx.globalAlpha = .5; ctx.fillRect(x, y, mw, 3); ctx.globalAlpha = 1;
+      y += sz * .62; label('SIZES AVAILABLE', x, y, sz * .2, t.mu); y += sz * .25; pins(p.sizes.split(' '), x, y, sz * .82, t.pinB, t.ink, mw); }
+  }
+
+  // ---------- A · Black Card (ကတ်ရှေ့ဘက်) ----------
+  function drawA(W, H, pct){
+    const SW = 150, cw = W - SW, pad = 64, p = P[cur], img = own || imgs[cur], side = H / W < 1.2;
+    ctx.fillStyle = K; ctx.fillRect(0, 0, W, H); grid(0, 0, cw, H, 45, 'rgba(214,255,63,.07)');
+    outline('SUWATI', pad - 20, H - 150, cw - pad * 2 + 40, G, .2);
+    stripe(cw, 0, SW, H, G, K);
+    logo(pad, 118, 66, C, MU);
+    badge($('t-head').value.toUpperCase(), cw - pad, 64, 50, R, C, 'right');
+    ctx.font = `700 17px ${PM}`; ctx.fillStyle = MU; ctx.textAlign = 'right'; spaced('NAY PYI TAW', cw - pad, 150, 3, 'right'); ctx.textAlign = 'left';
+    const top = 196, bottom = H - 160;
+    if(mode === 'grid') return gridMode(W, H, pct, { x:pad, top, w:cw - pad * 2, bottom, ink:C, acc:G, mu:MU, frame:G, bg:K });
+    let px = pad, py = top, pw, ph;
+    if(side){ pw = (cw - pad * 2) * .56; ph = bottom - top; } else { pw = cw - pad * 2; ph = bottom - top - (fmt === 'st' ? 720 : 330); }
+    ctx.fillStyle = '#000'; rr(px + 14, py + 14, pw, ph, 26); ctx.fill();
+    fitImg(img, px, py, pw, ph, 26, true); ctx.strokeStyle = G; ctx.lineWidth = 4; rr(px + 2, py + 2, pw - 4, ph - 4, 24); ctx.stroke();
+    if(pct) badge(`-${pct}% OFF`, px + 24, py + 24, 62, R, C, 'left', -.05);
+    const t = { ink:C, acc:G, mu:MU, line:G, pinB:G };
+    if(side) info(p, px + pw + 42, top + 34, cw - pad - (px + pw + 42), 62, t, pct);
+    else if(fmt === 'pt') info2(p, pad, py + ph + 56, cw - pad * 2, t, pct);
+    else info(p, pad, py + ph + 66, cw - pad * 2, 92, t, pct);
+    ctx.fillStyle = G; ctx.globalAlpha = .5; ctx.fillRect(pad, H - 128, cw - pad * 2, 3); ctx.globalAlpha = 1;
+    footer(pad, H - 76, C, MU);
+  }
+
+  // ---------- B · Acid Back (ကတ်နောက်ဘက်) ----------
+  function drawB(W, H, pct){
+    const pad = 64, p = P[cur], img = own || imgs[cur], side = H / W < 1.2;
+    ctx.fillStyle = G; ctx.fillRect(0, 0, W, H); grid(0, 0, W, H, 45, 'rgba(20,20,18,.07)');
+    ctx.fillStyle = K; ctx.fillRect(0, 48, W, 140); ctx.fillStyle = '#000'; ctx.fillRect(0, 188, W, 6);
+    logo(pad, 132, 62, C, G);
+    badge($('t-head').value.toUpperCase(), W - pad, 94, 48, R, C, 'right');
+    const top = 236, bottom = H - 250;
+    if(mode === 'grid') return gridMode(W, H, pct, { x:pad, top, w:W - pad * 2, bottom, ink:K, acc:K, mu:'rgba(20,20,18,.6)', frame:K, bg:G }, true);
+    let px = pad, py = top, pw, ph;
+    if(side){ pw = (W - pad * 2) * .56; ph = bottom - top; } else { pw = W - pad * 2; ph = bottom - top - (fmt === 'st' ? 720 : 330); }
+    ctx.fillStyle = K; rr(px + 14, py + 14, pw, ph, 26); ctx.fill();
+    fitImg(img, px, py, pw, ph, 26, true); ctx.strokeStyle = K; ctx.lineWidth = 5; rr(px + 2.5, py + 2.5, pw - 5, ph - 5, 24); ctx.stroke();
+    if(pct) badge(`-${pct}% OFF`, px + 24, py + 24, 62, R, C, 'left', -.05);
+    const t = { ink:K, acc:K, mu:'rgba(20,20,18,.62)', line:K, pinB:K };
+    if(side) info(p, px + pw + 42, top + 34, W - pad - (px + pw + 42), 62, t, pct);
+    else if(fmt === 'pt') info2(p, pad, py + ph + 56, W - pad * 2, t, pct);
+    else info(p, pad, py + ph + 66, W - pad * 2, 92, t, pct);
+    // Barcode ဧရိယာ (ကတ်နောက်ကျော Panel လို)
+    const by = H - 214; ctx.fillStyle = K; ctx.fillRect(pad, by - 34, W - pad * 2, 3);
+    const ft = $('t-foot').value; ctx.fillStyle = K; const fs = fit(ft, `700 $px ${MM}`, 30, W - pad * 2, 20); ctx.font = `700 ${fs}px ${MM}`; ctx.fillText(ft, pad, by + 10);
+    barcode(pad, by + 40, W - pad * 2, 74, K, cur + 7);
+    ctx.font = `700 22px ${PM}`; ctx.fillStyle = K; spaced(`SW-${String(cur + 1).padStart(4, '0')}-${p.tag.toUpperCase()}`, pad, H - 58, 4);
+    ctx.textAlign = 'right'; spaced($('o-url').checked ? 'SUWATIMENFASHION.VERCEL.APP  ▲' : '▲ SCAN TO SHOP', W - pad, H - 58, 2, 'right'); ctx.textAlign = 'left';
+  }
+
+  // ---------- 📚 ၄ ထည် Collage ----------
+  // ================== Design အသစ် ၅ မျိုး ==================
+  const PAPER = '#f8f5ee', DG = '#6f6858';
+  function grain(W, H, a, seed = 3){ let s = seed; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280; ctx.save(); ctx.globalAlpha = a;
+    for(let i = 0; i < W * H / 700; i++){ ctx.fillStyle = rnd() > .5 ? '#000' : '#fff'; ctx.fillRect(rnd() * W, rnd() * H, 2, 2); } ctx.restore(); }
+  function collage(W, H, pct, pal){ ctx.fillStyle = pal.bg; ctx.fillRect(0, 0, W, H); if(pal.grain) grain(W, H, pal.grain);
+    logo(64, 118, 66, pal.ink, pal.mu, 'left', pal.bg === R ? K : R); badge($('t-head').value.toUpperCase(), W - 64, 64, 50, pal.badge || R, C, 'right');
+    gridMode(W, H, pct, { x:64, top:196, w:W - 128, bottom:H - 160, ink:pal.ink, acc:pal.acc, mu:pal.mu, frame:pal.frame, bg:pal.bg, line:pal.line, sale:pal.bg === R ? K : R }, pal.light); }
+  const headTxt = () => $('t-head').value.toUpperCase();
+  const curPrice = (p, pct) => pct ? saleP(p, pct) : p.price;
+  function priceC(v, cx, y, s, col, unitCol, font = AN){ ctx.font = `${s}px ${font}`; const t = ks(v), w = ctx.measureText(t).width; ctx.font = `700 ${s * .24}px ${PM}`; const uw = ctx.measureText('MMK').width;
+    const x = cx - (w + s * .1 + uw) / 2; ctx.textAlign = 'left'; ctx.font = `${s}px ${font}`; ctx.fillStyle = col; ctx.fillText(t, x, y); ctx.font = `700 ${s * .24}px ${PM}`; ctx.fillStyle = unitCol; ctx.fillText('MMK', x + w + s * .1, y); }
+  function dash(x1, x2, y, col, lw = 2, d = 8){ ctx.save(); ctx.setLineDash([d, d]); ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke(); ctx.restore(); }
+  function stamp(cx, cy, r, pct, col = R, fg = C){ ctx.save(); ctx.translate(cx, cy); ctx.rotate(-.25); ctx.fillStyle = col; ctx.beginPath(); ctx.arc(0, 0, r, 0, 7); ctx.fill();
+    ctx.strokeStyle = fg; ctx.lineWidth = r * .04; ctx.setLineDash([r * .08, r * .06]); ctx.beginPath(); ctx.arc(0, 0, r * .84, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.font = `${r * .62}px ${AN}`; ctx.fillText(`-${pct}%`, 0, r * .14); ctx.font = `700 ${r * .2}px ${PM}`; ctx.fillText('SALE', 0, r * .48); ctx.restore(); ctx.textAlign = 'left'; }
+  function textC(t, cx, y, font, col){ ctx.font = font; ctx.fillStyle = col; ctx.textAlign = 'left'; ctx.fillText(t, cx - mw(t) / 2, y); }
+
+  // ---------- B · Hang Tag (ဈေးကတ် ချိတ်) ----------
+  function drawD(W, H, pct){
+    const p = P[cur], img = own || imgs[cur], bg = '#E9E4D8';
+    if(mode === 'grid') return colD(W, H, pct);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); grain(W, H, .05);
+    logo(64, 112, 62, K, DG); badge(headTxt(), W - 64, 58, 48, K, C, 'right');
+    const px = 64, py = 170, pw = W - 128, ph = H - 340;
+    ctx.fillStyle = K; rr(px + 12, py + 12, pw, ph, 18); ctx.fill();
+    fitImg(img, px, py, pw, ph, 18, true); ctx.strokeStyle = K; ctx.lineWidth = 4; rr(px + 2, py + 2, pw - 4, ph - 4, 16); ctx.stroke();
+    const tw = fmt === 'st' ? 420 : fmt === 'pt' ? 380 : 330, q = tw / 330, th = tw * 1.8, tx = W - 64 - tw - 26 * q, ty = py + (fmt === 'sq' ? 46 : 90);
+    // ကြိုး
+    ctx.strokeStyle = '#7d725d'; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.moveTo(tx + tw * .5 - 70 * q, py - 4); ctx.bezierCurveTo(tx + tw * .3, py + 40, tx + tw * .55, ty + 10, tx + tw / 2, ty + 48 * q); ctx.stroke();
+    ctx.save(); ctx.translate(tx + tw / 2, ty + 48 * q); ctx.rotate(.06); ctx.translate(-tw / 2, -48 * q);
+    ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14; ctx.fillStyle = PAPER;
+    ctx.beginPath(); ctx.moveTo(tw * .24, 0); ctx.lineTo(tw * .76, 0); ctx.lineTo(tw, tw * .2); ctx.lineTo(tw, th); ctx.lineTo(0, th); ctx.lineTo(0, tw * .2); ctx.closePath(); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.clip();
+    ctx.strokeStyle = '#d8cfba'; ctx.lineWidth = 2; ctx.strokeRect(14 * q, tw * .2 + 4, tw - 28 * q, th - tw * .2 - 18 * q);
+    ctx.fillStyle = '#cfc5ae'; ctx.beginPath(); ctx.arc(tw / 2, 48 * q, 21 * q, 0, 7); ctx.fill(); ctx.fillStyle = '#3a372f'; ctx.beginPath(); ctx.arc(tw / 2, 48 * q, 13 * q, 0, 7); ctx.fill();
+    const cx = tw / 2, m = 34 * q; let y = 128 * q;
+    logo(cx, y, 40 * q, K, DG, 'center'); y += 46 * q; dash(m, tw - m, y, '#8a8170', 2, 6); y += 54 * q;
+    const n = p.name.toUpperCase(), ns = fit(n, `$px ${AR}`, 36 * q, tw - m * 2, 18); textC(n, cx, y, `${ns}px ${AR}`, K); y += 36 * q;
+    ctx.fillStyle = DG; ctx.textAlign = 'center'; ctx.font = `500 ${17 * q}px ${MM}`; y = wrap($('t-mm').value, cx, y, tw - m * 2, 30 * q, 2) + 6 * q; ctx.textAlign = 'left';
+    if(pct && $('o-old').checked){ ctx.font = `700 ${22 * q}px ${PM}`; const o = ks(p.price), ow = ctx.measureText(o).width; ctx.fillStyle = DG; ctx.fillText(o, cx - ow / 2, y);
+      ctx.strokeStyle = R; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx - ow / 2 - 3, y - 7 * q); ctx.lineTo(cx + ow / 2 + 3, y - 7 * q); ctx.stroke(); }
+    y += 84 * q; { const ps = Math.min(82 * q, fit(ks(curPrice(p, pct)), `$px ${AN}`, 82 * q, tw - m * 2 - 60 * q, 30)); priceC(curPrice(p, pct), cx, y, ps, R, K); }
+    if($('o-size').checked){ y += 50 * q; textC('SIZE  ' + p.sizes.split(' ').join(' · '), cx, y, `700 ${19 * q}px ${PM}`, K); }
+    barcode(m + 10 * q, th - 92 * q, tw - m * 2 - 20 * q, 44 * q, K, cur + 3); textC(`SW-${String(cur + 1).padStart(4, '0')}`, cx, th - 30 * q, `700 ${15 * q}px ${PM}`, DG);
+    ctx.restore();
+    if(pct) stamp(px + 110, py + ph - 110, 78, pct);
+    footer(64, H - 76, K, DG);
+  }
+
+  // ---------- C · Magazine Cover ----------
+  function drawE(W, H, pct){
+    const p = P[cur], img = own || imgs[cur], bg = '#f2efe6', sc = fmt === 'sq' ? 1 : fmt === 'pt' ? 1.12 : 1.3;
+    if(mode === 'grid') return colE(W, H, pct);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); grain(W, H, .04);
+    // Masthead
+    ctx.font = `200px ${AN}`; const full = ctx.measureText('SUWATI.MEN').width, s = Math.min(fmt === 'sq' ? 150 : 200, 200 * (W - 128) / full);
+    ctx.font = `${s}px ${AN}`; const a = ctx.measureText('SUWATI').width, d = ctx.measureText('.').width, tw = ctx.measureText('SUWATI.MEN').width, mx = (W - tw) / 2, my = 40 + s * .9;
+    ctx.fillStyle = K; ctx.fillText('SUWATI', mx, my); ctx.fillStyle = R; ctx.fillText('.', mx + a, my); ctx.fillStyle = K; ctx.fillText('MEN', mx + a + d, my);
+    let y = my + 26; ctx.fillStyle = K; ctx.fillRect(64, y, W - 128, 4); y += 34;
+    ctx.font = `700 17px ${PM}`; ctx.fillStyle = K; spaced("FASHION · MEN'S STYLE ISSUE", 64, y, 3); ctx.textAlign = 'right'; spaced('NO.10 · NAY PYI TAW', W - 64, y, 3, 'right'); ctx.textAlign = 'left';
+    y += 16; ctx.fillRect(64, y, W - 128, 2); y += 26;
+    const blockH = 190 * sc, pb = H - 150 - blockH - 20;
+    fitImg(img, 64, y, W - 128, pb - y, 0, true);
+    badge(headTxt(), 84, y + 22, 52, R, C, 'left', -.03);
+    if(pct) stamp(W - 160, y + 120, 82, pct, K, C);
+    // Cover စာ
+    const by = pb + 20, lw = (W - 128) * .6;
+    ctx.fillStyle = K; const n = p.name.toUpperCase(), ns = fit(n, `$px ${AN}`, 88 * sc, lw, 40); ctx.font = `${ns}px ${AN}`; ctx.fillText(n, 64, by + ns * .9);
+    ctx.fillStyle = DG; ctx.font = `500 ${24 * sc}px ${MM}`; const yy = wrap($('t-mm').value, 64, by + ns * .9 + 42 * sc, lw, 38 * sc, 2);
+    if($('o-size').checked){ ctx.font = `700 ${18 * sc}px ${PM}`; ctx.fillStyle = K; spaced('SIZES  ' + p.sizes.split(' ').join(' / '), 64, Math.min(yy + 4, by + blockH - 6), 2); }
+    // ဈေး Box (မဂ္ဂဇင်း Barcode ထောင့်လို)
+    const bw = (W - 128) * .34, bx = W - 64 - bw, bh = blockH; ctx.fillStyle = '#fff'; ctx.fillRect(bx, by, bw, bh); ctx.strokeStyle = K; ctx.lineWidth = 3; ctx.strokeRect(bx, by, bw, bh);
+    const lw2 = label(pct ? 'SALE PRICE' : 'PRICE', bx + 18, by + 34 * sc, 14 * sc, DG);
+    if(pct && $('o-old').checked) oldPrice(p, bx + 18 + lw2 + 10, by + 34 * sc, 17 * sc, DG);
+    const pv = ks(curPrice(p, pct)), ps = fit(pv, `$px ${AR}`, 64 * sc, bw - 90 * sc, 30); price(curPrice(p, pct), bx + 18, by + 34 * sc + ps * 1.02, ps, K, K);
+    barcode(bx + 18, by + bh - 52 * sc, bw - 36, 36 * sc, K, cur + 11);
+    ctx.fillStyle = K; ctx.fillRect(64, H - 128, W - 128, 3); footer(64, H - 76, K, DG);
+  }
+
+  // ---------- D · Receipt (ဘောက်ချာ) ----------
+  function receipt(x, y, w, h, rot, p, pct){
+    const u = Math.min(w / 420, h / 760), m = 30 * u + w * .02;
+    ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.rotate(rot); ctx.translate(-w / 2, -h / 2);
+    const z = 14 * u; ctx.beginPath(); ctx.moveTo(0, z);
+    for(let i = 0; i <= w; i += z * 2){ ctx.lineTo(Math.min(w, i + z), 0); ctx.lineTo(Math.min(w, i + z * 2), z); }
+    ctx.lineTo(w, h - z); for(let i = w; i >= 0; i -= z * 2){ ctx.lineTo(Math.max(0, i - z), h); ctx.lineTo(Math.max(0, i - z * 2), h - z); } ctx.closePath();
+    ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = 34; ctx.shadowOffsetY = 16; ctx.fillStyle = '#fbfaf5'; ctx.fill(); ctx.shadowColor = 'transparent'; ctx.clip();
+    const cx = w / 2, lh = 40 * u; let yy = 92 * u;
+    logo(cx, yy, 50 * u, K, DG, 'center'); yy += 52 * u; textC('NAY PYI TAW · RECEIPT', cx, yy, `700 ${15 * u}px ${PM}`, DG); yy += 30 * u;
+    dash(m, w - m, yy, K, 2, 6); yy += 46 * u;
+    const n = p.name.toUpperCase(), ns = fit(n, `$px ${AR}`, 32 * u, w - m * 2, 16); ctx.font = `${ns}px ${AR}`; ctx.fillStyle = K; ctx.fillText(n, m, yy); yy += 34 * u;
+    ctx.fillStyle = DG; ctx.font = `500 ${16 * u}px ${MM}`; yy = wrap($('t-mm').value, m, yy, w - m * 2, 28 * u, 2) - 6 * u; dash(m, w - m, yy, K, 2, 6); yy += 40 * u;
+    const row = (l, r, col = K) => { ctx.font = `700 ${18 * u}px ${PM}`; ctx.fillStyle = K; ctx.fillText(l, m, yy); ctx.fillStyle = col; ctx.textAlign = 'right'; ctx.fillText(r, w - m, yy); ctx.textAlign = 'left'; yy += lh; };
+    if($('o-size').checked) row('SIZE', p.sizes.split(' ').join('/'));
+    row('PRICE', ks(p.price));
+    if(pct) row(`DISCOUNT ${pct}%`, '-' + ks(p.price - saleP(p, pct)), R);
+    yy -= 14 * u; dash(m, w - m, yy, K, 2, 6); dash(m, w - m, yy + 7 * u, K, 2, 6); yy += 62 * u;
+    ctx.font = `700 ${20 * u}px ${PM}`; ctx.fillStyle = K; ctx.fillText('TOTAL', m, yy - 8 * u);
+    ctx.font = `${50 * u}px ${AN}`; ctx.fillStyle = pct ? R : K; ctx.textAlign = 'right'; ctx.fillText(ks(curPrice(p, pct)) + ' Ks', w - m, yy); ctx.textAlign = 'left'; yy += 30 * u;
+    dash(m, w - m, yy, K, 2, 6); yy += 22 * u;
+    barcode(m, yy, w - m * 2, 58 * u, K, cur + 5); yy += 92 * u;
+    textC('THANK YOU 🤍 ကျေးဇူးတင်ပါတယ်ရှင့်', cx, Math.min(yy, h - 34 * u), `700 ${16 * u}px ${MM}`, K);
+    ctx.restore();
+  }
+  function drawF(W, H, pct){
+    const p = P[cur], img = own || imgs[cur], bg = '#26241f';
+    if(mode === 'grid') return colF(W, H, pct);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); grain(W, H, .06);
+    logo(64, 112, 62, C, MU); badge(headTxt(), W - 64, 58, 48, R, C, 'right');
+    if(fmt === 'st'){ fitImg(img, 64, 170, W - 128, 800, 16, true); receipt(150, 900, W - 300, 840, -.025, p, pct); }
+    else { const pw = fmt === 'sq' ? 540 : 520; fitImg(img, 50, 160, pw, H - 320, 16, true); receipt(pw + 70, 150, W - pw - 120, H - 300, .025, p, pct); }
+    if(pct) stamp(fmt === 'st' ? 190 : 140, fmt === 'st' ? 240 : 250, 72, pct);
+    footer(64, H - 76, C, MU);
+  }
+
+  // ---------- E · Polaroid ----------
+  function drawG(W, H, pct){
+    const p = P[cur], img = own || imgs[cur], bg = '#2b2925';
+    if(mode === 'grid') return colG(W, H, pct);
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); grain(W, H, .07);
+    const vg = ctx.createRadialGradient(W / 2, H / 2, W * .2, W / 2, H / 2, W * .95); vg.addColorStop(0, 'rgba(255,255,255,.05)'); vg.addColorStop(1, 'rgba(0,0,0,.45)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+    logo(64, 112, 62, C, MU); badge(headTxt(), W - 64, 58, 48, R, C, 'right');
+    const side = fmt !== 'st', fw = fmt === 'sq' ? 560 : fmt === 'pt' ? 600 : 860, mg = fw * .055, phH = fw - mg * 2, fh = phH + mg + fw * .24;
+    const fx = side ? 64 : (W - fw) / 2, fy = 180;
+    ctx.save(); ctx.translate(fx + fw / 2, fy + fh / 2); ctx.rotate(-.035); ctx.translate(-fw / 2, -fh / 2);
+    ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18; ctx.fillStyle = '#fbfaf6'; ctx.fillRect(0, 0, fw, fh); ctx.shadowColor = 'transparent';
+    fitImg(img, mg, mg, fw - mg * 2, phH, 0, true);
+    ctx.fillStyle = K; const n = p.name.toUpperCase(), ns = fit(n, `$px ${AN}`, fw * .085, fw - mg * 2, 24); ctx.font = `${ns}px ${AN}`; ctx.fillText(n, mg, mg + phH + fw * .12);
+    ctx.font = `700 ${fw * .032}px ${PM}`; ctx.fillStyle = DG; spaced('SUWATI.MEN · ' + new Date().getFullYear(), mg, mg + phH + fw * .19, 2);
+    ctx.restore();
+    // Tape
+    const tape = (x, y, r) => { ctx.save(); ctx.translate(x, y); ctx.rotate(r); ctx.fillStyle = 'rgba(233,228,216,.55)'; ctx.fillRect(-70, -20, 140, 40); ctx.restore(); };
+    tape(fx + 40, fy + 6, -.6); tape(fx + fw - 30, fy - 10, .5);
+    if(pct) stamp(fx + fw - 30, fy + fh - 60, 80, pct);
+    // ဈေး + Size
+    let x, y, mw; if(side){ x = fx + fw + 50; y = fmt === 'pt' ? 300 : 260; mw = W - 64 - x; } else { x = 64; y = fy + fh + 70; mw = W - 128; }
+    ctx.fillStyle = MU; ctx.font = `500 ${side ? 26 : 30}px ${MM}`; y = wrap($('t-mm').value, x, y, mw, side ? 44 : 50, 3) + 20;
+    const lw = label(pct ? 'SALE PRICE' : 'PRICE', x, y, 16, MU); if(pct && $('o-old').checked) oldPrice(p, x + lw + 14, y + 2, 24, MU);
+    const pv = ks(curPrice(p, pct)), ps = fit(pv, `$px ${AR}`, side ? 96 : 120, mw - 80, 40); y += ps * 1.05; price(curPrice(p, pct), x, y, ps, C, MU);
+    if($('o-size').checked){ y += 36; label('SIZES', x, y + 10, 16, MU); pins(p.sizes.split(' '), x, y + 26, side ? 54 : 62, C, C, mw); }
+    footer(64, H - 76, C, MU);
+  }
+
+  // ---------- F · Rust Sale (အနီ Bold) ----------
+  function drawH(W, H, pct){
+    const p = P[cur], img = own || imgs[cur];
+    if(mode === 'grid') return colH(W, H, pct);
+    ctx.fillStyle = R; ctx.fillRect(0, 0, W, H); grain(W, H, .05);
+    logo(64, 112, 62, C, '#f1c9bd', 'left', K); badge(headTxt(), W - 64, 58, 48, K, C, 'right');
+    const big = pct ? `${pct}% OFF` : 'NEW IN', gs = fit(big, `$px ${AN}`, fmt === 'st' ? 300 : 240, W - 128, 80); const gy = 170 + gs * .86;
+    ctx.font = `${gs}px ${AN}`; ctx.fillStyle = C; ctx.fillText(big, 64, gy);
+    const side = fmt === 'sq', top = gy + 34;
+    // အနက် Band (စောင်း)
+    const b1 = side ? H * .58 : fmt === 'pt' ? H * .6 : H * .58, b2 = b1 - 90; ctx.fillStyle = K; ctx.beginPath(); ctx.moveTo(0, b1); ctx.lineTo(W, b2); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+    let px = 64, pw, ph; if(side){ pw = 470; ph = H - 150 - top; } else { pw = W - 128; ph = (fmt === 'pt' ? 400 : 860); }
+    ctx.fillStyle = K; ctx.fillRect(px + 16, top + 16, pw, ph); ctx.fillStyle = C; ctx.fillRect(px - 8, top - 8, pw + 16, ph + 16);
+    fitImg(img, px, top, pw, ph, 0, true);
+    let x, y, mw; if(side){ x = px + pw + 50; y = b1 + 16; mw = W - 64 - x; } else { x = 64; y = top + ph + 90; mw = W - 128; }
+    ctx.fillStyle = C; const n = p.name.toUpperCase(), ns = fit(n, `$px ${AN}`, side ? 64 : fmt === 'pt' ? 76 : 92, mw, 30); ctx.font = `${ns}px ${AN}`; y = wrap(n, x, y, mw, ns * 1.02, 2) - ns * .2;
+    ctx.fillStyle = MU; ctx.font = `500 ${side ? 22 : 28}px ${MM}`; y = wrap($('t-mm').value, x, y + 4, mw, side ? 38 : 46, 2) + 8;
+    if(pct && $('o-old').checked){ oldPrice(p, x, y, side ? 22 : 28, MU); }
+    const ps = fit(ks(curPrice(p, pct)), `$px ${AR}`, side ? 84 : fmt === 'pt' ? 94 : 120, mw - 80, 40); y += ps * .98; price(curPrice(p, pct), x, y, ps, C, MU);
+    if($('o-size').checked){ y += 26; pins(p.sizes.split(' '), x, y, side || fmt === 'pt' ? 50 : 62, C, C, mw); }
+    footer(64, H - 76, C, MU);
+  }
+
+  // ================== 📚 ၄ ထည် Collage — Design တစ်ခုချင်း ပုံစံမတူ · ပုံတစ်ပုံချင်း ရွှေ့/ချဲ့ ရ ==================
+  const ITEMS = pct => P.map((p, i) => ({ p, i, img:imgs[i], on:!!p.pct, v:p.pct ? saleP(p, p.pct) : p.price }));
+  function bgPaper(W, H, col, g){ ctx.fillStyle = col; ctx.fillRect(0, 0, W, H); if(g) grain(W, H, g); }
+  function head(W, ink, mu, badgeBg, dot = R){ logo(64, 112, 62, ink, mu, 'left', dot); badge(headTxt(), W - 64, 58, 48, badgeBg, C, 'right'); }
+
+  // B · Hang Tag — ပုံ ၄ ပုံ + ကတ်ချိတ်လေး တစ်ခုစီ
+  function colD(W, H, pct){
+    bgPaper(W, H, '#E9E4D8', .05); head(W, K, DG, K);
+    const top = 176, bot = H - 150, g = 30, cw = (W - 128 - g) / 2, chh = (bot - top - g) / 2;
+    ITEMS(pct).forEach(o => { const x = 64 + (o.i % 2) * (cw + g), y = top + Math.floor(o.i / 2) * (chh + g);
+      ctx.fillStyle = K; rr(x + 8, y + 8, cw, chh, 14); ctx.fill(); fitImg(o.img, x, y, cw, chh, 14, o.i); ctx.strokeStyle = K; ctx.lineWidth = 3; rr(x + 1.5, y + 1.5, cw - 3, chh - 3, 13); ctx.stroke();
+      const tw = Math.min(cw * .3, 150), th = tw * 1.3, tx = x + cw - tw - 12, ty = y + 22, q = tw / 190;
+      ctx.strokeStyle = '#7d725d'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(tx + tw / 2 - 30 * q, y - 2); ctx.quadraticCurveTo(tx + tw * .3, ty, tx + tw / 2, ty + 28 * q); ctx.stroke();
+      ctx.save(); ctx.translate(tx + tw / 2, ty + 28 * q); ctx.rotate(.07); ctx.translate(-tw / 2, -28 * q);
+      ctx.shadowColor = 'rgba(0,0,0,.3)'; ctx.shadowBlur = 16; ctx.shadowOffsetY = 8; ctx.fillStyle = PAPER;
+      ctx.beginPath(); ctx.moveTo(tw * .24, 0); ctx.lineTo(tw * .76, 0); ctx.lineTo(tw, tw * .2); ctx.lineTo(tw, th); ctx.lineTo(0, th); ctx.lineTo(0, tw * .2); ctx.closePath(); ctx.fill(); ctx.shadowColor = 'transparent'; ctx.clip();
+      ctx.fillStyle = '#3a372f'; ctx.beginPath(); ctx.arc(tw / 2, 28 * q, 8 * q, 0, 7); ctx.fill();
+      const n = o.p.name.toUpperCase(), ns = fit(n, `$px ${AR}`, 20 * q, tw - 24 * q, 10); textC(n, tw / 2, 82 * q, `${ns}px ${AR}`, K);
+      dash(14 * q, tw - 14 * q, 98 * q, '#8a8170', 1.5, 4);
+      if(o.on && $('o-old').checked) textC(ks(o.p.price), tw / 2, 124 * q, `700 ${15 * q}px ${PM}`, DG);
+      const ps = fit(ks(o.v), `$px ${AN}`, 42 * q, tw - 30 * q, 18); priceC(o.v, tw / 2, (o.on ? 172 : 160) * q, ps, R, K);
+      if($('o-size').checked) textC(o.p.sizes.split(' ').join('·'), tw / 2, th - 18 * q, `700 ${12 * q}px ${PM}`, DG);
+      ctx.restore();
+      if(o.on) stamp(x + 62, y + chh - 62, 46, o.p.pct); });
+    footer(64, H - 76, K, DG);
+  }
+
+  // C · Magazine — ပုံကြီး ၁ + ပုံသေး ၃ (Cover Story)
+  function masthead(W, compact){
+    ctx.font = `200px ${AN}`; const full = ctx.measureText('SUWATI.MEN').width, s = Math.min(compact ? 130 : 170, 200 * (W - 128) / full);
+    ctx.font = `${s}px ${AN}`; const a = ctx.measureText('SUWATI').width, d = ctx.measureText('.').width, tw = ctx.measureText('SUWATI.MEN').width, mx = (W - tw) / 2, my = 36 + s * .9;
+    ctx.fillStyle = K; ctx.fillText('SUWATI', mx, my); ctx.fillStyle = R; ctx.fillText('.', mx + a, my); ctx.fillStyle = K; ctx.fillText('MEN', mx + a + d, my);
+    let y = my + 24; ctx.fillStyle = K; ctx.fillRect(64, y, W - 128, 4); y += 32;
+    ctx.font = `700 16px ${PM}`; spaced("OUR LITTLE PICKS · MEN'S STYLE", 64, y, 3); ctx.textAlign = 'right'; spaced('NO.10 · NAY PYI TAW', W - 64, y, 3, 'right'); ctx.textAlign = 'left';
+    y += 14; ctx.fillRect(64, y, W - 128, 2); return y + 26; }
+  function colE(W, H, pct){
+    bgPaper(W, H, '#f2efe6', .04); const top = masthead(W, fmt === 'sq'), bot = H - 150, it = ITEMS(pct);
+    const g = 24, bw = (W - 128) * .58, rx = 64 + bw + g, rw = W - 64 - rx, tH = fmt === 'sq' ? 74 : 92, sH = 62;
+    // ပုံကြီး
+    const bh = bot - top - tH; fitImg(it[0].img, 64, top, bw, bh, 0, 0); badge(headTxt(), 80, top + 16, 44, R, C, 'left', -.03);
+    if(it[0].on) stamp(64 + bw - 70, top + 74, 54, it[0].p.pct, K, C);
+    const n0 = it[0].p.name.toUpperCase(), s0 = fit(n0, `$px ${AN}`, fmt === 'sq' ? 44 : 54, bw * .62, 24); ctx.font = `${s0}px ${AN}`; ctx.fillStyle = K; ctx.fillText(n0, 64, top + bh + s0 * .95);
+    price(it[0].v, 64 + bw * .64, top + bh + s0 * .95, fmt === 'sq' ? 40 : 48, R, K);
+    // ပုံသေး ၃
+    const each = (bot - top - g * 2) / 3, ih = each - sH;
+    it.slice(1).forEach((o, k) => { const y = top + k * (each + g); fitImg(o.img, rx, y, rw, ih, 0, o.i);
+      const n = o.p.name.toUpperCase(), ns = fit(n, `$px ${AN}`, 28, rw * .56, 14); ctx.font = `${ns}px ${AN}`; ctx.fillStyle = K; ctx.fillText(n, rx, y + ih + 34);
+      ctx.font = `${26}px ${AN}`; ctx.fillStyle = o.on ? R : K; ctx.textAlign = 'right'; ctx.fillText(ks(o.v), W - 64, y + ih + 34); ctx.textAlign = 'left';
+      if(o.on) badge(`-${o.p.pct}%`, rx + 10, y + 10, 34, R, C); });
+    ctx.fillStyle = K; ctx.fillRect(64, H - 128, W - 128, 3); footer(64, H - 76, K, DG);
+  }
+
+  // D · Receipt — ပုံ ၄ ပုံ + ပစ္စည်း ၄ ခု ပါတဲ့ ဘောက်ချာ
+  function receiptList(x, y, w, h, rot, it, pct){
+    const u = Math.min(w / 420, h / 700), m = 28 * u + w * .02;
+    ctx.save(); ctx.translate(x + w / 2, y + h / 2); ctx.rotate(rot); ctx.translate(-w / 2, -h / 2);
+    const z = 13 * u; ctx.beginPath(); ctx.moveTo(0, z);
+    for(let i = 0; i <= w; i += z * 2){ ctx.lineTo(Math.min(w, i + z), 0); ctx.lineTo(Math.min(w, i + z * 2), z); }
+    ctx.lineTo(w, h - z); for(let i = w; i >= 0; i -= z * 2){ ctx.lineTo(Math.max(0, i - z), h); ctx.lineTo(Math.max(0, i - z * 2), h - z); } ctx.closePath();
+    ctx.shadowColor = 'rgba(0,0,0,.4)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14; ctx.fillStyle = '#fbfaf5'; ctx.fill(); ctx.shadowColor = 'transparent'; ctx.clip();
+    const cx = w / 2; let yy = 84 * u; logo(cx, yy, 46 * u, K, DG, 'center'); yy += 48 * u; textC('LITTLE PICKS · RECEIPT', cx, yy, `700 ${14 * u}px ${PM}`, DG); yy += 26 * u; dash(m, w - m, yy, K, 2, 6); yy += 44 * u;
+    it.forEach(o => { const n = o.p.name.toUpperCase(); ctx.font = `700 ${17 * u}px ${PM}`; ctx.fillStyle = K; const nw = w - m * 2 - 120 * u; let t = n; while(ctx.measureText(t).width > nw && t.length > 3) t = t.slice(0, -1);
+      ctx.fillText(t, m, yy); ctx.fillStyle = o.on ? R : K; ctx.textAlign = 'right'; ctx.fillText(ks(o.v), w - m, yy); ctx.textAlign = 'left';
+      if(o.on){ ctx.font = `700 ${12 * u}px ${PM}`; ctx.fillStyle = DG; ctx.fillText(`  ${ks(o.p.price)} −${o.p.pct}%`, m, yy + 20 * u); yy += 16 * u; } yy += 40 * u; });
+    yy -= 12 * u; dash(m, w - m, yy, K, 2, 6); dash(m, w - m, yy + 7 * u, K, 2, 6); yy += 50 * u;
+    ctx.font = `700 ${18 * u}px ${PM}`; ctx.fillStyle = K; ctx.fillText(`${it.length} ITEMS`, m, yy); ctx.textAlign = 'right'; ctx.font = `${30 * u}px ${AN}`; ctx.fillStyle = R; ctx.fillText(pct ? `UP TO ${pct}% OFF` : 'NEW IN', w - m, yy); ctx.textAlign = 'left';
+    yy += 26 * u; dash(m, w - m, yy, K, 2, 6); yy += 20 * u; barcode(m, yy, w - m * 2, 52 * u, K, 21); yy += 84 * u;
+    textC('THANK YOU 🤍 ကျေးဇူးတင်ပါတယ်ရှင့်', cx, Math.min(yy, h - 30 * u), `700 ${15 * u}px ${MM}`, K);
+    ctx.restore();
+  }
+  function colF(W, H, pct){
+    bgPaper(W, H, '#26241f', .06); head(W, C, MU, R); const it = ITEMS(pct), top = 168, g = 18;
+    const grid4 = (x, y, w, h) => { const cw = (w - g) / 2, ch = (h - g) / 2; it.forEach(o => { const cx = x + (o.i % 2) * (cw + g), cy = y + Math.floor(o.i / 2) * (ch + g);
+      fitImg(o.img, cx, cy, cw, ch, 12, o.i); if(o.on) badge(`-${o.p.pct}%`, cx + 10, cy + 10, 36, R, C); }); };
+    if(fmt === 'st'){ grid4(64, top, W - 128, 820); receiptList(150, 1010, W - 300, H - 1010 - 150, -.02, it, pct); }
+    else { const gw = fmt === 'sq' ? 560 : 540; grid4(50, top, gw, H - top - 160); receiptList(gw + 74, top - 14, W - gw - 120, H - top - 150, .025, it, pct); }
+    footer(64, H - 76, C, MU);
+  }
+
+  // E · Polaroid — နံရံပေါ် Polaroid ၄ ပုံ ကပ်ထား
+  function colG(W, H, pct){
+    bgPaper(W, H, '#2b2925', .07);
+    const vg = ctx.createRadialGradient(W / 2, H / 2, W * .2, W / 2, H / 2, W * .95); vg.addColorStop(0, 'rgba(255,255,255,.05)'); vg.addColorStop(1, 'rgba(0,0,0,.45)'); ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+    head(W, C, MU, R);
+    const top = 180, bot = H - 150, fw = Math.min((W - 128) / 2 - 10, (bot - top) / 2 / 1.2 - 8), rots = [-.06, .05, .045, -.04];
+    ITEMS(pct).forEach(o => { const col = o.i % 2, row = Math.floor(o.i / 2), mg = fw * .06, ph = fw - mg * 2, fh = ph + mg + fw * .22;
+      const cx = W / 2 + (col ? 1 : -1) * (fw / 2 + 12) + (row ? (col ? -14 : 14) : 0), cy = top + (bot - top) * (row ? .73 : .26);
+      ctx.save(); ctx.translate(cx, cy); ctx.rotate(rots[o.i]); ctx.translate(-fw / 2, -fh / 2);
+      ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14; ctx.fillStyle = '#fbfaf6'; ctx.fillRect(0, 0, fw, fh); ctx.shadowColor = 'transparent';
+      fitImg(o.img, mg, mg, ph, ph, 0, o.i);
+      const n = o.p.name.toUpperCase(), ns = fit(n, `$px ${AN}`, fw * .085, fw * .58, 14); ctx.font = `${ns}px ${AN}`; ctx.fillStyle = K; ctx.fillText(n, mg, mg + ph + fw * .13);
+      ctx.font = `${fw * .075}px ${AN}`; ctx.fillStyle = o.on ? R : K; ctx.textAlign = 'right'; ctx.fillText(ks(o.v), fw - mg, mg + ph + fw * .13); ctx.textAlign = 'left';
+      ctx.fillStyle = 'rgba(233,228,216,.6)'; ctx.save(); ctx.translate(fw / 2, -4); ctx.rotate(-.08 + o.i * .05); ctx.fillRect(-fw * .16, -16, fw * .32, 32); ctx.restore();
+      ctx.restore();
+      if(o.on) stamp(cx + fw / 2 - 30, cy - fh / 2 + 40, 44, o.p.pct); });
+    footer(64, H - 76, C, MU);
+  }
+
+  // F · Rust Sale — စာလုံးကြီး + ပုံ ၄ ပုံ အစီအရီ
+  function colH(W, H, pct){
+    bgPaper(W, H, R, .05); head(W, C, '#f1c9bd', K, K);
+    const big = pct ? `UP TO ${pct}% OFF` : 'NEW IN', gs = fit(big, `$px ${AN}`, fmt === 'st' ? 220 : 170, W - 128, 60), gy = 160 + gs * .86;
+    ctx.font = `${gs}px ${AN}`; ctx.fillStyle = C; ctx.fillText(big, 64, gy);
+    const b1 = H * .55, b2 = b1 - 90; ctx.fillStyle = K; ctx.beginPath(); ctx.moveTo(0, b1); ctx.lineTo(W, b2); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fill();
+    const top = gy + 36, bot = H - 150, g = 26, cw = (W - 128 - g) / 2, ch = (bot - top - g) / 2, ih = ch - 78;
+    ITEMS(pct).forEach(o => { const x = 64 + (o.i % 2) * (cw + g), y = top + Math.floor(o.i / 2) * (ch + g);
+      ctx.fillStyle = K; ctx.fillRect(x + 12, y + 12, cw, ih); ctx.fillStyle = C; ctx.fillRect(x - 6, y - 6, cw + 12, ih + 12); fitImg(o.img, x, y, cw, ih, 0, o.i);
+      if(o.on) badge(`-${o.p.pct}%`, x + 10, y + 10, 40, K, C);
+      const n = o.p.name.toUpperCase(), ns = fit(n, `$px ${AN}`, 34, cw * .6, 16); ctx.font = `${ns}px ${AN}`; ctx.fillStyle = C; ctx.fillText(n, x, y + ih + 52);
+      ctx.font = `34px ${AN}`; ctx.textAlign = 'right'; ctx.fillText(ks(o.v), x + cw, y + ih + 52); ctx.textAlign = 'left'; });
+    footer(64, H - 76, C, MU);
+  }
+
+  function gridMode(W, H, pct, o, isB, isC){
+    const g = 26, cw = (o.w - g) / 2, area = o.bottom - o.top, chh = (area - g) / 2, ih = chh - 112;
+    P.forEach((p, i) => { const x = o.x + (i % 2) * (cw + g), y = o.top + Math.floor(i / 2) * (chh + g), on = !!p.pct;
+      ctx.fillStyle = '#000'; rr(x + 10, y + 10, cw, ih, 20); ctx.fill(); fitImg(imgs[i], x, y, cw, ih, 20, i);
+      ctx.strokeStyle = o.frame; ctx.lineWidth = 3.5; rr(x + 1.5, y + 1.5, cw - 3, ih - 3, 19); ctx.stroke();
+      if(on) badge(`-${p.pct}%`, x + 16, y + 16, 46, o.sale || R, C);
+      ctx.fillStyle = o.ink; const n = p.name.toUpperCase(), s = fit(n, `$px ${AR}`, 38, cw, 22); ctx.font = `${s}px ${AR}`; ctx.fillText(n, x, y + ih + 52);
+      price(on ? saleP(p, p.pct) : p.price, x, y + ih + 100, 40, o.acc, o.ink);
+    });
+    ctx.fillStyle = isB ? K : (o.line || G); ctx.globalAlpha = .5; ctx.fillRect(o.x, H - 128, o.w, 3); ctx.globalAlpha = 1;
+    footer(o.x, H - 76, isB ? K : C, isB ? 'rgba(20,20,18,.6)' : MU);
+  }
+
+  function draw(){
+    const W = 1080, H = fmt === 'sq' ? 1080 : fmt === 'pt' ? 1350 : 1920, pct = mode === 'grid' ? Math.max(0, ...P.map(p => p.pct || 0)) : pctV();
+    if(!P.length){ cv.width = W; cv.height = H; ctx.fillStyle = '#26241f'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#E9E4D8'; ctx.font = `700 44px ${MM}`; ctx.textAlign = 'center'; ctx.fillText('👆 အပေါ်က ပစ္စည်း ရွေးပါ', W / 2, H / 2); ctx.textAlign = 'left'; $('size-info').textContent = ''; return; }
+    cv.width = W; cv.height = H; $('stage').classList.toggle('tall', fmt === 'st');
+    $('size-info').textContent = `${W} × ${H} px · ${mode === 'grid' ? 'Collage ' + P.length + ' ထည်' : P[cur].name}`;
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic'; boxes = [];
+    ({ A:drawA, D:drawD, E:drawE, F:drawF, G:drawG, H:drawH }[sty] || drawA)(W, H, pct);
+  }
+
+  // ---------- ✨ AI Caption ----------
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const shuffle = a => a.map(v => [Math.random(), v]).sort((x, y) => x[0] - y[0]).map(v => v[1]);
+  // 🌸 စာအရေးအသား — နူးနူးညံ့ညံ့ ချစ်စရာ လေသံ
+  const HOOK = {
+    soft:{ mm:['🌸 အကိုလေးတို့အတွက် {N} လေး ရောက်လာပါပြီရှင့်', '🤍 ဒီတစ်ခါ ချစ်စရာကောင်းတဲ့ {N} လေး ယူလာပေးပါတယ်နော်', '☁️ နူးနူးညံ့ညံ့လေး ဝတ်ရတာ သက်တောင့်သက်သာ ရှိမယ့် {N} လေးပါ', '🌷 ကြည့်ရုံနဲ့ စိတ်ချမ်းသာသွားမယ့် {N} လေးကို မိတ်ဆက်ပေးပါရစေ'],
+           en:['🌸 Hi lovelies, our {N} is finally here 🤍', '🤍 Something soft and sweet just arrived for you.', '☁️ Cozy, gentle and made for everyday — meet the {N}.', '🌷 A little something we picked just for you.'] },
+    happy:{ mm:['✨ ဝမ်းသာစရာလေး ပြောပြချင်လို့ပါ — {N} လေး ရောက်ပါပြီနော်', '🎀 စောင့်နေတဲ့ အကိုလေးတို့ရေ ရောက်ပါပြီရှင့်', '💫 ဒီအပတ်ရဲ့ အချစ်ဆုံးလေးကို မိတ်ဆက်ပေးပါရစေ', '🛍️ လက်ကျန်လေး နည်းနည်းပဲ ရှိတော့လို့ မြန်မြန်လေး လာခဲ့နော်'],
+            en:['✨ Happy news — the {N} is here!', '🎀 To everyone who waited, it’s finally here 🤍', '💫 Meet our favourite piece of the week.', '🛍️ Only a few left, so come by soon, okay?'] },
+    prem:{ mm:['🤍 အသေးစိတ်လေးတွေကအစ ဂရုတစိုက် ရွေးထားပေးတဲ့ {N} လေးပါ', '🕊️ ရိုးရိုးလေးနဲ့ ကျက်သရေရှိတဲ့ Style လေး ကြိုက်တဲ့သူတွေအတွက်ပါ', '🌙 အရည်အသွေး ကောင်းကောင်းလေးကို ဈေးသက်သာသာလေးနဲ့ ပေးချင်လို့ပါရှင့်', '🤍 SUWATI က ချစ်ခင်စွာ ရွေးပေးထားတဲ့ {N} လေးပါ'],
+           en:['🤍 Every little detail, chosen with care — the {N}.', '🕊️ Simple, gentle and quietly elegant.', '🌙 Lovely quality at a kind price.', '🤍 Picked with love by SUWATI.'] },
+    cute:{ mm:['😊 ဒါလေးဝတ်ပြီး ရိုက်ထားတဲ့ ဓာတ်ပုံလေးတွေ ပြန်ပို့ပေးဦးနော်', '🙈 ချစ်သူလေးကို လက်ဆောင်ပေးဖို့လည်း အရမ်းအဆင်ပြေပါတယ်ရှင့်', '🥰 {P}% လေး လျှော့ပေးထားလို့ ပိုက်ဆံအိတ်လေးလည်း မငိုရတော့ဘူးနော်', '🐻 ဝတ်လိုက်တာနဲ့ ချစ်စရာကောင်းသွားမယ့် {N} လေးပါ'],
+          en:['😊 Send us your photos wearing it, okay? 🤍', '🙈 A sweet little gift idea for someone special.', '🥰 {P}% off, so your wallet can smile too.', '🐻 Instantly cuter in the {N}.'] },
+  };
+  const CTA = { mm:['💌 Comment မှာ "ယူမယ်" လေး ရေးထားခဲ့ပေးနော်', '📩 Size လေးတွေ မေးချင်ရင် Inbox ကို ပို့ပေးပါရှင့်', '🛒 Website လေးကနေလည်း တိုက်ရိုက် မှာလို့ရပါတယ်နော်'],
+                en:['💌 Leave a little “mine” in the comments 🤍', '📩 Message us anytime for sizing help', '🛒 You can order on our website too'] };
+  function genCaption(){
+    const p = P[cur], pct = pctV(), L = lang === 'mix' ? (Math.random() > .5 ? 'mm' : 'en') : lang, L2 = lang === 'en' ? 'en' : 'mm';
+    const fill = s => s.replace('{N}', p.name).replace('{P}', pct || 10);
+    if(mode === 'grid'){ const items = P.map((x, i) => `🤍 ${x.name} — ${ks(x.pct ? saleP(x, x.pct) : x.price)} ${L2 === 'mm' ? 'ကျပ်လေးပါ' : 'MMK'}`).join('\n');
+      return L2 === 'mm' ? `🌸 ဒီအပတ် အကိုလေးတို့အတွက် ရွေးထားပေးတဲ့ ပစ္စည်းလေးတွေပါရှင့်\n\n${items}\n\n🛵 မြို့တွင်း အိမ်အရောက် ပို့ပေးပါတယ်နော်\n${pick(CTA.mm)}\n🌐 suwatimenfashion.vercel.app\n\nချစ်ခင်စွာဖြင့် SUWATI 🤍\n#SUWATI #SuwatiMenFashion #MenFashion #Myanmar`
+        : `🌸 Our little picks of the week, just for you\n\n${items}\n\n🛵 Delivery available\n${pick(CTA.en)}\n🌐 suwatimenfashion.vercel.app\n\nWith love, SUWATI 🤍\n#SUWATI #SuwatiMenFashion #MenFashion #Myanmar`; }
+    const hooks = HOOK[tone][L].filter(h => pct || !h.includes('{P}')); const hook = fill(pick(hooks));
+    const mmDesc = $('t-mm').value, np = pct ? saleP(p, pct) : p.price;
+    const priceLine = L2 === 'mm' ? (pct ? `💰 ${ks(p.price)} → ${ks(np)} ကျပ်လေးပဲ (${pct}% လျှော့ပေးထားပါတယ်)` : `💰 ${ks(p.price)} ကျပ်လေးပါ`) : (pct ? `💰 ${ks(p.price)} → ${ks(np)} MMK (${pct}% off 🤍)` : `💰 ${ks(p.price)} MMK`);
+    const tags = shuffle(['#SUWATI', '#SuwatiMenFashion', '#MenFashion', '#MyanmarFashion', '#NayPyiTaw', '#OOTD', '#' + p.tag, '#မြန်မာ']).slice(0, plat === 'tt' ? 4 : 6);
+    if(plat === 'tt'){ tags.push('#fyp', '#foryou', '#tiktokmyanmar');
+      return `${hook}\n${priceLine}\n${pick(CTA[L2])} 🤍\n\n${tags.join(' ')}`; }
+    const lines = [hook, ''];
+    if(L2 === 'mm' || lang === 'mix') lines.push(mmDesc);
+    if(lang === 'en') lines.push(pick([`Soft, comfy and easy to love.`, `Made for slow days and sweet moments.`, `Pairs nicely with anything you love.`]));
+    if(lang === 'mix') lines.push(pick(['Soft + Comfy လေး ✔️', 'Everyday ဝတ်ဖို့ အဆင်ပြေလေး ✔️', 'ဘာနဲ့တွဲတွဲ Cute လေး ✔️']));
+    lines.push('', priceLine, L2 === 'mm' ? `📏 Size လေးတွေ — ${p.sizes}` : `📏 Sizes — ${p.sizes}`,
+      L2 === 'mm' ? '🛵 မြို့တွင်း အိမ်အရောက် ပို့ပေးပါတယ်နော်\n💳 Prepaid Card / Gift Card လေးတွေနဲ့လည်း ချေလို့ရပါတယ်ရှင့်' : '🛵 Delivery available\n💳 Prepaid & Gift Cards welcome',
+      '', pick(CTA[L2]), '🌐 suwatimenfashion.vercel.app', '', L2 === 'mm' ? 'ချစ်ခင်စွာဖြင့် SUWATI 🤍' : 'With love, SUWATI 🤍', tags.join(' '));
+    return lines.join('\n');
+  }
+  function typeOut(el, text){ return new Promise(res => { let i = 0; const chars = Array.from(text); el.classList.add('typing'); el.textContent = '';
+    const step = () => { i = Math.min(chars.length, i + 3 + Math.floor(Math.random() * 3)); el.textContent = chars.slice(0, i).join(''); if(i < chars.length) setTimeout(step, 14); else { el.classList.remove('typing'); res(); } }; step(); }); }
+  $('ai-go').onclick = async () => {
+    const btn = $('ai-go'); btn.classList.add('busy'); btn.textContent = '✨ AI ရေးနေသည်...';
+    const box = $('caps'); box.innerHTML = ''; const names = { soft:'🌸 SOFT', happy:'✨ HAPPY', prem:'🤍 PREMIUM', cute:'🥰 CUTE' };
+    const seen = new Set(), list = []; for(let k = 0; k < 12 && list.length < 3; k++){ const c = genCaption(); const h = c.split('\n')[0]; if(!seen.has(h)){ seen.add(h); list.push(c); } }
+    while(list.length < 3) list.push(genCaption());
+    await new Promise(r => setTimeout(r, 650));
+    for(let i = 0; i < 3; i++){
+      const d = document.createElement('div'); d.className = 'capc' + (i ? '' : ' sel');
+      d.innerHTML = `<div class="ch">OPTION ${i + 1} · ${names[tone]}<span>${plat === 'tt' ? 'TIKTOK' : 'FACEBOOK'}</span></div><div class="ct" contenteditable="true" spellcheck="false"></div>
+        <div class="cb"><button type="button" data-a="use">✔️ ဒါသုံးမည်</button><button type="button" data-a="copy">📋 Copy</button></div>`;
+      box.appendChild(d); await typeOut(d.querySelector('.ct'), list[i]);
+    }
+    selCap = list[0]; btn.classList.remove('busy'); btn.textContent = '🔄 နောက်ထပ် ၃ မျိုး ရေးမည်';
+  };
+  $('caps').addEventListener('click', async e => { const b = e.target.closest('button'); if(!b) return; const c = b.closest('.capc'), t = c.querySelector('.ct').innerText;
+    if(b.dataset.a === 'use'){ $('caps').querySelectorAll('.capc').forEach(x => x.classList.toggle('sel', x === c)); selCap = t; toast('✔️ Share မှာ ဒီ Caption သုံးမည်'); }
+    else { try{ await navigator.clipboard.writeText(t); }catch(_){} toast('📋 Copy ကူးပြီး'); } });
+
+  // ---------- Save / Share ----------
+  const blob = () => new Promise((r, j) => { try{ cv.toBlob(b => b ? r(b) : j(new Error('blob')), 'image/jpeg', .92); }catch(e){ toast('⚠️ ပုံ Save မရပါ — 📷 ကိုယ့်ပုံ နဲ့ ထည့်ပြီး ပြန်စမ်းပါ'); j(e); } });
+  const fname = () => `suwati-${mode === 'grid' ? 'collage' : (P[cur]?.name || 'post').toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${fmt}.jpg`;
+  $('save').onclick = async () => { const b = await blob(), a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = fname(); a.click(); toast('⬇️ ပုံ Save ပြီး'); };
+  $('share').onclick = async () => { const b = await blob(), f = new File([b], fname(), { type:'image/jpeg' }); const cap = ($('caps').querySelector('.capc.sel .ct')?.innerText) || selCap || '';
+    if(navigator.canShare && navigator.canShare({ files:[f] })){ try{ if(cap) await navigator.clipboard?.writeText(cap); }catch(e){}
+      try{ await navigator.share({ files:[f], text:cap }); toast(cap ? '📤 Share ပြီး — Caption Copy ကူးထား' : '📤 Share ပြီး'); }catch(e){} }
+    else $('save').click(); };
+  function toast(m){ try{ showToast(m); }catch(e){} }
+
+  Promise.all([
+    document.fonts.load('40px Anton'), document.fonts.load('40px "Archivo Black"'), document.fonts.load('700 20px "IBM Plex Mono"'), document.fonts.load('700 20px "Space Mono"'),
+    document.fonts.load('500 30px "Noto Sans Myanmar"', 'မြန်မာ'), document.fonts.load('700 30px "Noto Sans Myanmar"', 'မြန်မာ'),
+    
+  ]).catch(() => {}).then(draw);
+  document.fonts.ready.then(draw);
+}
+// Tab ဖွင့်ရင် / ပစ္စည်းစာရင်းက "📱 Post" ခလုတ်ကနေ
+function openPostMaker(productId){
+  postMakerInit();
+  const btn = document.querySelector('[data-tab="post-maker-panel"]'); if(btn && !document.getElementById('post-maker-panel').classList.contains('active')) btn.click();
+  try{ window.postMakerOpen(productId); }catch(e){}
+  if(productId) setTimeout(() => document.getElementById('post-maker-panel')?.scrollIntoView({ behavior:'smooth', block:'start' }), 120);
+}
+// ပစ္စည်းစာရင်း — ပစ္စည်းတိုင်းမှာ 📱 Post ခလုတ်
+if(typeof renderProductsList === 'function'){
+  const _rplPM = renderProductsList;
+  renderProductsList = function(){
+    const r = _rplPM.apply(this, arguments);
+    try{
+      const list = document.getElementById('products-list'); const q = (document.getElementById('products-search')?.value || '').trim().toLowerCase();
+      let data = productsListCache; if(q) data = data.filter(p => p.name.toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q));
+      [...list.querySelectorAll(':scope > .list-item')].forEach((el, i) => { const p = data[i]; if(!p || p.is_gift_card || el.querySelector('.pm-quick')) return;
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'secondary pm-quick'; b.textContent = '📱 Post'; b.title = 'Facebook / TikTok Post ပုံထုတ်';
+        b.onclick = e => { e.stopPropagation(); openPostMaker(p.id); };
+        const host = el.querySelector('.actions') || el.lastElementChild || el; host.appendChild(b); });
+    }catch(e){}
+    return r;
+  };
+}
+
+// =====================================================================
+// 🔳 QR POSTER — ဆိုင်မှာ ကပ်ဖို့ (QR ဖတ်ရင် Website ရောက်) · A4 300 DPI · Design ၆ မျိုး
+// =====================================================================
+let __qpReady = false;
+function qrPosterInit(){
+  if(__qpReady) return; const panel = document.getElementById('qr-poster-panel'); if(!panel) return; __qpReady = true;
+  panel.innerHTML = "<div class=\"pm qp\">\n  <div class=\"form-card\"><h3>🔳 QR Poster — ဆိုင်မှာ ကပ်ရန်</h3><div class=\"hint\">ဆိုင်မှာ ကပ်ဖို့ — QR ဖတ်လိုက်ရင် <b>suwatimenfashion.vercel.app</b> ကို တန်းရောက်ပါတယ် · A4 (300 DPI) Print အရွယ်</div></div>\n  <div class=\"pm-lbl\" style=\"margin-top:0\">Design</div>\n  <div class=\"pm-seg c3\" id=\"qp-sty\">\n    <button type=\"button\" data-v=\"A\" class=\"on\">Black Card<small>ကတ်ပုံစံ</small></button>\n    <button type=\"button\" data-v=\"B\">Ticket<small>အနီ လက်မှတ်</small></button>\n    <button type=\"button\" data-v=\"C\">Phone<small>Scan → Shop</small></button>\n    <button type=\"button\" data-v=\"D\">Split<small>အစိမ်း/အနက်</small></button>\n    <button type=\"button\" data-v=\"E\">Neon<small>အလင်းဘောင်</small></button>\n    <button type=\"button\" data-v=\"F\">Big Card<small>ကတ်ကြီး</small></button>\n  </div>\n  <div class=\"pm-stage\" style=\"margin-top:12px\"><canvas id=\"qp-cv\"></canvas></div>\n  <div class=\"pm-acts\">\n    <button type=\"button\" class=\"acid\" id=\"qp-save\">⬇️ PNG Save (A4)</button>\n    <button type=\"button\" class=\"secondary\" id=\"qp-print\">🖨️ Print</button>\n  </div>\n  <div class=\"form-card\" style=\"margin-top:14px\">\n    <div class=\"pm-lbl\">စာ ပြင်ချင်ရင်</div>\n    <div class=\"pm-lbl\">🏷️ Badge</div>\n    <input id=\"qp-t-badge\" value=\"ONLINE STORE\" maxlength=\"20\" aria-label=\"Badge\">\n    <div class=\"pm-lbl\">↕️ ဘေး ဒေါင်လိုက်ဘား စာ (Black Card · Big Card)</div>\n    <input id=\"qp-t-stripe\" value=\"SCAN ✕ SHOP ✕ SUWATI\" maxlength=\"40\" aria-label=\"ဒေါင်လိုက်ဘား\">\n    <div class=\"pm-lbl\">📝 မြန်မာစာ</div>\n    <input id=\"qp-t-mm\" value=\"ဖုန်းကင်မရာနဲ့ Scan ဖတ်လိုက်ရုံနဲ့ SUWATI Online Shop လေးကို ရောက်ပါပြီရှင့် 🤍\" aria-label=\"မြန်မာစာ\">\n    <div class=\"pm-lbl\">အောက်ခြေ ပုံစံ</div>\n    <div class=\"pm-seg c2\" id=\"qp-bot\">\n      <button type=\"button\" data-v=\"four\" class=\"on\">▦ ၄ ကွက်<small>အကျိုးကျေးဇူး ၄ ခု</small></button>\n      <button type=\"button\" data-v=\"big\">▬ စာကြီး<small>တစ်ကြောင်းတည်း</small></button>\n    </div>\n    <div id=\"qp-big-box\" hidden><div class=\"pm-lbl\">စာကြီး တစ်ကြောင်း</div>\n    <input id=\"qp-t-big\" value=\"ပစ္စည်းအသစ်လေးတွေ နေ့တိုင်း တင်ပေးနေပါတယ်ရှင့် 🤍\" maxlength=\"80\"></div>\n    <div id=\"qp-four-box\"><div class=\"pm-lbl\">အကျိုးကျေးဇူး ၄ ခု</div>\n    <input id=\"qp-b1\" value=\"🛍️ ပစ္စည်းအသစ်လေးတွေ အရင်ဆုံး ကြည့်လို့ရ\">\n    <input id=\"qp-b2\" value=\"🛵 အိမ်အရောက် ပို့ပေးပါတယ်နော်\">\n    <input id=\"qp-b3\" value=\"💳 Prepaid / Gift Card နဲ့ ချေလို့ရ\">\n    <input id=\"qp-b4\" value=\"🌸 Online သီးသန့် Promo လေးတွေ\"></div>\n    <div class=\"note\">✅ QR ကို စစ်ပြီးပါပြီ — <b>https://suwatimenfashion.vercel.app</b> ကို ရောက်ပါတယ်<br>🖨️ Print ထုတ်ရင် \"Fit to page / စာမျက်နှာအပြည့်\" ရွေးပါ · အကောင်းဆုံး = A4 ဒါမှမဟုတ် A3 · QR ကို အနည်းဆုံး 5cm ကျော်အောင် ထုတ်ပါ</div>\n  </div>\n</div>";
+
+  const QR = '1111111000000110010110110110001111111100000100010011010000100101000100000110111010110100110000010111100010111011011101010110000001001000100101011101101110100101000100011000101000101110110000010001010010001101110000010000011111111010101010101010101010101111111000000000110001000001011110110000000000011011000110001000100111001000011001011100000010111111100011100011010100110111100111001101110010010001111100101111000101111000111101010110110011011001011000101110101100110000101000010101000011101110010110001110111001010010110111101001111111111101011101111111100010100101011111111110001111101110011101101001011110001110010100100010101010000000101111011111010110101001101010001111000011110011101101101010101110111010001011110101111110110010101001101010000101111111111100101110100010110010101110011111111101111100111010011010101100101111111110110100001010100101100010101101100100101011101011011111101011010001010010001100000111011111011001101110001001010011000100000011110111100101010000000110010011111111011100101101111101100010000110100101111101111010001111011100110111111101000000000111100100111111000111000111001111111010110111000011011010101011101100000100001111100100001010110001101110111010101110100000111100111111100111011101010100001111000101111101001100101110100111001001011011000000001101110000010011100000010110110000010111111111111000111000101011011010101001001', N = 37; let sty = 'A', botMode = 'four';
+  const $ = id => document.getElementById('qp-' + id), cv = $('cv'), ctx = cv.getContext('2d');
+  const K = '#141412', G = '#D6FF3F', R = '#C13B1F', C = '#E9E4D8', MU = '#a39e91';
+  const AN = 'Anton, "Archivo Black", "Noto Sans Myanmar", sans-serif', AR = '"Archivo Black", Anton, sans-serif', PM = '"Space Mono", "IBM Plex Mono", monospace', MM = '"Noto Sans Myanmar", sans-serif';
+  // စာကြောင်းခွဲ — မြန်မာစာ (Space မပါ) ကိုလည်း စကားလုံး/စာလုံးအလိုက် ခွဲ · ဘောင်မကျော် · အကြောင်းရေ ပိုရင် "…"
+  const SEG = typeof Intl !== 'undefined' && Intl.Segmenter;
+  const segW = SEG ? new Intl.Segmenter('my', { granularity:'word' }) : null, segG = SEG ? new Intl.Segmenter('my', { granularity:'grapheme' }) : null;
+  const toks = t => segW ? [...segW.segment(t)].map(x => x.segment) : t.split(/(\s+)/);
+  const graph = t => segG ? [...segG.segment(t)].map(x => x.segment) : Array.from(t);
+  // 📏 မြန်မာစာ အကျယ် အမှန် — iPhone Safari က measureText မှားတတ်လို့ တကယ်ဆွဲပြီး Pixel နဲ့ တိုင်း
+  const MYR = /[\u1000-\u109F\uAA60-\uAA7F]/, inkC = document.createElement('canvas'), ictx = inkC.getContext('2d', { willReadFrequently:true }), inkCache = new Map();
+  // iPhone Safari က measureText မြန်မာစာ အကျယ် မှားလို့ — HTML စာသား (DOM) နဲ့ပါ တိုင်း
+  let mspan = null;
+  function domW(t){ try{ if(!mspan){ mspan = document.createElement('span'); mspan.style.cssText = 'position:absolute;left:-99999px;top:0;white-space:pre;visibility:hidden;pointer-events:none'; document.body.appendChild(mspan); }
+    mspan.style.font = ctx.font; mspan.textContent = t; return mspan.getBoundingClientRect().width; }catch(e){ return 0; } }
+  function mw(t){ const m = ctx.measureText(t).width; if(!MYR.test(t)) return m; const key = ctx.font + '|' + t; if(inkCache.has(key)) return inkCache.get(key);
+    const fs = parseFloat((ctx.font.match(/([\d.]+)px/) || [0, 40])[1]), W = Math.min(8000, Math.ceil(Math.max(m * 3, Array.from(t).length * fs * 1.1) + fs * 6 + 20)), H = Math.ceil(fs * 2.6);
+    inkC.width = W; inkC.height = H; ictx.font = ctx.font; ictx.textBaseline = 'middle'; ictx.textAlign = 'left'; ictx.fillStyle = '#000'; ictx.fillText(t, fs, H / 2);
+    let x1 = -1; try{ const d = ictx.getImageData(0, 0, W, H).data; for(let x = W - 1; x >= 0 && x1 < 0; x--) for(let y = 0; y < H; y++) if(d[(y * W + x) * 4 + 3] > 16){ x1 = x; break; } }catch(e){}
+    const r = Math.max(m, x1 > 0 ? x1 - fs + 2 : 0, domW(t)); if(document.fonts && document.fonts.status !== 'loaded') return r; if(inkCache.size > 3000) inkCache.clear(); inkCache.set(key, r); return r; }
+  try{ document.fonts.addEventListener('loadingdone', () => { inkCache.clear(); setTimeout(() => { try{ draw(); }catch(e){} }, 30); }); }catch(e){}
+  function wrap(text, x, y, maxW, lh, maxLines = 3){
+    const lines = []; let line = ''; const push = () => { lines.push(line.trim()); line = ''; };
+    for(let w of toks(String(text || ''))){
+      if(mw(line + w) <= maxW){ line += w; continue; }
+      if(line.trim()){ push(); w = w.trimStart(); }
+      if(mw(w) > maxW){ for(const g of graph(w)){ if(line && mw(line + g) > maxW) push(); line += g; } }
+      else line = w;
+    }
+    if(line.trim()) lines.push(line.trim());
+    const out = lines.slice(0, maxLines);
+    if(lines.length > maxLines){ let l = out[maxLines - 1]; while(l && ctx.measureText(l + '…').width > maxW) l = graph(l).slice(0, -1).join(''); out[maxLines - 1] = l + '…'; }
+    for(const l of out){ ctx.fillText(l, x, y); y += lh; }
+    return y;
+  }
+
+  function spaced(text, x, y, sp, align = 'left'){ let w = 0; for(const ch of text) w += ctx.measureText(ch).width + sp; w -= sp;
+    let cx = align === 'right' ? x - w : align === 'center' ? x - w / 2 : x; const a = ctx.textAlign; ctx.textAlign = 'left';
+    for(const ch of text){ ctx.fillText(ch, cx, y); cx += ctx.measureText(ch).width + sp; } ctx.textAlign = a; return w; }
+  function rr(x, y, w, h, r){ ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+  function fit(text, font, size, maxW, min){ let s = size; ctx.font = font.replace('$', s); while(mw(text) > maxW && s > min){ s -= 2; ctx.font = font.replace('$', s); } return s; }
+
+  function qr(x, y, size, br, PB = G, PF = K){
+    const q = 4, m = size / (N + q * 2); ctx.fillStyle = PB; rr(x, y, size, size, m * 1.6); ctx.fill(); ctx.fillStyle = K;
+    const inLogo = (r, c) => c >= 13 && c <= 23 && r >= 13 && r <= 22;
+    // Finder (ထောင့် ၃ ခု) ကို လုံးလုံးလေး
+    const finder = (r, c) => { const fx = x + (c + q) * m, fy = y + (r + q) * m; ctx.fillStyle = PF; rr(fx, fy, m * 7, m * 7, m * .5); ctx.fill(); ctx.fillStyle = PB; rr(fx + m, fy + m, m * 5, m * 5, m * .3); ctx.fill(); ctx.fillStyle = PF; rr(fx + m * 2, fy + m * 2, m * 3, m * 3, m * .2); ctx.fill(); };
+    const isFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= N - 7) || (r >= N - 7 && c < 7);
+    ctx.fillStyle = PF;
+    for(let r = 0; r < N; r++) for(let c = 0; c < N; c++){ if(QR[r * N + c] !== '1' || inLogo(r, c) || isFinder(r, c)) continue;
+      ctx.fillRect(Math.floor(x + (c + q) * m), Math.floor(y + (r + q) * m), Math.ceil(m) + .5, Math.ceil(m) + .5); }
+    finder(0, 0); finder(0, N - 7); finder(N - 7, 0);
+    // အလယ် Logo — S + အစက်အနီ
+    const lx = x + (13 + q) * m, ly = y + (13 + q) * m, lw = m * 11, lh = m * 10; ctx.fillStyle = PF; rr(lx, ly, lw, lh, m); ctx.fill();
+    ctx.fillStyle = C; ctx.font = `${m * 7.2}px ${AR}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('S', lx + lw * .46, ly + lh * .5); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = R; ctx.fillRect(lx + lw * .74, ly + lh * .68, m * 1.4, m * 1.4);
+    if(!br) return;
+    // Scan ဘောင်ထောင့်လေးများ
+    const o = 26, L = 78; ctx.strokeStyle = C; ctx.lineWidth = 8; ctx.lineCap = 'square';
+    [[x - o, y - o, 1, 1], [x + size + o, y - o, -1, 1], [x - o, y + size + o, 1, -1], [x + size + o, y + size + o, -1, -1]].forEach(([a, b, sx, sy]) => { ctx.beginPath(); ctx.moveTo(a, b + sy * L); ctx.lineTo(a, b); ctx.lineTo(a + sx * L, b); ctx.stroke(); });
+  }
+
+  // ================= Common =================
+  const W = 1080, H = 3508 * 1080 / 2480;
+  const stripeTxt = () => { const t = ($('t-stripe').value || 'SCAN ✕ SHOP ✕ SUWATI').trim(); return Array(8).fill(t).join(' ✕ '); };
+  function gridBg(x, y, w, h, col){ ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip(); ctx.strokeStyle = col; ctx.lineWidth = 1.2;
+    for(let gx = x; gx <= x + w; gx += 45){ ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx, y + h); ctx.stroke(); }
+    for(let gy = y; gy <= y + h; gy += 45){ ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x + w, gy); ctx.stroke(); } ctx.restore(); }
+  function stripe(x, y, w, h, bg, fg){ ctx.fillStyle = bg; ctx.fillRect(x, y, w, h); ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
+    ctx.translate(x + w / 2, y); ctx.rotate(Math.PI / 2); ctx.fillStyle = fg; ctx.font = `${w * .44}px ${AR}`; ctx.textBaseline = 'middle'; ctx.fillText(stripeTxt(), 16, 0); ctx.restore(); ctx.textBaseline = 'alphabetic'; }
+  function logo(x, y, s, col, align = 'left', sub = MU, dot = R){
+    ctx.font = `${s}px ${AN}`; const a = ctx.measureText('SUWATI').width, d = ctx.measureText('.').width, m = ctx.measureText('MEN').width, tw = a + d + m;
+    const lx = align === 'center' ? x - tw / 2 : align === 'right' ? x - tw : x; ctx.textAlign = 'left';
+    ctx.fillStyle = col; ctx.fillText('SUWATI', lx, y); ctx.fillStyle = dot; ctx.fillText('.', lx + a, y); ctx.fillStyle = col; ctx.fillText('MEN', lx + a + d, y);
+    ctx.font = `700 ${s * .27}px "Space Mono", monospace`; ctx.fillStyle = sub; const sp = s * .12, fw = spaced('FASHION', 0, -999, sp); spaced('FASHION', lx + (tw - fw) / 2, y + s * .44, sp); return tw; }
+  function badge(t, x, y, h, bg, fg, align = 'left'){ ctx.font = `700 ${h * .42}px ${PM}`; const w = ctx.measureText(t).width + h * .7, bx = align === 'right' ? x - w : align === 'center' ? x - w / 2 : x;
+    ctx.fillStyle = bg; ctx.fillRect(bx, y, w, h); ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.fillText(t, bx + w / 2, y + h * .66); ctx.textAlign = 'left'; return w; }
+  const badgeTxt = () => ($('t-badge').value || '').toUpperCase();
+  function url(cx, y, col, size = 27){ ctx.font = `700 ${size}px ${PM}`; ctx.fillStyle = col; spaced('SUWATIMENFASHION.VERCEL.APP', cx, y, size * .11, 'center'); }
+  function benefits(x, y, w, col, line, fill, cols = 2){
+    if(botMode === 'big'){ const bh = 162, txt = $('t-big').value || ''; ctx.strokeStyle = line; ctx.lineWidth = 3; ctx.strokeRect(x, y, w, bh); ctx.fillStyle = fill; ctx.fillRect(x, y, w, bh);
+      let fs = 60; ctx.font = `700 ${fs}px ${MM}`; const lines = () => { ctx.font = `700 ${fs}px ${MM}`; let n = 0; const save = ctx.fillText; ctx.fillText = () => n++; wrap(txt, 0, 0, w - 60, 1, 9); ctx.fillText = save; return n; };
+      while(fs > 22 && (lines() > 2 || (lines() === 2 && fs * 1.55 * 2 > bh - 20))) fs -= 2;
+      const n = lines(), lh = fs * 1.55; ctx.fillStyle = col; ctx.textAlign = 'center'; wrap(txt, x + w / 2, y + bh / 2 - (n - 1) * lh / 2 + fs * .36, w - 60, lh, 2); ctx.textAlign = 'left';
+      return y + bh + 14; }
+    const g = 16, gw = (w - g * (cols - 1)) / cols, gh = 74;
+    ['b1', 'b2', 'b3', 'b4'].forEach((id, i) => { const bx = x + (i % cols) * (gw + g), by = y + Math.floor(i / cols) * (gh + 14);
+      ctx.strokeStyle = line; ctx.lineWidth = 2.5; ctx.strokeRect(bx, by, gw, gh); ctx.fillStyle = fill; ctx.fillRect(bx, by, gw, gh);
+      ctx.fillStyle = col; const t = $(id).value, fs = fit(t, `600 $px ${MM}`, 24, gw - 32, 14); ctx.font = `600 ${fs}px ${MM}`; ctx.fillText(t, bx + 16, by + gh / 2 + fs * .36); });
+    return y + (gh + 14) * Math.ceil(4 / cols); }
+  function mmLine(x, y, w, col, align = 'left', size = 31){ ctx.fillStyle = col; ctx.font = `600 ${size}px ${MM}`; ctx.textAlign = align; const r = wrap($('t-mm').value, x, y, w, size * 1.72, 2); ctx.textAlign = 'left'; return r; }
+  function outlineTxt(t, x, y, w, col, a){ ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.font = `400px ${AR}`; const s = 400 * w / ctx.measureText(t).width; ctx.font = `${s}px ${AR}`; ctx.strokeText(t, x, y); ctx.restore(); }
+
+  // ================= A · Black Card (မူလ) =================
+  function dA(){
+    ctx.fillStyle = K; ctx.fillRect(0, 0, W, H); const SW = 112, cw = W - SW, pad = 64;
+    gridBg(0, 0, cw, H, 'rgba(214,255,63,.07)'); outlineTxt('SUWATI', 20, H - 20, cw - 40, G, .16); stripe(cw, 0, SW, H, G, K);
+    logo(pad, 120, 68, C); badge(badgeTxt(), cw - pad, 74, 52, G, K, 'right');
+    ctx.font = `700 16px ${PM}`; ctx.fillStyle = MU; spaced('NAY PYI TAW', cw - pad, 158, 4, 'right');
+    ctx.fillStyle = G; ctx.globalAlpha = .5; ctx.fillRect(pad, 190, cw - pad * 2, 3); ctx.globalAlpha = 1;
+    const s1 = fit('SCAN', `$px ${AN}`, 250, (cw - pad * 2) * .52, 120); ctx.font = `${s1}px ${AN}`; ctx.fillStyle = G; ctx.fillText('SCAN', pad - 4, 196 + s1 * .98);
+    const sx = pad + ctx.measureText('SCAN').width + 26; ctx.font = `700 24px ${PM}`; ctx.fillStyle = C; ctx.fillText('TO VISIT', sx, 196 + s1 * .42); ctx.fillText('OUR', sx, 196 + s1 * .62); ctx.fillStyle = G; ctx.fillText('ONLINE SHOP →', sx, 196 + s1 * .82);
+    let y = mmLine(pad, 196 + s1 * .98 + 70, cw - pad * 2, C) + 30;
+    qr((cw - 520) / 2, y + 10, 520, true); y += 10 + 520 + 82; url(cw / 2, y, C); benefits(pad, y + 40, cw - pad * 2, C, 'rgba(214,255,63,.55)', 'rgba(214,255,63,.06)');
+  }
+
+  // ================= B · Ticket (ပြင်ပြီး — ကြည်လင်တဲ့ Paper + အနီ လက်မှတ်) =================
+  function grain(a, seed = 7){ let s = seed; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280; ctx.save(); ctx.globalAlpha = a;
+    for(let i = 0; i < 5200; i++){ ctx.fillStyle = rnd() > .5 ? '#000' : '#fff'; ctx.fillRect(rnd() * W, rnd() * H, 1.6, 1.6); } ctx.restore(); }
+  function dB(){
+    const P1 = '#ECE6D8', CR = '#F7F2E7', RD = '#C13B1F', DK = '#9E2E16';
+    ctx.fillStyle = P1; ctx.fillRect(0, 0, W, H); grain(.06);
+    logo(64, 116, 60, K, 'left', '#6f6858'); badge(badgeTxt(), W - 64, 70, 48, K, CR, 'right');
+    const hs = fit('SCAN TO SHOP', `$px ${AN}`, 160, W - 128, 70); ctx.font = `${hs}px ${AN}`; ctx.fillStyle = K; ctx.fillText('SCAN TO', 60, 196 + hs * .9);
+    const w1 = ctx.measureText('SCAN TO ').width; ctx.fillStyle = RD; ctx.fillText('SHOP', 60 + w1, 196 + hs * .9);
+    // လက်မှတ်
+    const tw = 680, th = 900, tx = (W - tw) / 2, ty = 196 + hs * .9 + 50, stubH = 440, perf = th - stubH, nr = 30;
+    ctx.save(); ctx.translate(tx + tw / 2, ty + th / 2); ctx.rotate(-.03); ctx.translate(-tw / 2, -th / 2);
+    const shape = () => { ctx.beginPath(); ctx.moveTo(24, 0); ctx.lineTo(tw - 24, 0); ctx.arcTo(tw, 0, tw, 24, 24); ctx.lineTo(tw, perf - nr); ctx.arc(tw, perf, nr, -Math.PI / 2, Math.PI / 2, true);
+      ctx.lineTo(tw, th - 24); ctx.arcTo(tw, th, tw - 24, th, 24); ctx.lineTo(24, th); ctx.arcTo(0, th, 0, th - 24, 24); ctx.lineTo(0, perf + nr); ctx.arc(0, perf, nr, Math.PI / 2, -Math.PI / 2, true); ctx.lineTo(0, 24); ctx.arcTo(0, 0, 24, 0, 24); ctx.closePath(); };
+    ctx.save(); ctx.shadowColor = 'rgba(60,30,10,.35)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 18; shape(); ctx.fillStyle = RD; ctx.fill(); ctx.restore();
+    ctx.save(); shape(); ctx.clip(); ctx.fillStyle = CR; ctx.fillRect(0, perf, tw, stubH);
+    // အပေါ်ပိုင်း (အနီ)
+    ctx.strokeStyle = 'rgba(247,242,231,.35)'; ctx.lineWidth = 2; ctx.strokeRect(22, 22, tw - 44, perf - 44);
+    ctx.font = `700 19px ${PM}`; ctx.fillStyle = CR; spaced('ADMIT ONE', 50, 70, 5); ctx.textAlign = 'right'; spaced('Nº 0001', tw - 50, 70, 4, 'right'); ctx.textAlign = 'left';
+    const ss = fit('SUWATI', `$px ${AN}`, 190, tw - 100, 80); ctx.font = `${ss}px ${AN}`; ctx.fillStyle = CR; ctx.fillText('SUWATI', 46, 92 + ss * .9);
+    ctx.font = `700 22px ${PM}`; ctx.fillStyle = '#F2C9BC'; spaced('ONLINE STORE · MEN FASHION', 50, 92 + ss * .9 + 44, 3);
+    const rows = [['DATE', 'EVERYDAY'], ['VENUE', 'ONLINE'], ['ENTRY', 'FREE']], ry = 92 + ss * .9 + 86, cwid = (tw - 100) / 3;
+    rows.forEach(([l, v], i) => { const x = 50 + i * cwid; ctx.font = `700 15px ${PM}`; ctx.fillStyle = '#F2C9BC'; spaced(l, x, ry, 3); ctx.font = `30px ${AN}`; ctx.fillStyle = CR; ctx.fillText(v, x, ry + 40);
+      if(i) { ctx.fillStyle = 'rgba(247,242,231,.3)'; ctx.fillRect(x - 16, ry - 16, 2, 62); } });
+    ctx.restore();
+    // ဖောက်မျဉ်း
+    ctx.save(); ctx.setLineDash([12, 10]); ctx.strokeStyle = DK; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(nr + 12, perf); ctx.lineTo(tw - nr - 12, perf); ctx.stroke(); ctx.restore();
+    // ဖြတ်ပိုင်း (QR)
+    const qs = 340; qr((tw - qs) / 2, perf + 30, qs, false, CR, K);
+    ctx.font = `700 17px ${PM}`; ctx.fillStyle = RD; spaced('▲  SCAN HERE TO ENTER  ▲', tw / 2, th - 30, 3, 'center');
+    ctx.restore();
+    let y = ty + th + 74; url(W / 2, y, K); ctx.textAlign = 'left';
+    mmLine(W / 2, y + 58, W - 160, '#3a372f', 'center', 27);
+  }
+
+  // ================= C · Phone (ပြင်ပြီး — QR → ဖုန်းထဲ Website) =================
+  function dC(){
+    const BG1 = '#1E2B24', BG2 = '#0F1612', CR = '#F4EFE3', MINT = '#B9E6C9';
+    const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, BG1); g.addColorStop(1, BG2); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); grain(.05, 3);
+    const rg = ctx.createRadialGradient(W * .7, H * .42, 40, W * .7, H * .42, 620); rg.addColorStop(0, 'rgba(185,230,201,.22)'); rg.addColorStop(1, 'rgba(185,230,201,0)'); ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
+    logo(64, 116, 60, CR, 'left', '#9fb3a6'); badge(badgeTxt(), W - 64, 70, 48, CR, BG1, 'right');
+    const words = [['SCAN.', CR], ['SHOP.', MINT], ['DONE.', CR]]; let x = 60; const s = fit('SCAN. SHOP. DONE.', `$px ${AN}`, 140, W - 120, 60); ctx.font = `${s}px ${AN}`;
+    words.forEach(([t, c]) => { ctx.fillStyle = c; ctx.fillText(t, x, 196 + s * .9); x += ctx.measureText(t + ' ').width; });
+    let y = mmLine(64, 196 + s * .9 + 64, W - 128, '#cfd8d1', 'left', 28) + 20;
+    // QR (ဘယ်)
+    const qs = 430, qx = 64, qy = y + 60;
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.45)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 16; ctx.fillStyle = CR; rr(qx - 22, qy - 22, qs + 44, qs + 44, 34); ctx.fill(); ctx.restore();
+    qr(qx, qy, qs, false, CR, K);
+    ctx.font = `700 18px ${PM}`; ctx.fillStyle = MINT; spaced('① SCAN', qx + qs / 2, qy + qs + 66, 4, 'center');
+    // မြှား
+    ctx.save(); ctx.strokeStyle = MINT; ctx.lineWidth = 5; ctx.setLineDash([2, 14]); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(qx + qs + 20, qy + 40); ctx.quadraticCurveTo(qx + qs + 110, qy - 70, 640, qy + 10); ctx.stroke(); ctx.restore();
+    ctx.fillStyle = MINT; ctx.beginPath(); ctx.moveTo(652, qy + 14); ctx.lineTo(622, qy - 4); ctx.lineTo(628, qy + 30); ctx.closePath(); ctx.fill();
+    // ဖုန်း (ညာ · စောင်း)
+    const pw = 360, ph = 740, px = W - 64 - pw + 10, py = qy - 70;
+    ctx.save(); ctx.translate(px + pw / 2, py + ph / 2); ctx.rotate(.07); ctx.translate(-pw / 2, -ph / 2);
+    ctx.save(); ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 26; ctx.fillStyle = '#0a0a0a'; rr(0, 0, pw, ph, 58); ctx.fill(); ctx.restore();
+    ctx.strokeStyle = '#3c3c3a'; ctx.lineWidth = 4; rr(2, 2, pw - 4, ph - 4, 56); ctx.stroke();
+    const sx = 14, sy = 14, sw = pw - 28, sh = ph - 28; ctx.save(); rr(sx, sy, sw, sh, 46); ctx.clip();
+    ctx.fillStyle = '#141412'; ctx.fillRect(sx, sy, sw, sh);
+    ctx.fillStyle = '#000'; rr(sx + sw / 2 - 56, sy + 14, 112, 30, 15); ctx.fill();
+    ctx.fillStyle = '#26261f'; rr(sx + 16, sy + 60, sw - 32, 34, 17); ctx.fill(); ctx.font = `700 13px ${PM}`; ctx.fillStyle = '#b9b4a6'; ctx.textAlign = 'center'; ctx.fillText('🔒 suwatimenfashion.vercel.app', sx + sw / 2, sy + 82); ctx.textAlign = 'left';
+    logo(sx + 22, sy + 146, 34, C);
+    ctx.fillStyle = R; rr(sx + 16, sy + 184, sw - 32, 150, 14); ctx.fill(); ctx.font = `46px ${AN}`; ctx.fillStyle = C; ctx.fillText('NEW DROP', sx + 34, sy + 262);
+    ctx.font = `700 13px ${PM}`; ctx.fillStyle = '#F2C9BC'; ctx.fillText('SHOP NOW →', sx + 36, sy + 300);
+    const tile = (tx, ty, col, lbl) => { ctx.fillStyle = '#24241f'; rr(tx, ty, (sw - 44) / 2, 170, 12); ctx.fill(); ctx.fillStyle = col; rr(tx + 14, ty + 14, (sw - 44) / 2 - 28, 106, 8); ctx.fill();
+      ctx.fillStyle = '#d6d1c4'; ctx.font = `700 11px ${PM}`; ctx.fillText(lbl, tx + 14, ty + 142); ctx.fillStyle = G; ctx.fillText('18,000', tx + 14, ty + 160); };
+    const tw2 = (sw - 44) / 2; tile(sx + 16, sy + 352, '#3a3a36', 'HOODIE'); tile(sx + 28 + tw2, sy + 352, '#5f6138', 'CARGO'); tile(sx + 16, sy + 536, '#e9e4d8', 'TEE'); tile(sx + 28 + tw2, sy + 536, '#b23a20', 'CAP');
+    ctx.restore(); ctx.restore();
+    ctx.font = `700 18px ${PM}`; ctx.fillStyle = MINT; spaced('② SHOP', px + pw / 2, py + ph + 70, 4, 'center');
+    y = Math.max(qy + qs + 120, py + ph + 120); url(W / 2, y, CR);
+    benefits(64, y + 36, W - 128, CR, 'rgba(185,230,201,.45)', 'rgba(185,230,201,.07)');
+  }
+
+  // ================= D · Split (အစိမ်း/အနက် ခွဲ) =================
+  function dD(){
+    const split = 640; ctx.fillStyle = G; ctx.fillRect(0, 0, W, split); ctx.fillStyle = K; ctx.fillRect(0, split, W, H - split);
+    gridBg(0, 0, W, split, 'rgba(20,20,18,.07)'); gridBg(0, split, W, H - split, 'rgba(214,255,63,.06)');
+    logo(64, 116, 62, K, 'left', '#3d4a10', K); badge(badgeTxt(), W - 64, 70, 50, K, G, 'right');
+    const hs = fit('SCAN ME', `$px ${AN}`, 270, W - 128, 100); ctx.font = `${hs}px ${AN}`; ctx.fillStyle = K; ctx.fillText('SCAN ME', 60, 170 + hs * .88);
+    mmLine(64, 170 + hs * .88 + 60, W - 128, K, 'left', 28);
+    const q = 560, qx = (W - q) / 2, qy = split - 150; ctx.fillStyle = K; rr(qx - 18, qy - 18, q + 36, q + 36, 34); ctx.fill(); ctx.strokeStyle = C; ctx.lineWidth = 6; rr(qx - 18, qy - 18, q + 36, q + 36, 34); ctx.stroke();
+    qr(qx, qy, q, false);
+    ctx.font = `700 26px ${MM}`; ctx.fillStyle = G; { const tt = '↓ ဖုန်းကင်မရာနဲ့ ချိန်ကြည့်ပါနော် ↓'; ctx.fillText(tt, W / 2 - mw(tt) / 2, qy + q + 62); }
+    let y = qy + q + 120; url(W / 2, y, C); outlineTxt('SUWATI', 20, H - 20, W - 40, G, .12); benefits(70, y + 34, W - 140, C, 'rgba(214,255,63,.55)', 'rgba(214,255,63,.06)');
+  }
+
+  // ================= E · Neon (အလင်းဘောင်) =================
+  function dE(){
+    ctx.fillStyle = '#0b0b0a'; ctx.fillRect(0, 0, W, H);
+    const glow = (fn, blur = 26) => { ctx.save(); ctx.shadowColor = G; ctx.shadowBlur = blur; fn(); ctx.restore(); };
+    glow(() => { ctx.strokeStyle = G; ctx.lineWidth = 5; rr(36, 36, W - 72, H - 72, 30); ctx.stroke(); });
+    ctx.strokeStyle = 'rgba(214,255,63,.35)'; ctx.lineWidth = 2; rr(56, 56, W - 112, H - 112, 22); ctx.stroke();
+    logo(W / 2, 160, 64, C, 'center');
+    const hs = fit('SCAN', `$px ${AN}`, 230, W - 200, 100); ctx.font = `${hs}px ${AN}`; ctx.textAlign = 'center';
+    glow(() => { ctx.strokeStyle = G; ctx.lineWidth = 5; ctx.strokeText('SCAN', W / 2, 230 + hs * .9); }, 30); ctx.textAlign = 'left';
+    ctx.font = `700 24px ${PM}`; ctx.fillStyle = C; spaced('— TO VISIT OUR ONLINE STORE —', W / 2, 230 + hs * .9 + 50, 3, 'center');
+    let y = 230 + hs * .9 + 80; const q = 560, qx = (W - q) / 2;
+    glow(() => { ctx.fillStyle = G; rr(qx, y, q, q, 20); ctx.fill(); }, 60); qr(qx, y, q, false);
+    y += q + 62; url(W / 2, y, G); y = mmLine(W / 2, y + 62, W - 200, C, 'center', 28);
+    benefits(90, y + 4, W - 180, C, 'rgba(214,255,63,.4)', 'rgba(214,255,63,.04)');
+  }
+
+  // ================= F · Prepaid Card (ကတ်ကြီး) =================
+  function dF(){
+    ctx.fillStyle = K; ctx.fillRect(0, 0, W, H); gridBg(0, 0, W, H, 'rgba(214,255,63,.05)');
+    logo(64, 118, 62, C); badge(badgeTxt(), W - 64, 72, 50, G, K, 'right');
+    ctx.font = `700 24px ${PM}`; ctx.fillStyle = G; spaced('YOUR PASS TO', 64, 250, 6);
+    const hs = fit('SUWATI ONLINE', `$px ${AN}`, 150, W - 128, 70); ctx.font = `${hs}px ${AN}`; ctx.fillStyle = C; ctx.fillText('SUWATI ONLINE', 60, 262 + hs * .9);
+    const cw = 952, ch = cw * 540 / 856, cx = (W - cw) / 2, cy = 262 + hs * .9 + 70, q = cw / 100;
+    ctx.save(); ctx.translate(cx + cw / 2, cy + ch / 2); ctx.rotate(-.035); ctx.translate(-cw / 2, -ch / 2);
+    ctx.shadowColor = 'rgba(214,255,63,.28)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 20; ctx.fillStyle = '#1a1a17'; rr(0, 0, cw, ch, 4.2 * q); ctx.fill(); ctx.shadowColor = 'transparent';
+    ctx.save(); rr(0, 0, cw, ch, 4.2 * q); ctx.clip(); gridBg(0, 0, cw, ch, 'rgba(214,255,63,.08)'); outlineTxt('SUWATI', 3 * q, ch - 2 * q, 70 * q, G, .22); stripe(cw - 15.42 * q, 0, 15.42 * q, ch, G, K); ctx.restore();
+    ctx.strokeStyle = 'rgba(214,255,63,.25)'; ctx.lineWidth = 2; rr(1, 1, cw - 2, ch - 2, 4.2 * q); ctx.stroke();
+    const L = 5.6 * q; ctx.font = `${4.4 * q}px ${AR}`; ctx.fillStyle = G; ctx.fillText('SUWATI', L, 9.6 * q); let tw = ctx.measureText('SUWATI').width; ctx.fillStyle = C; ctx.fillText('.', L + tw, 9.6 * q); tw += ctx.measureText('.').width; ctx.fillStyle = G; ctx.fillText('ONLINE CARD', L + tw, 9.6 * q);
+    badge('SCAN TO SHOP', L, 13 * q, 3.6 * q, R, C);
+    ctx.font = `700 ${1.7 * q}px ${PM}`; ctx.fillStyle = MU; spaced('MEMBER SINCE 2026', L, 24 * q, .3 * q);
+    ctx.font = `700 ${3 * q}px ${PM}`; ctx.fillStyle = C; spaced('0001 2026', L, 30 * q, .5 * q);
+    ctx.font = `700 ${1.6 * q}px ${PM}`; ctx.fillStyle = MU; spaced('WEBSITE', L, ch - 11 * q, .3 * q);
+    ctx.font = `700 ${2.2 * q}px ${PM}`; ctx.fillStyle = C; spaced('suwatimenfashion.vercel.app', L, ch - 5.6 * q, .1 * q);
+    const qs = 33 * q; qr(cw - 15.42 * q - qs - 4 * q, (ch - qs) / 2, qs, false);
+    ctx.restore();
+    let y = cy + ch + 80; y = mmLine(64, y, W - 128, C, 'left', 30) + 10; benefits(64, y, W - 128, C, 'rgba(214,255,63,.55)', 'rgba(214,255,63,.06)');
+  }
+
+  function draw(){
+    const S = 2480 / 1080; cv.width = 2480; cv.height = 3508; ctx.setTransform(S, 0, 0, S, 0, 0); ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    ({ A:dA, B:dB, C:dC, D:dD, E:dE, F:dF }[sty] || dA)();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+  }
+  ['t-badge', 't-stripe', 't-big', 't-mm', 'b1', 'b2', 'b3', 'b4'].forEach(id => $(id).addEventListener('input', draw));
+  $('bot').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; botMode = b.dataset.v; $('bot').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    $('big-box').hidden = botMode !== 'big'; $('four-box').hidden = botMode === 'big'; draw(); });
+  $('sty').addEventListener('click', e => { const b = e.target.closest('button'); if(!b) return; sty = b.dataset.v; $('sty').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); draw(); });
+  $('save').onclick = () => cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `suwati-qr-poster-${sty}-A4.png`; a.click(); }, 'image/png');
+  $('print').onclick = () => { const u = cv.toDataURL('image/png'), w = window.open('', '_blank'); if(!w){ try{ showToast('⚠️ Popup ပိတ်ထားလို့ — PNG Save နဲ့ ထုတ်ပါ'); }catch(e){} return; } w.document.write(`<title>SUWATI QR Poster</title><style>@page{size:A4 portrait;margin:0}html,body{margin:0}img{width:210mm;height:297mm;display:block}</style><img src="${u}" onload="setTimeout(()=>print(),300)">`); w.document.close(); };
+  Promise.all([document.fonts.load('40px Anton'), document.fonts.load('40px "Archivo Black"'), document.fonts.load('700 20px "Space Mono"'), document.fonts.load('600 30px "Noto Sans Myanmar"', 'မြန်မာ')]).catch(() => {}).then(draw);
+  document.fonts.ready.then(draw); draw();
+}
+
 // ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
 (function(){
   const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -9579,7 +10632,7 @@ function renderTrash(){
 })();
 
 // SUWATI MEN FASHION — 💬 Customer Chat တန်းရောက် + ✍️ စာရိုက်နေ "•••" + 🔄 App ပြန်ဖွင့်ရင် Update
-//   • Realtime (ချက်ချင်း) + ၈ စက္ကန့်တစ်ခါ စစ် (Realtime ပြတ်နေရင်လည်း စာ မလွတ်)
+//   • Realtime (ချက်ချင်း) + ၃၀ စက္ကန့်တစ်ခါ စစ် (Realtime ပြတ်နေရင်လည်း စာ မလွတ်)
 //   • စာအသစ်ဝင်ရင် ရေးနေတဲ့စာ မပျက်ဘဲ Bubble သာ ထပ်ထည့်
 //   • SUWATI.ADMIN Logo နှိပ် = App တစ်ခုလုံး Refresh
 (function(){
@@ -9638,7 +10691,7 @@ function renderTrash(){
     startPoll();
   };
 
-  // ---------- Realtime ပြတ်နေရင်လည်း ၈ စက္ကန့်တစ်ခါ စစ် ----------
+  // ---------- Realtime ပြတ်နေရင်လည်း ၃၀ စက္ကန့်တစ်ခါ စစ် ----------
   let polling = false, pollT = null;
   async function poll(){
     if(polling || typeof currentAdminUserId === 'undefined' || !currentAdminUserId) return;
@@ -9652,7 +10705,7 @@ function renderTrash(){
     }catch(e){}
     polling = false;
   }
-  function startPoll(){ if(pollT) return; pollT = setInterval(() => { if(!document.hidden) poll(); }, 8000); }
+  function startPoll(){ if(pollT) return; pollT = setInterval(() => { if(!document.hidden) poll(); }, 30000); } // ၃၀ စက္ကန့် အရန် (Realtime က ချက်ချင်း)
   window.chatLivePoll = poll;
 
   // Auto-Refresh (၄၅ စက္ကန့်) က Conversation တစ်ခုလုံး ပြန်ဆွဲလို့ ရေးနေတဲ့စာ ပျက်တာ ပြင်
@@ -9786,6 +10839,74 @@ function renderTrash(){
   document.querySelector('.tab-btn[data-tab="salesreport-panel"]')?.addEventListener('click', () => {
     setTimeout(() => { try{ if(typeof renderSalesChart === 'function' && Array.isArray(currentSalesBuckets) && currentSalesBuckets.length) renderSalesChart(); }catch(e){} }, 160);
   });
+})();
+
+// SUWATI MEN FASHION — 🔊 Admin အသံများ (ဖိုင်မလို · Web Audio)
+//   💬 Customer စာ · 🛒 Order အသစ် · 💰 ငွေဖြည့်/ရောင်းပြီး · 🧾 Receipt Print · 🎁 Gift Card · ✅ အတည်ပြု
+(function(){
+  let ctx = null; const AC = window.AudioContext || window.webkitAudioContext;
+  const ac = () => { if(!AC) return null; if(!ctx){ try{ ctx = new AC(); }catch(e){ return null; } } if(ctx.state === 'suspended') ctx.resume().catch(() => {}); return ctx; };
+  const unlock = () => { const c = ac(); if(c){ const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); try{ s.start(0); }catch(e){} } };
+  ['pointerdown', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, unlock, { passive:true, capture:true }));
+  const muted = () => { try{ return localStorage.getItem('suwati_admin_sound') === 'off'; }catch(e){ return false; } };
+  function tone(f, t, dur, { type = 'sine', vol = .18, glide = 0, attack = .008 } = {}){
+    const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type; o.frequency.setValueAtTime(f, t); if(glide) o.frequency.exponentialRampToValueAtTime(glide, t + dur);
+    g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + attack); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + dur + .05);
+  }
+  function noise(t, dur, vol = .1, hp = 3000){
+    const n = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate), d = n.getChannelData(0);
+    for(let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length);
+    const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain(); s.buffer = n; f.type = 'highpass'; f.frequency.value = hp; g.gain.value = vol;
+    s.connect(f).connect(g).connect(ctx.destination); s.start(t);
+  }
+  const play = fn => { if(muted()) return; const c = ac(); if(!c) return; try{ fn(c.currentTime + .02); }catch(e){} };
+  window.adminSfx = {
+    msg:   () => play(t => { tone(1318.5, t, .16, { vol:.17 }); tone(1760, t + .11, .3, { vol:.15 }); }),
+    order: () => play(t => { [784, 988, 1175, 1568].forEach((f, i) => tone(f, t + i * .085, .35, { type:'triangle', vol:.14 })); tone(2349, t + .34, .5, { vol:.05 }); }),
+    send:  () => play(t => { tone(520, t, .16, { glide:1400, vol:.05 }); noise(t, .12, .04, 5000); }),
+    coin:  () => play(t => { [0, .09, .16].forEach((d, i) => { tone(2093 + i * 220, t + d, .22, { type:'square', vol:.04 }); tone(3136 + i * 180, t + d + .02, .3, { vol:.05 }); }); tone(1568, t + .26, .6, { type:'triangle', vol:.1 }); }),
+    cash:  () => play(t => { tone(1318.5, t, .1, { type:'square', vol:.05 }); tone(1975.5, t + .07, .5, { type:'triangle', vol:.15 }); noise(t + .07, .25, .08, 5000); tone(2637, t + .1, .6, { vol:.06 }); }),
+    gift:  () => play(t => { tone(392, t, .6, { glide:1568, vol:.08 }); [1568, 1975.5, 2349.3, 2637, 3136].forEach((f, i) => tone(f, t + .18 + i * .06, .45, { vol:.06 })); }),
+    ok:    () => play(t => { tone(880, t, .1, { vol:.1 }); tone(1320, t + .08, .2, { vol:.1 }); }),
+    no:    () => play(t => { tone(330, t, .16, { type:'sawtooth', vol:.05 }); tone(247, t + .14, .26, { type:'sawtooth', vol:.05 }); }),
+    print: () => play(t => { for(let k = 0; k < 16; k++){ const d = t + k * .093; noise(d, .06, .07, 1800); tone(180 + (k % 2) * 30, d, .05, { type:'square', vol:.025 }); }
+      tone(880, t + 1.55, .08, { type:'square', vol:.04 }); noise(t + 1.6, .12, .09, 4000); }),
+  };
+  // မူလ "တင်တင်" အသံ → iPhone မှာလည်း မြည်အောင် (Context တစ်ခုတည်း ပြန်သုံး)
+  window.playNotificationSound = () => adminSfx.msg();
+  try{ playNotificationSound = window.playNotificationSound; }catch(e){}
+
+  // 🧾 Receipt Print သံ
+  if(typeof showReceiptOverlay === 'function'){ const _s = showReceiptOverlay; showReceiptOverlay = function(){ const r = _s.apply(this, arguments); adminSfx.print(); return r; }; }
+  // လုပ်ဆောင်ချက်အလိုက် အသံ
+  const MAP = { pos_sale_completed:'cash', pos_gift_card_sold:'gift', wallet_topup_approved:'coin', gift_card_approved:'gift', wallet_topup_rejected:'no', gift_card_rejected:'no',
+    order_delivered:'ok', stock_received:'ok', trash_restored:'ok', broadcast_sent:'send', broadcast_scheduled:'ok', sale_refunded:'no' };
+  if(typeof logActivity === 'function'){
+    const _l = logActivity;
+    logActivity = function(action){ try{ const k = MAP[action]; if(k && !(action === 'pos_sale_completed')) adminSfx[k](); }catch(e){} return _l.apply(this, arguments); };
+  }
+  // POS ရောင်းပြီး — ငွေသား "ချင်း" (Receipt Print သံ မတိုင်ခင်)
+  if(typeof printPosReceipt === 'function'){ const _p = printPosReceipt; printPosReceipt = function(){ if(window.__fxPrintAnim) adminSfx.cash(); return _p.apply(this, arguments); }; }
+  // 🛒 Order အသစ် — သီးသန့် အသံ
+  if(typeof fxAdminNewOrder === 'function'){ const _n = fxAdminNewOrder; window.fxAdminNewOrder = function(){ setTimeout(() => adminSfx.order(), 380); return _n.apply(this, arguments); }; try{ fxAdminNewOrder = window.fxAdminNewOrder; }catch(e){} }
+})();
+
+// ---------- 🔊 Settings › App အသံ ဖွင့်/ပိတ် (ဒီဖုန်းအတွက်) ----------
+(function(){
+  const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('asnd-card')) return;
+  const on = (() => { try{ return localStorage.getItem('suwati_admin_sound') !== 'off'; }catch(e){ return true; } })();
+  const card = document.createElement('div'); card.className = 'form-card'; card.id = 'asnd-card';
+  card.innerHTML = `<h3>🔊 App အသံ</h3>
+    <label class="promo-check"><input type="checkbox" id="asnd-on" ${on ? 'checked' : ''}> <span>ဒီဖုန်းမှာ အသံ ဖွင့်မည် — Customer စာ · Order အသစ် · ရောင်းပြီး · ငွေဖြည့် · Receipt Print</span></label>
+    <div class="asnd-test">${[['msg', '💬 စာဝင်'], ['order', '🛒 Order'], ['cash', '💰 ရောင်းပြီး'], ['print', '🧾 Print']].map(([k, l]) => `<button type="button" class="secondary" data-k="${k}">${l}</button>`).join('')}</div>`;
+  const push = document.getElementById('apush-card');
+  if(push) push.insertAdjacentElement('afterend', card); else panel.prepend(card);
+  card.querySelector('#asnd-on').addEventListener('change', e => {
+    try{ localStorage.setItem('suwati_admin_sound', e.target.checked ? 'on' : 'off'); }catch(_){}
+    if(e.target.checked) adminSfx.ok(); showToast(e.target.checked ? '🔊 အသံ ဖွင့်ပြီးပါပြီ' : '🔇 အသံ ပိတ်လိုက်ပါပြီ');
+  });
+  card.querySelectorAll('.asnd-test button').forEach(b => b.addEventListener('click', () => { if(!card.querySelector('#asnd-on').checked) return showToast('🔇 အသံ ပိတ်ထားပါသည်'); adminSfx[b.dataset.k](); }));
 })();
 
 // =====================================================================
