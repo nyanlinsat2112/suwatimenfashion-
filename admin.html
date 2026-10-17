@@ -1217,6 +1217,19 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
 .pos-card-info{ font-size:13px; line-height:1.7; padding:10px 12px; border:2px solid var(--bd, #5a564b); }
 .pos-card-info.ok{ border-color:var(--acid); } .pos-card-info.bad{ border-color:var(--rust); color:var(--warn-text); }
 #pos-card-scan{ margin:0; font-family:'Noto Sans Myanmar',sans-serif; }
+/* 📊 ၂ ကော်လံ ညီညီ — Orders ဝင်ငွေ + Sales Report */
+#revenue-stats{ display:grid !important; grid-template-columns:1fr 1fr; gap:18px 16px !important; align-items:start; }
+#revenue-stats > *{ min-width:0; } #revenue-stats .display{ font-size:clamp(18px, 5.4vw, 26px) !important; overflow-wrap:anywhere; }
+#revenue-stats .ms-range{ grid-column:1 / -1; margin-bottom:0; }
+.sr-stats{ display:grid; grid-template-columns:1fr 1fr; gap:18px 16px; margin-bottom:16px; } .sr-stats > *{ min-width:0; } .sr-stats .display{ font-size:clamp(18px, 5.4vw, 24px) !important; overflow-wrap:anywhere; }
+.sr-picker{ display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center; margin:0 0 16px; }
+.sr-picker .sr-nav{ margin:0; width:46px; padding:10px 0; font-size:20px; line-height:1; }
+.sr-picker .sr-ctl{ display:flex; gap:8px; min-width:0; } .sr-picker .sr-ctl > *{ flex:1; min-width:0; margin:0; }
+.sr-picker .sr-range-label{ grid-column:1 / 3; font:700 13px 'Noto Sans Myanmar',sans-serif; color:var(--acid-text); }
+.sr-picker .sr-today{ margin:0; padding:8px 12px; font-size:12px; }
+.sr-table-title{ font:700 14px 'Noto Sans Myanmar',sans-serif; margin:4px 0 8px; }
+#sales-report-table .sr-total-row td{ border-top:2px solid var(--concrete); }
+.sr-period-btn{ white-space:nowrap; padding-left:4px !important; padding-right:4px !important; font-size:13px !important; }
 </style>
 </head>
 <body>
@@ -1702,8 +1715,9 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
         <button type="button" class="secondary sr-period-btn" data-period="yearly">Yearly</button>
         <button type="button" class="secondary" id="export-sales-csv-btn" style="margin-left:auto;">📥 CSV/Excel Export</button>
       </div>
+      <div id="sr-picker" class="sr-picker"></div>
 
-      <div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:16px;">
+      <div class="sr-stats">
         <div>
           <div class="hint" style="margin:0;">ရောင်းရငွေ (ကာလအလိုက်)</div>
           <div class="display" style="font-size:24px; color:var(--acid-text);" id="sr-total-revenue">-</div>
@@ -1718,11 +1732,11 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
         </div>
         <div>
           <div class="hint" style="margin:0;">💰 Prepaid Card ငွေဖြည့်ခံရငွေ (ကာလအလိုက်)</div>
-          <div class="display" style="font-size:24px; color:var(--info-text);" id="sr-total-topup">-</div>
+          <div class="display" style="font-size:24px; color:var(--info-text);" id="sr-total-topup">-</div><div class="ms-sub" id="sr-total-topup-n"></div>
         </div>
         <div>
           <div class="hint" style="margin:0;">🎁 Gift Card ရောင်းရငွေ (ကာလအလိုက်)</div>
-          <div class="display" style="font-size:24px; color:var(--purple-text);" id="sr-total-giftcard">-</div>
+          <div class="display" style="font-size:24px; color:var(--purple-text);" id="sr-total-giftcard">-</div><div class="ms-sub" id="sr-total-giftcard-n"></div>
         </div>
       </div>
 
@@ -1738,6 +1752,7 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
         <canvas id="sales-chart" height="90"></canvas>
       </div>
 
+      <div class="sr-table-title" id="sr-table-title"></div>
       <div style="overflow-x:auto;">
         <table class="inventory-table-styled" id="sales-report-table">
           <thead><tr><th>ကာလ</th><th>Order အရေအတွက်</th><th>ရောင်းရငွေ</th></tr></thead>
@@ -4451,16 +4466,24 @@ function subscribeToWalletRealtime(){
 }
 
 // ---------- SALES REPORT ----------
+//   Daily = Calendar ကနေ ရက်ရွေး (နာရီအလိုက်) · Weekly = တနင်္လာ–တနင်္ဂနွေ (နေ့အလိုက်)
+//   Monthly = လ ရွေး (ရက်အလိုက်) · Yearly = နှစ် ရွေး (လအလိုက်)
+//   အောက်က ဇယား = Graph မှာ ရွေးထားတဲ့ အချက်အလိုက် (ရောင်းရငွေ / ပစ္စည်း / Top-up / Gift Card)
 let salesChartInstance = null;
 let currentChartMetric = 'revenue';
 let currentSalesPeriod = 'daily';
 let currentSalesBuckets = [];
+let srAnchor = new Date();   // ရွေးထားတဲ့ ရက် (ကာလ တွက်ရန်)
+
+const SR_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const SR_DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 
 document.querySelectorAll('.sr-period-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
     document.querySelectorAll('.sr-period-btn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentSalesPeriod = btn.dataset.period;
+    renderSrPicker();
     loadSalesReport();
   });
 });
@@ -4468,91 +4491,133 @@ document.querySelectorAll('.sr-period-btn').forEach(btn=>{
 document.getElementById('export-sales-csv-btn').addEventListener('click', exportSalesCSV);
 
 function initSalesReport(){
+  renderSrPicker();
   loadSalesReport();
 }
 
-function bucketKey(date, period){
-  const d = new Date(date);
-  if(period === 'daily'){
-    return localYMD(d); // YYYY-MM-DD (ဒေသစံတော်ချိန်)
-  }
-  if(period === 'weekly'){
-    const onejan = new Date(d.getFullYear(),0,1);
-    const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay()+1)/7);
-    return `${d.getFullYear()}-W${String(week).padStart(2,'0')}`;
-  }
-  if(period === 'monthly'){
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-  }
-  // yearly
-  return `${d.getFullYear()}`;
+// ---- ရွေးထားတဲ့ ကာလ (စ / ဆုံး) ----
+function srRange(){
+  const a = new Date(srAnchor); a.setHours(0, 0, 0, 0);
+  let s, e;
+  if(currentSalesPeriod === 'daily'){ s = new Date(a); e = new Date(a); e.setDate(e.getDate() + 1); }
+  else if(currentSalesPeriod === 'weekly'){ s = new Date(a); s.setDate(s.getDate() - ((s.getDay() + 6) % 7)); e = new Date(s); e.setDate(e.getDate() + 7); }
+  else if(currentSalesPeriod === 'monthly'){ s = new Date(a.getFullYear(), a.getMonth(), 1); e = new Date(a.getFullYear(), a.getMonth() + 1, 1); }
+  else { s = new Date(a.getFullYear(), 0, 1); e = new Date(a.getFullYear() + 1, 0, 1); }
+  return { s, e };
+}
+function srRangeLabel(){
+  const { s, e } = srRange(), last = new Date(e.getTime() - 1);
+  if(currentSalesPeriod === 'daily') return `${s.getDate()} ${SR_MON[s.getMonth()]} ${s.getFullYear()} (${SR_DAY[s.getDay()]})`;
+  if(currentSalesPeriod === 'weekly') return `${s.getDate()} ${SR_MON[s.getMonth()]} – ${last.getDate()} ${SR_MON[last.getMonth()]} ${last.getFullYear()}`;
+  if(currentSalesPeriod === 'monthly') return `${SR_MON[s.getMonth()]} ${s.getFullYear()}`;
+  return `${s.getFullYear()}`;
+}
+function srShift(dir){
+  const a = new Date(srAnchor);
+  if(currentSalesPeriod === 'daily') a.setDate(a.getDate() + dir);
+  else if(currentSalesPeriod === 'weekly') a.setDate(a.getDate() + 7 * dir);
+  else if(currentSalesPeriod === 'monthly'){ a.setDate(1); a.setMonth(a.getMonth() + dir); }
+  else a.setFullYear(a.getFullYear() + dir);
+  srAnchor = a; renderSrPicker(); loadSalesReport();
 }
 
-function periodRangeStart(period){
-  const now = new Date();
-  if(period === 'daily') return new Date(now.getTime() - 13*86400000); // last 14 days
-  if(period === 'weekly') return new Date(now.getTime() - 12*7*86400000); // last 12 weeks
-  if(period === 'monthly'){ const d = new Date(now); d.setMonth(d.getMonth()-11); return d; } // last 12 months
-  const d = new Date(now); d.setFullYear(d.getFullYear()-4); return d; // last 5 years
+// ---- ကာလ ရွေးတဲ့ ကိရိယာ ----
+function renderSrPicker(){
+  const box = document.getElementById('sr-picker'); if(!box) return;
+  const a = new Date(srAnchor), y = a.getFullYear(), nowY = new Date().getFullYear();
+  const years = []; for(let i = nowY; i >= nowY - 6; i--) years.push(i); if(!years.includes(y)) years.push(y);
+  const ySel = `<select id="sr-year">${years.sort((p, q) => q - p).map(v => `<option value="${v}"${v === y ? ' selected' : ''}>${v}</option>`).join('')}</select>`;
+  let ctl = '';
+  if(currentSalesPeriod === 'daily' || currentSalesPeriod === 'weekly'){
+    ctl = `<input type="date" id="sr-date" value="${localYMD(a)}">`;
+  } else if(currentSalesPeriod === 'monthly'){
+    ctl = `<select id="sr-month">${SR_MON.map((m, i) => `<option value="${i}"${i === a.getMonth() ? ' selected' : ''}>${m} (${i + 1} လ)</option>`).join('')}</select>${ySel}`;
+  } else ctl = ySel;
+  box.innerHTML = `<button type="button" class="secondary sr-nav" id="sr-prev" aria-label="အရင်">‹</button>
+    <div class="sr-ctl">${ctl}</div>
+    <button type="button" class="secondary sr-nav" id="sr-next" aria-label="နောက်">›</button>
+    <div class="sr-range-label" id="sr-range-label">📅 ${srRangeLabel()}${currentSalesPeriod === 'weekly' ? ' · တနင်္လာ → တနင်္ဂနွေ' : ''}</div>
+    <button type="button" class="secondary sr-today" id="sr-today">ယခု</button>`;
+  document.getElementById('sr-prev').onclick = () => srShift(-1);
+  document.getElementById('sr-next').onclick = () => srShift(1);
+  document.getElementById('sr-today').onclick = () => { srAnchor = new Date(); renderSrPicker(); loadSalesReport(); };
+  const d = document.getElementById('sr-date'); if(d) d.onchange = () => { if(d.value){ srAnchor = new Date(d.value + 'T00:00:00'); renderSrPicker(); loadSalesReport(); } };
+  const m = document.getElementById('sr-month'), ys = document.getElementById('sr-year');
+  const upd = () => { const nm = m ? Number(m.value) : 0; srAnchor = new Date(Number(ys.value), nm, 1); renderSrPicker(); loadSalesReport(); };
+  if(m) m.onchange = upd; if(ys) ys.onchange = upd;
 }
+
+// ---- ကာလထဲက အပိုင်းလေးများ (Chart / ဇယား) ----
+function srSlots(){
+  const { s, e } = srRange(), out = [];
+  if(currentSalesPeriod === 'daily'){ for(let h = 0; h < 24; h++) out.push({ key:String(h), label:`${String(h).padStart(2, '0')}:00` }); }
+  else if(currentSalesPeriod === 'yearly'){ for(let mo = 0; mo < 12; mo++) out.push({ key:String(mo), label:SR_MON[mo] }); }
+  else { for(let d = new Date(s); d < e; d.setDate(d.getDate() + 1)) out.push({ key:localYMD(d), label:currentSalesPeriod === 'weekly' ? `${SR_DAY[d.getDay()]} ${d.getDate()}` : String(d.getDate()) }); }
+  return out;
+}
+function srSlotKey(date){
+  const d = new Date(date);
+  if(currentSalesPeriod === 'daily') return String(d.getHours());
+  if(currentSalesPeriod === 'yearly') return String(d.getMonth());
+  return localYMD(d);
+}
+// (အခြားနေရာမှ သုံးနိုင်ရန် ချန်ထား)
+function bucketKey(date, period){ const d = new Date(date);
+  if(period === 'daily') return localYMD(d);
+  if(period === 'monthly') return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  return `${d.getFullYear()}`; }
 
 async function loadSalesReport(){
-  const { data: orders, error } = await sb.from('orders').select('created_at, total_amount, quantity, order_status');
+  const { s, e } = srRange(), si = s.toISOString(), ei = new Date(e.getTime() - 1).toISOString();
+  const lab = document.getElementById('sr-range-label'); if(lab) lab.style.opacity = '.5';
+  const [{ data: orders, error }, { data: topups }, { data: giftCards }] = await Promise.all([
+    sb.from('orders').select('created_at, total_amount, quantity, order_status').gte('created_at', si).lte('created_at', ei),
+    sb.from('wallet_topups').select('amount, created_at, status').eq('status','approved').gte('created_at', si).lte('created_at', ei),
+    sb.from('gift_cards').select('amount, created_at, status').neq('status','pending').neq('status','rejected').gte('created_at', si).lte('created_at', ei),
+  ]);
+  if(lab) lab.style.opacity = '';
   if(error || !orders) return;
+  const inR = r => { const t = new Date(r.created_at); return t >= s && t < e; };
 
-  const rangeStart = periodRangeStart(currentSalesPeriod);
-  const filtered = orders.filter(o => new Date(o.created_at) >= rangeStart && o.order_status !== 'cancelled' && o.order_status !== 'awaiting_payment');
+  const slots = srSlots(), map = {};
+  slots.forEach(sl => map[sl.key] = { label:sl.label, revenue:0, orders:0, items:0, topup:0, topupN:0, giftcard:0, giftN:0 });
+  const add = (r, fn) => { if(!inR(r)) return; const b = map[srSlotKey(r.created_at)]; if(b) fn(b); };
+  orders.filter(o => o.order_status !== 'cancelled' && o.order_status !== 'awaiting_payment').forEach(o => add(o, b => { b.revenue += Number(o.total_amount) || 0; b.orders += 1; b.items += (o.quantity || 0); }));
+  (topups || []).forEach(t => add(t, b => { b.topup += Number(t.amount) || 0; b.topupN += 1; }));
+  (giftCards || []).forEach(g => add(g, b => { b.giftcard += Number(g.amount) || 0; b.giftN += 1; }));
+  currentSalesBuckets = slots.map(sl => map[sl.key]);
 
-  const buckets = {};
-  filtered.forEach(o=>{
-    const key = bucketKey(o.created_at, currentSalesPeriod);
-    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0, topup:0, giftcard:0 };
-    buckets[key].revenue += Number(o.total_amount);
-    buckets[key].orders += 1;
-    buckets[key].items += (o.quantity||0);
-  });
+  const sum = f => currentSalesBuckets.reduce((x, b) => x + b[f], 0);
+  document.getElementById('sr-total-revenue').textContent = sum('revenue').toLocaleString()+' ကျပ်';
+  document.getElementById('sr-total-orders').textContent = sum('orders');
+  document.getElementById('sr-total-items').textContent = sum('items');
+  document.getElementById('sr-total-topup').textContent = sum('topup').toLocaleString()+' ကျပ်';
+  document.getElementById('sr-total-giftcard').textContent = sum('giftcard').toLocaleString()+' ကျပ်';
+  const n1 = document.getElementById('sr-total-topup-n'), n2 = document.getElementById('sr-total-giftcard-n');
+  if(n1) n1.textContent = `${sum('topupN')} ကြိမ်`; if(n2) n2.textContent = `${sum('giftN')} ကတ်`;
 
-  // Prepaid Card Top-up + Gift Card ရောင်းရငွေ (ဒီကာလအတွက်) — Admin မှ Approve လုပ်ပြီးသားများသာ ရေတွက် — Graph မှာလည်း ကာလအလိုက် ခွဲပြနိုင်ရန် Bucket ချထား
-  const { data: topups } = await sb.from('wallet_topups').select('amount, created_at, status').eq('status','approved');
-  (topups||[]).filter(t => new Date(t.created_at) >= rangeStart).forEach(t=>{
-    const key = bucketKey(t.created_at, currentSalesPeriod);
-    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0, topup:0, giftcard:0 };
-    buckets[key].topup += Number(t.amount);
-  });
-
-  const { data: giftCards } = await sb.from('gift_cards').select('amount, created_at, status').neq('status','pending').neq('status','rejected');
-  (giftCards||[]).filter(g => new Date(g.created_at) >= rangeStart).forEach(g=>{
-    const key = bucketKey(g.created_at, currentSalesPeriod);
-    if(!buckets[key]) buckets[key] = { revenue:0, orders:0, items:0, topup:0, giftcard:0 };
-    buckets[key].giftcard += Number(g.amount);
-  });
-
-  const sortedKeys = Object.keys(buckets).sort();
-  currentSalesBuckets = sortedKeys.map(k=>({ label:k, ...buckets[k] }));
-
-  const totalRevenue = currentSalesBuckets.reduce((s,b)=>s+b.revenue,0);
-  const totalOrders = currentSalesBuckets.reduce((s,b)=>s+b.orders,0);
-  const totalItems = currentSalesBuckets.reduce((s,b)=>s+b.items,0);
-  const topupTotal = currentSalesBuckets.reduce((s,b)=>s+b.topup,0);
-  const giftCardTotal = currentSalesBuckets.reduce((s,b)=>s+b.giftcard,0);
-
-  document.getElementById('sr-total-revenue').textContent = totalRevenue.toLocaleString()+' ကျပ်';
-  document.getElementById('sr-total-orders').textContent = totalOrders;
-  document.getElementById('sr-total-items').textContent = totalItems;
-  document.getElementById('sr-total-topup').textContent = topupTotal.toLocaleString()+' ကျပ်';
-  document.getElementById('sr-total-giftcard').textContent = giftCardTotal.toLocaleString()+' ကျပ်';
-
-  // Table
-  const tbody = document.getElementById('sales-report-tbody');
-  if(!currentSalesBuckets.length){
-    tbody.innerHTML = '<tr><td colspan="3" class="hint">ဒီကာလအတွက် Order မရှိသေးပါ</td></tr>';
-  } else {
-    tbody.innerHTML = currentSalesBuckets.slice().reverse().map(b=>`
-      <tr><td>${b.label}</td><td>${b.orders}</td><td>${b.revenue.toLocaleString()} ကျပ်</td></tr>
-    `).join('');
-  }
-
+  renderSalesTable();
   renderSalesChart();
+}
+
+// ---- ဇယား — Graph မှာ ရွေးထားတဲ့ အချက်အလိုက် ----
+const SR_TABLES = {
+  revenue:  { title:'🛍️ ပစ္စည်း ရောင်းအား', cols:['Order', 'ပစ္စည်း', 'ရောင်းရငွေ'], row:b => [b.orders, b.items, b.revenue.toLocaleString() + ' ကျပ်'], has:b => b.orders > 0 },
+  items:    { title:'🛍️ ပစ္စည်း ရောင်းအား', cols:['Order', 'ပစ္စည်း', 'ရောင်းရငွေ'], row:b => [b.orders, b.items, b.revenue.toLocaleString() + ' ကျပ်'], has:b => b.orders > 0 },
+  topup:    { title:'💰 Prepaid Card ငွေဖြည့်', cols:['အကြိမ်', 'ငွေဖြည့်ငွေ'], row:b => [b.topupN, b.topup.toLocaleString() + ' ကျပ်'], has:b => b.topupN > 0 },
+  giftcard: { title:'🎁 Gift Card ရောင်းအား', cols:['ကတ်', 'ရောင်းရငွေ'], row:b => [b.giftN, b.giftcard.toLocaleString() + ' ကျပ်'], has:b => b.giftN > 0 },
+};
+function renderSalesTable(){
+  const t = SR_TABLES[currentChartMetric] || SR_TABLES.revenue;
+  const head = document.querySelector('#sales-report-table thead');
+  if(head) head.innerHTML = `<tr><th>${currentSalesPeriod === 'daily' ? 'နာရီ' : currentSalesPeriod === 'yearly' ? 'လ' : 'ရက်'}</th>${t.cols.map(c => `<th>${c}</th>`).join('')}</tr>`;
+  const ttl = document.getElementById('sr-table-title'); if(ttl) ttl.textContent = `${t.title} — ${srRangeLabel()}`;
+  const tbody = document.getElementById('sales-report-tbody');
+  const rows = currentSalesBuckets.filter(t.has);
+  if(!rows.length){ tbody.innerHTML = `<tr><td colspan="${t.cols.length + 1}" class="hint">ဒီကာလအတွက် မှတ်တမ်း မရှိပါ</td></tr>`; return; }
+  const tot = { orders:0, items:0, revenue:0, topupN:0, topup:0, giftN:0, giftcard:0 }; rows.forEach(b => Object.keys(tot).forEach(k => tot[k] += b[k]));
+  tbody.innerHTML = rows.map(b => `<tr><td>${b.label}</td>${t.row(b).map(v => `<td>${v}</td>`).join('')}</tr>`).join('')
+    + `<tr class="sr-total-row"><td><b>စုစုပေါင်း</b></td>${t.row(tot).map(v => `<td><b>${v}</b></td>`).join('')}</tr>`;
 }
 
 const CHART_METRIC_CONFIG = {
@@ -4583,12 +4648,12 @@ function renderSalesChart(){
       // ⑭ Bar တွေ တစ်ခုချင်း တက်လာ
       animation: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? false : {
         duration: 900, easing: 'easeOutQuart',
-        delay: (c) => (c.type === 'data' && c.mode === 'default') ? c.dataIndex * 55 : 0,
+        delay: (c) => (c.type === 'data' && c.mode === 'default') ? c.dataIndex * 35 : 0,
       },
       plugins: { legend: { labels: { color: chartTextColor() } } },
       scales: {
-        x: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } },
-        y: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() } }
+        x: { ticks: { color: chartTextColor(), autoSkip:true, maxRotation:0 }, grid: { color: chartGridColor() } },
+        y: { ticks: { color: chartTextColor() }, grid: { color: chartGridColor() }, beginAtZero:true }
       }
     }
   });
@@ -4600,25 +4665,26 @@ document.querySelectorAll('.chart-metric-btn').forEach(btn=>{
     btn.classList.add('active');
     currentChartMetric = btn.dataset.metric;
     renderSalesChart();
+    renderSalesTable();
   });
 });
 
 function exportSalesCSV(){
   if(!currentSalesBuckets.length){ showToast('Export လုပ်ရန် Data မရှိပါ'); return; }
-  let csv = 'Period,Orders,Revenue (MMK)\n';
+  let csv = `﻿SUWATI Sales Report,${srRangeLabel()}\nPeriod,Orders,Items,Revenue (MMK),Top-up Count,Top-up (MMK),Gift Card Count,Gift Card (MMK)\n`;
   currentSalesBuckets.forEach(b=>{
-    csv += `${b.label},${b.orders},${b.revenue}\n`;
+    csv += `${b.label},${b.orders},${b.items},${b.revenue},${b.topupN},${b.topup},${b.giftN},${b.giftcard}\n`;
   });
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `suwati-sales-report-${currentSalesPeriod}-${localYMD()}.csv`;
+  a.download = `suwati-sales-${currentSalesPeriod}-${localYMD(srRange().s)}.csv`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  logActivity('sales_report_exported', currentSalesPeriod);
+  logActivity('sales_report_exported', currentSalesPeriod + ' ' + srRangeLabel());
 }
 
 // ---------- CUSTOMER MANAGEMENT ----------
@@ -10538,7 +10604,7 @@ function qrPosterInit(){
 
   // ================= 💳 WALLET TOP-UP မှတ်တမ်း =================
   function ensureBox(listId, boxId){ const list = document.getElementById(listId); if(!list) return null; let b = document.getElementById(boxId);
-    if(!b){ b = document.createElement('div'); b.id = boxId; list.parentNode.insertBefore(b, list); } return b; }
+    if(!b){ b = document.createElement('div'); b.id = boxId; list.parentNode.insertBefore(b, list.parentNode.firstChild); } return b; }
   if(typeof loadAllTopups === 'function'){
     const _lt = loadAllTopups;
     loadAllTopups = async function(){
@@ -10551,7 +10617,7 @@ function qrPosterInit(){
         box.innerHTML = `<div class="form-card ms-card"><div class="ms-range">${label(v)} — Top-up</div><div class="ms-grid">
           ${statBox('ms-tp-amt', '💰 ဖြည့်ငွေ (Approved)', 'var(--acid-text)')}${statBox('ms-tp-bonus', '🎁 Bonus ပေးငွေ', 'var(--purple-text)')}
           <div class="ms-stat"><div class="hint" style="margin:0;">🔁 အကြိမ်</div><div class="display" style="font-size:24px;">${ok.length}</div><div class="ms-sub">⏳ ${pend} စောင့်ဆဲ · ❌ ${rej} ပယ်</div></div></div>
-          <details class="ms-days"><summary>📊 ရက်အလိုက် ဇယား</summary><div id="ms-tp-days"><p class="hint">Load လုပ်နေသည်...</p></div></details></div>`;
+          <details class="ms-days" open><summary>📊 ရက်အလိုက် ဇယား</summary><div id="ms-tp-days"><p class="hint">Load လုပ်နေသည်...</p></div></details></div>`;
         setStat('ms-tp-amt', ok.reduce((s, x) => s + Number(x.amount || 0), 0), `${ok.length} ကြိမ်`);
         setStat('ms-tp-bonus', ok.reduce((s, x) => s + Number(x.bonus_amount || 0), 0), '');
         box.querySelector('details').addEventListener('toggle', async e => { if(!e.target.open) return;
@@ -10576,7 +10642,7 @@ function qrPosterInit(){
         box.innerHTML = `<div class="form-card ms-card"><div class="ms-range">${label(v)} — Gift Card ရောင်းအား</div><div class="ms-grid">
           ${statBox('ms-gc-amt', '💰 ရောင်းရငွေ', 'var(--acid-text)')}${statBox('ms-gc-online', '🌐 Online', 'var(--info-text)')}${statBox('ms-gc-pos', '🏪 ဆိုင် (POS)', 'var(--purple-text)')}
           <div class="ms-stat"><div class="hint" style="margin:0;">🎁 ကတ်</div><div class="display" style="font-size:24px;">${sold.length}</div><div class="ms-sub">☑️ ${redeemed} သုံးပြီး · ⏳ ${pend} စောင့်ဆဲ</div></div></div>
-          <details class="ms-days"><summary>📊 ရက်အလိုက် ဇယား</summary><div id="ms-gc-days"><p class="hint">Load လုပ်နေသည်...</p></div></details></div>`;
+          <details class="ms-days" open><summary>📊 ရက်အလိုက် ဇယား</summary><div id="ms-gc-days"><p class="hint">Load လုပ်နေသည်...</p></div></details></div>`;
         const sum = a => a.reduce((s, x) => s + Number(x.amount || 0), 0);
         setStat('ms-gc-amt', sum(sold), `${sold.length} ကတ်`); setStat('ms-gc-online', sum(online), `${online.length} ကတ်`); setStat('ms-gc-pos', sum(pos), `${pos.length} ကတ်`);
         box.querySelector('details').addEventListener('toggle', async e => { if(!e.target.open) return;
@@ -10602,12 +10668,19 @@ function qrPosterInit(){
         const { data } = await sb.from('wallets').select('user_id, balance, card_number').eq('card_number', num).limit(1);
         if(my !== seq) return; const w = data && data[0];
         if(!w){ info('❌ ဒီ Card Number နဲ့ Card မတွေ့ပါ', 'bad'); return; }
-        let nm = '';
-        try{ const { data: u } = await sb.rpc('admin_customer_names', { p_ids:[w.user_id] }); const x = u && u[0]; if(x) nm = x.full_name || x.nickname || x.email || ''; }catch(e){}
+        let nm = '', ph = '';
+        try{ const { data: u } = await sb.rpc('admin_customer_names', { p_ids:[w.user_id] }); const x = u && u[0]; if(x){ nm = x.full_name || x.nickname || ''; ph = x.phone || ''; } }catch(e){}
+        // Customer စီမံခန့်ခွဲမှုနဲ့ ကိုက်အောင် — သူ့ Online Order အသစ်ဆုံးက နာမည်/ဖုန်း ကို ဦးစားပေး
+        try{ const { data: lo } = await sb.from('orders').select('customer_name, phone, created_at').eq('user_id', w.user_id).order('created_at', { ascending:false }).limit(1); const o = lo && lo[0];
+          if(o){ if(o.phone) ph = o.phone; if(!nm && o.customer_name) nm = o.customer_name; } }catch(e){}
         if(my !== seq) return;
+        window.__posCardCustomer = { card:num, user_id:w.user_id, name:nm, phone:ph };
+        const nEl = document.getElementById('pos-customer-name'), pEl = document.getElementById('pos-customer-phone');
+        if(nm && nEl && (!nEl.value.trim() || /^walk-?in/i.test(nEl.value.trim()) || nEl.dataset.auto)){ nEl.value = nm; nEl.dataset.auto = 1; }
+        if(ph && pEl && (!pEl.value.trim() || pEl.dataset.auto)){ pEl.value = ph; pEl.dataset.auto = 1; }
         let due = 0; try{ due = getPosFinalTotal() || 0; }catch(e){}
         const low = due && Number(w.balance) < due;
-        info(`💳 <b>${nm ? nm.replace(/[<>&]/g, '') : 'Customer'}</b> · လက်ကျန် <b>${money(w.balance)}</b> ကျပ်${low ? ' — ⚠️ လက်ကျန် မလောက်ပါ' : ''}<br><small>Customer ကို PIN ရိုက်ခိုင်းပြီး "အရောင်းပြီးစီး" နှိပ်ပါ</small>`, low ? 'bad' : 'ok');
+        info(`💳 <b>${nm ? nm.replace(/[<>&]/g, '') : 'Customer'}</b>${ph ? ' · 📞 ' + ph.replace(/[<>&]/g, '') : ''} · လက်ကျန် <b>${money(w.balance)}</b> ကျပ်${low ? ' — ⚠️ လက်ကျန် မလောက်ပါ' : ''}<br><small>Customer ကို PIN ရိုက်ခိုင်းပြီး "အရောင်းပြီးစီး" နှိပ်ပါ</small>`, low ? 'bad' : 'ok');
       }catch(e){ info('⚠️ Card စစ်မရပါ — Internet စစ်ပါ', 'bad'); }
     }
     function setCard(raw){ const f = fmt(raw); if(!f){ try{ showToast('⚠️ Prepaid Card Barcode မဟုတ်ပါ'); }catch(e){} return 'Card Barcode မဟုတ်ပါ'; }
@@ -10617,7 +10690,17 @@ function qrPosterInit(){
     cn.addEventListener('input', () => { const f = fmt(cn.value); if(f){ if(cn.value !== f) cn.value = f; lookup(f); } else info(''); });
     cn.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); const f = fmt(cn.value); if(f){ cn.value = f; document.getElementById('pos-card-pin').focus(); } } });
     document.getElementById('pos-card-pin').setAttribute('inputmode', 'numeric');
-    if(typeof renderPosCart === 'function'){ const _rpc = renderPosCart; renderPosCart = function(){ const r = _rpc.apply(this, arguments); if(!cn.value) info(''); return r; }; }
+    if(typeof renderPosCart === 'function'){ const _rpc = renderPosCart; renderPosCart = function(){ const r = _rpc.apply(this, arguments);
+      if(!cn.value){ info(''); window.__posCardCustomer = null; ['pos-customer-name', 'pos-customer-phone'].forEach(i => { const e = document.getElementById(i); if(e) delete e.dataset.auto; }); } return r; }; }
+    // POS Order ကို Customer Account နဲ့ ချိတ် (user_id) — Customer စီမံခန့်ခွဲမှုမှာ ဝယ်ထားတာ ပေါင်းပြ
+    const _from = sb.from.bind(sb);
+    sb.from = function(t){ const q = _from(t); if(t !== 'orders' || !q || typeof q.insert !== 'function') return q; const _ins = q.insert.bind(q);
+      q.insert = function(rows, ...rest){ try{ const c = window.__posCardCustomer, arr = Array.isArray(rows) ? rows : [rows];
+        const pm = document.getElementById('pos-payment-method')?.value || '';
+        if(c && c.user_id && arr.length && arr.every(x => x && x.sale_channel === 'in_store' && !x.user_id) && /Prepaid|Split/.test(pm) && (cn.value || '').replace(/\D/g, '') === c.card.replace(/\D/g, ''))
+          arr.forEach(x => { x.user_id = c.user_id; if(!x.customer_name || /^walk-?in/i.test(x.customer_name)) x.customer_name = c.name || x.customer_name; if(!x.phone && c.phone) x.phone = c.phone; });
+      }catch(e){} return _ins(rows, ...rest); };
+      return q; };
   }
 })();
 
