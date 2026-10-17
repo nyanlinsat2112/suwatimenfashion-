@@ -34,7 +34,9 @@ async function imageInfo(url){
 
 module.exports = async (req, res) => {
   // ⚠️ Facebook/Messenger က "http-equiv refresh" ကို လိုက်သွားပြီး ဆိုင် Home ကို ဖတ်မိလို့ ပုံ/နာမည် မှားတာ — Redirect ကို လူအတွက် JS နဲ့သာ
-  //    (Facebook Bot တွေက JavaScript မ Run လို့ ပစ္စည်းစာမျက်နှာမှာ ရပ်ပြီး ပုံ/နာမည် ဖတ်သွား · လူတွေက ချက်ချင်း ပစ္စည်းဆီ ရောက်)
+  //    Link Preview Bot (Facebook/Messenger/Viber...) → ပစ္စည်း ပုံ/နာမည် ပါတဲ့ စာမျက်နှာ · လူ → ပစ္စည်းဆီ Server ကနေ တန်းပို့ (302)
+  const ua = String(req.headers["user-agent"] || "");
+  const isBot = /bot|crawl|spider|slurp|preview|externalhit|facebot|meta-external|whatsapp|viber|telegram|skype|discord|slack|linkedin|pinterest|embedly|iframely|vkshare|zalo|line-poker|kakaotalk|mastodon|bitly|google-inspection/i.test(ua) && !/FBAN|FBAV|FB_IAB|Instagram|Line\//.test(ua);
   const id = String((req.query && req.query.id) || "").slice(0, 200);
   const host = req.headers["x-forwarded-host"] || req.headers.host || "suwatimenfashion.vercel.app";
   const site = "https://" + host;
@@ -63,8 +65,11 @@ module.exports = async (req, res) => {
   const sv = String((req.query && req.query.s) || "").replace(/[^0-9a-z]/gi, "").slice(0, 8);
   const reqPath = "/p/" + encodeURIComponent(id) + (sv ? "?s=" + sv : "");
 
+  // Bot နဲ့ လူကို မတူတာပေးလို့ Vercel CDN မှာ မမှတ်စေ (တစ်ယောက်ဟာ နောက်တစ်ယောက်ဆီ မရောက်စေရ)
+  res.setHeader("Cache-Control", "private, no-store, max-age=0");
+  res.setHeader("Vary", "User-Agent");
+  if(!isBot){ res.statusCode = 302; res.setHeader("Location", target); return res.end(); }
   res.setHeader("Content-Type", "text/html; charset=utf-8");
-  res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=86400");
   res.statusCode = 200;
   res.end(`<!doctype html><html lang="my"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -88,5 +93,5 @@ ${p ? `<meta property="product:price:amount" content="${esc(p.price)}"><meta pro
 <link rel="canonical" href="${esc(site + reqPath)}">
 <style>body{background:#141412;color:#E9E4D8;font-family:sans-serif;display:grid;place-items:center;min-height:100vh;margin:0}a{color:#D6FF3F}</style>
 </head><body><p>SUWATI MEN FASHION — <a href="${esc(target)}">${esc(p ? p.name : "ဆိုင်သို့ သွားရန်")}</a></p>
-<script>location.replace(${JSON.stringify(target)});</script></body></html>`);
+</body></html>`);
 };
