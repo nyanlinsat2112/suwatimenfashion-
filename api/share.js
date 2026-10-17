@@ -4,6 +4,34 @@ const SUPABASE_URL = "https://gfatvhxougswmzrjpqkp.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmYXR2aHhvdWdzd216cmpwcWtwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0NzQ0NTEsImV4cCI6MjEwNTA1MDQ1MX0.SZDCjKzOyQBZCPXib1EyLEdj9NimYbhvA6PXk-9j42U";
 const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+// 📐 ပုံရဲ့ အရွယ် (JPEG / PNG / WebP) — Facebook/Messenger က og:image:width/height ပါမှ ပထမဆုံး Share မှာကတည်းက ပုံပြ
+async function imageInfo(url){
+  try{
+    const r = await fetch(url, { headers: { Range: "bytes=0-131071" } });
+    if(!r.ok && r.status !== 206) return null;
+    const b = Buffer.from(await r.arrayBuffer());
+    const type = (r.headers.get("content-type") || "").split(";")[0];
+    if(b[0] === 0x89 && b[1] === 0x50) return { w: b.readUInt32BE(16), h: b.readUInt32BE(20), type: "image/png" };
+    if(b.toString("ascii", 0, 4) === "RIFF" && b.toString("ascii", 8, 12) === "WEBP"){
+      const f = b.toString("ascii", 12, 16);
+      if(f === "VP8X") return { w: 1 + b.readUIntLE(24, 3), h: 1 + b.readUIntLE(27, 3), type: "image/webp" };
+      if(f === "VP8 ") return { w: b.readUInt16LE(26) & 0x3fff, h: b.readUInt16LE(28) & 0x3fff, type: "image/webp" };
+      if(f === "VP8L"){ const v = b.readUInt32LE(21); return { w: (v & 0x3fff) + 1, h: ((v >> 14) & 0x3fff) + 1, type: "image/webp" }; }
+    }
+    if(b[0] === 0xff && b[1] === 0xd8){
+      let i = 2;
+      while(i < b.length - 9){
+        if(b[i] !== 0xff){ i++; continue; }
+        const m = b[i + 1], len = b.readUInt16BE(i + 2);
+        if(m >= 0xc0 && m <= 0xcf && m !== 0xc4 && m !== 0xc8 && m !== 0xcc) return { h: b.readUInt16BE(i + 5), w: b.readUInt16BE(i + 7), type: "image/jpeg" };
+        i += 2 + len;
+      }
+      return { type: "image/jpeg" };
+    }
+    return type ? { type } : null;
+  }catch(e){ return null; }
+}
+
 module.exports = async (req, res) => {
   const id = String((req.query && req.query.id) || "").slice(0, 200);
   const host = req.headers["x-forwarded-host"] || req.headers.host || "suwatimenfashion.vercel.app";
@@ -26,7 +54,12 @@ module.exports = async (req, res) => {
     ? ((p.description || "").replace(/\s+/g, " ").slice(0, 150) || (p.category ? p.category + " · " : "") + "SUWATI MEN FASHION — Nay Pyi Taw · KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်")
     : "Streetwear Menswear — Nay Pyi Taw · KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်";
   const firstImg = p ? (p.image_url || String(p.images || "").split(",")[0] || "").trim() : "";
-  const image = firstImg || site + "/og-image.png";
+  // ပုံကို ကိုယ့် Domain ကနေ တိုက်ရိုက် ပေး (Messenger/Facebook/Viber ပိုသေချာ) — api/og-img.js
+  const isSb = /^https:\/\/[a-z0-9]+\.supabase\.co\/storage\/v1\/object\/public\//i.test(firstImg);
+  const image = firstImg ? (isSb ? site + "/api/og-img?u=" + encodeURIComponent(firstImg) : firstImg) : site + "/og-image.png";
+  const info = firstImg ? await imageInfo(firstImg) : { w: 1200, h: 630, type: "image/png" };
+  const sv = String((req.query && req.query.s) || "").replace(/[^0-9a-z]/gi, "").slice(0, 8);
+  const reqPath = "/p/" + encodeURIComponent(id) + (sv ? "?s=" + sv : "");
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "public, s-maxage=600, stale-while-revalidate=86400");
@@ -40,8 +73,11 @@ module.exports = async (req, res) => {
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:image" content="${esc(image)}">
+<meta property="og:image:secure_url" content="${esc(image)}">
+${info && info.type ? `<meta property="og:image:type" content="${esc(info.type)}">` : ""}
+${info && info.w && info.h ? `<meta property="og:image:width" content="${info.w}"><meta property="og:image:height" content="${info.h}">` : ""}
 <meta property="og:image:alt" content="${esc(p ? p.name : "SUWATI MEN FASHION")}">
-<meta property="og:url" content="${esc(site + "/p/" + encodeURIComponent(id))}">
+<meta property="og:url" content="${esc(site + reqPath)}">
 ${p ? `<meta property="product:price:amount" content="${esc(p.price)}"><meta property="product:price:currency" content="MMK">` : ""}
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${esc(title)}">

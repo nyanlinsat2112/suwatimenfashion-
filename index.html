@@ -7405,7 +7405,7 @@ function getProductShareUrl(name){
   const key = p && p.id ? p.id : name;
   // /p/<ID> Link — Facebook/Messenger/Viber မှာ ပုံ + ဈေး ပါပေါ်စေရန် (api/share.js)
   if(/^(localhost|127\.)/.test(location.hostname) || location.protocol === "file:") return `${location.origin}/?p=${encodeURIComponent(key)}`;
-  return `${location.origin}/p/${encodeURIComponent(key)}`;
+  return `${location.origin}/p/${encodeURIComponent(key)}?s=2`; // ?s=2 = Messenger/Facebook ရဲ့ ပုံမပါတဲ့ Cache အဟောင်းကို ကျော်
 }
 async function shareProduct(name){
   const url = getProductShareUrl(name);
