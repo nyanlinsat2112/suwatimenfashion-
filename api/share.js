@@ -36,7 +36,10 @@ module.exports = async (req, res) => {
   // ⚠️ Facebook/Messenger က "http-equiv refresh" ကို လိုက်သွားပြီး ဆိုင် Home ကို ဖတ်မိလို့ ပုံ/နာမည် မှားတာ — Redirect ကို လူအတွက် JS နဲ့သာ
   //    Link Preview Bot (Facebook/Messenger/Viber...) → ပစ္စည်း ပုံ/နာမည် ပါတဲ့ စာမျက်နှာ · လူ → ပစ္စည်းဆီ Server ကနေ တန်းပို့ (302)
   const ua = String(req.headers["user-agent"] || "");
-  const isBot = /bot|crawl|spider|slurp|preview|externalhit|facebot|meta-external|whatsapp|viber|telegram|skype|discord|slack|linkedin|pinterest|embedly|iframely|vkshare|zalo|line-poker|kakaotalk|mastodon|bitly|google-inspection/i.test(ua) && !/FBAN|FBAV|FB_IAB|Instagram|Line\//.test(ua);
+  // Messenger / Facebook App က Link Preview ကို App ကိုယ်တိုင် (FBAN/FBAV) ဖတ်တယ် — လူ နှိပ်ရင်လည်း ဒီ App Browser ပဲ
+  //   → HTML (ပုံ/နာမည်) ပေး + JavaScript နဲ့သာ ပစ္စည်းဆီ ပို့ (Preview က JS မ Run · လူ့ Browser က Run)
+  const inApp = /FBAN|FBAV|FB_IAB|FBIOS|Messenger|Instagram|Line\//i.test(ua);
+  const isBot = inApp || /bot|crawl|spider|slurp|preview|externalhit|facebot|meta-external|whatsapp|viber|telegram|skype|discord|slack|linkedin|pinterest|embedly|iframely|vkshare|zalo|line-poker|kakaotalk|mastodon|bitly|google-inspection/i.test(ua);
   const id = String((req.query && req.query.id) || "").slice(0, 200);
   const host = req.headers["x-forwarded-host"] || req.headers.host || "suwatimenfashion.vercel.app";
   const site = "https://" + host;
@@ -93,5 +96,5 @@ ${p ? `<meta property="product:price:amount" content="${esc(p.price)}"><meta pro
 <link rel="canonical" href="${esc(site + reqPath)}">
 <style>body{background:#141412;color:#E9E4D8;font-family:sans-serif;display:grid;place-items:center;min-height:100vh;margin:0}a{color:#D6FF3F}</style>
 </head><body><p>SUWATI MEN FASHION — <a href="${esc(target)}">${esc(p ? p.name : "ဆိုင်သို့ သွားရန်")}</a></p>
-</body></html>`);
+${inApp ? `<script>location.replace(${JSON.stringify(target)});</script>` : ""}</body></html>`);
 };
