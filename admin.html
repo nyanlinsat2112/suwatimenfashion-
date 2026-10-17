@@ -1208,6 +1208,15 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
 .pm .pm-acts{ grid-template-columns:1fr 1fr !important; } .pm .pm-editbar{ grid-template-columns:1fr !important; } .pm .pm-editbar.on{ grid-template-columns:1fr auto !important; }
 .pm .pm-chips{ display:flex !important; } .pm .capc .cb{ grid-template-columns:1fr 1fr !important; }
 .pm .pm-seg button{ display:block; text-align:center; }
+/* 💰 ငွေဝင် Stats */
+#revenue-stats .ms-range, .ms-card .ms-range{ flex-basis:100%; font:700 13px 'Noto Sans Myanmar',sans-serif; color:var(--acid-text); margin-bottom:-8px; }
+.ms-sub{ font:400 11px 'Space Mono',monospace; color:var(--grey); margin-top:2px; }
+.ms-card .ms-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; margin-top:14px; }
+.ms-days{ margin-top:14px; } .ms-days summary{ cursor:pointer; font:700 13px 'Noto Sans Myanmar',sans-serif; padding:8px 0; }
+.ms-table tr[data-d]{ cursor:pointer; } .ms-table tr.on td{ background:rgba(214,255,63,.12); } .ms-table tr.ms-all td{ border-top:2px solid var(--concrete); }
+.pos-card-info{ font-size:13px; line-height:1.7; padding:10px 12px; border:2px solid var(--bd, #5a564b); }
+.pos-card-info.ok{ border-color:var(--acid); } .pos-card-info.bad{ border-color:var(--rust); color:var(--warn-text); }
+#pos-card-scan{ margin:0; font-family:'Noto Sans Myanmar',sans-serif; }
 </style>
 </head>
 <body>
@@ -10472,6 +10481,145 @@ function qrPosterInit(){
   Promise.all([document.fonts.load('40px Anton'), document.fonts.load('40px "Archivo Black"'), document.fonts.load('700 20px "Space Mono"'), document.fonts.load('600 30px "Noto Sans Myanmar"', 'မြန်မာ')]).catch(() => {}).then(draw);
   document.fonts.ready.then(draw); draw();
 }
+
+// =====================================================================
+// 💰 ငွေဝင် စာရင်း — Online Orders · Wallet Top-up · Gift Card (Default = ဒီနေ့ · ရက်ရွေး · အားလုံး)
+// 💳 POS — Prepaid Card ကို Barcode (ကင်မရာ / USB Scanner) နဲ့ ရှင်း
+// =====================================================================
+(function(){
+  const pad = n => String(n).padStart(2, '0');
+  const dayKey = d => { d = new Date(d); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+  const today = () => dayKey(new Date());
+  const range = v => v ? [new Date(v + 'T00:00:00').toISOString(), new Date(v + 'T23:59:59.999').toISOString()] : null;
+  const money = n => Number(n || 0).toLocaleString();
+  const label = v => !v ? '📚 အားလုံး' : v === today() ? '📅 ဒီနေ့' : '📅 ' + new Date(v + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+  const statBox = (id, title, color) => `<div class="ms-stat"><div class="hint" style="margin:0;">${title}</div><div class="display" style="font-size:24px; color:${color};" id="${id}">-</div><div class="ms-sub" id="${id}-n"></div></div>`;
+  const setStat = (id, amt, sub) => { const a = document.getElementById(id), b = document.getElementById(id + '-n'); if(a) a.textContent = money(amt) + ' ကျပ်'; if(b) b.textContent = sub || ''; };
+  const range2 = (q, col, v) => { const r = range(v); return r ? q.gte(col, r[0]).lte(col, r[1]) : q; };
+
+  // 📊 ရက်အလိုက် ဇယား (နောက်ဆုံး ၃၀ ရက်) — တစ်တန်းနှိပ်ရင် အဲဒီရက် ကြည့်
+  function dayTable(hostId, rows, onPick, cur){
+    const host = document.getElementById(hostId); if(!host) return;
+    const map = {}; rows.forEach(r => { const k = dayKey(r.at); (map[k] = map[k] || { n:0, amt:0 }); map[k].n++; map[k].amt += Number(r.amt) || 0; });
+    const keys = Object.keys(map).sort().reverse().slice(0, 30);
+    const tot = rows.reduce((s, r) => s + (Number(r.amt) || 0), 0);
+    host.innerHTML = !keys.length ? '<p class="hint">မှတ်တမ်း မရှိသေးပါ</p>' : `<div style="overflow-x:auto;"><table class="inventory-table-styled ms-table"><thead><tr><th>ရက်</th><th>အကြိမ်</th><th>ငွေ (ကျပ်)</th></tr></thead><tbody>
+      ${keys.map(k => `<tr data-d="${k}" class="${k === cur ? 'on' : ''}"><td>${k === today() ? 'ဒီနေ့ · ' : ''}${new Date(k + 'T00:00:00').toLocaleDateString('en-GB', { day:'numeric', month:'short' })}</td><td>${map[k].n}</td><td><b>${money(map[k].amt)}</b></td></tr>`).join('')}
+      <tr class="ms-all${!cur ? ' on' : ''}" data-d=""><td>📚 အားလုံး</td><td>${rows.length}</td><td><b>${money(tot)}</b></td></tr></tbody></table></div>`;
+    host.querySelectorAll('tr[data-d]').forEach(tr => tr.onclick = () => onPick(tr.dataset.d));
+  }
+
+  // ================= 🌐 ONLINE ORDERS — ဒီနေ့ Default + Gift Card + Top-up =================
+  const rs = document.getElementById('revenue-stats');
+  if(rs && !document.getElementById('stat-giftcard-income')){
+    rs.insertAdjacentHTML('afterbegin', `<div class="ms-range" id="orders-range-label">📅 ဒီနေ့</div>`);
+    rs.insertAdjacentHTML('beforeend', statBox('stat-giftcard-income', '🎁 Gift Card ရောင်းရငွေ', 'var(--purple-text)') + statBox('stat-topup-income', '💳 Prepaid Top-up', 'var(--info-text)') + statBox('stat-all-income', '💰 စုစုပေါင်း ဝင်ငွေ', 'var(--acid-text)'));
+    const h = [...rs.querySelectorAll('.hint')].find(x => /ရောင်းရငွေ \(Order အားလုံး\)/.test(x.textContent)); if(h) h.textContent = '🌐 Online ရောင်းရငွေ';
+  }
+  const of = document.getElementById('orders-date-filter'); if(of && !of.value) of.value = today();
+  window.ordersMoneyExtra = async function(){
+    const v = document.getElementById('orders-date-filter')?.value || '';
+    const lab = document.getElementById('orders-range-label'); if(lab) lab.textContent = label(v) + ' — ဝင်ငွေ';
+    try{
+      const [o, t, g] = await Promise.all([
+        range2(sb.from('orders').select('total_amount, order_status').neq('sale_channel', 'in_store'), 'created_at', v),
+        range2(sb.from('wallet_topups').select('amount, status').eq('status', 'approved'), 'created_at', v),
+        range2(sb.from('gift_cards').select('amount, status').neq('status', 'pending').neq('status', 'rejected'), 'created_at', v),
+      ]);
+      const orderSum = (o.data || []).filter(r => r.order_status !== 'cancelled' && r.order_status !== 'awaiting_payment').reduce((s, r) => s + Number(r.total_amount || 0), 0);
+      const tSum = (t.data || []).reduce((s, r) => s + Number(r.amount || 0), 0), gSum = (g.data || []).reduce((s, r) => s + Number(r.amount || 0), 0);
+      setStat('stat-giftcard-income', gSum, `${(g.data || []).length} ကတ်`); setStat('stat-topup-income', tSum, `${(t.data || []).length} ကြိမ်`);
+      setStat('stat-all-income', orderSum + gSum + tSum, 'Online + Gift Card + Top-up');
+    }catch(e){}
+  };
+  if(typeof loadOrders === 'function'){ const _lo = loadOrders; loadOrders = async function(){ const r = await _lo.apply(this, arguments); ordersMoneyExtra(); return r; }; try{ TAB_REFRESH_MAP['orders-panel'] = loadOrders; }catch(e){} }
+  of?.addEventListener('change', () => ordersMoneyExtra());
+  document.getElementById('orders-clear-date-btn')?.addEventListener('click', () => setTimeout(ordersMoneyExtra, 0));
+
+  // ================= 💳 WALLET TOP-UP မှတ်တမ်း =================
+  function ensureBox(listId, boxId){ const list = document.getElementById(listId); if(!list) return null; let b = document.getElementById(boxId);
+    if(!b){ b = document.createElement('div'); b.id = boxId; list.parentNode.insertBefore(b, list); } return b; }
+  if(typeof loadAllTopups === 'function'){
+    const _lt = loadAllTopups;
+    loadAllTopups = async function(){
+      const inp = document.getElementById('topup-date-filter'); if(inp && !inp.dataset.init){ inp.dataset.init = 1; inp.value = today(); }
+      const r = await _lt.apply(this, arguments);
+      try{
+        const v = inp?.value || '', items = typeof allTopupsCache !== 'undefined' ? allTopupsCache : [];
+        const ok = items.filter(x => x.status === 'approved'), pend = items.filter(x => x.status === 'pending').length, rej = items.filter(x => x.status === 'rejected').length;
+        const box = ensureBox('topup-all-list', 'topup-stats'); if(!box) return r;
+        box.innerHTML = `<div class="form-card ms-card"><div class="ms-range">${label(v)} — Top-up</div><div class="ms-grid">
+          ${statBox('ms-tp-amt', '💰 ဖြည့်ငွေ (Approved)', 'var(--acid-text)')}${statBox('ms-tp-bonus', '🎁 Bonus ပေးငွေ', 'var(--purple-text)')}
+          <div class="ms-stat"><div class="hint" style="margin:0;">🔁 အကြိမ်</div><div class="display" style="font-size:24px;">${ok.length}</div><div class="ms-sub">⏳ ${pend} စောင့်ဆဲ · ❌ ${rej} ပယ်</div></div></div>
+          <details class="ms-days"><summary>📊 ရက်အလိုက် ဇယား</summary><div id="ms-tp-days"><p class="hint">Load လုပ်နေသည်...</p></div></details></div>`;
+        setStat('ms-tp-amt', ok.reduce((s, x) => s + Number(x.amount || 0), 0), `${ok.length} ကြိမ်`);
+        setStat('ms-tp-bonus', ok.reduce((s, x) => s + Number(x.bonus_amount || 0), 0), '');
+        box.querySelector('details').addEventListener('toggle', async e => { if(!e.target.open) return;
+          const { data } = await sb.from('wallet_topups').select('amount, created_at, status').eq('status', 'approved');
+          dayTable('ms-tp-days', (data || []).map(x => ({ at:x.created_at, amt:x.amount })), d => { inp.value = d; loadAllTopups(); }, v); });
+      }catch(e){}
+      return r;
+    };
+  }
+
+  // ================= 🎁 GIFT CARD မှတ်တမ်း — ရောင်းအား =================
+  if(typeof loadAllGiftCards === 'function'){
+    const _lg = loadAllGiftCards;
+    loadAllGiftCards = async function(){
+      const inp = document.getElementById('giftcard-date-filter'); if(inp && !inp.dataset.init){ inp.dataset.init = 1; inp.value = today(); }
+      const r = await _lg.apply(this, arguments);
+      try{
+        const v = inp?.value || '', items = typeof giftCardCache !== 'undefined' ? giftCardCache : [];
+        const sold = items.filter(x => x.status !== 'pending' && x.status !== 'rejected'), pos = sold.filter(x => !x.payment_screenshot_url), online = sold.filter(x => x.payment_screenshot_url);
+        const redeemed = sold.filter(x => x.status === 'redeemed').length, pend = items.filter(x => x.status === 'pending').length;
+        const box = ensureBox('giftcard-all-list', 'giftcard-stats'); if(!box) return r;
+        box.innerHTML = `<div class="form-card ms-card"><div class="ms-range">${label(v)} — Gift Card ရောင်းအား</div><div class="ms-grid">
+          ${statBox('ms-gc-amt', '💰 ရောင်းရငွေ', 'var(--acid-text)')}${statBox('ms-gc-online', '🌐 Online', 'var(--info-text)')}${statBox('ms-gc-pos', '🏪 ဆိုင် (POS)', 'var(--purple-text)')}
+          <div class="ms-stat"><div class="hint" style="margin:0;">🎁 ကတ်</div><div class="display" style="font-size:24px;">${sold.length}</div><div class="ms-sub">☑️ ${redeemed} သုံးပြီး · ⏳ ${pend} စောင့်ဆဲ</div></div></div>
+          <details class="ms-days"><summary>📊 ရက်အလိုက် ဇယား</summary><div id="ms-gc-days"><p class="hint">Load လုပ်နေသည်...</p></div></details></div>`;
+        const sum = a => a.reduce((s, x) => s + Number(x.amount || 0), 0);
+        setStat('ms-gc-amt', sum(sold), `${sold.length} ကတ်`); setStat('ms-gc-online', sum(online), `${online.length} ကတ်`); setStat('ms-gc-pos', sum(pos), `${pos.length} ကတ်`);
+        box.querySelector('details').addEventListener('toggle', async e => { if(!e.target.open) return;
+          const { data } = await sb.from('gift_cards').select('amount, created_at, status').neq('status', 'pending').neq('status', 'rejected');
+          dayTable('ms-gc-days', (data || []).map(x => ({ at:x.created_at, amt:x.amount })), d => { inp.value = d; loadAllGiftCards(); }, v); });
+      }catch(e){}
+      return r;
+    };
+  }
+
+  // ================= 💳 POS — Prepaid Card Barcode =================
+  const area = document.getElementById('pos-prepaid-card-area'), cn = document.getElementById('pos-card-number');
+  if(area && cn && !document.getElementById('pos-card-scan')){
+    area.insertAdjacentHTML('afterbegin', `<button type="button" class="acid full" id="pos-card-scan">📷 Prepaid Card Barcode ကို Scan ဖတ်မည်</button>`);
+    area.insertAdjacentHTML('beforeend', `<div class="full pos-card-info" id="pos-card-info" hidden></div>`);
+    cn.setAttribute('inputmode', 'numeric'); cn.setAttribute('autocomplete', 'off');
+    const fmt = s => { const d = String(s || '').replace(/\D/g, ''); return d.length === 16 ? d.replace(/(\d{4})(?=\d)/g, '$1 ') : null; };
+    const info = (html, cls) => { const el = document.getElementById('pos-card-info'); el.hidden = !html; el.className = 'full pos-card-info ' + (cls || ''); el.innerHTML = html || ''; };
+    let seq = 0;
+    async function lookup(num){
+      const my = ++seq; info('🔎 Card စစ်နေသည်...');
+      try{
+        const { data } = await sb.from('wallets').select('user_id, balance, card_number').eq('card_number', num).limit(1);
+        if(my !== seq) return; const w = data && data[0];
+        if(!w){ info('❌ ဒီ Card Number နဲ့ Card မတွေ့ပါ', 'bad'); return; }
+        let nm = '';
+        try{ const { data: u } = await sb.rpc('admin_customer_names', { p_ids:[w.user_id] }); const x = u && u[0]; if(x) nm = x.full_name || x.nickname || x.email || ''; }catch(e){}
+        if(my !== seq) return;
+        let due = 0; try{ due = getPosFinalTotal() || 0; }catch(e){}
+        const low = due && Number(w.balance) < due;
+        info(`💳 <b>${nm ? nm.replace(/[<>&]/g, '') : 'Customer'}</b> · လက်ကျန် <b>${money(w.balance)}</b> ကျပ်${low ? ' — ⚠️ လက်ကျန် မလောက်ပါ' : ''}<br><small>Customer ကို PIN ရိုက်ခိုင်းပြီး "အရောင်းပြီးစီး" နှိပ်ပါ</small>`, low ? 'bad' : 'ok');
+      }catch(e){ info('⚠️ Card စစ်မရပါ — Internet စစ်ပါ', 'bad'); }
+    }
+    function setCard(raw){ const f = fmt(raw); if(!f){ try{ showToast('⚠️ Prepaid Card Barcode မဟုတ်ပါ'); }catch(e){} return 'Card Barcode မဟုတ်ပါ'; }
+      cn.value = f; lookup(f); const pin = document.getElementById('pos-card-pin'); setTimeout(() => { pin.value = ''; pin.focus(); }, 550); return '✅ ' + f; }
+    document.getElementById('pos-card-scan').onclick = () => { if(typeof openScanner === 'function') openScanner(setCard, { title:'💳 Prepaid Card နောက်ကျောက Barcode ကို Scan ဖတ်ပါ' }); };
+    // USB / Bluetooth Scanner (Keyboard အဖြစ် ရိုက်ထည့်) · လက်နဲ့ ရိုက်တာ
+    cn.addEventListener('input', () => { const f = fmt(cn.value); if(f){ if(cn.value !== f) cn.value = f; lookup(f); } else info(''); });
+    cn.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); const f = fmt(cn.value); if(f){ cn.value = f; document.getElementById('pos-card-pin').focus(); } } });
+    document.getElementById('pos-card-pin').setAttribute('inputmode', 'numeric');
+    if(typeof renderPosCart === 'function'){ const _rpc = renderPosCart; renderPosCart = function(){ const r = _rpc.apply(this, arguments); if(!cn.value) info(''); return r; }; }
+  }
+})();
 
 // ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
 (function(){
