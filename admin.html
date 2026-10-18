@@ -1509,7 +1509,7 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
 
   <!-- INVENTORY -->
   <div class="panel" id="inventory-panel">
-    <div class="form-card" style="display:flex; gap:24px; flex-wrap:wrap;">
+    <div class="form-card" id="inv-value-card" style="display:flex; gap:24px; flex-wrap:wrap;">
       <div>
         <div class="hint" style="margin:0;">ပစ္စည်းအမျိုးအစား</div>
         <div class="display" style="font-size:24px;" id="stat-total-products">-</div>
@@ -10660,6 +10660,7 @@ function qrPosterInit(){
     rs.insertAdjacentHTML('afterbegin', `<div class="ms-range" id="orders-range-label">📅 ဒီနေ့</div>`);
     rs.insertAdjacentHTML('beforeend', statBox('stat-giftcard-income', '🎁 Gift Card ရောင်းရငွေ', 'var(--purple-text)') + statBox('stat-topup-income', '💳 Prepaid Top-up', 'var(--info-text)') + statBox('stat-all-income', '💰 စုစုပေါင်း ဝင်ငွေ', 'var(--acid-text)'));
     const h = [...rs.querySelectorAll('.hint')].find(x => /ရောင်းရငွေ \(Order အားလုံး\)/.test(x.textContent)); if(h) h.textContent = '🌐 Online ရောင်းရငွေ';
+    ['stat-giftcard-income','stat-topup-income','stat-all-income'].forEach(id => { try{ window.fxAttachCount && fxAttachCount(document.getElementById(id)); }catch(e){} });
   }
   const of = document.getElementById('orders-date-filter'); if(of && !of.value) of.value = today();
   window.ordersMoneyExtra = async function(){
@@ -10783,6 +10784,12 @@ function qrPosterInit(){
   }
 })();
 
+// ================= 📦 INVENTORY — Inventory Value ကတ်ကို အပေါ်ဆုံး ရွှေ့ =================
+(function(){
+  const card = document.getElementById('inv-value-card'), panel = document.getElementById('inventory-panel');
+  if(card && panel && panel.firstElementChild !== card) panel.prepend(card);
+})();
+
 // ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
 (function(){
   const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -10872,10 +10879,11 @@ function qrPosterInit(){
 (function(){
   const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const IDS = ['stat-total-orders','stat-total-revenue','stat-confirmed-revenue','stat-confirmed-orders','stat-pending-orders',
-               'sr-total-revenue','sr-total-orders','sr-total-items','sr-total-topup','sr-total-giftcard','stat-total-customers','stat-avg-spend'];
+               'sr-total-revenue','sr-total-orders','sr-total-items','sr-total-topup','sr-total-giftcard','stat-total-customers','stat-avg-spend',
+               'stat-giftcard-income','stat-topup-income','stat-all-income'];
   const num = t => Number(String(t).replace(/[^\d.-]/g, '')) || 0;
-  IDS.forEach(id => {
-    const el = document.getElementById(id); if(!el) return;
+  function attach(el){
+    if(!el || el.__fxRun) return;
     let last = 0, raf = 0, written = null;
     // Tab ဖွင့်ချိန် 0 ကနေ ပြန်တက်စေရန် (Tab ပိတ်ထားစဉ် ပြီးသွားတဲ့ Animation ကို ပြန်ပြ)
     el.__fxReplay = () => { if(reduce) return; const txt = el.textContent; if(!/\d/.test(txt)) return; last = 0; written = null; el.__fxRun(txt); };
@@ -10898,10 +10906,13 @@ function qrPosterInit(){
       };
       raf = requestAnimationFrame(step);
     };
-  });
+    if(/\d/.test(el.textContent)) el.__fxReplay();   // နောက်မှ ထည့်တဲ့ ဂဏန်းကတ် — ပထမဆုံး ပေါ်ချိန်ကတည်းက တက်
+  }
+  window.fxAttachCount = attach;
+  IDS.forEach(id => attach(document.getElementById(id)));
   // Sales Report / Online Orders / Customers Tab ဖွင့်တိုင်း ဂဏန်းတွေ 0 ကနေ တက် + Graph Bar တွေ ပြန်တက်
   const TAB_IDS = { 'salesreport-panel':['sr-total-revenue','sr-total-orders','sr-total-items','sr-total-topup','sr-total-giftcard'],
-                    'orders-panel':['stat-total-orders','stat-total-revenue','stat-confirmed-revenue','stat-confirmed-orders','stat-pending-orders'],
+                    'orders-panel':['stat-total-orders','stat-total-revenue','stat-confirmed-revenue','stat-confirmed-orders','stat-pending-orders','stat-giftcard-income','stat-topup-income','stat-all-income'],
                     'customers-panel':['stat-total-customers','stat-avg-spend'] };
   document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
     const ids = TAB_IDS[btn.dataset.tab]; if(!ids) return;
