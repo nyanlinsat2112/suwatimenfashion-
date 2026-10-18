@@ -18,8 +18,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SUWATI Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
 <style>
   :root{
     --ink:#141412; --concrete:#E9E4D8; --rust:#C13B1F; --acid:#D6FF3F; --grey:#87806f; --paper:#f2efe6;
@@ -1945,7 +1945,7 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
         <div class="form-grid">
           <div class="full">
             <div class="hint" style="margin-bottom:8px;">လက်ရှိ QR Code:</div>
-            <img id="current-qr" src="" style="max-width:140px; display:none; border:2px solid var(--concrete); margin-bottom:10px;">
+            <img id="current-qr" alt="" style="max-width:140px; display:none; border:2px solid var(--concrete); margin-bottom:10px;">
           </div>
           <input type="file" id="settings-qr" class="full" accept="image/*">
           <textarea id="settings-instructions" class="full" placeholder="ငွေပေးချေမှု ညွှန်ကြားချက်"></textarea>
@@ -2103,7 +2103,7 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
 </div>
 
 <div id="toast"></div>
-<div id="lightbox-overlay" onclick="closeLightbox()"><img id="lightbox-img" src=""></div>
+<div id="lightbox-overlay" onclick="closeLightbox()"><img id="lightbox-img" alt=""></div>
 
 <script>
 // ============ CONFIG — ဒီနေရာကို Supabase project ရဲ့ တန်ဖိုးများနဲ့ အစားထိုးပါ ============
@@ -2124,6 +2124,68 @@ function showToast(msg){
 
 // ဖုန်း/ကွန်ပျူတာရဲ့ ဒေသစံတော်ချိန်အတိုင်း ရက်စွဲ (YYYY-MM-DD) — toISOString() က UTC ဖြစ်လို့ မနက် 6:30 မတိုင်ခင် မနေ့က ရက်စွဲ ဖြစ်နေတတ်သည်
 function localYMD(d){ d = d ? new Date(d) : new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+
+// ================= 🛡️ XSS GUARD — Customer ရိုက်ထည့်တဲ့ စာ (အမည်/ဖုန်း/လိပ်စာ/Chat/Review…) ထဲက HTML Code မ Run အောင် =================
+// Database ထဲက Data ကို ဖတ်တဲ့အခါ < > " ' ` \ ကို ပုံစံတူ စာလုံးနဲ့ အစားထိုးပေး (Database ထဲက Data ကို မပြောင်း)
+(function(){
+  const STRICT = s => String(s).replace(/[<>"'`\\]/g, c => ({ '<':'＜', '>':'＞', '"':'″', "'":'’', '`':'‵', '\\':'＼' }[c]));
+  const SOFT = s => String(s).replace(/[<>]/g, c => (c === '<' ? '＜' : '＞'));   // ပစ္စည်းအမည် — ' " မပြောင်း (Stock ချိတ်ဆက်မှု မပျက်အောင်)
+  const S = ['customer_name','phone','address','email','customer_email','message','comment','reply','purchaser_name','purchaser_phone','recipient_name','recipient_phone',
+             'gift_message','delivery_note','note','cancellation_reason','full_name','details','payment_screenshot_url','delivery_photo_url','photo_url','label','region',
+             'township','detail','size_bought','black_reason','tags','reason','admin_email','reviewed_by_email','closed_by_email','created_by_email','device_id','user_agent'];
+  const P = ['product_name','size','color','name'];
+  const RULES = {
+    orders:{ s:S, p:['product_name','size','color'] }, chat_messages:{ s:S.concat(['image_url']), p:[] }, product_reviews:{ s:S, p:['product_name'] },
+    gift_cards:{ s:S, p:[] }, wallet_topups:{ s:S, p:[] }, customer_addresses:{ s:S.concat(['name']), p:[] }, customer_crm:{ s:S.concat(['name']), p:[] },
+    activity_logs:{ s:S, p:[] }, wallet_transactions:{ s:['description','note','details'], p:[] }, wishlists:{ s:[], p:['name','product_name'] },
+    admin_logins:{ s:S, p:[] }, cash_closings:{ s:S, p:[] }, hidden_customers:{ s:S.concat(['name']), p:[] }, promo_redemptions:{ s:S, p:[] },
+    stock_movements:{ s:['note','supplier','reason','created_by_email'], p:['product_name','size','color'] },
+    'rpc/admin_customer_names':{ s:S.concat(['name']), p:[] }
+  };
+  function cleanRow(r, rule){
+    if(!r || typeof r !== 'object') return;
+    for(const k of rule.s) if(typeof r[k] === 'string') r[k] = STRICT(r[k]);
+    for(const k of rule.p) if(typeof r[k] === 'string') r[k] = SOFT(r[k]);
+  }
+  function cleanData(table, data){
+    const rule = RULES[table]; if(!rule || !data) return;
+    (Array.isArray(data) ? data : [data]).forEach(r => cleanRow(r, rule));
+  }
+  window.__xssClean = cleanData;
+  function tableOf(b){
+    try{ const u = b && b.url; const p = (u && (u.pathname || new URL(String(u)).pathname)) || ''; const m = p.match(/\/rest\/v1\/(.+)$/); return m ? decodeURIComponent(m[1]) : null; }catch(e){ return null; }
+  }
+  try{
+    if(typeof sb === 'undefined' || !sb || sb.__xssGuard) return;
+    sb.__xssGuard = true;
+    // ① REST (select / insert().select() / rpc) ရလဒ်များ
+    let probe = null; try{ probe = sb.from('orders').select('id'); }catch(e){}
+    let proto = probe ? Object.getPrototypeOf(probe) : null;
+    while(proto && !Object.prototype.hasOwnProperty.call(proto, 'then')) proto = Object.getPrototypeOf(proto);
+    if(proto && !proto.__xssThen){
+      const _then = proto.then; proto.__xssThen = true;
+      proto.then = function(onOk, onErr){
+        const t = tableOf(this);
+        return _then.call(this, res => { try{ if(res && res.data && t) cleanData(t, res.data); }catch(e){} return onOk ? onOk(res) : res; }, onErr);
+      };
+    }
+    // ② Realtime (Chat / Order အသစ် ချက်ချင်းဝင်)
+    if(typeof sb.channel === 'function'){
+      const _ch = sb.channel.bind(sb);
+      sb.channel = function(){
+        const c = _ch.apply(null, arguments);
+        if(c && typeof c.on === 'function' && !c.__xssOn){
+          const _on = c.on.bind(c); c.__xssOn = true;
+          c.on = function(type, filter, cb){
+            if(typeof cb !== 'function') return _on.apply(null, arguments);
+            return _on(type, filter, function(payload){ try{ if(payload && payload.table){ cleanData(payload.table, payload.new); cleanData(payload.table, payload.old); } }catch(e){} return cb.apply(this, arguments); });
+          };
+        }
+        return c;
+      };
+    }
+  }catch(e){ console.warn('xss guard', e); }
+})();
 
 // ---------- 💬 Admin Dialog — Browser ရဲ့ confirm()/prompt() အစား ဒီဇိုင်းနဲ့ Box ----------
 // await adminConfirm('စာ') → true/false · await adminPrompt('မေးခွန်း', 'default') → စာ / null
@@ -3658,6 +3720,8 @@ document.getElementById('subcategory-form').addEventListener('submit', async (e)
   const category_name = document.getElementById('subcategory-parent').value;
   const name = document.getElementById('subcategory-name').value.trim();
   if(!category_name || !name) return;
+  const { data: ex } = await sb.from('subcategories').select('name').eq('category_name', category_name);
+  if((ex || []).some(c => String(c.name).toLowerCase() === name.toLowerCase())){ showToast('"' + name + '" ဆိုတဲ့ Sub-Category ရှိပြီးသားပါ'); return; }
   const { error } = await sb.from('subcategories').insert({ category_name, name });
   if(error){ showToast('Error: '+error.message); return; }
   showToast('Sub-Category Add ပြီးပါပြီ');
@@ -3671,6 +3735,8 @@ document.getElementById('category-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const name = document.getElementById('category-name').value.trim();
   if(!name) return;
+  const { data: ex } = await sb.from('categories').select('name').ilike('name', name);
+  if((ex || []).some(c => String(c.name).toLowerCase() === name.toLowerCase())){ showToast('"' + name + '" ဆိုတဲ့ Category ရှိပြီးသားပါ'); return; }
   const { error } = await sb.from('categories').insert({ name });
   if(error){ showToast('Error: '+error.message); return; }
   showToast('Category Add ပြီးပါပြီ');
@@ -3684,11 +3750,24 @@ async function renameCategory(cat){
   if(!newName || newName.trim()===cat.name) return;
   const trimmed = newName.trim();
 
-  const { error } = await sb.from('categories').update({ name: trimmed }).eq('id', cat.id);
-  if(error){ showToast('Error: '+error.message); return; }
-
-  // ဒီ Category အောက်က ပစ္စည်းများရဲ့ category text ကိုပါ Update လိုက်မည်
+  // 🔁 Sub-Category တွေက Category နာမည်နဲ့ ချိတ်ထားလို့ (Foreign Key) — နာမည်အသစ်နဲ့ Category အရင်ဖန်တီး → Sub/ပစ္စည်း ရွှေ့ → အဟောင်း ဖျက်
+  const { data: dup } = await sb.from('categories').select('id,name').ilike('name', trimmed);
+  if((dup || []).some(d => d.id !== cat.id && d.name.toLowerCase() === trimmed.toLowerCase())){ showToast('"' + trimmed + '" ဆိုတဲ့ Category ရှိပြီးသားပါ'); return; }
+  if(trimmed.toLowerCase() === cat.name.toLowerCase()){
+    const { error } = await sb.from('categories').update({ name: trimmed }).eq('id', cat.id);
+    if(error){ showToast('Error: '+error.message); return; }
+  } else {
+    const { error: e1 } = await sb.from('categories').insert({ name: trimmed, sort_order: cat.sort_order ?? 0 });
+    if(e1){ showToast('Error: '+e1.message); return; }
+    const { error: e2 } = await sb.from('subcategories').update({ category_name: trimmed }).eq('category_name', cat.name);
+    if(e2){ await sb.from('categories').delete().eq('name', trimmed); showToast('Error: '+e2.message); return; }
+    await sb.from('products').update({ category: trimmed }).eq('category', cat.name);
+    const { error: e3 } = await sb.from('categories').delete().eq('id', cat.id);
+    if(e3) showToast('Category အဟောင်း ဖျက်မရပါ — ' + e3.message);
+  }
+  // ဒီ Category အောက်က ပစ္စည်းများ + Bundle Deal ရဲ့ category text ကိုပါ Update လိုက်မည်
   await sb.from('products').update({ category: trimmed }).eq('category', cat.name);
+  try{ await sb.from('bundle_deals').update({ category: trimmed }).eq('category', cat.name); }catch(e){}
 
   showToast('Category နာမည်ပြောင်းပြီးပါပြီ');
   logActivity('category_renamed', `${cat.name} → ${trimmed}`);

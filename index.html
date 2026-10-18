@@ -65,7 +65,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo+Black&family=IBM+Plex+Mono:wght@400;700&family=Space+Mono:wght@400;700&family=Noto+Sans+Myanmar:wght@400;500;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <style>
 /* SUWATI MEN FASHION — Customer Website Styles */
@@ -2135,7 +2135,7 @@ html[data-theme="dark"] .bd-check-sh{ stroke:#000; } html[data-theme="dark"] .bd
 </div>
 
 <div id="site-toast"></div>
-<div id="site-lightbox" onclick="closeSiteLightbox()"><img id="site-lightbox-img" src=""></div>
+<div id="site-lightbox" onclick="closeSiteLightbox()"><img id="site-lightbox-img" alt=""></div>
 
 <div class="chat-fab" id="chat-fab" onclick="openChatWidget()">
   <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
@@ -2221,6 +2221,68 @@ function siteAlert(message, o){ return _siteDialog(message, { ...(o||{}), alertO
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ================= 🛡️ XSS GUARD — Customer ရိုက်ထည့်တဲ့ စာ (အမည်/ဖုန်း/လိပ်စာ/Chat/Review…) ထဲက HTML Code မ Run အောင် =================
+// Database ထဲက Data ကို ဖတ်တဲ့အခါ < > " ' ` \ ကို ပုံစံတူ စာလုံးနဲ့ အစားထိုးပေး (Database ထဲက Data ကို မပြောင်း)
+(function(){
+  const STRICT = s => String(s).replace(/[<>"'`\\]/g, c => ({ '<':'＜', '>':'＞', '"':'″', "'":'’', '`':'‵', '\\':'＼' }[c]));
+  const SOFT = s => String(s).replace(/[<>]/g, c => (c === '<' ? '＜' : '＞'));   // ပစ္စည်းအမည် — ' " မပြောင်း (Stock ချိတ်ဆက်မှု မပျက်အောင်)
+  const S = ['customer_name','phone','address','email','customer_email','message','comment','reply','purchaser_name','purchaser_phone','recipient_name','recipient_phone',
+             'gift_message','delivery_note','note','cancellation_reason','full_name','details','payment_screenshot_url','delivery_photo_url','photo_url','label','region',
+             'township','detail','size_bought','black_reason','tags','reason','admin_email','reviewed_by_email','closed_by_email','created_by_email','device_id','user_agent'];
+  const P = ['product_name','size','color','name'];
+  const RULES = {
+    orders:{ s:S, p:['product_name','size','color'] }, chat_messages:{ s:S.concat(['image_url']), p:[] }, product_reviews:{ s:S, p:['product_name'] },
+    gift_cards:{ s:S, p:[] }, wallet_topups:{ s:S, p:[] }, customer_addresses:{ s:S.concat(['name']), p:[] }, customer_crm:{ s:S.concat(['name']), p:[] },
+    activity_logs:{ s:S, p:[] }, wallet_transactions:{ s:['description','note','details'], p:[] }, wishlists:{ s:[], p:['name','product_name'] },
+    admin_logins:{ s:S, p:[] }, cash_closings:{ s:S, p:[] }, hidden_customers:{ s:S.concat(['name']), p:[] }, promo_redemptions:{ s:S, p:[] },
+    stock_movements:{ s:['note','supplier','reason','created_by_email'], p:['product_name','size','color'] },
+    'rpc/admin_customer_names':{ s:S.concat(['name']), p:[] }
+  };
+  function cleanRow(r, rule){
+    if(!r || typeof r !== 'object') return;
+    for(const k of rule.s) if(typeof r[k] === 'string') r[k] = STRICT(r[k]);
+    for(const k of rule.p) if(typeof r[k] === 'string') r[k] = SOFT(r[k]);
+  }
+  function cleanData(table, data){
+    const rule = RULES[table]; if(!rule || !data) return;
+    (Array.isArray(data) ? data : [data]).forEach(r => cleanRow(r, rule));
+  }
+  window.__xssClean = cleanData;
+  function tableOf(b){
+    try{ const u = b && b.url; const p = (u && (u.pathname || new URL(String(u)).pathname)) || ''; const m = p.match(/\/rest\/v1\/(.+)$/); return m ? decodeURIComponent(m[1]) : null; }catch(e){ return null; }
+  }
+  try{
+    if(typeof sb === 'undefined' || !sb || sb.__xssGuard) return;
+    sb.__xssGuard = true;
+    // ① REST (select / insert().select() / rpc) ရလဒ်များ
+    let probe = null; try{ probe = sb.from('orders').select('id'); }catch(e){}
+    let proto = probe ? Object.getPrototypeOf(probe) : null;
+    while(proto && !Object.prototype.hasOwnProperty.call(proto, 'then')) proto = Object.getPrototypeOf(proto);
+    if(proto && !proto.__xssThen){
+      const _then = proto.then; proto.__xssThen = true;
+      proto.then = function(onOk, onErr){
+        const t = tableOf(this);
+        return _then.call(this, res => { try{ if(res && res.data && t) cleanData(t, res.data); }catch(e){} return onOk ? onOk(res) : res; }, onErr);
+      };
+    }
+    // ② Realtime (Chat / Order အသစ် ချက်ချင်းဝင်)
+    if(typeof sb.channel === 'function'){
+      const _ch = sb.channel.bind(sb);
+      sb.channel = function(){
+        const c = _ch.apply(null, arguments);
+        if(c && typeof c.on === 'function' && !c.__xssOn){
+          const _on = c.on.bind(c); c.__xssOn = true;
+          c.on = function(type, filter, cb){
+            if(typeof cb !== 'function') return _on.apply(null, arguments);
+            return _on(type, filter, function(payload){ try{ if(payload && payload.table){ cleanData(payload.table, payload.new); cleanData(payload.table, payload.old); } }catch(e){} return cb.apply(this, arguments); });
+          };
+        }
+        return c;
+      };
+    }
+  }catch(e){ console.warn('xss guard', e); }
+})();
 
 let allProducts = [];
 let currentGridProducts = [];
@@ -2742,12 +2804,32 @@ function renderCartBadge(){
   else { badge.style.display='none'; }
 }
 
+// 🛡️ ခြင်းထဲ Stock ထက် ပိုမထည့်မိအောင် — (Pre-order ပစ္စည်းဆို ကန့်သတ်ချက်မရှိ)
+function cartStockOf(item){
+  try{
+    const p = (typeof allProducts !== 'undefined' ? allProducts : []).find(x => x.name === item.name);
+    if(!p || item.preorder || (typeof isPreorder === 'function' && isPreorder(p))) return null;
+    const sz = item.size || '_', cl = item.color || '_';
+    if(p.variant_stock && p.variant_stock[sz] && p.variant_stock[sz][cl] !== undefined) return Math.max(0, Number(p.variant_stock[sz][cl]) || 0);
+    if(item.color && p.color_stock && p.color_stock[item.color] !== undefined) return Math.max(0, Number(p.color_stock[item.color]) || 0);
+    if(p.status === 'sold_out') return 0;
+    return p.stock_qty == null ? null : Math.max(0, Number(p.stock_qty) || 0);
+  }catch(e){ return null; }
+}
 function addToCart(item){
+  const add = Math.max(1, parseInt(item.quantity, 10) || 1);
   const existing = cart.find(i=>i.name===item.name && i.size===item.size && i.color===item.color);
-  if(existing){ existing.quantity += 1; }
-  else{ cart.push(item); }
+  const have = existing ? existing.quantity : 0;
+  const stock = cartStockOf(item);
+  let want = have + add;
+  if(stock !== null && want > stock){
+    want = stock;
+    if(want <= have){ showSiteToast(stock === 0 ? `"${item.name}" — ဒီ Size/အရောင် ကုန်သွားပါပြီ` : `"${item.name}" — Stock ${stock} ခုသာ ကျန်ပါတယ် (ခြင်းထဲမှာ ${have} ခု ရှိပြီးသား)`); return; }
+  }
+  if(existing){ existing.quantity = want; }
+  else{ cart.push({ ...item, quantity: want }); }
   saveCart();
-  showSiteToast(`🛒 "${item.name}" ကို ခြင်းထဲ ထည့်ပြီးပါပြီ`);
+  showSiteToast(stock !== null && want < have + add ? `🛒 Stock ${stock} ခုသာ ကျန်လို့ ${want} ခု ထည့်ထားပါတယ်` : `🛒 "${item.name}" ကို ခြင်းထဲ ထည့်ပြီးပါပြီ`);
 }
 
 // ⑥ Cart Animation — ဖွင့်ရင် တစ်ခုချင်း ဝင်၊ အရေအတွက် ပြောင်းရင် ခုန်၊ ဖျက်ရင် ဘေးကို လွင့်
@@ -2761,7 +2843,10 @@ function removeFromCart(idx){
 
 function changeCartQty(idx, delta){
   const before = cart[idx].quantity;
-  cart[idx].quantity = Math.max(1, cart[idx].quantity + delta);
+  let next = Math.max(1, cart[idx].quantity + delta);
+  const stock = delta > 0 ? cartStockOf(cart[idx]) : null;
+  if(stock !== null && next > stock){ next = Math.max(before > stock ? stock : before, 1); showSiteToast(`Stock ${stock} ခုသာ ကျန်ပါတယ်`); }
+  cart[idx].quantity = next;
   saveCart();
   _cartFx = before === cart[idx].quantity ? { type:'stuck', idx } : { type:'qty', idx };
   renderCartDrawer();
@@ -3071,7 +3156,10 @@ let cachedSettings = null;
 
 async function getSettings(){
   if(cachedSettings) return cachedSettings;
-  const { data, error } = await sb.from('settings').select('*').eq('id', 1).single();
+  // 🔒 admin_email ကို Customer ဘက် မယူ (SETTINGS-PRIVACY.sql နဲ့ အတူ) — Column အသစ်ထည့်ရင် ဒီ List ထဲ ထည့်ပါ
+  const COLS = 'id,kbzpay_qr_url,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
+  let { data, error } = await sb.from('settings').select(COLS).eq('id', 1).single();
+  if(error){ ({ data, error } = await sb.from('settings').select('*').eq('id', 1).single()); if(data) delete data.admin_email; }
   if(!error) cachedSettings = data;
   return cachedSettings;
 }
@@ -3393,6 +3481,14 @@ async function renderGiftAddonOption(){
     </div>`;
 }
 
+// 📞 မြန်မာ ဖုန်းနံပါတ် စစ်ခြင်း — 09xxxxxxxx / +959xxxxxxxx (Space / - ပါလည်း ရ)
+function mmPhoneError(v){
+  const d = String(v || '').replace(/[၀-၉]/g, c => String(c.charCodeAt(0) - 0x1040)).replace(/[\s\-().]/g, '');
+  if(!d) return 'ဖုန်းနံပါတ် ထည့်ပေးပါ';
+  if(!/^(?:\+?959|09)\d{7,9}$/.test(d)) return 'ဖုန်းနံပါတ် မှားနေပါသည် — ဥပမာ 09xxxxxxxxx';
+  return '';
+}
+
 async function goToStep2(){
   const name = document.getElementById('co-name').value.trim();
   const phone = document.getElementById('co-phone').value.trim();
@@ -3401,6 +3497,8 @@ async function goToStep2(){
   const err = document.getElementById('co-error-1');
   const picked = readAddressPickers();
   if(!name || !phone){ err.textContent = 'အမည်၊ ဖုန်းနံပါတ် ဖြည့်ပေးပါ'; return; }
+  const phErr = mmPhoneError(phone); if(phErr){ err.textContent = phErr; document.getElementById('co-phone')?.focus(); return; }
+  if(email && typeof atEmailError === 'function'){ const emErr = atEmailError(email); if(emErr){ err.textContent = emErr; document.getElementById('co-email')?.focus(); return; } }
   if(!picked.region){ err.textContent = 'တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပေးပါ'; return; }
   if(!picked.township){ err.textContent = 'မြို့နယ် ရွေးပေးပါ'; return; }
   if(!detail){ err.textContent = 'အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် ဖြည့်ပေးပါ'; return; }
@@ -5102,7 +5200,7 @@ function atNext(n){
     const ph = document.getElementById('su-phone'), em = document.getElementById('su-email');
     const digits = ph.value.replace(/[^\d၀-၉]/g, '');
     if(!ph.value.trim()) return atFail('ဖုန်းနံပါတ် ထည့်ပေးပါ', [ph]);
-    if(digits.length < 7) return atFail('ဖုန်းနံပါတ် မှန်အောင် ထည့်ပါ — ဥပမာ 09xxxxxxxxx', [ph]);
+    if(digits.length < 7 || (typeof mmPhoneError === 'function' && mmPhoneError(ph.value))) return atFail('ဖုန်းနံပါတ် မှန်အောင် ထည့်ပါ — ဥပမာ 09xxxxxxxxx', [ph]);
     const ee = atEmailError(em.value); if(ee) return atFail(ee, [em]);
     const a = addrRead('su');
     if(a.error){
@@ -5201,7 +5299,8 @@ handleSignup = async function(){
   const addr = addrRead('su');
   if(!name){ atStep(0); return atFail('အမည် ထည့်ပေးပါ', [g('su-name')]); }
   const ee = atEmailError(email);
-  if(!phone || ee || addr.error){ atStep(1); return atFail(!phone ? 'ဖုန်းနံပါတ် ထည့်ပေးပါ' : (ee || addr.error), [!phone ? g('su-phone') : ee ? g('su-email') : null]); }
+  const pe = typeof mmPhoneError === 'function' ? mmPhoneError(phone) : (!phone ? 'ဖုန်းနံပါတ် ထည့်ပေးပါ' : '');
+  if(pe || ee || addr.error){ atStep(1); return atFail(pe || ee || addr.error, [pe ? g('su-phone') : ee ? g('su-email') : null]); }
   if(password.length < 6) return atFail('Password အနည်းဆုံး ၆ လုံး ရှိရပါမည်', [g('su-password')]);
   if(password !== password2) return atFail('Password ၂ ခု မတူပါ', [g('su-password2')]);
   const btn = g('at-signup-btn'); atBusy(btn, true);
