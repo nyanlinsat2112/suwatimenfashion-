@@ -3191,6 +3191,10 @@ function friendlyOrderError(msg){
   if(msg.includes('PAY_LATER_LIMIT')) return '⏰ ငွေမလွှဲရသေးတဲ့ Order ၂ ခု ရှိနေပါသည် — အရင် Order တွေကို ငွေလွှဲ (သို့) ပယ်ဖျက်ပြီးမှ "ငွေ နောက်မှ လွှဲမည်" ကို ထပ်သုံးနိုင်ပါသည်';
   if(msg.includes('PAY_LATER_DISABLED')) return '"ငွေ နောက်မှ လွှဲမည်" ကို ယာယီ ပိတ်ထားပါသည် — Screenshot တင်ပြီး Order တင်ပေးပါ';
   if(msg.includes('SPLIT_PAYMENT_INVALID') || msg.includes('MIXED_PAYMENT_STATUS')) return 'ငွေပေးချေမှု ပုံစံ မမှန်ကန်ပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ';
+  if(msg.includes('TOO_MANY_OPEN_ORDERS')) return '⏳ ဒီဖုန်းနံပါတ်နဲ့ ငွေစစ်ဆေးဆဲ / ငွေမလွှဲရသေးတဲ့ Order ၃ ခု ရှိနေပါသည် — ဆိုင်က အတည်ပြုပြီးမှ ထပ်မှာပါ (သို့) Messenger/Viber ဖြင့် ဆက်သွယ်ပါ';
+  if(msg.includes('TOO_MANY_ORDERS')) return '⏳ ခဏအတွင်း Order အများကြီး တင်ထားပါသည် — ၁၀ မိနစ်လောက် စောင့်ပြီးမှ ထပ်မှာပါ';
+  if(msg.includes('ORDER_RATE_LIMIT')) return '⏳ ယခု Order များနေပါသည် — ခဏနေမှ ပြန်ကြိုးစားပါ (သို့) Login ဝင်ပြီး မှာပါ';
+  if(msg.includes('TOO_MANY_PENDING')) return '⏳ စစ်ဆေးရန် ကျန်နေတာ ၃ ခု ရှိနေပါသည် — ဆိုင်က အတည်ပြုပြီးမှ ထပ်တင်ပါ';
   if(msg.includes('row-level security')) return 'Order တင်ခွင့် မရှိပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ';
   return 'Error: ' + msg;
 }

@@ -1230,6 +1230,10 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
 .sr-table-title{ font:700 14px 'Noto Sans Myanmar',sans-serif; margin:4px 0 8px; }
 #sales-report-table .sr-total-row td{ border-top:2px solid var(--concrete); }
 .sr-period-btn{ white-space:nowrap; padding-left:4px !important; padding-right:4px !important; font-size:13px !important; }
+/* 🔐 2FA မဖြစ်မနေ ဖွင့်ရန် Screen — QR ပါလို့ ရှည်ရင် Scroll ရ */
+#login-screen{ overflow-y:auto; }
+#login-screen .mfa-steps{ display:flex; flex-direction:column; gap:8px; }
+#login-screen .mfa-qr{ align-self:center; width:200px; height:200px; background:#fff; padding:8px; }
 </style>
 </head>
 <body>
@@ -3066,7 +3070,7 @@ async function deleteProduct(id, name){
 // ---------- ⚠️ Stock နည်း သတိပေးချက် ----------
 let lowStockThreshold = 2;
 async function loadLowStockThreshold(){
-  try{ const { data } = await sb.from('settings').select('*').eq('id',1).maybeSingle(); if(data && data.low_stock_threshold) lowStockThreshold = Number(data.low_stock_threshold) || 2; }catch(e){}
+  try{ const { data } = await sb.from('settings').select('low_stock_threshold').eq('id',1).maybeSingle(); if(data && data.low_stock_threshold) lowStockThreshold = Number(data.low_stock_threshold) || 2; }catch(e){}
 }
 // ပြရန် ပစ္စည်း (Gift Card / Website မှာ ဖျောက်ထားတာ မပါ) ရဲ့ Size/အရောင် တစ်ခုချင်း လက်ကျန်
 function computeLowStock(products){
@@ -3998,9 +4002,13 @@ async function restoreStockForRows(rows){
 }
 
 // ---------- SETTINGS ----------
+const SETTINGS_PUBLIC_COLS = 'id,kbzpay_qr_url,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
 async function loadSettingsForm(){
-  const { data, error } = await sb.from('settings').select('*').eq('id', 1).single();
-  if(error) return;
+  // 🔒 admin_email ကို admin_private_settings (Admin သီးသန့်) ကနေ ဖတ် — SECURITY-OCT18.sql မ Run ရသေးရင် settings ကနေ
+  let { data, error } = await sb.from('settings').select('*').eq('id', 1).single();
+  if(error) ({ data, error } = await sb.from('settings').select(SETTINGS_PUBLIC_COLS).eq('id', 1).single());
+  if(error || !data) return;
+  try{ const pv = await sb.from('admin_private_settings').select('admin_email').eq('id', 1).maybeSingle(); if(!pv.error && pv.data) data.admin_email = pv.data.admin_email; }catch(e){}
   document.getElementById('settings-instructions').value = data.payment_instructions || '';
   document.getElementById('settings-admin-email').value = data.admin_email || '';
   document.getElementById('settings-ticker').value = data.ticker_text || '';
@@ -4262,6 +4270,14 @@ async function fetchAllRows(table){
     if(error) throw new Error(error.message);
     return data || [];
   }
+  if(table === 'settings'){
+    // 🔒 admin_email ကို Column ပိတ်ထားလို့ — ကျန် Column + Private Table က Email ပေါင်း
+    let { data, error } = await sb.from('settings').select('*');
+    if(error) ({ data, error } = await sb.from('settings').select(SETTINGS_PUBLIC_COLS));
+    if(error) throw new Error(error.message);
+    try{ const pv = await sb.from('admin_private_settings').select('admin_email').eq('id', 1).maybeSingle(); if(!pv.error && pv.data) (data || []).forEach(r => { if(r.id === 1) r.admin_email = pv.data.admin_email; }); }catch(e){}
+    return data || [];
+  }
   const first = sb.from(table).select('*');
   if(typeof first.range !== 'function'){ const { data, error } = await first; if(error) throw new Error(error.message); return data||[]; }
   for(let from=0; ; from+=size){
@@ -4428,11 +4444,15 @@ document.getElementById('save-ticker-btn').addEventListener('click', async ()=>{
 document.getElementById('settings-form').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const file = document.getElementById('settings-qr').files[0];
-  const payload = { payment_instructions: document.getElementById('settings-instructions').value, admin_email: document.getElementById('settings-admin-email').value };
+  const adminEmail = document.getElementById('settings-admin-email').value.trim();
+  const payload = { payment_instructions: document.getElementById('settings-instructions').value };
   if(file){
     const url = await uploadImage(file);
     if(url) payload.kbzpay_qr_url = url;
   }
+  // 🔒 Admin Email → admin_private_settings (Trigger က settings ထဲ Email Function အတွက် ကူးပေး) · Table မရှိသေးရင် settings ထဲ တိုက်ရိုက်
+  const pv = await sb.from('admin_private_settings').upsert({ id: 1, admin_email: adminEmail || null }, { onConflict: 'id' });
+  if(pv.error) payload.admin_email = adminEmail;
   const { error } = await sb.from('settings').update(payload).eq('id', 1);
   if(error){ showToast('Error: '+error.message); return; }
   showToast('Settings သိမ်းပြီးပါပြီ');
@@ -9038,6 +9058,32 @@ function showMfaPrompt(){
   document.getElementById('mfa-verify-btn').addEventListener('click', verifyMfaLogin);
   document.getElementById('mfa-cancel-btn').addEventListener('click', async () => { await sb.auth.signOut(); hideMfaPrompt(); location.reload(); });
 }
+// 🔐 2FA မဖြစ်မနေ ဟုတ်/မဟုတ် — ADMIN-2FA-REQUIRED.sql Run ထားမှ ဖွင့် (Run မထားရင် 2FA ကိုယ်တိုင် ရွေးလို့ရ)
+let __mfaReq = null;
+async function mfaRequired(){
+  if(__mfaReq !== null) return __mfaReq;
+  try{ const { data, error } = await sb.rpc('mfa_required'); __mfaReq = !error && data === true; }catch(e){ __mfaReq = false; }
+  return __mfaReq;
+}
+// 🔐 2FA မဖွင့်ရသေးတဲ့ Admin — ဖွင့်ပြီးမှ ဝင်ခွင့်
+function showMfaSetupRequired(){
+  window.__mfaRequired = true;
+  const scr = document.getElementById('login-screen'), form = document.getElementById('login-form');
+  document.getElementById('dashboard').style.display = 'none';
+  scr.style.display = 'flex'; form.style.display = 'none';
+  let box = document.getElementById('mfa-login-box');
+  if(!box){ box = document.createElement('div'); box.id = 'mfa-login-box'; box.className = 'mfa-login'; form.insertAdjacentElement('afterend', box); }
+  box.style.display = '';
+  box.innerHTML = `
+    <div class="mfa-lock">🔐</div>
+    <div class="mfa-h">2FA ဖွင့်ရန် လိုအပ်ပါသည်</div>
+    <div class="hint" style="text-align:center;">လုံခြုံရေးအတွက် Admin App ဝင်သူတိုင်း ၂ ဆင့် Login (2FA) ဖွင့်ထားရပါမည်။<br>ဖုန်းမှာ <b>Google Authenticator</b> (သို့) <b>Microsoft Authenticator</b> App ထည့်ပြီး အောက်က ခလုတ်ကို နှိပ်ပါ</div>
+    <button type="button" class="acid" id="mfa-start-btn" style="width:100%; margin-top:10px;">🔐 2FA ဖွင့်မည်</button>
+    <div id="mfa-enroll"></div>
+    <button type="button" class="secondary" id="mfa-cancel-btn" style="width:100%; margin-top:10px;">Logout</button>`;
+  document.getElementById('mfa-start-btn').addEventListener('click', startMfaEnroll);
+  document.getElementById('mfa-cancel-btn').addEventListener('click', async () => { await sb.auth.signOut(); location.reload(); });
+}
 function hideMfaPrompt(){
   const box = document.getElementById('mfa-login-box'); if(box) box.style.display = 'none';
   document.getElementById('login-form').style.display = '';
@@ -9097,6 +9143,13 @@ function applyActionPermissions(){
       }
     }catch(e){}
     const r = await _cs.apply(this, arguments);
+    // 🔐 2FA မဖြစ်မနေ — Admin/Staff/Delivery အားလုံး 2FA မဖွင့်ရသေးရင် Dashboard မပြဘဲ ဖွင့်ခိုင်း
+    try{
+      if(mfaReady() && currentAdminUserId && document.getElementById('dashboard').style.display === 'block' && await mfaRequired()){
+        const { data: lf } = await sb.auth.mfa.listFactors();
+        if(!(lf?.totp || []).some(f => f.status === 'verified')){ showMfaSetupRequired(); return r; }
+      }
+    }catch(e){}
     try{
       if(currentAdminUserId){
         const { data } = await sb.from('admins').select('*').eq('user_id', currentAdminUserId).maybeSingle();
@@ -9125,9 +9178,11 @@ async function render2faCard(){
   if(on.length){
     body.innerHTML = `
       <div class="mfa-on">✅ ဖွင့်ထားပါသည် — Login ဝင်တိုင်း ဖုန်း App ထဲက Code လိုပါမည်</div>
-      <div class="hint">ဖုန်းပျောက်ရင်: Supabase Dashboard › Authentication › Users › ကိုယ့် Email › MFA Factors မှာ ဖျက်ပြီး ပြန်ဖွင့်ပါ</div>
-      <button type="button" class="secondary" id="mfa-off-btn" style="width:100%; margin-top:8px;">2FA ပိတ်မည်</button>`;
-    document.getElementById('mfa-off-btn').addEventListener('click', async () => {
+      ${await mfaRequired()
+        ? `<div class="hint">🔒 2FA က မဖြစ်မနေ ဖွင့်ထားရပါမည် (ပိတ်လို့ မရပါ)။ ဖုန်းပျောက်/ဖုန်းအသစ်ပြောင်းရင်: Owner က Supabase Dashboard › Authentication › Users › ထို Email › MFA Factors မှာ ဖျက်ပေးပါ — နောက်တစ်ခါ Login ဝင်ရင် ဖုန်းအသစ်နဲ့ ပြန်ဖွင့်ခိုင်းပါမည်</div>`
+        : `<div class="hint">ဖုန်းပျောက်ရင်: Supabase Dashboard › Authentication › Users › ကိုယ့် Email › MFA Factors မှာ ဖျက်ပြီး ပြန်ဖွင့်ပါ</div>
+      <button type="button" class="secondary" id="mfa-off-btn" style="width:100%; margin-top:8px;">2FA ပိတ်မည်</button>`}`;
+    document.getElementById('mfa-off-btn')?.addEventListener('click', async () => {
       if(!await adminConfirm('2FA ပိတ်ရင် Password တစ်ခုတည်းနဲ့ ဝင်လို့ရသွားမည် — သေချာပါသလား?')) return;
       for(const f of on){ const { error } = await sb.auth.mfa.unenroll({ factorId: f.id }); if(error){ showToast('Error: ' + error.message); return; } }
       showToast('2FA ပိတ်ပြီးပါပြီ'); logActivity('mfa_disabled', currentAdminEmail); render2faCard();
@@ -9175,6 +9230,7 @@ async function startMfaEnroll(){
       if(ve) return showToast('❌ Code မှားနေပါသည် — App ထဲက နောက်ဆုံး Code ကို ရိုက်ပါ');
       showToast('🔐 2FA ဖွင့်ပြီးပါပြီ — နောက်တစ်ခါ Login ဝင်ရင် Code လိုပါမည်');
       logActivity('mfa_enabled', currentAdminEmail);
+      if(window.__mfaRequired){ setTimeout(() => location.reload(), 900); return; }
       render2faCard();
     });
   }catch(e){ showToast('Error: ' + (e.message || e)); btn.disabled = false; }
