@@ -61,45 +61,52 @@ async function sbService(path, opts = {}){
 }
 
 // ---------- Gemini ----------
-async function gemini(system, prompt, { json = true, temperature = 0.8, maxTokens = 6000 } = {}){
+async function gemini(system, prompt, { json = true, temperature = 0.8, maxTokens = 6000, fast = false, budgetMs = 24000 } = {}){
   const key = env("GEMINI_API_KEY");
   if(!key){ const e = new Error("AI_NOT_CONFIGURED"); e.code = "AI_NOT_CONFIGURED"; throw e; }
-  const models = [...new Set([env("GEMINI_MODEL"), "gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.5-flash", "gemini-2.0-flash"].filter(Boolean))];
+  // fast (Chat) — Lite Model အရင် (မြန် · အခမဲ့ Quota သီးသန့်) · ကျန်တာ — Flash အရင် (စာပိုကောင်း)
+  const order = fast ? ["gemini-flash-lite-latest", "gemini-2.5-flash-lite", "gemini-flash-latest", "gemini-2.5-flash"]
+                     : ["gemini-flash-latest", "gemini-2.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash-lite"];
+  const models = [...new Set([env("GEMINI_MODEL"), ...order].filter(Boolean))];
   const body = {
     systemInstruction: { parts: [{ text: system }] },
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     generationConfig: { temperature, maxOutputTokens: maxTokens, ...(json ? { responseMimeType: "application/json" } : {}) },
   };
-  let last = null;
+  const t0 = Date.now();
+  let last = null, sawRate = false;
   for(const m of models){
-    for(let attempt = 0; attempt < 2; attempt++){
-      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
-        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(body),
+    const left = budgetMs - (Date.now() - t0);
+    if(left < 2500) break;                                                    // Vercel အချိန်မကုန်ခင် ရပ်
+    const ac = new AbortController(); const timer = setTimeout(() => ac.abort(), Math.min(left, fast ? 12000 : 20000));
+    let r;
+    try{
+      r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`, {
+        method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(body), signal: ac.signal,
       });
-      if(r.status === 404){ last = new Error("model " + m + " not found"); break; }            // နောက် Model စမ်း
-      if(r.status === 429){ if(attempt === 0){ await sleep(1500); continue; } const e = new Error("AI_RATE_LIMIT"); e.code = "AI_RATE_LIMIT"; throw e; }
-      if(r.status >= 500){ last = new Error("gemini " + r.status); if(attempt === 0){ await sleep(800); continue; } break; }
-      if(!r.ok){
-        const t = await r.text();
-        const e = new Error("gemini " + m + " " + r.status + " " + clip(t, 300));
-        e.code = /location is not supported|not available in your country|region/i.test(t) ? "AI_REGION"
-               : /API key|API_KEY|PERMISSION_DENIED|unregistered callers/i.test(t) ? "AI_KEY_ERROR"
-               : (r.status === 400 ? (last = e, null) : "AI_ERROR");
-        if(e.code === null) break;                                   // ဒီ Model နဲ့ မကိုက် (400) — နောက် Model စမ်း
-        throw e;
-      }
-      const d = await r.json();
-      const text = ((d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts) || []).map((p) => p.text || "").join("").trim();
-      if(!text){ last = new Error("empty answer from " + m + " (" + ((d.candidates && d.candidates[0] && d.candidates[0].finishReason) || (d.promptFeedback && d.promptFeedback.blockReason) || "?") + ")"); break; }
-      if(!json) return text;
-      const raw = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
-      try{ return JSON.parse(raw); }catch(e){
-        const m2 = raw.match(/\{[\s\S]*\}/); if(m2){ try{ return JSON.parse(m2[0]); }catch(_){} }
-        last = new Error("bad json from " + m); break;
-      }
+    }catch(e){ clearTimeout(timer); last = new Error("timeout/network " + m); continue; }   // ကြာလွန်း → နောက် Model
+    clearTimeout(timer);
+    if(r.status === 404){ last = new Error("model " + m + " not found"); continue; }
+    if(r.status === 429){ sawRate = true; last = new Error("rate limit " + m); continue; }   // ဒီ Model Quota ပြည့် → နောက် Model
+    if(r.status >= 500){ last = new Error("gemini " + m + " " + r.status); continue; }
+    if(!r.ok){
+      const t = await r.text();
+      const e = new Error("gemini " + m + " " + r.status + " " + clip(t, 300));
+      if(/location is not supported|not available in your country/i.test(t)){ e.code = "AI_REGION"; throw e; }
+      if(/API key|API_KEY|PERMISSION_DENIED|unregistered callers/i.test(t)){ e.code = "AI_KEY_ERROR"; throw e; }
+      last = e; continue;
+    }
+    const d = await r.json();
+    const text = ((d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts) || []).map((p) => p.text || "").join("").trim();
+    if(!text){ last = new Error("empty answer from " + m + " (" + ((d.candidates && d.candidates[0] && d.candidates[0].finishReason) || (d.promptFeedback && d.promptFeedback.blockReason) || "?") + ")"); continue; }
+    if(!json) return text;
+    const raw = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
+    try{ return JSON.parse(raw); }catch(e){
+      const m2 = raw.match(/\{[\s\S]*\}/); if(m2){ try{ return JSON.parse(m2[0]); }catch(_){} }
+      last = new Error("bad json from " + m); continue;
     }
   }
-  const e = last || new Error("AI_ERROR"); e.code = e.code || "AI_ERROR"; throw e;
+  const e = last || new Error("AI_ERROR"); e.code = e.code || (sawRate ? "AI_RATE_LIMIT" : "AI_ERROR"); throw e;
 }
 
 // ---------- Prompts ----------
@@ -117,11 +124,14 @@ function productLine(p){
   } else stock = p.status === "sold_out" ? "ကုန်" : String(p.stock_qty ?? "?");
   return `- ${clip(p.name, 60).trim()} | ${p.category || ""}${p.subcategory ? "/" + p.subcategory : ""} | ${onSale ? `${ks(sp)} ကျပ် (Sale · မူလ ${ks(pr)})` : ks(pr) + " ကျပ်"} | Size: ${p.sizes || "-"} | အရောင်: ${p.colors || "-"} | လက်ကျန်: ${stock}${p.preorder ? " | Pre-order ရ" : ""}${p.is_gift_card ? " | Gift Card" : ""}${p.description ? " | " + clip(String(p.description).replace(/\s+/g, " "), 140) : ""}`;
 }
-async function shopContext(priv){
-  const [prods, sets] = await Promise.all([
+function shopData(){
+  return Promise.all([
     sbAnon("products?select=name,category,subcategory,price,sale_price,sale_start,sale_end,sizes,colors,variant_stock,stock_qty,status,description,preorder,is_gift_card&visible=eq.true&order=created_at.desc&limit=80"),
     sbAnon("settings?select=delivery_zones,delivery_note,gift_wrap_price,pay_later_enabled,unpaid_cancel_hours,topup_bonus&id=eq.1"),
   ]);
+}
+async function shopContext(priv, dataP){
+  const [prods, sets] = await (dataP || shopData());
   const s = (Array.isArray(sets) && sets[0]) || {};
   let zones = s.delivery_zones; if(typeof zones === "string"){ try{ zones = JSON.parse(zones); }catch(e){ zones = null; } }
   const zoneTxt = Array.isArray(zones) && zones.length ? zones.map((z) => `${z.name}: ${ks(z.min)}${z.max ? "–" + ks(z.max) : ""} ကျပ်`).join("၊ ") : "Delivery ခ — ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေ";
@@ -176,8 +186,8 @@ async function taskSummary(b){
     actions: (out && Array.isArray(out.actions) ? out.actions : []).map(noHtml).filter(Boolean).slice(0, 5),
   };
 }
-async function answerChat(question, history, priv){
-  const ctx = await shopContext(priv);
+async function answerChat(question, history, priv, dataP){
+  const ctx = await shopContext(priv, dataP);
   const hist = (history || []).slice(-8).map((m) => `${m.sender === "customer" ? "Customer" : "ဆိုင်"}: ${clip(mask(m.message), 400)}`).join("\n");
   const out = await gemini(
     `သင်က ${SHOP} ရဲ့ Website Chat မှာ Customer မေးခွန်းကို ဖြေပေးတဲ့ AI လက်ထောက်ပါ။ ${VOICE}
@@ -191,8 +201,8 @@ JSON: {"answer":"...","handoff":true|false}
 
 # ဆိုင်အချက်အလက်
 ${ctx}`,
-    `${hist ? "ယခင် စကားဝိုင်း:\n" + hist + "\n\n" : ""}Customer ရဲ့ နောက်ဆုံး မေးခွန်း: ${clip(mask(question), 800)}`,
-    { temperature: 0.4, maxTokens: 4096 }
+    `${hist ? "ယခင် စကားဝိုင်း:\n" + hist + "\n\n" : ""}Customer ရဲ့ နောက်ဆုံး မေးခွန်း (တစ်ခုထက်ပိုရင် အကုန်ဖြေ): ${clip(mask(question), 800)}`,
+    { temperature: 0.4, maxTokens: 4096, fast: true, budgetMs: 22000 }
   );
   let answer = noHtml(out && out.answer);
   const handoff = !!(out && out.handoff) || !answer;
@@ -212,30 +222,37 @@ function inShopHours(open, close){
 
 async function taskChat(user){
   if(!env("SUPABASE_SERVICE_ROLE_KEY")) return { skipped: "no_service_key" };
-  const privRows = await sbService("admin_private_settings?select=ai_chat_mode,ai_open,ai_close,ai_shop_info&id=eq.1");
+  const uid = encodeURIComponent(user.id);
+  const since10 = new Date(Date.now() - 10 * 60000).toISOString(), since24 = new Date(Date.now() - 864e5).toISOString();
+  const dataP = shopData();                                                   // ပစ္စည်းစာရင်း — အစကတည်းက ပြိုင်တူ ဆွဲ
+  dataP.catch(() => {});
+  const [privRows, msgs, recentBot] = await Promise.all([                     // ⚡ Database ကို တစ်ပြိုင်နက် ခေါ်
+    sbService("admin_private_settings?select=ai_chat_mode,ai_open,ai_close,ai_shop_info&id=eq.1"),
+    sbService(`chat_messages?select=id,sender,message,image_url,created_at,customer_name&user_id=eq.${uid}&order=created_at.desc&limit=20`),
+    sbService(`chat_messages?select=id,created_at&user_id=eq.${uid}&sender=eq.admin&message=like.${encodeURIComponent(BOT + "*")}&created_at=gte.${since24}&limit=60`),
+  ]);
   const priv = (privRows && privRows[0]) || {};
   const mode = priv.ai_chat_mode || "off";
   if(mode === "off") return { skipped: "off" };
   if(mode === "hours" && inShopHours(priv.ai_open, priv.ai_close)) return { skipped: "shop_open" };
-  const uid = encodeURIComponent(user.id);
-  const msgs = await sbService(`chat_messages?select=id,sender,message,image_url,created_at,customer_name&user_id=eq.${uid}&order=created_at.desc&limit=20`);
   if(!Array.isArray(msgs) || !msgs.length) return { skipped: "no_message" };
-  const lastCustomerIdx = msgs.findIndex((m) => m.sender === "customer");
-  if(lastCustomerIdx !== 0) return { skipped: "already_answered" };          // နောက်ဆုံးစာက Customer စာ ဖြစ်မှ
+  if(msgs[0].sender !== "customer") return { skipped: "already_answered" };   // နောက်ဆုံးစာက Customer စာ ဖြစ်မှ
+  // ဆက်တိုက် ပို့ထားတဲ့ Customer စာတွေ (ဖြေမထားသေးတာ) အကုန် ပေါင်းမေး
+  const pending = [];
+  for(const m of msgs){ if(m.sender !== "customer") break; pending.push(m); }
+  const texts = pending.filter((m) => m.message && String(m.message).trim()).reverse();
+  if(!texts.length) return { skipped: "image_only" };
   const q = msgs[0];
-  if(!q.message || !String(q.message).trim()) return { skipped: "image_only" };
   if(Date.now() - Date.parse(q.created_at) > 3 * 60000) return { skipped: "old" };
   const human = msgs.find((m) => m.sender === "admin" && !String(m.message || "").startsWith(BOT));
   if(human && Date.now() - Date.parse(human.created_at) < 20 * 60000) return { skipped: "human_active" };   // Admin ကိုယ်တိုင် ဖြေနေဆဲ
-  const since10 = new Date(Date.now() - 10 * 60000).toISOString(), since24 = new Date(Date.now() - 864e5).toISOString();
-  const recentBot = await sbService(`chat_messages?select=id,created_at&user_id=eq.${uid}&sender=eq.admin&message=like.${encodeURIComponent(BOT + "*")}&created_at=gte.${since24}&limit=60`);
   const n10 = (recentBot || []).filter((m) => m.created_at >= since10).length;
   if(n10 >= 5 || (recentBot || []).length >= 30) return { skipped: "rate" };
-  await sleep(1200);                                                          // ဆက်တိုက် ပို့နေရင် နောက်ဆုံးစာကိုသာ ဖြေ
+  const hist = msgs.slice(pending.length, pending.length + 8).reverse().filter((m) => m.message);
+  const question = texts.map((m) => m.message).join("\n");
+  const { answer, handoff } = await answerChat(question, hist, priv, dataP);
   const again = await sbService(`chat_messages?select=id,sender&user_id=eq.${uid}&order=created_at.desc&limit=1`);
-  if(again && again[0] && again[0].id !== q.id) return { skipped: "newer" };
-  const hist = msgs.slice(1, 9).reverse().filter((m) => m.message);
-  const { answer, handoff } = await answerChat(q.message, hist, priv);
+  if(again && again[0] && again[0].id !== q.id) return { skipped: "newer" };  // ဖြေနေတုန်း စာအသစ်ရောက် — နောက်တစ်ခေါက် ပေါင်းဖြေ
   await sbService("chat_messages", { method: "POST", body: JSON.stringify({
     user_id: user.id, customer_name: q.customer_name || null, sender: "admin", message: BOT + answer, read_by_admin: !handoff, read_by_customer: false,
   }) });

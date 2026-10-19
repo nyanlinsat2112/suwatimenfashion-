@@ -6946,20 +6946,30 @@ async function sendChatMessage(){
 }
 
 // 🤖 AI အလိုလို ဖြေ (api/ai.js · Admin Settings မှာ ဖွင့်ထားမှ) — Server က ဖြေသင့်/မသင့် ဆုံးဖြတ်
-let _chatAiBusy = false;
-async function chatAiReply(){
-  if(_chatAiBusy) return; _chatAiBusy = true;
+// စာ ဆက်တိုက် ပို့ရင် — နောက်ဆုံးစာ ပို့ပြီး ခဏစောင့်မှ တစ်ခါတည်း ခေါ် · ဖြေနေတုန်း စာအသစ်ရောက်ရင် ပြီးတာနဲ့ ထပ်ခေါ်
+let _chatAiBusy = false, _chatAiAgain = false, _chatAiDebounce = null;
+function chatAiReply(){
+  clearTimeout(_chatAiDebounce);
+  _chatAiDebounce = setTimeout(chatAiRun, 1200);
+}
+async function chatAiRun(){
+  if(_chatAiBusy){ _chatAiAgain = true; return; }
+  _chatAiBusy = true;
   let typing = null;
   try{
     const { data:{ session } } = await sb.auth.getSession(); if(!session) return;
-    typing = setTimeout(function tick(){ try{ showChatTyping(); }catch(e){} typing = setTimeout(tick, 3000); }, 900);
+    typing = setTimeout(function tick(){ try{ showChatTyping(); }catch(e){} typing = setTimeout(tick, 3000); }, 300);
     const r = await fetch('/api/ai', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + session.access_token }, body: JSON.stringify({ task:'chat' }) });
     const j = r.ok ? await r.json() : null;
     clearTimeout(typing); typing = null;
     document.querySelector('#chat-log .fx-typing')?.remove();
     if(j && j.ok) loadChatMessages();
   }catch(e){}
-  finally{ if(typing) clearTimeout(typing); _chatAiBusy = false; }
+  finally{
+    if(typing) clearTimeout(typing);
+    _chatAiBusy = false;
+    if(_chatAiAgain){ _chatAiAgain = false; chatAiRun(); }
+  }
 }
 
 let _chatTypingTimer = null;
