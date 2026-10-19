@@ -1951,6 +1951,247 @@ html[data-theme="dark"] .bd-check-sh{ stroke:#000; } html[data-theme="dark"] .bd
 .msgr-log > *, .admin-chat-log > *{ flex-shrink:0; }
 .msgr-album.n1{ max-width:min(170px, 50vw) !important; } .msgr-album.n1 img{ max-height:200px !important; } .msgr-b img.msgr-img{ max-width:min(170px, 100%); max-height:200px; }
 .snd-row{ margin-top:12px; padding-top:12px; border-top:1px dashed var(--grey); }
+
+/* =====================================================================
+   👤 Profile (ဒီဇိုင်းအသစ်) + ⚙️ Account Settings
+   ===================================================================== */
+.pf{margin-top:14px; padding-right:4px;}
+.pf-hero{position:relative; background:var(--black); color:var(--cream); border:3px solid var(--black); box-shadow:6px 6px 0 var(--rust); padding:18px 18px 14px; overflow:hidden;}
+.pf-hero::after{content:""; position:absolute; right:-40px; top:-40px; width:150px; height:150px; border-radius:50%; border:22px solid var(--acid); opacity:.13; pointer-events:none;}
+.pf-tag{font-family:'Anton',sans-serif; font-size:13px; letter-spacing:.18em; color:var(--acid);}
+.pf-tag i{color:var(--rust); font-style:normal;}
+.pf-me{display:flex; align-items:center; gap:14px; margin:14px 0 12px;}
+.pf-av{position:relative; flex:none; width:64px; height:64px; border-radius:50%; background:var(--acid); color:var(--black); display:grid; place-items:center; font-family:'Anton',sans-serif; font-size:30px; border:3px solid var(--cream); overflow:hidden;}
+.pf-av img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;}
+.pf-who{min-width:0; display:flex; flex-direction:column; gap:2px;}
+.pf-who b{font-size:20px; line-height:1.25; overflow-wrap:anywhere;}
+.pf-who small{font-size:13px; color:#cfc9bb;}
+.pf-who .pf-mail{font-family:'Space Mono',monospace; font-size:12px; color:#a39e91; overflow-wrap:anywhere;}
+.pf-foot{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; border-top:1px dashed #4a4842; padding-top:10px;}
+.pf-badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; background:#24231f; border:1px solid #4a4842; padding:4px 10px; border-radius:99px;}
+.pf-since{font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.12em; color:#a39e91;}
+b.g{display:inline-grid; place-items:center; width:18px; height:18px; border-radius:50%; background:#fff; color:#4285F4; font:700 12px/1 Arial,sans-serif;}
+
+.pf-stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:22px 0 4px;}
+.pf-stats button{background:var(--surface); color:var(--ink); border:2.5px solid var(--ink); box-shadow:3px 3px 0 var(--ink); padding:12px 4px 10px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; font:inherit; transition:transform .12s, box-shadow .12s;}
+.pf-stats button:active{transform:translate(3px,3px); box-shadow:0 0 0 var(--ink);}
+.pf-stats b{font-family:'Anton',sans-serif; font-size:24px; line-height:1; letter-spacing:.02em; max-width:100%; overflow:hidden; text-overflow:ellipsis;}
+.pf-stats span{font-size:11px; color:var(--grey); white-space:nowrap;}
+
+.pf-sec{margin-top:22px;}
+.pf-h{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-family:'Space Mono',monospace; font-size:12px; color:var(--grey); letter-spacing:.04em;}
+.pf-edit{background:none; border:none; color:var(--rust); font:600 13px 'Noto Sans Myanmar',sans-serif; cursor:pointer; padding:4px 0;}
+.pf-list{border:2.5px solid var(--ink); background:var(--surface);}
+.pf-row{display:flex; align-items:center; gap:10px; padding:12px 12px; border-bottom:1px solid var(--ph); font-size:14px;}
+.pf-row:last-child{border-bottom:none;}
+.pf-ic{flex:none; width:22px; text-align:center;}
+.pf-k{flex:none; color:var(--grey); font-size:13px; min-width:58px;}
+.pf-v{flex:1; text-align:right; overflow-wrap:anywhere;}
+.pf-v.empty{color:var(--grey); font-size:12px;}
+.pf-go{width:100%; display:flex; align-items:center; gap:12px; text-align:left; background:var(--surface); color:var(--ink); border:2.5px solid var(--ink); padding:13px 12px; cursor:pointer; font:inherit;}
+.pf-go:active{background:var(--ph);}
+.pf-gt{flex:1; display:flex; flex-direction:column; gap:2px;}
+.pf-gt b{font-size:15px;} .pf-gt small{font-size:12px; color:var(--grey);}
+.pf-arr{font-size:24px; line-height:1; color:var(--grey);}
+.pf-logout{display:block; width:100%; margin-top:18px; background:transparent; color:var(--rust); border:2.5px solid var(--rust); padding:13px; font:700 15px 'Space Mono','Noto Sans Myanmar',monospace; cursor:pointer; letter-spacing:.04em;}
+.pf-logout:active{background:var(--rust); color:#fff;}
+#checkout-modal-content #notify-section{margin-top:22px;}
+
+/* ⚙️ Account Settings */
+.as-back{background:none; border:none; color:var(--ink); font:600 14px 'Noto Sans Myanmar',sans-serif; cursor:pointer; padding:2px 0 8px;}
+.as-h{margin-bottom:14px !important;}
+.as-card{border:2.5px solid var(--ink); background:var(--surface); padding:14px; margin-bottom:14px;}
+.as-ct{font-weight:700; font-size:15px; margin-bottom:8px;}
+.as-mail{font-family:'Space Mono',monospace; font-size:12px; color:var(--grey); margin-bottom:10px; overflow-wrap:anywhere;}
+.as-m{display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--ph);}
+.as-mi{flex:none; width:26px; text-align:center;}
+.as-m > span:nth-child(2){flex:1; display:flex; flex-direction:column;}
+.as-m small{font-size:12px; color:var(--grey);}
+.as-ms{font-size:11px; font-family:'Space Mono',monospace; color:var(--grey); white-space:nowrap;}
+.as-m.on .as-ms{color:#2f7d32; font-weight:700;}
+html[data-theme="dark"] .as-m.on .as-ms{color:var(--acid);}
+.as-note{font-size:13px; line-height:1.7; color:var(--text2); margin:0 0 8px;}
+.as-ul{margin:0 0 10px 18px; font-size:13px; line-height:1.7; color:var(--text2);}
+.as-ok{font-size:13px; color:#2f7d32; font-weight:700; margin:0 0 6px;}
+html[data-theme="dark"] .as-ok{color:var(--acid);}
+.as-lbl{display:block; font-family:'Space Mono',monospace; font-size:11px; color:var(--grey); letter-spacing:.04em; margin:12px 0 5px;}
+.as-pw{position:relative;}
+.as-pw input, .as-code{width:100%; padding:12px 44px 12px 12px; border:2px solid var(--ink); background:var(--paper); color:var(--ink); font-size:16px; border-radius:0;}
+.as-code{padding-right:12px; letter-spacing:.3em; font-family:'Space Mono',monospace; text-align:center;}
+.as-pw input:focus, .as-code:focus{outline:none; box-shadow:3px 3px 0 var(--acid), 3px 3px 0 1.5px var(--ink);}
+.as-eye{position:absolute; right:4px; top:50%; transform:translateY(-50%); width:38px; height:38px; display:grid; place-items:center; background:none; border:none; color:var(--grey); cursor:pointer;}
+.as-eye svg{width:20px; height:20px;} .as-eye.on{color:var(--ink);}
+.as-forgot{background:none; border:none; color:var(--rust); font:13px 'Noto Sans Myanmar',sans-serif; text-decoration:underline; padding:6px 0 0; cursor:pointer;}
+.as-str{display:grid; grid-template-columns:repeat(4,1fr); gap:4px; margin-top:8px;}
+.as-str i{height:5px; background:var(--ph);}
+.as-str.s1 i:nth-child(-n+1){background:var(--rust);}
+.as-str.s2 i:nth-child(-n+2){background:#e0a020;}
+.as-str.s3 i:nth-child(-n+3){background:#7cb342;}
+.as-str.s4 i{background:#2f7d32;}
+.as-strt{font-size:11px; color:var(--grey); margin-top:4px;}
+.as-err{min-height:18px; font-size:13px; color:var(--rust); margin:10px 0 2px;}
+.as-err.ok{color:#2f7d32;} html[data-theme="dark"] .as-err.ok{color:var(--acid);}
+.as-err.shake{animation:asShake .35s;}
+@keyframes asShake{20%,60%{transform:translateX(-5px);}40%,80%{transform:translateX(5px);}}
+.as-go{width:100%; background:var(--acid); color:var(--black); border:2.5px solid var(--black); box-shadow:4px 4px 0 var(--black); padding:13px; font:700 15px 'Noto Sans Myanmar',sans-serif; cursor:pointer; margin-top:6px;}
+.as-go:active{transform:translate(4px,4px); box-shadow:none;}
+.as-go:disabled{opacity:.6;}
+.as-gg{width:100%; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; color:#1f1f1f; border:2.5px solid var(--black); padding:13px; font:600 14px 'Noto Sans Myanmar',sans-serif; cursor:pointer; box-shadow:4px 4px 0 var(--black);}
+.as-gg b.g{border:1px solid #ddd;}
+.as-out{width:100%; background:transparent; color:var(--rust); border:2px solid var(--rust); padding:11px; font:600 14px 'Noto Sans Myanmar',sans-serif; cursor:pointer;}
+.as-done{text-align:center; padding:40px 10px 30px;}
+.as-dok{width:72px; height:72px; margin:0 auto 16px; border-radius:50%; background:var(--acid); color:var(--black); border:3px solid var(--black); display:grid; place-items:center; font-size:36px; font-weight:700; animation:asPop .45s cubic-bezier(.2,1.6,.4,1);}
+.as-done b{display:block; font-size:19px; margin-bottom:8px;}
+.as-done p{font-size:14px; color:var(--grey); line-height:1.7;}
+@keyframes asPop{from{transform:scale(.3); opacity:0;}}
+
+/* 👁️ PIN ကြည့် — Google ဖြင့် အတည်ပြု */
+.cp-auth-gg{width:100%; display:flex; align-items:center; justify-content:center; gap:8px; background:#fff; color:#1f1f1f; border:1px solid #dadce0; border-radius:12px; padding:12px; font:600 14px 'Noto Sans Myanmar',sans-serif; cursor:pointer; margin-top:8px;}
+.cp-auth-or{font-size:12px; color:#8e8e93; text-align:center; margin:10px 0 0;}
+.cp-auth-gnote{font-size:13px; line-height:1.6; color:#8e8e93; text-align:center; margin:4px 0 2px;}
+
+/* =====================================================================
+   💳 Profile — ကတ်အိတ် (Wallet) ပုံစံ
+   ===================================================================== */
+.pw{margin-top:2px;}
+.pw-who{display:flex; align-items:center; gap:12px; padding-right:52px;}
+.pw-av{position:relative; flex:none; width:48px; height:48px; border-radius:50%; background:var(--acid); color:var(--black); display:grid; place-items:center; font-family:'Archivo Black',sans-serif; font-size:21px; overflow:hidden; border:2px solid var(--ink);}
+.pw-av img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;}
+.pw-wt{min-width:0;}
+.pw-wt b{display:block; font-size:18px; line-height:1.3; overflow-wrap:anywhere;}
+.pw-wt small{display:block; font-size:12px; color:var(--grey); overflow-wrap:anywhere;}
+.pw-wt i.g, .pw i.g{display:inline-grid; place-items:center; width:15px; height:15px; border-radius:50%; background:#fff; color:#4285F4; font:700 10px/1 Arial,sans-serif; font-style:normal; vertical-align:-2px; box-shadow:0 0 0 1px #ddd;}
+.pw-hint{font-size:12px; color:var(--grey); margin:16px 0 8px; line-height:1.6;}
+.pw-hint b{color:var(--ink);}
+.pw-stack{position:relative; height:320px; margin-bottom:6px;}
+.pw-card{position:absolute; left:0; right:0; cursor:pointer; transform-origin:50% 0; transition:top .45s cubic-bezier(.2,.9,.3,1), transform .45s cubic-bezier(.2,.9,.3,1); -webkit-tap-highlight-color:transparent; border-radius:16px;}
+.pw-card:focus-visible{outline:3px solid var(--acid); outline-offset:3px;}
+.pw-card:not(.front){filter:brightness(.92);}
+.pw-card .sgc{animation:none;}
+.pw-card .sgc__btn{cursor:pointer;}
+.pw-face{position:relative; width:100%; aspect-ratio:856/540; border-radius:4.2cqw; overflow:hidden; container-type:inline-size;
+  background-color:#141412; color:#E9E4D8; font-family:'IBM Plex Mono',monospace;
+  box-shadow:0 10px 26px rgba(0,0,0,.35), inset 0 0 0 1px rgba(214,255,63,.22);
+  background-image:linear-gradient(rgba(214,255,63,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(214,255,63,.07) 1px,transparent 1px); background-size:4.2cqw 4.2cqw;}
+.pw-card{container-type:inline-size;}
+.pw-mem .pw-face{background-color:#22211d;}
+.pw-wm{position:absolute; left:3cqw; bottom:-3.5cqw; font-family:'Archivo Black',sans-serif; font-size:21cqw; line-height:1; color:transparent; -webkit-text-stroke:1px rgba(214,255,63,.16); white-space:nowrap; pointer-events:none;}
+.pw-mem .pw-wm{font-size:17cqw;}
+.pw-stripe{position:absolute; top:0; right:0; bottom:0; width:15.4cqw; background:#D6FF3F; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.pw-stripe span{writing-mode:vertical-rl; font-family:'Archivo Black',sans-serif; font-size:4.6cqw; color:#141412; white-space:nowrap;}
+.pw-mem .pw-stripe{background:#C13B1F;} .pw-mem .pw-stripe span{color:#E9E4D8;}
+.pw-ttl{position:absolute; left:5.6cqw; top:5cqw; font-family:'Archivo Black',sans-serif; font-size:4.4cqw; line-height:1; color:#D6FF3F; white-space:nowrap;}
+.pw-ttl i{font-style:normal; color:#E9E4D8;}
+.pw-mem .pw-ttl{color:#E9E4D8;} .pw-mem .pw-ttl i{color:#C13B1F;}
+.pw-tags{position:absolute; left:5.6cqw; top:11.6cqw; display:flex; gap:1.6cqw; align-items:center; font-size:1.6cqw; letter-spacing:.14em;}
+.pw-tags b{background:#C13B1F; color:#E9E4D8; padding:.5cqw 1.2cqw;}
+.pw-tags span{color:#a39e91;}
+.pw-lbl{position:absolute; left:5.6cqw; font-size:1.5cqw; color:#a39e91; letter-spacing:.16em;}
+.pw-big{position:absolute; left:5.6cqw; font-family:'Archivo Black',sans-serif; line-height:1.1; white-space:nowrap; color:#E9E4D8;}
+.pw-big small{font-family:'IBM Plex Mono',monospace; font-size:2.2cqw; color:#E9E4D8; margin-left:1cqw; font-weight:700;}
+.pw-acid{color:#D6FF3F;} .pw-mut{color:#a39e91;}
+.pw-div{position:absolute; left:5.6cqw; right:20cqw; height:.2cqw; background:#D6FF3F; opacity:.5;}
+.pw-mem .pw-div{background:#C13B1F; opacity:.8;}
+.pw-num{position:absolute; left:5.6cqw; font-size:4.2cqw; font-weight:700; letter-spacing:.5cqw; color:#E9E4D8; white-space:nowrap;}
+
+.pw-acts{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px;}
+.pw-acts button{position:relative; background:var(--surface); color:var(--ink); border:2px solid var(--ink); border-radius:14px; padding:12px 2px 10px; font:600 12px 'Noto Sans Myanmar',sans-serif; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px;}
+.pw-acts button i{font-style:normal; font-size:22px; line-height:1;}
+.pw-acts button sup{position:absolute; top:6px; right:10px; background:var(--rust); color:#fff; border-radius:99px; font-size:10px; padding:1px 6px; line-height:1.4;}
+.pw-acts button:active{transform:scale(.96);}
+.pw-info{margin-top:14px; background:var(--surface); border:2px solid var(--ink); border-radius:14px; padding:2px 14px;}
+.pw-r{display:flex; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--ph); font-size:14px;}
+.pw-r:last-child{border-bottom:none;}
+.pw-r span:first-child{color:var(--grey); flex:none;}
+.pw-r span:last-child{text-align:right; overflow-wrap:anywhere;}
+.pw-r .empty{color:var(--grey); font-size:12px;}
+.pw-ed{justify-content:flex-end; padding:8px 0;}
+.pw-ed button{background:none; border:none; color:var(--rust); font:700 14px 'Noto Sans Myanmar',sans-serif; cursor:pointer; padding:4px 0;}
+@media (prefers-reduced-motion: reduce){ .pw-card{transition:none;} }
+
+/* Profile ⚙️ ခလုတ် + Settings စာမျက်နှာ */
+.pw{position:relative;}
+.pw-gear{position:absolute; right:0; top:62px; display:flex; align-items:center; gap:6px; background:var(--surface); color:var(--ink); border:2px solid var(--ink); border-radius:99px; padding:6px 12px 6px 9px; font:700 13px 'Noto Sans Myanmar',sans-serif; cursor:pointer;}
+.pw-gear:active{transform:scale(.96);}
+.pw-hint{padding-right:120px; min-height:40px;}
+.pw-acts{grid-template-columns:repeat(3,1fr);}
+.as-sec{font-family:'Space Mono',monospace; font-size:12px; color:var(--grey); margin:20px 0 8px; letter-spacing:.04em;}
+.as-line{display:flex; align-items:center; gap:12px;}
+.as-li{font-size:20px; width:26px; text-align:center;}
+.as-lt{flex:1; display:flex; flex-direction:column;}
+.as-lt b{font-size:15px;} .as-lt small{font-size:12px; color:var(--grey);}
+.as-fold > summary{list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; margin:0;}
+.as-fold > summary::-webkit-details-marker{display:none;}
+.as-fold > summary::after{content:'›'; font-size:22px; line-height:1; color:var(--grey); transition:transform .2s;}
+.as-fold[open] > summary{margin-bottom:10px;}
+.as-fold[open] > summary::after{transform:rotate(90deg);}
+#checkout-modal-content #notify-section{margin-top:0;}
+#notify-section .modal-label{margin-bottom:8px;}
+
+/* =====================================================================
+   🎁 Gift Card — အနီရောင် ဒီဇိုင်း (Prepaid Card ပုံစံ · ညာဘက် Stripe)
+   ===================================================================== */
+.sgc__front{ background-color:#C13B1F; color:#efeae0;
+  background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px); background-size:4.2cqw 4.2cqw; }
+.sgc__rstripe{ position:absolute; top:0; right:0; bottom:0; width:15.4cqw; background:#efeae0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.sgc__rstripe span{ writing-mode:vertical-rl; font-family:'Archivo Black',sans-serif; font-size:4.6cqw; color:#141412; white-space:nowrap; letter-spacing:.04em; }
+.sgc__bigword{ left:3cqw; top:auto; bottom:-5cqw; font-size:26cqw; color:transparent; -webkit-text-stroke:.2cqw rgba(255,255,255,.2); letter-spacing:0; }
+.sgc__title{ left:5.6cqw; color:#efeae0; font-size:4.4cqw; }
+.sgc__title i{ color:#141412; }
+.sgc__chip{ right:19.5cqw; background:#141412; color:#efeae0; }
+.sgc__status{ right:19.5cqw; }
+.sgc__lbl{ left:5.6cqw; color:#ffd9cf; }
+.sgc__amt{ left:5cqw; color:#efeae0; font-size:13.5cqw; }
+.sgc__amt.is-long{ font-size:11.5cqw; }
+.sgc__foot{ left:5.6cqw; right:19.5cqw; border-top-color:rgba(239,234,224,.75); color:#efeae0; }
+.sgc[data-status="used"] .sgc__front, .sgc[data-status="rejected"] .sgc__front{ background-color:#6f6a62; }
+.sgc__gem{ font-size:4cqw; margin-right:1.4cqw; vertical-align:.1cqw; }
+/* 🎁 Gift Card နောက်ကျော — အနီနဲ့ လိုက်ဖက်တဲ့ အနက်-ကရင်မ်-အနီ (အစိမ်း မသုံးတော့) */
+.sgc__back{ background-color:#1c1412; color:#efeae0;
+  background-image:linear-gradient(rgba(193,59,31,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(193,59,31,.16) 1px,transparent 1px); }
+.sgc__stripe{ background:#C13B1F; border-bottom-color:#efeae0; }
+.sgc__codelbl{ color:#ff8a5c; }
+.sgc__code{ color:#efeae0; border-color:#ff8a5c; }
+.sgc__code.is-copied{ background:rgba(193,59,31,.25); }
+.sgc__act{ border-color:rgba(239,234,224,.7); }
+.sgc__act--main{ background:#C13B1F; border-color:#C13B1F; color:#fff; }
+.sgc__act:focus-visible{ outline-color:#ff8a5c; }
+.sgc__dot{ background:#efeae0; }
+
+/* 🎁 GIFT စာလုံးကြီး — အဖြူ ပိုထင်း */
+.sgc__bigword{ -webkit-text-stroke:.32cqw rgba(255,255,255,.42); }
+/* USED — စာတံဆိပ်ကြီး မပြ · အရောင်ပဲ မှိန် · Status မှာ USED */
+.sgc[data-status="used"] .sgc__stamp{ display:none !important; }
+.sgc[data-status="used"] .sgc__front{ background-color:#8a5a4e; }
+.sgc[data-status="used"] .sgc__front > :not(.sgc__stamp){ filter:saturate(.25) brightness(.92); }
+.sgc[data-status="used"] .sgc__front > .sgc__status{ filter:none; background:#141412; color:#efeae0; }
+
+/* =====================================================================
+   🎁 Gift Card သုံးတဲ့ Animation — အနီ + ကရင်မ် (Gift Card အသစ်နဲ့ လိုက်)
+   ===================================================================== */
+.fx-gift-bg{ background:radial-gradient(circle at 50% 30%, rgba(193,59,31,.32), rgba(10,10,9,.88) 62%); }
+.fx-gift-rays{ background:repeating-conic-gradient(from 0deg, rgba(255,138,92,.32) 0deg 8deg, transparent 8deg 22deg); }
+.fx-gift-spark{ color:#ffd9cf; }
+.fx-gift-spark:nth-child(odd){ color:#ff8a5c; }
+.fg3-face{ border-color:#141412;
+  background:linear-gradient(90deg, transparent 43%, #d8d1c3 43%, #efeae0 47%, #ffffff 50%, #efeae0 53%, #d8d1c3 57%, transparent 57%),
+             linear-gradient(180deg, rgba(255,255,255,.08), transparent 40%),
+             repeating-linear-gradient(0deg, rgba(255,255,255,.07) 0 1px, transparent 1px 12px),
+             repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0 1px, transparent 1px 12px), var(--fc, #a8331b); }
+.fg3-face.front{ --fc:#C13B1F; }
+.fg3-face.back{ --fc:#8f2a15; }
+.fg3-face.right{ --fc:#7f2512; }
+.fg3-face.left{ --fc:#a8331b; }
+.fg3-face.front .fg3-tag{ background:#141412; color:#efeae0; border-color:#efeae0; }
+.fg3-inside{ background:radial-gradient(circle, #fff6e8 0%, #ffd9cf 22%, #7a2412 55%, #0b0b0a 80%); }
+.fg3-lf{ border-color:#141412; background:linear-gradient(90deg, transparent 42%, #d8d1c3 42%, #efeae0 47%, #ffffff 50%, #efeae0 53%, #d8d1c3 58%, transparent 58%), var(--fc, #b5381d); }
+.fg3-lf.front{ --fc:#cf4426; } .fg3-lf.back{ --fc:#9a2f18; } .fg3-lf.right{ --fc:#8a2a16; } .fg3-lf.left{ --fc:#b5381d; }
+.fg3-lf.top{ background:linear-gradient(90deg, transparent 42%, #e2dccf 42%, #ffffff 50%, #e2dccf 58%, transparent 58%), linear-gradient(0deg, transparent 42%, #e2dccf 42%, #ffffff 50%, #e2dccf 58%, transparent 58%), #d24a2b; }
+.fg3-bow i{ border-color:#141412; background:linear-gradient(135deg, #ffffff, #efeae0 45%, #cfc6b5); }
+.fg3-bow .k{ background:#141412; }
+.fg3-glow{ background:radial-gradient(closest-side, rgba(255,246,232,.95), rgba(255,138,92,.5) 45%, transparent); }
+.fx-gift-amt{ color:#efeae0; text-shadow:0 3px 0 #C13B1F, 0 0 22px rgba(255,138,92,.65); }
+.fx-gift-realcard .fgc-plus{ background:#C13B1F; color:#fff; }
 </style>
 </head>
 <body>
@@ -4849,57 +5090,114 @@ async function openProfile(){
   await renderProfileView();
 }
 
-async function renderProfileView(){
+async function renderProfileView(mode){
   const box = document.getElementById('checkout-modal-content');
   const meta = currentUser.user_metadata || {};
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 
-  const { data: myOrderRows } = await sb.from('orders').select('id, order_group_id, hidden_by_customer').eq('user_id', currentUser.id);
-  const count = new Set((myOrderRows||[]).filter(o=>!o.hidden_by_customer).map(o=>o.order_group_id||o.id)).size;
+  const { data: walletData } = await sb.from('wallets').select('balance, card_number').eq('user_id', currentUser.id).maybeSingle();
+  const balance = Number(walletData?.balance || 0);
+  const cardNo = String(walletData?.card_number || '').replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ') || '•••• •••• •••• ••••';
 
-  const { data: walletData } = await sb.from('wallets').select('user_id, balance, card_number, updated_at').eq('user_id', currentUser.id).maybeSingle();
-  const balance = walletData?.balance || 0;
+  const name = meta.full_name || meta.name || (currentUser.email || '').split('@')[0];
+  const ini = ((String(name).match(/[A-Za-z]/) || String(currentUser.email || '').match(/[A-Za-z]/) || ['★'])[0]).toUpperCase();
+  const pic = meta.avatar_url || meta.picture || '';
+  const google = typeof acctHasGoogle === 'function' ? acctHasGoogle() : false;
+  const since = currentUser.created_at ? new Date(currentUser.created_at) : null;
+  const MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const sinceTxt = since && !isNaN(since) ? `${MON[since.getMonth()]} ${since.getFullYear()}` : '';
+  const upName = esc(String(name).toUpperCase());
+  const row = (label, val) => `<div class="pw-r"><span>${label}</span><span class="${val ? '' : 'empty'}">${val ? esc(val) : 'မထည့်ရသေးပါ'}</span></div>`;
 
   box.innerHTML = `
     <button class="modal-close" onclick="closeCheckout()">&times;</button>
-    <h3>Profile</h3>
-    <div class="modal-section" style="margin-top:10px; padding-top:0; border-top:none;">
-      <div class="profile-row"><span class="profile-label">အမည်</span><span>${meta.full_name || '-'}</span></div>
-      <div class="profile-row"><span class="profile-label">Nickname</span><span>${meta.nickname || '-'}</span></div>
-      <div class="profile-row"><span class="profile-label">Gmail</span><span>${currentUser.email}</span></div>
-      <div class="profile-row"><span class="profile-label">ဖုန်း</span><span>${meta.phone || '-'}</span></div>
-      <div class="profile-row"><span class="profile-label">မွေးသက္ကရာဇ်</span><span>${meta.dob || '-'}</span></div>
-      <div class="profile-row"><span class="profile-label">လိပ်စာ</span><span>${meta.address || '-'}</span></div>
-      <button type="button" class="submit-order-btn" style="background:transparent; color:var(--ink); margin-top:10px;" onclick="renderProfileEdit()">Profile ပြင်ဆင်ရန်</button>
-    </div>
-
-    <div class="modal-section">
-      <div class="modal-label">💰 WALLET</div>
-      <div class="wallet-balance-box">
-        <div class="wb-label">လက်ကျန် ငွေပမာဏ</div>
-        <div class="wb-amount">${balance.toLocaleString()} ကျပ်</div>
+    <div class="pw">
+      <div class="pw-who">
+        <div class="pw-av">${pic ? `<img src="${esc(pic)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<span>${esc(ini)}</span></div>
+        <div class="pw-wt"><b>${esc(name)}</b><small>${google ? '<i class="g">G</i>' : '✉️'} ${esc(currentUser.email || '')}</small></div>
       </div>
-      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-        <button type="button" class="order-btn" style="background:var(--acid); color:var(--black); border-color:var(--black); width:auto; flex:1; margin-top:0;" onclick="openWalletTopup()">➕ ငွေဖြည့်ရန်</button>
-        <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openWalletHistory()">📜 Usage History</button>
+      <button type="button" class="pw-gear" onclick="openAppSettings()" aria-label="Settings">⚙️<span>Settings</span></button>
+      <div class="pw-hint" id="pw-hint">ကတ်ကို နှိပ်ပြီး ရွေးပါ</div>
+      <div class="pw-stack" id="pw-stack">
+
+        <div class="pw-card pw-pre" data-k="prepaid" role="button" tabindex="0" aria-label="Prepaid Card">
+          <div class="pw-face">
+            <div class="pw-wm">SUWATI</div>
+            <div class="pw-stripe"><span>× SUWATI × SUWATI × SUWATI ×</span></div>
+            <div class="pw-ttl">SUWATI<i>.</i>PREPAID CARD</div>
+            <div class="pw-tags"><b>MEN FASHION</b><span>NAY PYI TAW</span></div>
+            <div class="pw-lbl" style="top:19.5cqw">AVAILABLE BALANCE</div>
+            <div class="pw-big pw-acid" style="top:22.4cqw;font-size:6.6cqw">${balance.toLocaleString('en-US')}<small>MMK</small></div>
+            <div class="pw-div" style="top:34.6cqw"></div>
+            <div class="pw-num" style="top:37.2cqw">${esc(cardNo)}</div>
+            <div class="pw-lbl" style="bottom:11cqw">CARDHOLDER NAME</div>
+            <div class="pw-big" style="bottom:4.6cqw;font-size:4cqw;right:19cqw;overflow:hidden;text-overflow:ellipsis">${upName}</div>
+          </div>
+        </div>
+
+        <div class="pw-card pw-mem" data-k="member" role="button" tabindex="0" aria-label="Member Card">
+          <div class="pw-face">
+            <div class="pw-wm">MEMBER</div>
+            <div class="pw-stripe"><span>× MEMBER × SUWATI × MEMBER ×</span></div>
+            <div class="pw-ttl">SUWATI<i>.</i>MEMBER</div>
+            <div class="pw-tags"><b>MEN FASHION</b><span>${google ? 'GOOGLE ACCOUNT' : 'GMAIL ACCOUNT'}</span></div>
+            <div class="pw-lbl" style="top:19.5cqw">MEMBER NAME</div>
+            <div class="pw-big" style="top:22.4cqw;font-size:6cqw;right:19cqw;overflow:hidden;text-overflow:ellipsis">${upName}</div>
+            <div class="pw-div" style="top:34.6cqw"></div>
+            <div class="pw-num" style="top:37.2cqw;font-size:3.2cqw">${esc(meta.phone || currentUser.email || '')}</div>
+            <div class="pw-lbl" style="bottom:11cqw">MEMBER SINCE</div>
+            <div class="pw-big pw-mut" style="bottom:4.6cqw;font-size:3.6cqw">${sinceTxt || '—'}</div>
+          </div>
+        </div>
       </div>
-      <button type="button" class="auth-link" style="margin-top:10px;" onclick="openPrepaidCard()">🎫 ကျွန်ုပ်၏ Prepaid Card ကြည့်ရန် (အပြင်ဆိုင်တွင် သုံးရန်)</button>
-    </div>
 
-    <div class="modal-section">
-      <div class="modal-label">🎁 GIFT CARD</div>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="order-btn" style="background:var(--rust); color:#fff; border-color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardHub('buy')">Gift Card ဝယ်ရန်</button>
-        <button type="button" class="order-btn" style="background:transparent; color:var(--ink); width:auto; flex:1; margin-top:0;" onclick="openGiftCardHub('redeem')">Code သုံးရန်</button>
+      <div class="pw-info">
+        ${meta.nickname ? row('Nickname', meta.nickname) : ''}
+        ${row('ဖုန်း', meta.phone)}
+        ${row('မွေးနေ့', meta.dob)}
+        ${row('လိပ်စာ', meta.address)}
+        <div class="pw-r pw-ed"><button type="button" onclick="renderProfileEdit()">✏️ ပြင်မည်</button></div>
       </div>
-      <button type="button" class="auth-link" style="margin-top:10px;" onclick="openGiftCardHub('cards')">🎁 ကျွန်ုပ်၏ Gift Card များ · History ကြည့်ရန်</button>
     </div>
+    ${typeof acctSecurityHtml === 'function' ? await acctSecurityHtml(mode) : '<button type="button" class="pf-logout" onclick="handleLogout()">⎋ Logout</button>'}`;
+  pwStackInit();
+  if(typeof acctSecurityBind === 'function') acctSecurityBind(mode);
+  if(typeof i18nNode === 'function') try{ i18nNode(box); }catch(_){}
+}
 
-    <div class="modal-section">
-      <div class="modal-label">📦 MY ORDERS</div>
-      <button type="button" class="order-btn" style="background:transparent; color:var(--ink);" onclick="openOrderHistory()">📦 Order History ကြည့်ရန် (${count||0})</button>
-    </div>
-
-    <button type="button" class="submit-order-btn" style="background:transparent; color:var(--rust); margin-top:6px;" onclick="handleLogout()">Logout</button>`;
+// 💳 ကတ်အိတ် — နှိပ်တဲ့ကတ် ရှေ့ထွက် · ရှေ့ဆုံးကတ်ကို ထပ်နှိပ်ရင် ဖွင့်
+function pwStackInit(){
+  const st = document.getElementById('pw-stack'); if(!st) return;
+  const cards = [...st.querySelectorAll('.pw-card')];
+  let order = cards.map((_, i) => i);   // နောက်ဆုံး = ရှေ့ဆုံး (Member)
+  const PEEK = 58;
+  const hint = document.getElementById('pw-hint');
+  const OPEN = { prepaid: () => openPrepaidCard(), member: () => renderProfileEdit() };
+  const LABEL = { prepaid:'🎫 Prepaid Card', member:'👤 Member Card' };
+  const lay = () => {
+    const w = st.clientWidth, h = w * 540 / 856;
+    st.style.height = (h + PEEK * (cards.length - 1)) + 'px';
+    order.forEach((idx, pos) => {
+      const c = cards[idx], front = pos === order.length - 1;
+      c.style.top = (pos * PEEK) + 'px'; c.style.zIndex = pos + 1;
+      c.style.transform = front ? 'none' : `scale(${(0.92 + pos * 0.03).toFixed(3)})`;
+      c.classList.toggle('front', front);
+      c.setAttribute('aria-label', LABEL[c.dataset.k] + (front ? ' — ဖွင့်ရန် နှိပ်ပါ' : ' — ရှေ့ထုတ်ရန် နှိပ်ပါ'));
+    });
+    const f = cards[order[order.length - 1]].dataset.k;
+    if(hint) hint.innerHTML = `ကတ်ကို နှိပ်ပြီး ရွေးပါ · <b>${LABEL[f]}</b> ကို ထပ်နှိပ်ရင် ဖွင့်ပါမယ်`;
+  };
+  const pick = (i) => {
+    if(order[order.length - 1] === i){ OPEN[cards[i].dataset.k](); return; }
+    order = order.filter(x => x !== i).concat(i); lay();
+    try{ navigator.vibrate && navigator.vibrate(8); }catch(e){}
+  };
+  cards.forEach((c, i) => {
+    c.addEventListener('click', () => pick(i));
+    c.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(i); } });
+  });
+  lay();
+  if(window.ResizeObserver){ const ro = new ResizeObserver(() => { if(!st.isConnected){ ro.disconnect(); return; } lay(); }); ro.observe(st); }
 }
 
 let orderHistoryCache = [];
@@ -5999,6 +6297,7 @@ const prepaidPayAnim = (function(){
       clearTimeout(snap._t); snap._t = setTimeout(() => { inner.classList.remove('snap'); inner.style.transition = ''; }, (ms || 650) + 60); };
     const flip = () => snap(Math.round(ang / 180) * 180 + 180);
     spin = { flip };
+    window.cpFlipToBack = () => { if(!wrap.classList.contains('flipped')) flip(); };
 
     stage.addEventListener('pointerdown', e => {
       if(e.button > 0) return;
@@ -6174,7 +6473,9 @@ const prepaidPayAnim = (function(){
 
   function authSheet(amount, opts){
     opts = opts || {};
-    const rv = !!opts.reveal;   // 👁️ PIN ကြည့်ရန် — Fallback = Login Password
+    const rv = !!opts.reveal;   // 👁️ PIN ကြည့်ရန် — Fallback = Login Password (Google သမား = Google ဖြင့် ပြန်အတည်ပြု)
+    const rvPw = rv && (typeof acctHasPassword !== 'function' || acctHasPassword());
+    const rvG = rv && typeof acctHasGoogle === 'function' && acctHasGoogle();
     return new Promise(resolve => {
       const word = bioWord();
       const el = document.createElement('div'); el.className = 'cp-auth'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
@@ -6185,11 +6486,13 @@ const prepaidPayAnim = (function(){
           <div class="cp-auth-amt">${rv ? '🔒 Card PIN ကြည့်ရန်' : `🎫 Prepaid Card — <b>${Number(amount || 0).toLocaleString()}</b> ကျပ်`}</div>
           <div class="cp-auth-msg" role="alert"></div>
           <div class="cp-auth-face"><button type="button" class="cp-auth-go">🙂 ${word} ဖြင့် အတည်ပြု</button>
-            <button type="button" class="cp-auth-link" data-a="pin">${rv ? '🔑 Login Password ဖြင့်' : '🔑 Card PIN သုံးမည်'}</button></div>
+            <button type="button" class="cp-auth-link" data-a="pin">${rv ? (rvPw ? '🔑 Login Password ဖြင့်' : 'Google ဖြင့် အတည်ပြုမည်') : '🔑 Card PIN သုံးမည်'}</button></div>
           <div class="cp-auth-pin" hidden>
-            <label>${rv ? 'Login Password (' + esc(currentUser?.email || '') + ')' : 'Card PIN ၄ လုံး'}</label>
+            ${rv && !rvPw ? '' : `<label>${rv ? 'Login Password (' + esc(currentUser?.email || '') + ')' : 'Card PIN ၄ လုံး'}</label>
             ${rv ? '<input type="password" class="cp-pw" autocomplete="current-password" placeholder="Password">' : '<input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" placeholder="••••">'}
-            <button type="button" class="cp-auth-go" data-a="pinok">အတည်ပြုမည်</button>
+            <button type="button" class="cp-auth-go" data-a="pinok">အတည်ပြုမည်</button>`}
+            ${rvG ? `${rvPw ? '<div class="cp-auth-or">သို့မဟုတ်</div>' : '<p class="cp-auth-gnote">Google နဲ့ ဝင်ထားလို့ Password မရှိပါ — Google နဲ့ ပြန်အတည်ပြုပြီး PIN ကြည့်ပါ</p>'}
+            <button type="button" class="cp-auth-gg" data-a="google"><b class="g">G</b> Google ဖြင့် အတည်ပြုမည်</button>` : ''}
           </div>
           <button type="button" class="cp-auth-cancel">ပယ်ဖျက်မည်</button>
         </div>`;
@@ -6201,7 +6504,7 @@ const prepaidPayAnim = (function(){
       const close = (v, why) => { if(done) return; done = true; if(!v && !rv) window.__cpAuthMsg = { m: why || 'ငွေမဖြတ်ရသေးပါ — ' + word + ' / PIN အတည်ပြုချက် မရှိလို့ ဝယ်ယူမှု ပယ်ဖျက်ပါသည်', t: Date.now() };
         el.classList.remove('show'); setTimeout(() => el.remove(), 260); resolve(v); };
       const success = (label) => { $('.cp-auth-ic').innerHTML = OK; $('.cp-auth-t').textContent = label; msg('', true); el.classList.add('ok'); try{ navigator.vibrate && navigator.vibrate(25); }catch(e){} setTimeout(() => close(true), 650); };
-      const showPin = () => { $('.cp-auth-face').hidden = true; $('.cp-auth-pin').hidden = false; $('.cp-auth-t').textContent = rv ? 'Login Password ဖြင့် အတည်ပြုပါ' : 'Card PIN ဖြင့် အတည်ပြုပါ'; $('.cp-auth-ic').innerHTML = '<span class="cp-auth-key">🔑</span>'; setTimeout(() => $('.cp-auth-pin input').focus(), 60); };
+      const showPin = () => { $('.cp-auth-face').hidden = true; $('.cp-auth-pin').hidden = false; $('.cp-auth-t').textContent = rv ? (rvPw ? 'Login Password ဖြင့် အတည်ပြုပါ' : 'Google ဖြင့် အတည်ပြုပါ') : 'Card PIN ဖြင့် အတည်ပြုပါ'; $('.cp-auth-ic').innerHTML = '<span class="cp-auth-key">🔑</span>'; setTimeout(() => $('.cp-auth-pin input')?.focus(), 60); };
 
       // Challenge + ချိတ်ထားတဲ့ Device စာရင်း ကြိုယူ (ခလုတ်နှိပ်ချိန် ချက်ချင်း Face ID ခေါ်နိုင်ရန်)
       let ch = null, creds = (window.__cpBio && window.__cpBio.creds) || null;
@@ -6256,9 +6559,12 @@ const prepaidPayAnim = (function(){
           success('PIN မှန်ပါသည်');
         }finally{ b.disabled = false; }
       };
-      $('[data-a="pinok"]').onclick = pinGo;
-      $('.cp-auth-pin input').addEventListener('keydown', e => { if(e.key === 'Enter') pinGo(); });
-      $('.cp-auth-pin input').addEventListener('input', e => { if(!rv && e.target.value.length === 4) pinGo(); });
+      if($('[data-a="pinok"]')){
+        $('[data-a="pinok"]').onclick = pinGo;
+        $('.cp-auth-pin input').addEventListener('keydown', e => { if(e.key === 'Enter') pinGo(); });
+        $('.cp-auth-pin input').addEventListener('input', e => { if(!rv && e.target.value.length === 4) pinGo(); });
+      }
+      if($('[data-a="google"]')) $('[data-a="google"]').onclick = () => { close(false); acctGoogleConfirm('pin'); };
       $('.cp-auth-cancel').onclick = () => close(false);
     });
   }
@@ -6276,11 +6582,21 @@ const prepaidPayAnim = (function(){
     try{
       let st = window.__cpBio;
       if(!st){ try{ const { data } = await sb.rpc('passkey_status'); st = { enabled: !!(data && data.enabled), creds: (data && data.credentials) || [] }; window.__cpBio = st; }catch(e){ st = { enabled:false, creds:[] }; } }
-      const useBio = st.enabled && await platformReady();
-      const ok = await authSheet(0, { reveal:true, noBio: !useBio });
-      if(!ok) return;
-      let pin = null;
-      const { data, error } = await sb.rpc('reveal_card_pin');
+      // ခုနက Google/Password နဲ့ အတည်ပြုထားပြီးသား (၃ မိနစ်အတွင်း) ဆိုရင် ထပ်မမေး
+      let pre = null;
+      if(typeof acctAmr === 'function'){
+        const now = Date.now() / 1000;
+        if((await acctAmr()).some(a => (a.method === 'oauth' || a.method === 'password') && now - Number(a.timestamp || 0) < 170)){
+          const r = await sb.rpc('reveal_card_pin'); if(!r.error && r.data) pre = String(r.data);
+        }
+      }
+      if(!pre){
+        const useBio = st.enabled && await platformReady();
+        const ok = await authSheet(0, { reveal:true, noBio: !useBio });
+        if(!ok) return;
+      }
+      let pin = pre;
+      const { data, error } = pre ? { data: pre, error: null } : await sb.rpc('reveal_card_pin');
       if(!error && data) pin = String(data);
       else if(error && /reveal_card_pin|function|schema cache/i.test(error.message || '') && el.dataset.pin) pin = el.dataset.pin;   // FACE-ID-PIN.sql မ Run ရသေးရင်
       else { showSiteToast('⚠️ ' + (error?.message || 'PIN ယူ၍ မရပါ').replace(/^AUTH_REQUIRED:\s*/, '')); return; }
@@ -6330,6 +6646,293 @@ const prepaidPayAnim = (function(){
     document.querySelectorAll('[id^="co-error"], .form-error').forEach(n => { if(/လက်ကျန် မလုံလောက်/.test(n.textContent)) n.textContent = a; });
   }).observe(document.documentElement, { childList:true, subtree:true, characterData:true });
 })();
+
+// =====================================================================
+// ⚙️ Account Settings — Password ပြောင်း / သတ်မှတ် · Google Account အတည်ပြု
+//   • Gmail + Password သမား → လက်ရှိ Password စစ် → အသစ်သိမ်း → ဖုန်းအားလုံးက Logout → ပြန် Login
+//   • Google သမား (Password မရှိ) → Google နဲ့ ပြန်အတည်ပြု → Password အသစ် သတ်မှတ် (ရွေးချယ်ခွင့်)
+//     — Password ရှိသွားရင် Gmail + Password နဲ့လည်း ဝင်လို့ရ · Card PIN ကြည့်ရာမှာလည်း သုံးလို့ရ
+//   • Card PIN ကြည့်ရန် Google နဲ့ အတည်ပြု (card-plus.js က acctGoogleConfirm('pin') ခေါ်)
+// =====================================================================
+function acctProviders(){
+  const u = currentUser || {}, am = u.app_metadata || {};
+  const p = new Set([...(am.providers || []), ...((u.identities || []).map(i => i.provider))]);
+  if(am.provider) p.add(am.provider);
+  return p;
+}
+function acctHasGoogle(){ return acctProviders().has('google'); }
+function acctHasPassword(){ return acctProviders().has('email') || !!(currentUser && currentUser.user_metadata && currentUser.user_metadata.has_password); }
+
+// JWT ထဲက Login ဝင်ပုံ မှတ်တမ်း (amr) — ဘယ်နည်းနဲ့ ဘယ်အချိန် ဝင်ခဲ့လဲ
+async function acctAmr(){
+  try{
+    const { data:{ session } } = await sb.auth.getSession();
+    let b = session.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    while(b.length % 4) b += '=';
+    const json = decodeURIComponent(atob(b).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+    return JSON.parse(json).amr || [];
+  }catch(e){ return []; }
+}
+async function acctFreshGoogle(sec){
+  const now = Date.now() / 1000;
+  return (await acctAmr()).some(a => a.method === 'oauth' && now - Number(a.timestamp || 0) < (sec || 600));
+}
+
+// Google နဲ့ ပြန်အတည်ပြု — Google စာမျက်နှာ သွားပြီး ပြန်ရောက်ရင် ဆက်လုပ်ရန် မှတ်ထား
+async function acctGoogleConfirm(next){
+  try{ sessionStorage.setItem('suwati_gnext', JSON.stringify({ next, t: Date.now() })); }catch(e){}
+  const { error } = await sb.auth.signInWithOAuth({ provider:'google',
+    options:{ redirectTo: location.origin + location.pathname, queryParams:{ prompt:'select_account' } } });
+  if(error){ try{ sessionStorage.removeItem('suwati_gnext'); }catch(e){} showSiteToast('Google ဖြင့် အတည်ပြု၍ မရပါ — ' + error.message); }
+}
+// Google က ပြန်ရောက်လာရင် — ခုနက လုပ်လက်စ ဆက်လုပ်
+(function(){
+  let job = null;
+  try{ job = JSON.parse(sessionStorage.getItem('suwati_gnext') || 'null'); }catch(e){}
+  if(!job || Date.now() - job.t > 10 * 60000){ try{ sessionStorage.removeItem('suwati_gnext'); }catch(e){} return; }
+  let n = 0;
+  const iv = setInterval(async () => {
+    if(++n > 60){ clearInterval(iv); return; }                       // ၁၅ စက္ကန့်အထိ စောင့်
+    if(typeof currentUser === 'undefined' || !currentUser || document.querySelector('#fx-loader')) return;
+    clearInterval(iv);
+    try{ sessionStorage.removeItem('suwati_gnext'); }catch(e){}
+    await new Promise(r => setTimeout(r, 1200));                      // Login ကြိုဆိုစာ/Modal တွေ ပြီးအောင် ခဏစောင့်
+    if(!(await acctFreshGoogle(300))){ showSiteToast('Google အတည်ပြုချက် မရလိုက်ပါ — ထပ်စမ်းပါ'); return; }
+    if(job.next === 'pin'){
+      try{ closeAuthTag(); }catch(e){}
+      document.getElementById('checkout-modal').classList.add('open'); document.body.style.overflow = 'hidden';
+      await openPrepaidCard();
+      setTimeout(() => { try{ window.cpFlipToBack ? cpFlipToBack() : (document.getElementById('pc-wrap')?.classList.contains('flipped') || flipPrepaidCard()); }catch(e){} try{ togglePinReveal(); }catch(e){} }, 1600);
+    } else {
+      try{ closeAuthTag(); }catch(e){}
+      openAccountSettings(job.next === 'setpw' ? 'setpw' : '');
+    }
+  }, 250);
+})();
+
+const acctEsc = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const ACCT_EYE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+function acctPw(id, label, ac){
+  return `<label class="as-lbl" for="${id}">${label}</label>
+    <div class="as-pw"><input type="password" id="${id}" autocomplete="${ac}" placeholder="••••••••">
+    <button type="button" class="as-eye" aria-label="Password ပြ/ဖုံး" onclick="const i=this.previousElementSibling; i.type=i.type==='password'?'text':'password'; this.classList.toggle('on')">${ACCT_EYE}</button></div>`;
+}
+
+// 🔐 Account အပိုင်း (Profile ထဲမှာ ပြ) — Login ဝင်ပုံ · Password · Logout
+async function acctSecurityHtml(mode){
+  const google = acctHasGoogle(), hasPw = acctHasPassword();
+  const fresh = google && !hasPw ? await acctFreshGoogle(600) : false;
+  let pwPart;
+  if(hasPw){
+    pwPart = `
+      <details class="as-card as-fold"${mode === 'setpw' ? ' open' : ''}>
+        <summary class="as-ct">🔑 Password ပြောင်းမည်</summary>
+        <p class="as-note">ပြောင်းပြီးတာနဲ့ လုံခြုံရေးအတွက် ဖုန်း/ကွန်ပျူတာ <b>အားလုံးကနေ Logout</b> ထွက်ပါမယ် — Password အသစ်နဲ့ ပြန်ဝင်ပေးပါ</p>
+        ${acctPw('as-cur', 'လက်ရှိ PASSWORD', 'current-password')}
+        <button type="button" class="as-forgot" onclick="acctForgot()">လက်ရှိ Password မေ့နေလား?</button>
+        ${acctPw('as-new', 'PASSWORD အသစ် (အနည်းဆုံး ၈ လုံး)', 'new-password')}
+        <div class="as-str" id="as-str"><i></i><i></i><i></i><i></i></div><div class="as-strt" id="as-strt">Password ခိုင်မာမှု</div>
+        ${acctPw('as-new2', 'PASSWORD အသစ် ထပ်ရိုက်ပါ', 'new-password')}
+        <div class="as-err" id="as-err" role="alert"></div>
+        <button type="button" class="as-go" id="as-save" onclick="acctSavePassword()">Password အသစ် သိမ်းမည်</button>
+      </details>`;
+  } else if(!fresh){
+    pwPart = `
+      <details class="as-card as-fold"${mode === 'setpw' ? ' open' : ''}>
+        <summary class="as-ct">🔑 Password သတ်မှတ်မည်</summary>
+        <p class="as-note">အကိုက <b>Google Account</b> နဲ့ ဝင်ထားလို့ Password <b>မလိုပါဘူး</b> — Google က လုံခြုံရေး စောင့်ပေးပါတယ်။</p>
+        <p class="as-note">ဒါပေမဲ့ Password တစ်ခု <b>ထပ်ထည့်ထားရင်</b> —</p>
+        <ul class="as-ul"><li>Google မရှိတဲ့ ဖုန်း/ကွန်ပျူတာမှာ Gmail + Password နဲ့ ဝင်လို့ရ</li><li>Prepaid Card PIN ကြည့်တဲ့အခါ Password နဲ့ အတည်ပြုလို့ရ</li></ul>
+        <p class="as-note">လုံခြုံရေးအတွက် Google နဲ့ အရင် ပြန်အတည်ပြုပေးပါ —</p>
+        <button type="button" class="as-gg" onclick="acctGoogleConfirm('setpw')"><b class="g">G</b> Google ဖြင့် အတည်ပြုပြီး Password သတ်မှတ်မည်</button>
+      </details>`;
+  } else {
+    pwPart = `
+      <details class="as-card as-fold" open>
+        <summary class="as-ct">🔑 Password သတ်မှတ်မည်</summary>
+        <p class="as-ok">✅ Google ဖြင့် အတည်ပြုပြီးပါပြီ</p>
+        <p class="as-note">သတ်မှတ်ပြီးတာနဲ့ Logout ထွက်ပါမယ် — <b>Google</b> (သို့) <b>Gmail + Password အသစ်</b> နဲ့ ပြန်ဝင်ပေးပါ</p>
+        ${acctPw('as-new', 'PASSWORD အသစ် (အနည်းဆုံး ၈ လုံး)', 'new-password')}
+        <div class="as-str" id="as-str"><i></i><i></i><i></i><i></i></div><div class="as-strt" id="as-strt">Password ခိုင်မာမှု</div>
+        ${acctPw('as-new2', 'PASSWORD ထပ်ရိုက်ပါ', 'new-password')}
+        <div class="as-err" id="as-err" role="alert"></div>
+        <button type="button" class="as-go" id="as-save" onclick="acctSavePassword()">Password သတ်မှတ်မည်</button>
+      </details>`;
+  }
+
+  const m = (on, ic, t, sub) => `<div class="as-m${on ? ' on' : ''}"><span class="as-mi">${ic}</span><span><b>${t}</b><small>${sub}</small></span><span class="as-ms">${on ? '✓ ဖွင့်ထား' : '— မရှိ'}</span></div>`;
+  return `
+    <div class="as" id="as-account">
+      <div class="as-sec">🔐 Account · Login &amp; Password</div>
+      <div class="as-card">
+        <div class="as-ct">Login ဝင်ပုံ</div>
+        <div class="as-mail">${acctEsc(currentUser.email || '')}</div>
+        ${m(google, '<b class="g">G</b>', 'Google', 'Google ခလုတ်နဲ့ တစ်ချက်တည်း ဝင်')}
+        ${m(hasPw, '🔑', 'Gmail + Password', hasPw ? 'Gmail နဲ့ Password ရိုက်ပြီး ဝင်' : 'Password မသတ်မှတ်ရသေးပါ')}
+      </div>
+      ${pwPart}
+      <details class="as-card as-fold">
+        <summary class="as-ct">📱 ဖုန်းအားလုံးကနေ Logout</summary>
+        <p class="as-note">ဖုန်းပျောက်တာ၊ သူများဖုန်းမှာ ဝင်ခဲ့မိတာ ရှိရင် — Login ဝင်ထားတဲ့ နေရာ <b>အားလုံး</b>ကနေ ထွက်ပါမယ်</p>
+        <button type="button" class="as-out" onclick="acctLogoutAll()">⎋ နေရာအားလုံးကနေ Logout</button>
+      </details>
+      <button type="button" class="pf-logout" onclick="handleLogout()">⎋ Logout</button>
+    </div>`;
+}
+function acctSecurityBind(mode){
+  const np = document.getElementById('as-new');
+  if(np) np.addEventListener('input', () => {
+    const s = np.value; let k = 0;
+    if(s){ if(s.length >= 8) k++; if(/\d/.test(s) && /[a-z]/i.test(s)) k++; if(/[A-Z]/.test(s) || /[^\w]/.test(s)) k++; if(s.length >= 12) k++; }
+    document.getElementById('as-str').className = 'as-str s' + k;
+    document.getElementById('as-strt').textContent = ['Password ခိုင်မာမှု', 'အားနည်း', 'သင့်တင့်', 'ကောင်း', 'အရမ်းခိုင်မာ'][k];
+  });
+  document.getElementById('as-new2')?.addEventListener('keydown', e => { if(e.key === 'Enter') acctSavePassword(); });
+  if(mode === 'setpw'){
+    setTimeout(() => { document.getElementById('as-account')?.scrollIntoView({ behavior:'smooth', block:'start' }); np?.focus({ preventScroll:true }); }, 350);
+  }
+}
+
+// Password ပြင်ချင်ရင် — Profile ထဲက Account အပိုင်းကို ဖွင့်
+async function openAccountSettings(mode){
+  if(!document.getElementById('checkout-modal').classList.contains('open')){
+    document.getElementById('checkout-modal').classList.add('open'); document.body.style.overflow = 'hidden';
+  }
+  if(!currentUser){ closeCheckout(); openAuthModal('login'); return; }
+  await renderProfileView(mode || 'setpw');
+}
+
+// ⚙️ Settings — Notification · Dark mode
+async function openAppSettings(){
+  const box = document.getElementById('checkout-modal-content');
+  if(!document.getElementById('checkout-modal').classList.contains('open')){
+    document.getElementById('checkout-modal').classList.add('open'); document.body.style.overflow = 'hidden';
+  }
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  box.innerHTML = `
+    <button class="modal-close" onclick="closeCheckout()">&times;</button>
+    <div class="as">
+      ${currentUser ? '<button type="button" class="as-back" onclick="renderProfileView()">← Profile</button>' : ''}
+      <h3 class="as-h">⚙️ Settings</h3>
+      ${currentUser ? '<div class="as-card" id="notify-section"></div>' : ''}
+      <div class="as-card as-line">
+        <span class="as-li">🌙</span><span class="as-lt"><b>Dark mode</b><small>အနက်ရောင် နောက်ခံ</small></span>
+        <button type="button" class="pc-switch${dark ? ' on' : ''}" role="switch" aria-checked="${dark}" aria-label="Dark mode" onclick="acctTheme(this)"><span></span></button>
+      </div>
+    </div>`;
+  try{ if(currentUser && typeof renderPushSection === 'function') renderPushSection(); }catch(e){}
+  box.scrollTop = 0;
+  if(typeof i18nNode === 'function') try{ i18nNode(box); }catch(_){}
+}
+
+function acctErr(msg, ok){
+  const e = document.getElementById('as-err'); if(!e) return;
+  e.textContent = msg || ''; e.classList.toggle('ok', !!ok);
+  if(msg && !ok){ e.classList.remove('shake'); void e.offsetWidth; e.classList.add('shake'); }
+}
+function acctPwError(err){
+  const c = String((err && (err.code || '')) + ' ' + (err && err.message || ''));
+  if(/same_password|different from the old/i.test(c)) return 'Password အသစ်က အဟောင်းနဲ့ မတူရပါ';
+  if(/weak_password|at least|should contain/i.test(c)) return 'Password အားနည်းလွန်းပါသည် — စာလုံး + ဂဏန်း ရောပြီး ပိုရှည်အောင် ရေးပါ';
+  if(/rate|too many|security purposes/i.test(c)) return 'ခဏ စောင့်ပြီးမှ ပြန်စမ်းပါ (အကြိမ်များလွန်း)';
+  if(/network|fetch/i.test(c)) return 'Internet စစ်ပြီး ပြန်စမ်းပါ';
+  return 'မအောင်မြင်ပါ — ' + (err && err.message || 'ပြန်စမ်းပါ');
+}
+
+let acctPending = null;   // Supabase က Email Code ထပ်တောင်းရင် (Secure password change) Password အသစ်ကို ခဏမှတ်
+async function acctSavePassword(){
+  const btn = document.getElementById('as-save'); if(!btn || btn.disabled) return;
+  const cur = document.getElementById('as-cur'), p1 = document.getElementById('as-new').value, p2 = document.getElementById('as-new2').value;
+  if(cur && !cur.value) return acctErr('လက်ရှိ Password ရိုက်ပါ');
+  if(p1.length < 8) return acctErr('Password အသစ် အနည်းဆုံး ၈ လုံး ရှိရပါမည်');
+  if(!/\d/.test(p1) || !/[a-z]/i.test(p1)) return acctErr('စာလုံး (a-z) နဲ့ ဂဏန်း (0-9) ရောထည့်ပါ');
+  if(p1 !== p2) return acctErr('Password အသစ် ၂ ခု မတူပါ');
+  if(cur && cur.value === p1) return acctErr('Password အသစ်က အဟောင်းနဲ့ မတူရပါ');
+  btn.disabled = true; const old = btn.textContent; btn.textContent = 'စစ်နေသည်...'; acctErr('');
+  try{
+    if(cur){
+      const { error } = await sb.auth.signInWithPassword({ email: currentUser.email, password: cur.value });
+      if(error){ cur.value = ''; cur.focus(); return acctErr(/invalid|credentials/i.test(error.message) ? 'လက်ရှိ Password မှားနေပါသည်' : acctPwError(error)); }
+    } else if(!(await acctFreshGoogle(900))){
+      return acctErr('Google အတည်ပြုချက် သက်တမ်းကုန်သွားပါပြီ — Profile ကို ပြန်ဖွင့်ပြီး ထပ်လုပ်ပါ');
+    }
+    btn.textContent = 'သိမ်းနေသည်...';
+    const { error } = await sb.auth.updateUser({ password: p1, data: { has_password: true } });
+    if(error && /reauth/i.test((error.code || '') + ' ' + error.message)){ acctPending = p1; return acctAskNonce(); }
+    if(error) return acctErr(acctPwError(error));
+    await acctDone(!cur);
+  }catch(e){ acctErr(acctPwError(e)); }
+  finally{ const b = document.getElementById('as-save'); if(b){ b.disabled = false; b.textContent = old; } }
+}
+
+// Supabase "Secure password change" ဖွင့်ထားရင် — Gmail ထဲ ရောက်လာတဲ့ Code နဲ့ အတည်ပြု
+async function acctAskNonce(){
+  const { error } = await sb.auth.reauthenticate();
+  if(error){ acctPending = null; return acctErr(acctPwError(error)); }
+  const card = document.getElementById('as-save').closest('.as-card');
+  card.innerHTML = `<div class="as-ct">📧 Gmail ထဲက Code ရိုက်ပါ</div>
+    <p class="as-note"><b>${acctEsc(currentUser.email)}</b> ကို အတည်ပြု Code ပို့ထားပါတယ် (Spam ထဲပါ ကြည့်ပါ)</p>
+    <input type="text" id="as-nonce" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="123456" class="as-code">
+    <div class="as-err" id="as-err" role="alert"></div>
+    <button type="button" class="as-go" id="as-save" onclick="acctSubmitNonce()">အတည်ပြုပြီး သိမ်းမည်</button>`;
+  setTimeout(() => document.getElementById('as-nonce')?.focus(), 100);
+}
+async function acctSubmitNonce(){
+  const code = (document.getElementById('as-nonce')?.value || '').trim(), btn = document.getElementById('as-save');
+  if(!code) return acctErr('Code ရိုက်ပါ');
+  btn.disabled = true;
+  try{
+    const { error } = await sb.auth.updateUser({ password: acctPending, nonce: code, data: { has_password: true } });
+    if(error) return acctErr(/nonce|otp|expired|invalid/i.test(error.message) ? 'Code မှားနေ (သို့) သက်တမ်းကုန်နေပါသည်' : acctPwError(error));
+    const wasGoogleOnly = !acctProviders().has('email');
+    acctPending = null;
+    await acctDone(wasGoogleOnly);
+  }finally{ btn.disabled = false; }
+}
+
+// ✅ ပြီးရင် — အောင်မြင်ကြောင်းပြ → ဖုန်းအားလုံးက Logout → Login ကတ် ဖွင့်ပြီး Gmail ဖြည့်ထား
+async function acctDone(isNew){
+  const email = currentUser.email;
+  const box = document.getElementById('checkout-modal-content');
+  box.innerHTML = `<div class="as-done"><div class="as-dok">✓</div>
+    <b>${isNew ? 'Password သတ်မှတ်ပြီးပါပြီ' : 'Password ပြောင်းပြီးပါပြီ'}</b>
+    <p>လုံခြုံရေးအတွက် Logout ထွက်နေပါသည်...<br>Password အသစ်နဲ့ ပြန်ဝင်ပေးပါ</p></div>`;
+  await new Promise(r => setTimeout(r, 1800));
+  try{ await sb.auth.signOut({ scope:'global' }); }catch(e){ try{ await sb.auth.signOut(); }catch(_){} }
+  currentUser = null; updateAuthUI();
+  try{ await initWishlist(); }catch(e){}
+  closeCheckout();
+  openAuthModal('login');
+  setTimeout(() => {
+    const em = document.getElementById('auth-email'), er = document.getElementById('auth-error');
+    if(em){ em.value = email; em.closest('.at-fl')?.classList.add('up'); }
+    if(er){ er.style.color = 'var(--acid-dark, #3f6600)'; er.textContent = isNew ? '✅ Password သတ်မှတ်ပြီးပါပြီ — Password အသစ် (သို့) Google နဲ့ ဝင်ပါ' : '✅ Password ပြောင်းပြီးပါပြီ — Password အသစ်နဲ့ ပြန်ဝင်ပါ'; }
+    document.getElementById('auth-password')?.focus();
+  }, 120);
+}
+
+async function acctForgot(){
+  const ok = await siteConfirm(`Password ပြန်သတ်မှတ်ရန် Link ကို ${currentUser.email} ကို ပို့ပေးရမလား?`);
+  if(!ok) return;
+  const { error } = await sb.auth.resetPasswordForEmail(currentUser.email, { redirectTo: location.origin + location.pathname });
+  acctErr(error ? acctPwError(error) : '📧 Reset Link ပို့ပြီးပါပြီ — Gmail ကို စစ်ပါ', !error);
+}
+
+async function acctLogoutAll(){
+  const ok = await siteConfirm('Login ဝင်ထားတဲ့ ဖုန်း/ကွန်ပျူတာ အားလုံးကနေ Logout ထွက်မှာ သေချာလား?');
+  if(!ok) return;
+  try{ await sb.auth.signOut({ scope:'global' }); }catch(e){}
+  currentUser = null; updateAuthUI();
+  try{ await initWishlist(); }catch(e){}
+  closeCheckout();
+  showSiteToast('✅ နေရာအားလုံးကနေ Logout ထွက်ပြီးပါပြီ');
+}
+
+function acctTheme(btn){
+  try{ toggleTheme(); }catch(e){}
+  const on = document.documentElement.getAttribute('data-theme') === 'dark';
+  btn.classList.toggle('on', on); btn.setAttribute('aria-checked', on);
+}
 
 // SUWATI MEN FASHION — Gift Card
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
@@ -6501,7 +7104,7 @@ function createGiftCardEl(g, idx){
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const amt = Number(g.amount || 0).toLocaleString('en-US');
   const date = (() => { const d = new Date(g.created_at); return isNaN(d) ? '' : `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}/${d.getFullYear()}`; })();
-  const STATUS = { active:'အသုံးပြုနိုင်ပြီ', pending:'အတည်ပြုရန် စောင့်ဆိုင်းဆဲ', used:'အသုံးပြုပြီးသား', rejected:'ငြင်းပယ်ခံရ' };
+  const STATUS = { active:'အသုံးပြုနိုင်ပြီ', pending:'အတည်ပြုရန် စောင့်ဆိုင်းဆဲ', used:'USED · သုံးပြီးသား', rejected:'ငြင်းပယ်ခံရ' };
   const NOTE = {
     active: '“ယခုပဲ သုံးမည်” ကိုနှိပ်ရင် Prepaid Card ထဲ ငွေဖြည့်ပေးပါမည် — (သို့) Code ကို Copy ကူးပြီး လက်ဆောင်ပေးလို့ရပါတယ်',
     pending: 'ငွေလွှဲ Screenshot ကို Admin စစ်ပြီး အတည်ပြုတာနဲ့ ဒီနေရာမှာ Code ပေါ်လာပါမည်',
@@ -6519,9 +7122,8 @@ function createGiftCardEl(g, idx){
     <div class="sgc__btn" role="button" tabindex="0" aria-pressed="false" aria-label="${amt} ကျပ် Gift Card — နှိပ်ပြီး Code ကြည့်ရန်">
       <div class="sgc__face sgc__front">
         <div class="sgc__bigword" aria-hidden="true">GIFT</div>
-        <div class="sgc__stub" aria-hidden="true"><div class="sgc__hole"></div><div class="sgc__stubtxt">SUWATI</div><div class="sgc__no">E-GIFT</div></div>
-        <div class="sgc__perf" aria-hidden="true"></div>
-        <div class="sgc__title">SUWATI<i>.</i>GIFT CARD</div>
+        <div class="sgc__rstripe" aria-hidden="true"><span>× GIFT × SUWATI × GIFT × SUWATI ×</span></div>
+        <div class="sgc__title"><span class="sgc__gem">🎁</span>SUWATI<i>.</i>GIFT CARD</div>
         <div class="sgc__chip">E-GIFT</div>
         <div class="sgc__status"><span class="sgc__dot"></span>${STATUS[status]||''}</div>
         <div class="sgc__lbl">GIFT VALUE</div>
@@ -8610,22 +9212,7 @@ async function togglePushFromProfile(btn){
   btn.disabled = false;
   renderPushSection();
 }
-if(typeof renderProfileView === 'function'){
-  const _rpv = renderProfileView;
-  renderProfileView = async function(){
-    const r = await _rpv.apply(this, arguments);
-    try{
-      const box = document.getElementById('checkout-modal-content');
-      if(box && !document.getElementById('notify-section')){
-        const logout = Array.from(box.querySelectorAll('button')).find(b => /handleLogout/.test(b.getAttribute('onclick')||''));
-        const sec = document.createElement('div'); sec.className = 'modal-section'; sec.id = 'notify-section';
-        if(logout) box.insertBefore(sec, logout); else box.appendChild(sec);
-        renderPushSection();
-      }
-    }catch(e){}
-    return r;
-  };
-}
+// (🔔 Notification Section ကို ⚙️ Settings စာမျက်နှာ — account-settings.js က ထည့်ပြ)
 
 // Order တင်ပြီးတိုင်း / Stock Alert ထည့်ပြီးတိုင်း Notification ဖွင့်ဖို့ တစ်ခါတည်း ကမ်းလှမ်း
 async function offerPushOnce(where){
@@ -9001,7 +9588,7 @@ renderAcctButton();
 // 🌐 မြန်မာ / English — Website စာသားများကို English ပြောင်းပြ
 //   (ပစ္စည်းနာမည်/ဖော်ပြချက်၊ Post၊ Chat စာ ကဲ့သို့ ဆိုင်က ရေးထားတဲ့ စာများကို မပြောင်း)
 // =====================================================================
-const I18N_PAIRS = [["📍 သိမ်းထားသော လိပ်စာ", "📍 Saved addresses", 1], ["💾 ဒီလိပ်စာကို သိမ်းထားမည်", "💾 Save this address", 1], ["အိမ်", "Home", 1], ["ရုံး", "Office", 1], ["ဆိုင်", "Shop", 1], ["⏳ PRE-ORDER — ကြိုမှာထားလို့ရပါသည်", "⏳ PRE-ORDER — order now, ships on arrival", 1], ["ပစ္စည်းရောက်တာနဲ့ အရင်ဆုံး ပို့ပေးပါမည်", "We'll ship to you first as soon as it arrives", 1], ["ကြိုမှာမည် →", "Pre-order →", 1], ["⏳ ကြိုမှာမည် (Pre-order)", "⏳ Pre-order now", 1], ["မူလ", "Default", 1], ["အသစ်ဆုံး", "Newest", 1], ["ဈေး နည်း → များ", "Price: low → high", 1], ["ဈေး များ → နည်း", "Price: high → low", 1], ["🔥 လျှော့ဈေး အများဆုံး", "🔥 Biggest discount", 1], ["⭐ Rating အကောင်းဆုံး", "⭐ Top rated", 1], ["👀 မကြာခင်က ကြည့်ခဲ့သည်", "👀 Recently viewed", 1], ["ရှင်းမည်", "Clear", 1], ["⭐ Review များ", "⭐ Reviews", 1], ["⭐ Review ရေးမည်", "⭐ Write a review", 1], ["ဒီပစ္စည်းကို ဘယ်လောက် ကြိုက်လဲ?", "How do you like this item?", 1], ["ကြယ်ပွင့် နှိပ်ပြီး ရွေးပါ", "Tap a star", 1], ["😞 မကြိုက်ပါ", "😞 Didn't like it", 1], ["😕 သိပ်မကောင်း", "😕 Not great", 1], ["🙂 အသင့်အတင့်", "🙂 Okay", 1], ["😊 ကောင်းတယ်", "😊 Good", 1], ["🤩 အရမ်းကြိုက်တယ်", "🤩 Love it", 1], ["📷 ပုံ ထည့်မည် (Optional)", "📷 Add a photo (optional)", 1], ["Review တင်မည်", "Post review", 1], ["✅ ဝယ်ယူပြီးသူ", "✅ Verified buyer", 1], ["⏳ သင့် Review ကို ဆိုင်က စစ်ဆေးနေပါသည် — မကြာခင် ပေါ်ပါမည်", "⏳ Your review is being checked — it will appear soon", 1], ["✅ သင့် Review ပေါ်နေပါပြီ — ကျေးဇူးတင်ပါတယ်", "✅ Your review is live — thank you", 1], ["Load လုပ်နေသည်...", "Loading...", 1], ["Review မရှိသေးပါ", "No reviews yet", 1], ["Review မရှိသေးပါ — ပထမဆုံး ရေးပေးပါ 🙏", "No reviews yet — be the first 🙏", 1], ["⏰ Sale ကုန်ရန်", "⏰ Sale ends in", 1], ["⏰ Sale ကုန်သွားပါပြီ", "⏰ Sale has ended", 1], ["ရက်", "days", 1], ["စက္ကန့်", "sec", 1], ["MEMBER TAG · အဖွဲ့ဝင်ကတ်", "MEMBER TAG", 1], ["ကိုယ်ရေး", "Profile", 1], ["ဖုန်းနံပါတ် (09xxxxxxxxx)", "Phone (09xxxxxxxxx)", 1], ["PASSWORD (အနည်းဆုံး ၆ လုံး)", "PASSWORD (min 6)", 1], ["Password ခိုင်မာမှု", "Password strength", 1], ["အားနည်း", "Weak", 1], ["သင့်တင့်", "Fair", 1], ["ကောင်း", "Good", 1], ["အရမ်းခိုင်မာ", "Strong", 1], ["PASSWORD ထပ်ရိုက်ပါ", "CONFIRM PASSWORD", 1], ["Login ဝင်ပြီးပါပြီ", "You're logged in", 1], ["Account ဖွင့်ပြီးပါပြီ", "Account created", 1], ["Account ဖွင့်ပြီးပါပြီ — Gmail ထဲက Confirmation Link ကို နှိပ်ပြီးမှ Login ဝင်ပါ", "Account created — tap the confirmation link in your Gmail, then log in", 1], ["OK — Gmail သွားစစ်မည်", "OK — I'll check Gmail", 1], ["ဆက်ပြီး ဈေးဝယ်မည် →", "Continue shopping →", 1], ["Gmail ထဲမှာ Space (ကွက်လပ်) မပါရပါ", "Gmail can't contain spaces", 1], ["Gmail မှာ @ မပါသေးပါ — ဥပမာ you@gmail.com", "Gmail is missing @ — e.g. you@gmail.com", 1], ["Gmail မှာ @ တစ်ခုပဲ ပါရပါမည်", "Gmail must contain only one @", 1], ["@ ရှေ့မှာ နာမည် ထည့်ပါ — ဥပမာ you@gmail.com", "Add your name before @ — e.g. you@gmail.com", 1], ["@ နောက်မှာ gmail.com လို အပြည့်အစုံ ထည့်ပါ", "Complete the part after @, like gmail.com", 1], ["Gmail (သို့) Password မှားနေပါသည်", "Wrong Gmail or password", 1], ["ဒီ Gmail နဲ့ Account ရှိပြီးသားပါ — Login ဝင်ပါ", "An account with this Gmail already exists — please log in", 1], ["Gmail ထဲက Confirmation Link ကို အရင် နှိပ်ပေးပါ", "Please tap the confirmation link in your Gmail first", 1], ["ခဏ စောင့်ပြီးမှ ပြန်စမ်းပါ", "Please wait a moment and try again", 1], ["Gmail လိပ်စာ ပုံစံ မှားနေပါသည်", "Invalid Gmail address", 1], ["Internet ချိတ်ဆက်မှု စစ်ပေးပါ", "Please check your internet connection", 1], ["အမည် ထည့်ပေးပါ", "Please enter your name", 1], ["ဖုန်းနံပါတ် ထည့်ပေးပါ", "Please enter your phone number", 1], ["ဖုန်းနံပါတ် မှန်အောင် ထည့်ပါ — ဥပမာ 09xxxxxxxxx", "Enter a valid phone number — e.g. 09xxxxxxxxx", 1], ["Password ထည့်ပါ", "Enter your password", 1], ["Password အနည်းဆုံး ၆ လုံး ရှိရပါမည်", "Password must be at least 6 characters", 1], ["Password ၂ ခု မတူပါ", "Passwords don't match", 1], ["✅ Reset Link ပို့ပြီးပါပြီ — Gmail ကို စစ်ကြည့်ပါ", "✅ Reset link sent — check your Gmail", 1], ["Streetwear Menswear ဆိုင် — Nay Pyi Taw ပုဗ္ဗသီရိမြို့ အခြေစိုက်။ Tee, Hoodie, Jacket, Pants, Accessories များ KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်။", "Streetwear menswear store based in Pobbathiri, Nay Pyi Taw. Order tees, hoodies, jackets, pants and accessories online with KBZPay.", 0], ["ပစ္စည်းများ ▾", "Shop ▾", 0], ["အားလုံး", "All", 0], ["Post များ", "Posts", 0], ["မှာယူနည်း", "How to Order", 0], ["လိပ်စာ", "Location", 0], ["ဆက်သွယ်ရန်", "Contact", 0], ["လမ်းပေါ်က အမှန်တရား", "Truth from the Street", 0], ["နေပြည်တော် ပုဗ္ဗသီရိမြို့ကနေ အရည်အသွေးကောင်းတဲ့ အမျိုးသားဖက်ရှင် အင်္ကျီများကို ရွေးချယ်ဝယ်ယူပြီး ပြန်လည်ဖြန့်ဖြူး ရောင်းချပေးနေတဲ့ ဆိုင်ပါ။", "A Pobbathiri, Nay Pyi Taw store hand-picking quality menswear and bringing it to you.", 0], ["TikTok ကြည့်မည်", "Watch on TikTok", 0], ["Messenger ဖြင့် မှာယူမည်", "Order via Messenger", 0], ["Viber ဖြင့် ဆက်သွယ်မည်", "Contact via Viber", 0], ["SUWATI MEN FASHION သည် ကိုယ်တိုင် အင်္ကျီထုတ်လုပ်သည့် စက်ရုံမဟုတ်ပါ။ အရည်အသွေးကောင်းသော အမျိုးသားဖက်ရှင် ပစ္စည်းများကို ဂရုတစိုက် ရွေးချယ်ဝယ်ယူပြီး၊ နေပြည်တော် ပုဗ္ဗသီရိမြို့ကနေ ခိုင်မာတဲ့ ဈေးနှုန်းနဲ့ ပြန်လည်ဖြန့်ဖြူး ရောင်းချပေးနေတဲ့ ဆိုင်တစ်ခုပါ။ ပစ္စည်းတိုင်းကို ကိုယ်တိုင် စစ်ဆေးပြီးမှ ပြန်ရောင်းချပါတယ်။", "SUWATI MEN FASHION is not a factory. We carefully select quality menswear and resell it from Pobbathiri, Nay Pyi Taw at fair, stable prices. Every item is personally checked before it is sold.", 0], ["ဆိုင်ထဲက အသစ်ဆုံးတွေ", "Latest in Store", 0], ["Size — ပစ္စည်းတစ်ခုချင်းစီအောက်မှာ ကြည့်ပါ။ ဓာတ်ပုံအစစ်များကို Messenger ပို့ပေးပါမယ်။", "Sizes are listed under each item. We can send real photos via Messenger.", 0], ["ပစ္စည်းများ Load လုပ်နေသည်", "Loading products", 0], ["သတင်းနှင့် Promotion", "News & Promotions", 0], ["ဆိုင်ရဲ့ နောက်ဆုံးရ Drop, Promotion နဲ့ သတင်းများ", "Our latest drops, promotions and news", 0], ["Post များ Load လုပ်နေသည်", "Loading posts", 0], ["မှာယူနည်း သုံးဆင့်တည်း", "Order in 3 Easy Steps", 0], ["ကြိုက်တဲ့ ပစ္စည်းကို ရွေးပါ", "Pick what you like", 0], ["အထက်က ပစ္စည်းစာရင်းထဲက အရွယ်အစားနဲ့ အရေအတွက် ရွေးထားပါ။", "Choose the size and quantity from the products above.", 0], ["TikTok / Messenger ဖြင့် ဆက်သွယ်ပါ", "Contact us on TikTok / Messenger", 0], ["ပစ္စည်းအမည်၊ Size၊ ပို့ဆောင်လိပ်စာ ပို့ပေးပါ။", "Send the item name, size and delivery address.", 0], ["ငွေချေ + လက်ခံပါ", "Pay + Receive", 0], ["နေပြည်တော်အတွင်း ၁-၂ရက်၊ တခြားမြို့များ ၃-၅ရက်အတွင်း ပို့ဆောင်ပေးပါတယ်။", "Delivery in 1–2 days within Nay Pyi Taw, 3–5 days to other cities.", 0], ["ဆိုင်လိပ်စာ", "Store Address", 0], ["နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့၊ ကျည်တောင်ကန်", "Kyee Taung Kan, Pobbathiri, Nay Pyi Taw", 0], ["ဘူတာလမ်း အမှတ်(၁)ရပ်ကွက်", "Station Road, Ward No. 1", 0], ["Google Map ဖွင့်ရန်", "Open Google Maps", 0], ["နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့ — SUWATI MEN FASHION © 2026", "Pobbathiri, Nay Pyi Taw — SUWATI MEN FASHION © 2026", 0], ["စည်းမျဉ်းစည်းကမ်းများ", "Terms & Conditions", 0], ["မင်္ဂလာပါ", "Hello", 0], ["SUWATI MEN FASHION မှ ကြိုဆိုပါတယ်", "Welcome to SUWATI MEN FASHION", 0], ["Password ပြန်သတ်မှတ်ရန်", "Reset Password", 0], ["Gmail လိပ်စာ ထည့်ပါ — Password ပြန်သတ်မှတ်ရန် Link ပို့ပေးပါမယ်", "Enter your Gmail — we'll send you a reset link", 0], ["Reset Link ပို့မည်", "Send Reset Link", 0], ["← Login ကို ပြန်သွားမည်", "← Back to Login", 0], ["Account အသစ် ဖွင့်ရန်", "Create Account", 0], ["အမည် (Name)", "Name", 0], ["မွေးသက္ကရာဇ် (Date of Birth)", "Date of Birth", 0], ["ဖုန်းနံပါတ်", "Phone Number", 0], ["📍 နေရပ်လိပ်စာ", "📍 Home Address", 0], ["Sign Up နှိပ်ခြင်းဖြင့်", "By tapping Sign Up, you agree to the", 0], ["စည်းမျဉ်းများ", "Terms", 0], ["ကို သဘောတူပါသည်။", ".", 0], ["Google ဖြင့် Sign Up", "Sign up with Google", 0], ["Password မေ့နေပါသလား?", "Forgot password?", 0], ["Google ဖြင့် Login ဝင်မည်", "Log in with Google", 0], ["Google Login ဖြင့် ဝင်၍ မရပါ", "Couldn't log in with Google", 0], ["ဘောင်အားလုံး ဖြည့်ပေးပါ", "Please fill in all fields", 0], ["Password အသစ် သတ်မှတ်ရန်", "Set New Password", 0], ["Password အသစ် သိမ်းမည်", "Save New Password", 0], ["Load လုပ်နေသည်", "Loading", 0], ["အမည်", "Name", 0], ["ဖုန်း", "Phone", 0], ["မွေးသက္ကရာဇ်", "Birthday", 0], ["Profile ပြင်ဆင်ရန်", "Edit Profile", 0], ["လက်ကျန် ငွေပမာဏ", "Balance", 0], ["➕ ငွေဖြည့်ရန်", "➕ Top Up", 0], ["🎫 ကျွန်ုပ်၏ Prepaid Card ကြည့်ရန် (အပြင်ဆိုင်တွင် သုံးရန်)", "🎫 My Prepaid Card (use in store)", 0], ["Gift Card ဝယ်ရန်", "Buy Gift Card", 0], ["Code သုံးရန်", "Redeem Code", 0], ["🎁 ကျွန်ုပ်၏ Gift Card များ · History ကြည့်ရန်", "🎁 My Gift Cards · History", 0], ["📦 Order History ကြည့်ရန်", "📦 Order History", 0], ["← Profile ပြန်သွားရန်", "← Back to Profile", 0], ["Order History ကြည့်၍မရပါ", "Couldn't load order history", 0], ["⏰ ငွေလွှဲရန် စောင့်ဆဲ", "⏰ Awaiting payment", 0], ["ငွေချေမှု စစ်ဆေးဆဲ", "Verifying payment", 0], ["အတည်ပြုပြီး", "Confirmed", 0], ["ပြင်ဆင်နေဆဲ", "Preparing", 0], ["ပို့ဆောင်နေဆဲ", "Shipping", 0], ["ပေးအပ်ပြီး", "Delivered", 0], ["ပယ်ဖျက်", "Cancelled", 0], ["⏳ စစ်ဆေးဆဲ", "⏳ Pending", 0], ["✅ အသုံးပြုနိုင်ပြီ", "✅ Active", 0], ["☑️ အသုံးပြုပြီးသား", "☑️ Used", 0], ["❌ ငြင်းပယ်ခံရ", "❌ Rejected", 0], ["Order မှတ်တမ်း မရှိသေးပါ", "No orders yet", 0], ["ရှာဖွေမှုနှင့် ကိုက်ညီသော Order မတွေ့ပါ", "No matching orders", 0], ["🗑️ Order History အားလုံး ဖျက်မည်", "🗑️ Clear All Order History", 0], ["ဒီ Order History ကို ဖျက်မှာ သေချာပါသလား?", "Delete this order from history?", 0], ["ပြန်ယူလို့ မရပါ", "This can't be undone", 0], ["ဖျက်မည်", "Delete", 0], ["ဖျက်၍ မရပါ", "Couldn't delete", 0], ["Order History ဖျက်ပြီးပါပြီ", "Order removed from history", 0], ["Order History အားလုံးကို ဖျက်မှာ သေချာပါသလား?", "Clear your entire order history?", 0], ["အားလုံး ဖျက်မည်", "Delete All", 0], ["Order History အားလုံး ဖျက်ပြီးပါပြီ", "Order history cleared", 0], ["ကို ခြင်းထဲ ထည့်ပြီးပါပြီ", " added to cart", 0], ["ခြင်းထဲ ဗလာဖြစ်နေပါသည်", "Your cart is empty", 0], ["ပစ္စည်းများကို", "Tap", 0], ["ခြင်းထဲ ထည့်မည်", "Add to Cart", 0], ["နှိပ်ပြီး ထည့်လိုက်ပါ", "on items to add them", 0], ["ကျွန်ုပ်၏ ခြင်း", "My Cart", 0], ["စုစုပေါင်း", "Total", 0], ["Checkout ဆက်သွားမည် →", "Continue to Checkout →", 0], ["ဘယ်နှရက်", "How many days", 0], ["Size Chart ကို Product Detail Page ထဲမှာ ကြည့်နိုင်ပါတယ်။ Size ရွေးရာမှာ အခက်အခဲရှိရင် အောက်က Message ဘောင်ကနေ မေးနိုင်ပါတယ်။", "You can see the size chart on each product page. If you're unsure about sizing, ask us in the message box below.", 0], ["အရွယ်အစား", "Size", 0], ["ပစ္စည်း ချွတ်ယွင်းချက်ရှိမှသာ ပြန်လည် လဲလှယ်ပေးပါတယ်။ Order ရရှိပြီး ၂ရက်အတွင်း ဆက်သွယ်ပေးပါ။", "We exchange items only if they're defective. Please contact us within 2 days of receiving your order.", 0], ["KBZPay ဖြင့်သာ ငွေပေးချေလို့ရပါတယ်။ Order တင်ပြီးရင် QR Code ချက်ချင်း ပေါ်လာမှာပါ။", "We accept KBZPay only. The QR code appears right after you place your order.", 0], ["ပစ္စည်း Stock ရှိမရှိကို Product Page ပေါ်မှာ တိုက်ရိုက် ကြည့်လို့ရပါတယ် (Size/Color ရွေးရင် တိကျစွာ ပြပါမယ်)။", "Stock is shown live on each product page (exact stock appears once you choose size/color).", 0], ["ဈေးနှုန်းများကို ပစ္စည်းတစ်ခုချင်းစီအောက်မှာ တွေ့နိုင်ပါတယ်။", "Prices are shown under each item.", 0], ["ဈေးနှုန်း", "Price", 0], ["ADMIN နှင့် တိုက်ရိုက် စကားပြော", "Chat directly with ADMIN", 0], ["ပို့မည်", "Send", 0], ["Return/Refund Proof ပုံ ပို့ချင်ရင် 📎 ကို နှိပ်ပါ", "Tap 📎 to send a return/refund photo", 0], ["ADMIN ကို တိုက်ရိုက် Message ပို့ရန်", "Message ADMIN directly", 0], ["Message ပို့ရန် Login ဝင်ရန် လိုအပ်ပါသည် (Guest ဆိုရင် Messenger/Viber သုံးပါ)", "Please log in to send messages (guests can use Messenger/Viber)", 0], ["Login ဝင်ရန်", "Log In", 0], ["Messenger ဖြင့် ဆက်သွယ်ရန်", "Contact via Messenger", 0], ["မေးလေ့ရှိသော မေးခွန်းများ", "FAQ", 0], ["Message များ Load မလုပ်နိုင်ပါ", "Couldn't load messages", 0], ["Message မရှိသေးပါ — အောက်မှာ ရေးပို့နိုင်ပါတယ်", "No messages yet — write to us below", 0], ["ပုံ ပို့၍ မရပါ", "Couldn't send photo", 0], ["Message ပို့၍မရပါ", "Couldn't send message", 0], ["🎟️ Promo Code သုံးလို့ မရတော့ပါ", "🎟️ Promo code can no longer be used", 0], ["နောက်ပြန်သွားပြီး Promo ကို ဖြုတ်/ပြန်စစ်ပါ", "Go back and remove/recheck the promo", 0], ["တောင်းပန်ပါတယ် — Stock ကုန်သွားပါပြီ", "Sorry — out of stock", 0], ["Page ကို Refresh လုပ်ပြီး ပြန်ရွေးပေးပါ", "Please refresh the page and choose again", 0], ["ပစ္စည်းဈေးနှုန်း ပြောင်းသွားပါသည် — Page ကို Refresh လုပ်ပြီး ပြန်မှာပေးပါ", "Price has changed — please refresh and order again", 0], ["ငွေပေးချေမှု အတည်မပြုနိုင်ပါ — ထပ်ကြိုးစားပါ", "Couldn't confirm payment — please try again", 0], ["⏰ ငွေမလွှဲရသေးတဲ့ Order ၂ ခု ရှိနေပါသည် — အရင် Order တွေကို ငွေလွှဲ (သို့) ပယ်ဖျက်ပြီးမှ", "⏰ You have 2 unpaid orders — pay or cancel them first, then", 0], ["ငွေ နောက်မှ လွှဲမည်", "Pay Later", 0], ["ကို ထပ်သုံးနိုင်ပါသည်", " becomes available again", 0], ["ကို ယာယီ ပိတ်ထားပါသည် — Screenshot တင်ပြီး Order တင်ပေးပါ", " is temporarily off — please upload a screenshot to order", 0], ["ငွေပေးချေမှု ပုံစံ မမှန်ကန်ပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ", "Invalid payment — please refresh and try again", 0], ["Order တင်ခွင့် မရှိပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ", "Not allowed to place order — please refresh and try again", 0], ["🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု", "🎁 Gift Wrapping", 0], ["နေပြည်တော်အတွင်း", "Within Nay Pyi Taw", 0], ["အခြားမြို့များ (နေပြည်တော်ပြင်ပ)", "Other cities (outside Nay Pyi Taw)", 0], ["Royal Express Delivery Service မှ နှုန်းထားများအတိုင်း ကျသင့်ပါမည်", "Charged at Royal Express Delivery Service rates", 0], ["🚚 ပို့ဆောင်မည့် နေရာ ရွေးပါ", "🚚 Choose delivery area", 0], ["နေရာ ရွေးပါ", "Choose area", 0], ["Delivery ခ", "Delivery fee", 0], ["ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည်", "Pay the courier on delivery", 0], ["ဒီ Order စုစုပေါင်းထဲ မပါဝင်ပါ", "Not included in this order total", 0], ["🚚 Delivery ခ သည်", "🚚 Delivery fee", 0], ["🎉 ဒီ Order အတွက်", "🎉 You'll get", 0], ["ရပါမည် — ပစ္စည်းရောက်ပြီးနောက် Prepaid Card ထဲ အလိုအလျောက် ဝင်ပါမည်", " for this order — added to your Prepaid Card after delivery", 0], ["🎉 Login ဝင်ပြီး ဝယ်ရင်", "🎉 Log in to get", 0], ["ရနိုင်ပါသည် (Guest Order တွေမှာ Cashback မပါပါ)", " (no cashback for guest orders)", 0], ["💡 နောက်ထပ်", "💡 Buy", 0], ["ဖိုး ထပ်ဝယ်ရင် Cashback ရပါမည်", " more to get cashback", 0], ["🎟️ Promo Code ရှိပါသလား?", "🎟️ Have a promo code?", 0], ["Promo Code ရိုက်ထည့်ပါ", "Enter promo code", 0], ["စစ်ဆေးလို့ မရပါ", "Couldn't verify", 0], ["Promo Code မှားနေပါသည်", "Invalid promo code", 0], ["ကျပ်+ →", "MMK+ →", 0], ["Login ဝင်ပြီး ဝယ်ရင် ပစ္စည်းရောက်ပြီးနောက် Prepaid Card ထဲ အလိုအလျောက် ဝင်ပါမည်", "When logged in, it's added to your Prepaid Card automatically after delivery", 0], ["တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပါ", "Choose region / state", 0], ["အော်ဒါ အချက်အလက်", "Order Details", 0], ["📍 ပို့ဆောင်ရမည့် လိပ်စာ", "📍 Delivery Address", 0], ["ဆက်သွားမည် →", "Continue →", 0], ["← ပြန်သွားမည်", "← Back", 0], ["🎁 Gift အဖြစ် ထုပ်ပိုးပြီး ပို့ပေးစေချင်ပါသည်", "🎁 Gift-wrap my order", 0], ["လက်ဆောင်ထုပ်ပိုးမှု + ဆုတောင်းကတ် ပါဝင်ပါသည်", "Includes gift wrapping + greeting card", 0], ["အမည်၊ ဖုန်းနံပါတ် ဖြည့်ပေးပါ", "Please enter your name and phone number", 0], ["တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပေးပါ", "Please choose a region / state", 0], ["မြို့နယ် ရွေးပေးပါ", "Please choose a township", 0], ["အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် ဖြည့်ပေးပါ", "Please enter house no., street and ward", 0], ["မြို့နယ်၊", " Township,", 0], ["ပို့ဆောင်မည့် နေရာ (Delivery Zone) ရွေးပေးပါ", "Please choose a delivery zone", 0], ["KBZPay QR Code ကို Scan လုပ်ပြီး ငွေပေးချေမှု ပြုလုပ်ပါ။", "Scan the KBZPay QR code to pay.", 0], ["အော်ဒါ အတည်ပြုရန်", "Confirm Order", 0], ["ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည် (အထက်ပါ စုစုပေါင်းထဲ မပါဝင်ပါ)", "Pay the courier on delivery (not included in the total above)", 0], ["💰 PREPAID CARD (WALLET) — လက်ကျန်", "💰 PREPAID CARD (WALLET) — Balance", 0], ["KBZPAY ဖြင့် ငွေပေးချေရန်", "PAY WITH KBZPAY", 0], ["PAYMENT SCREENSHOT တင်ပါ", "UPLOAD PAYMENT SCREENSHOT", 0], ["Order တင်မည်", "Place Order", 0], ["ကျပ် နုတ်ပြီး", "MMK deducted", 0], ["လုပ်ဆောင်နေသည်", "Processing", 0], ["Stock မလုံလောက်တော့ပါ", "Not enough stock", 0], ["Wallet ဖြင့် ချက်ချင်း ဝယ်မည်", "Buy Now with Wallet", 0], ["Card လက်ကျန် မလုံလောက်ပါ", "Insufficient card balance", 0], ["Wallet ငွေ မလုံလောက်တော့ပါ", "Insufficient wallet balance", 0], ["ငွေ ပြန်အမ်းပြီးပါပြီ", "Refunded", 0], ["Prepaid Card ငွေ ပြန်အမ်းပြီးပါပြီ", "Refunded to Prepaid Card", 0], ["ငွေပေးချေပြီးကြောင်း Screenshot တင်ရန် လိုအပ်ပါသည်", "Please upload your payment screenshot", 0], ["JPG, JPEG, PNG ပုံဖိုင်သာ တင်ပေးပါ", "Only JPG, JPEG or PNG images", 0], ["Order ကို အရင်တင်ပြီး", "Place the order now and pay", 0], ["ကျပ်ကို နောက်မှ လွှဲမှာ သေချာပါသလား?", "MMK later?", 0], ["မတင်တော့ပါ", "Cancel", 0], ["တင်နေသည်", "Uploading", 0], ["တောင်းပန်ပါတယ်", "Sorry", 0], ["ပဲ ရှိတော့ပါတယ်။ အရေအတွက်ကို", " left. Quantity adjusted to", 0], ["ခု အဖြစ် ချိန်ညှိပေးလိုက်ပါပြီ — အဆင်ပြေရင်", " — if that's OK, tap", 0], ["ကို ထပ်နှိပ်ပေးပါ။", " again.", 0], ["လုံးဝ ကုန်သွားပါပြီ။ ခြင်းထဲက ဖယ်ရှားပေးလိုက်ပါပြီ — ကျန်တဲ့ ပစ္စည်းတွေနဲ့ ဆက်ပြီး Order တင်နိုင်ပါတယ်။", " is sold out and was removed from your cart — you can continue with the remaining items.", 0], ["Order ထဲက ပစ္စည်းအားလုံး Stock ကုန်သွားလို့ Order ပယ်ဖျက်လိုက်ပါပြီ", "All items are out of stock, so the order was cancelled", 0], ["Prepaid Card လက်ကျန် မလုံလောက်တော့ပါ — စာမျက်နှာ ပြန်ဖွင့်ပြီး ထပ်စမ်းပါ", "Insufficient Prepaid Card balance — please reload and try again", 0], ["Prepaid ငွေ ပြန်အမ်းပြီးပါပြီ", "Prepaid balance refunded", 0], ["Order တင်ပြီးပါပြီ", "Order Placed", 0], ["ကျေးဇူးတင်ပါတယ်", "Thank you", 0], ["ခဏစောင့်ဆိုင်းပေးပါ — ပြန်လည်ဆက်သွယ်ပေးပါမယ်။", "Please wait — we'll get back to you shortly.", 0], ["🧾 Receipt ကြည့်ရန်", "🧾 View Receipt", 0], ["ငွေလွှဲရန် စောင့်ဆဲ", "Awaiting payment", 0], ["နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့", "Pobbathiri, Nay Pyi Taw", 0], ["ကျေးဇူးတင်ပါသည်!", "Thank you!", 0], ["✕ ပိတ်မည်", "✕ Close", 0], ["✅ အတည်ပြုပြီး", "✅ Confirmed", 0], ["🎉 Gift Card ငွေ Prepaid Card ထဲ ဝင်ပါပြီ", "🎉 Gift card added to your Prepaid Card", 0], ["ပမာဏ ရွေးပါ", "Choose amount", 0], ["ဝယ်ယူမည်", "Buy", 0], ["Payment Screenshot တင်ရန် လိုအပ်ပါသည်", "Payment screenshot is required", 0], ["တောင်းပန်ပါတယ် — ဒီပမာဏ Stock ကုန်သွားပါပြီ", "Sorry — this amount is out of stock", 0], ["✅ Gift Card ဝယ်ယူမှု တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Code ရပါမည်", "✅ Gift card request sent — you'll get the code once Admin confirms", 0], ["လက်ဆောင်ရထားတဲ့ Gift Card Code ကို ထည့်ပါ — ပမာဏအတိုင်း Prepaid Card ထဲ ချက်ချင်း ဝင်ပါမည်", "Enter a gift card code — the amount goes straight into your Prepaid Card", 0], ["သုံးမည်", "Redeem", 0], ["Code ထည့်ပါ", "Enter a code", 0], ["စစ်ဆေးနေသည်", "Checking", 0], ["မသိသော Error", "Unknown error", 0], ["🎉 Gift Card အောင်မြင်ပါသည်!", "🎉 Gift card redeemed!", 0], ["ကျပ် Wallet ထဲ ဝင်ပါပြီ", "MMK added to your wallet", 0], ["အသုံးပြုနိုင်ပြီ", "Active", 0], ["အတည်ပြုရန် စောင့်ဆိုင်းဆဲ", "Awaiting approval", 0], ["အသုံးပြုပြီးသား", "Used", 0], ["ငြင်းပယ်ခံရ", "Rejected", 0], ["“ယခုပဲ သုံးမည်” ကိုနှိပ်ရင် Prepaid Card ထဲ ငွေဖြည့်ပေးပါမည် — (သို့) Code ကို Copy ကူးပြီး လက်ဆောင်ပေးလို့ရပါတယ်", "Tap “Use Now” to add it to your Prepaid Card — or copy the code and gift it", 0], ["ငွေလွှဲ Screenshot ကို Admin စစ်ပြီး အတည်ပြုတာနဲ့ ဒီနေရာမှာ Code ပေါ်လာပါမည်", "The code appears here once Admin verifies your payment", 0], ["ဒီ Code ကို Prepaid Card ထဲ ဖြည့်ပြီးသားပါ", "This code has already been added to a Prepaid Card", 0], ["အကြောင်းရင်း", "Reason", 0], ["မေးစရာရှိရင် Chat မှာ မေးမြန်းပါ", "Questions? Ask us in Chat", 0], ["Admin မှ အတည်ပြုပြီးမှ Code ထွက်လာပါမည်", "The code appears after Admin approval", 0], ["ငွေလွှဲ အတည်ပြု၍ မရပါ", "Payment couldn't be verified", 0], ["ယခုပဲ သုံးမည်", "Use Now", 0], ["✓ ကူးပြီး", "✓ Copied", 0], ["📋 Code ကူးယူပြီးပါပြီ", "📋 Code copied", 0], ["ဒီ Gift Card", "Add this gift card", 0], ["ကျပ်) ကို ယခုပဲ Wallet ထဲ ထည့်သုံးမှာ သေချာပါသလား?", "MMK) to your wallet now?", 0], ["Gift Card သုံးမည်", "Use Gift Card", 0], ["Wallet ထဲ ထည့်မည်", "Add to Wallet", 0], ["အမည် (Account ဖွင့်စဉ်က သတ်မှတ်ပြီးသား — ပြောင်း၍မရပါ)", "Name (set at sign-up — can't be changed)", 0], ["Nickname (အလွတ်တန်း ပြောင်းလို့ရသည် — Chat/Website ပေါ်မှာ ဒီနာမည် ပြပါမည်)", "Nickname (change anytime — shown in chat and on the site)", 0], ["📍 လိပ်စာ", "📍 Address", 0], ["သိမ်းမည်", "Save", 0], ["ကတ်များ", "Cards", 0], ["ဝယ်ရန်", "Buy", 0], ["Code သုံး", "Redeem", 0], ["စစ်ဆေးဆဲ", "Pending", 0], ["သုံးလို့ရ", "Active", 0], ["သုံးပြီး", "Used", 0], ["ငြင်းပယ်", "Rejected", 0], ["Gift Card ဝယ်ယူ", "Gift card purchase", 0], ["Prepaid Card ထဲ ဖြည့်သုံး", "Redeemed to Prepaid Card", 0], ["Wallet ဝင်", "To wallet", 0], ["မှတ်တမ်း မရှိသေးပါ", "No history yet", 0], ["Gift Card ဝယ်တာ / သုံးတာ တွေ ဒီမှာ ပေါ်ပါမည်", "Your gift card purchases and redemptions will appear here", 0], ["ဝယ်ယူခဲ့သော", "Purchased", 0], ["ဖြည့်သုံးခဲ့သော", "Redeemed", 0], ["📰 Post များ", "📰 Posts", 0], ["🛍️ မှာယူနည်း", "🛍️ How to Order", 0], ["📞 ဆက်သွယ်ရန်", "📞 Contact", 0], ["Messenger မှ မေးမြန်းရန်", "Ask on Messenger", 0], ["🔔 ပြန်ရောက်ရင် အသိပေးမည်", "🔔 Notify me when back", 0], ["✅ ပြန်ရောက်ရင် အသိပေးပါမည်", "✅ We'll notify you", 0], ["Stock ပြန်ရောက်ရင် အသိပေးဖို့ Login ဝင်ထားဖို့ လိုပါတယ်။ Login ဝင်မလား?", "Please log in to get restock alerts. Log in now?", 0], ["Login ဝင်မည်", "Log In", 0], ["⚠️ မအောင်မြင်ပါ", "⚠️ Failed", 0], ["🔕 အသိပေးမှု ဖျက်လိုက်ပါပြီ", "🔕 Alert removed", 0], ["ပြန်ရောက်တာနဲ့ Chat", " — we'll notify you by Chat", 0], ["ဖြင့် အသိပေးပါမည်", " as soon as it's back", 0], ["iPhone မှာ Notification ရဖို့", "To get notifications on iPhone", 0], ["နှိပ်ပါ", "tap", 0], ["2) Home Screen က SUWATI App ကနေ ဖွင့်ပြီး Login ဝင်ပါ", "2) Open the SUWATI app from your Home Screen and log in", 0], ["3) Profile › 🔔 Notification ဖွင့်ပါ", "3) Turn on Profile › 🔔 Notification", 0], ["iOS 16.4 နှင့်အထက် လိုပါသည်", "Requires iOS 16.4 or later", 0], ["📲 Home Screen App လိုပါသည်", "📲 Home Screen app required", 0], ["⚠️ ဒီ Browser က Notification မရပါ", "⚠️ This browser doesn't support notifications", 0], ["Notification ကို ပိတ်ထားပါတယ်။ ဖုန်း Settings › Notifications (သို့) Browser Site Settings မှာ SUWATI ကို Allow ပေးပြီးမှ ပြန်ဖွင့်ပါ။", "Notifications are blocked. Allow SUWATI in your phone Settings › Notifications (or browser site settings), then try again.", 0], ["🔕 ခွင့်ပြုချက် ပိတ်ထားသည်", "🔕 Permission blocked", 0], ["🔕 Notification ခွင့်မပြုခဲ့ပါ", "🔕 Notifications not allowed", 0], ["⚠️ သိမ်းမရပါ", "⚠️ Couldn't save", 0], ["🔔 Notification ဖွင့်ပြီးပါပြီ — Order အခြေအနေ ပြောင်းတိုင်း ဖုန်းကို အသိပေးပါမည်", "🔔 Notifications on — we'll alert you whenever your order status changes", 0], ["⚠️ Notification ဖွင့်မရပါ", "⚠️ Couldn't enable notifications", 0], ["🔕 Notification ပိတ်လိုက်ပါပြီ", "🔕 Notifications off", 0], ["✅ ဒီဖုန်းကို Order အခြေအနေ၊ Admin စာ၊ Stock ပြန်ရောက်ကြောင်း အသိပေးနေပါသည်", "✅ This phone gets order updates, admin messages and restock alerts", 0], ["Order အတည်ပြု/ပို့ဆောင်/ရောက်ရှိ ဖြစ်တိုင်း ဖုန်းကို ချက်ချင်း အသိပေးမည်", "Get instant alerts when your order is confirmed, shipped or delivered", 0], ["📲 iPhone မှာ Home Screen App (Add to Home Screen) ကနေ ဖွင့်မှ Notification ရပါမည်", "📲 On iPhone, open from the Home Screen app (Add to Home Screen) to get notifications", 0], ["🔕 ဖုန်း Settings မှာ Notification ကို ပိတ်ထားပါသည်", "🔕 Notifications are off in phone Settings", 0], ["ဒီ Browser က Notification မရပါ", "This browser doesn't support notifications", 0], ["⏳ ပြန်ရောက်ရင် အသိပေးရန် စောင့်နေသော ပစ္စည်း", "⏳ Waiting for restock", 0], ["ပစ္စည်း ပြန်ရောက်တာနဲ့ ဖုန်းကို ချက်ချင်း Notification ပို့ပေးရမလား?", "Send a phone notification as soon as it's back in stock?", 0], ["Order အတည်ပြု / ပို့ဆောင်နေ / ရောက်ရှိ ဖြစ်တိုင်း ဖုန်းကို Notification ပို့ပေးရမလား?", "Get a phone notification when your order is confirmed / shipped / delivered?", 0], ["🔔 ဖုန်း Notification", "🔔 Phone Notifications", 0], ["🔔 ဖွင့်မည်", "🔔 Turn On", 0], ["နောက်မှ", "Later", 0], ["Order ID (8လုံး) နှင့် မှာယူစဉ်က ဖုန်းနံပါတ် ထည့်ပါ", "Enter your Order ID (8 characters) and the phone number used to order", 0], ["Track လုပ်မည်", "Track", 0], ["Order ID နှင့် ဖုန်းနံပါတ် နှစ်ခုစလုံး ဖြည့်ပါ", "Enter both Order ID and phone number", 0], ["ရှာနေသည်", "Searching", 0], ["Order မတွေ့ပါ — Order ID (သို့) ဖုန်းနံပါတ် ပြန်စစ်ပါ", "Order not found — check the Order ID or phone number", 0], ["ပယ်ဖျက်ပြီး (Cancelled)", "Cancelled", 0], ["ပယ်ဖျက်ရသည့် အကြောင်းရင်း", "Cancellation reason", 0], ["ပို့ဆောင်ရေးသမား စာသား/ပုံ", "Courier note/photo", 0], ["ငွေချေမည့် Card", "Paying with card", 0], ["ကျသင့်ငွေ", "Amount due", 0], ["ချေပြီးနောက် လက်ကျန်", "Balance after payment", 0], ["ငွေချေမည်", "Pay", 0], ["မချေတော့ပါ", "Cancel", 0], ["Prepaid Card ဖြင့် ငွေချေနေသည်", "Paying with Prepaid Card", 0], ["ငွေချေပြီးပါပြီ", "Payment complete", 0], ["ငွေချေ၍ မရပါ", "Payment failed", 0], ["Card လက်ကျန်", "Card balance", 0], ["အချိန်ကုန်သွားပါပြီ", "Time's up", 0], ["နာရီ", "h", 0], ["မိနစ်", "min", 0], ["⏰ ငွေလွှဲရန် ကျန်ချိန်", "⏰ Time left to pay", 0], ["လွှဲရမည့်ငွေ", "Amount to pay", 0], ["💸 ငွေလွှဲ Screenshot တင်မည်", "💸 Upload Payment Screenshot", 0], ["✕ Order ပယ်ဖျက်မည်", "✕ Cancel Order", 0], ["💸 ငွေလွှဲ Screenshot တင်ရန်", "💸 Upload Payment Screenshot", 0], ["Screenshot တင်မည်", "Upload Screenshot", 0], ["← Order History ပြန်သွားရန်", "← Back to Order History", 0], ["Screenshot ရွေးပါ", "Choose a screenshot", 0], ["တင်၍ မရပါ", "Upload failed", 0], ["✅ Screenshot တင်ပြီးပါပြီ — Admin စစ်ဆေးပြီးရင် အတည်ပြုပေးပါမည်", "✅ Screenshot uploaded — Admin will confirm after checking", 0], ["ဒီ Order ကို ပယ်ဖျက်မှာ သေချာပါသလား?", "Cancel this order?", 0], ["Prepaid Card ထဲ", "Prepaid Card refund:", 0], ["ကျပ် ပြန်ထည့်ပေးပါမည်", "MMK will be returned", 0], ["Order ပယ်ဖျက်မည်", "Cancel Order", 0], ["ပယ်ဖျက်မည်", "Cancel Order", 0], ["မဖျက်တော့ပါ", "Keep Order", 0], ["ပယ်ဖျက်၍ မရပါ", "Couldn't cancel", 0], ["Admin အတည်ပြုနေပြီ ဖြစ်နိုင်ပါသည်", "Admin may have already confirmed it", 0], ["Order ပယ်ဖျက်ပြီးပါပြီ", "Order cancelled", 0], ["Prepaid ငွေ ပြန်ထည့်ပြီးပါပြီ", "Prepaid balance returned", 0], ["ကျပ်နှင့်အထက် →", "MMK and above →", 0], ["ထပ်ရမည် — Card ထဲ စုစုပေါင်း", " bonus — total added to card:", 0], ["ဝင်ပါမည်", "", 0], ["ပမာဏ ရွေးပါ (ကျပ်)", "Choose amount (MMK)", 0], ["Gift Card မှာယူမည် (KBZPay)", "Order Gift Card (KBZPay)", 0], ["SIZE ရွေးပါ", "Choose SIZE", 0], ["အရောင် ရွေးပါ", "Choose COLOR", 0], ["Order မှာယူမည် (KBZPay)", "Order Now (KBZPay)", 0], ["Gift Card ဝယ်ဖို့ Login ဝင်ရန် လိုအပ်ပါသည်", "Please log in to buy a gift card", 0], ["🎫 Prepaid Card ဖြင့် ဝယ်ချင်ရင်", "🎫 To pay with Prepaid Card,", 0], ["Login ဝင်ပါ", "log in", 0], ["🎫 Prepaid Card ဖြင့် ဝယ်မည်", "🎫 Buy with Prepaid Card", 0], ["🎫 Prepaid Card လက်ကျန်", "🎫 Prepaid Card balance", 0], ["ကျပ်ပဲ ရှိလို့ ဒီပစ္စည်းအတွက် မလုံလောက်ပါ", "MMK — not enough for this item", 0], ["ငွေဖြည့်ရန်", "Top up", 0], ["ဒီလိုမျိုး ထပ်ကြည့်ရန်", "You may also like", 0], ["👆 ဘေးတိုက် ဆွဲပါ", "👆 Swipe sideways", 0], ["ကျပ်", " SUWATI MEN FASHION|MMK | SUWATI MEN FASHION", 0], ["🔗 Link ကူးယူပြီးပါပြီ — Messenger/Viber မှာ Paste လုပ်ပြီး Share နိုင်ပါပြီ", "🔗 Link copied — paste it in Messenger/Viber to share", 0], ["ဒီ Link ကို Copy ကူးပါ", "Copy this link", 0], ["ဒီ Product ကို မတွေ့တော့ပါ (ဖျက်ထား/ဖျောက်ထားနိုင်ပါသည်) — Ref", "This product is no longer available — Ref", 0], ["ကုန်သွားပါပြီ", "Sold out", 0], ["ကုန်သွားပြီ", "Sold out", 0], ["ခုပဲ ကျန်သည်", " left", 0], ["⚫ Sold Out — ကုန်သွားပြီ", "⚫ Sold Out", 0], ["✅ ရနိုင်သည်", "✅ In stock", 0], ["ရနိုင်သည်", "In stock", 0], ["ခုသာ ရှိပါသည်", " left", 0], ["ပစ္စည်းများ Load မလုပ်နိုင်ပါ", "Couldn't load products", 0], ["ရှာဖွေမှုနှင့် ကိုက်ညီသော ပစ္စည်း မတွေ့ပါ။", "No matching products.", 0], ["10,000 ကျပ်မှ", "From 10,000 MMK", 0], ["ဝယ်မည် →", "Buy →", 0], ["ပမာဏ ရွေးပြီး ဝယ်ရန်", "Choose amount & buy", 0], ["ပမာဏ ရွေးပြီး KBZPay ဖြင့် ဝယ်ယူနိုင်ပါသည်", "Choose an amount and pay with KBZPay", 0], ["မေးစရာရှိရင် Messenger ပို့ပါ", "Questions? Message us on Messenger", 0], ["⚫ ကုန်သွားပြီ", "⚫ Sold out", 0], ["⚫ ကုန်သွားပါပြီ", "⚫ Sold out", 0], ["လောလောဆယ် Post မရှိသေးပါ။", "No posts yet.", 0], ["အရောင်", "Color", 0], ["🛒 ခြင်းထဲ ထည့်မည်", "🛒 Add to Cart", 0], ["အသေးစိတ် ကြည့်ပြီး ဝယ်မည် →", "View details & buy →", 0], ["ကို App အဖြစ် ထည့်ရန်", " — add as an app:", 0], ["အောက်ခြေ/အပေါ်က", "Tap the", 0], ["ခလုတ်နှိပ် →", "button at the bottom/top →", 0], ["နားလည်ပြီ", "Got it", 0], ["App ကို ဖုန်းထဲ ထည့်မလား?", "Add the app to your phone?", 0], ["Home Screen ကနေ တစ်ချက်နှိပ်ရုံနဲ့ ဖွင့်လို့ရပါမည်", "Open it with one tap from your Home Screen", 0], ["📲 ထည့်မည်", "📲 Add", 0], ["App ထည့်ပြီးပါပြီ — Home Screen မှာ ကြည့်ပါ", "App added — check your Home Screen", 0], ["💰 Wallet ငွေဖြည့်ရန်", "💰 Top Up Wallet", 0], ["ဖြည့်လိုသော ပမာဏ (ကျပ်)", "Top-up amount (MMK)", 0], ["ဥပမာ 50000", "e.g. 50000", 0], ["တင်သွင်းမည်", "Submit", 0], ["ပမာဏ အနည်းဆုံး 1,000 ကျပ် ထည့်ပါ", "Minimum amount is 1,000 MMK", 0], ["ပမာဏ အနည်းဆုံး 1,000 ကျပ် ရွေးပါ", "Minimum amount is 1,000 MMK", 0], ["✅ Top-up တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Wallet ထဲ ဝင်ပါမည်", "✅ Top-up submitted — it'll be added once Admin approves", 0], ["ကျပ် ပါ ထပ်ရပါမည်", " MMK bonus included", 0], ["🎫 ကျွန်ုပ်၏ Prepaid Card", "🎫 My Prepaid Card", 0], ["ဒီ Card ကို ဆိုင်ထဲမှာ Cashier ဆီ ပြပြီး Barcode Scan လုပ်ခိုင်း (သို့) Card Number + PIN ပေးလို့ ငွေရှင်းနိုင်ပါသည်", "Show this card to the cashier in store to scan the barcode, or give your card number + PIN to pay", 0], ["Card ရယူ၍ မရပါ", "Couldn't load card", 0], ["Card ကို လှန်ရန်", "Flip card", 0], ["Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Barcode နှင့် PIN ရှိပါသည်။ PIN ကြည့်ရန် အကွက်များပေါ် တို့ပါ", "Tap the card to flip it — the barcode and PIN are on the back. Tap the boxes to reveal the PIN", 0], ["ငွေဖြည့်ခြင်း", "Top-up", 0], ["Gift Card သုံးစွဲမှု", "Gift card redeemed", 0], ["ငွေပြန်အမ်းခြင်း", "Refund", 0], ["ဝယ်ယူမှု (Website)", "Purchase (Website)", 0], ["ဝယ်ယူမှု (ဆိုင်ထဲ)", "Purchase (In store)", 0], ["Cashback ရရှိမှု", "Cashback earned", 0], ["Cashback ပြန်နုတ်ခြင်း", "Cashback reversed", 0], ["⏳ စစ်ဆေးဆဲ Top-up Request", "⏳ Pending top-up requests", 0], ["❌ ငြင်းပယ်ခံရသော Request", "❌ Rejected requests", 0], ["✅ အတည်ပြုပြီးသား Top-up", "✅ Approved top-ups", 0], ["Usage History မရှိသေးပါ", "No usage history yet", 0], ["📋 Transaction Record အားလုံး", "📋 All transactions", 0], ["🔒 PIN မှားလို့ ပိတ်ထားသည်", "🔒 Locked (wrong PIN)", 0], ["❄️ ယာယီ ပိတ်ထားသည်", "❄️ Temporarily frozen", 0], ["🔒 Card လုံခြုံရေး", "🔒 Card Security", 0], ["⚠️ ဆိုင်မှာ PIN မှား ၅ ကြိမ် ရိုက်ခဲ့လို့ Card ကို ပိတ်ထားပါတယ်။ ကိုယ်တိုင် မဟုတ်ရင် အောက်မှာ PIN အသစ် ပြောင်းပါ — ပြောင်းတာနဲ့ ပြန်ဖွင့်ပါမည်။", "⚠️ Your card was locked after 5 wrong PIN attempts in store. If it wasn't you, change your PIN below — the card unlocks as soon as you do.", 0], ["Card ယာယီ ပိတ်ရန်", "Freeze card", 0], ["Card ပျောက်ရင် (သို့) PIN ပေါက်သွားရင် ပိတ်ထားပါ — ဆိုင်ထဲမှာ Card Number + PIN နဲ့ သုံးလို့ မရတော့ပါ", "Freeze it if your card is lost or your PIN leaked — it can't be used in store with card number + PIN", 0], ["🔑 PIN ပြောင်းရန်", "🔑 Change PIN", 0], ["PIN အဟောင်း", "Current PIN", 0], ["Card နောက်ကျောမှာ ကြည့်လို့ရ", "shown on the back of the card", 0], ["PIN အသစ် (ဂဏန်း ၄ လုံး)", "New PIN (4 digits)", 0], ["PIN အသစ် ထပ်ရိုက်ပါ", "Confirm new PIN", 0], ["PIN ပြောင်းမည်", "Change PIN", 0], ["ဒီ Card ကို ယာယီ ပိတ်မလား?", "Freeze this card?", 0], ["ပိတ်ထားစဉ် ဆိုင်ထဲမှာ Card Number + PIN နဲ့ ငွေရှင်းလို့ မရပါ။ နောက်မှ ဒီနေရာကနေ ပြန်ဖွင့်လို့ရပါတယ်။", "While frozen it can't be used in store with card number + PIN. You can unfreeze it here anytime.", 0], ["Card ပိတ်မည်", "Freeze Card", 0], ["❄️ ပိတ်မည်", "❄️ Freeze", 0], ["မအောင်မြင်ပါ", "Failed", 0], ["❄️ Card ကို ယာယီ ပိတ်လိုက်ပါပြီ", "❄️ Card frozen", 0], ["✅ Card ပြန်ဖွင့်ပြီးပါပြီ", "✅ Card unfrozen", 0], ["PIN အဟောင်း ဂဏန်း ၄ လုံး ထည့်ပါ", "Enter your current 4-digit PIN", 0], ["PIN အသစ်က ဂဏန်း ၄ လုံး ဖြစ်ရပါမည်", "New PIN must be 4 digits", 0], ["PIN အသစ် နှစ်ခု မတူပါ", "New PINs don't match", 0], ["ပြောင်းနေသည်", "Changing", 0], ["✅ PIN ပြောင်းပြီး Card ပြန်ဖွင့်ပါပြီ", "✅ PIN changed and card unlocked", 0], ["✅ PIN ပြောင်းပြီးပါပြီ", "✅ PIN changed", 0], ["Wishlist ထဲ ရှိသည်", "In Wishlist", 0], ["Wishlist ထဲ ထည့်ရန်", "Add to Wishlist", 0], ["Wishlist ဗလာဖြစ်နေပါသည်", "Your wishlist is empty", 0], ["ကြိုက်တဲ့ ပစ္စည်းပေါ်က ♡ ကို နှိပ်ပြီး ထည့်လိုက်ပါ", "Tap ♡ on items you like to save them", 0], ["Login ဝင်ထားရင် Wishlist ကို Device မရွေး Sync ဖြစ်ပါလိမ့်မယ်", "Log in to sync your wishlist across devices", 0], ["Login ဝင်ထားရင် ဒီ Wishlist ကို Device မရွေး ကြည့်လို့ရပါလိမ့်မယ်", "Log in to see this wishlist on any device", 0], ["ကျွန်ုပ်၏ Wishlist", "My Wishlist", 0], ["ပစ္စည်း မရှိတော့ပါ", "Item no longer available", 0], ["တန်းဝယ်မည်", "Buy Now", 0], ["Size/Color ရွေးရန် လိုအပ်ပါသည် — ပစ္စည်းစာမျက်နှာမှ ရွေးချယ်ပါ", "Please choose size/color on the product page", 0], ["ခြင်းထဲ ထည့်ပြီးပါပြီ", "Added to cart", 0], ["⚫ ဒီ Size/အရောင် ကုန်သွားပြီ", "⚫ This size/color is sold out", 0], ["ဒီ Size/အရောင် ရွေးချယ်မှု ကုန်သွားပါပြီ", "This size/color is sold out", 0], ["ကျပ် ဝယ်မှာ သေချာပါသလား?", "MMK — confirm purchase?", 0], ["Prepaid Card ဖြင့်", "Pay with Prepaid Card:", 0], ["Prepaid Card ငွေ မလုံလောက်တော့ပါ", "Insufficient Prepaid Card balance", 0], ["ပိတ်ရန်", "Close", 0], ["Prepaid Card ဖြင့် ပေးပြီး", "Paid by Prepaid Card", 0], ["⏰ ကျန်ချိန်", "⏰ Time left", 0], ["မတိုင်ခင်", "before", 0], ["ကျပ် ပေးပြီး", "MMK paid", 0], ["QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်", "QR code hasn't been set up yet", 0], ["အထိသာ", "only", 0], ["အမည် (Name", "Name", 0], ["မွေးသက္ကရာဇ် (Date of Birth", "Date of Birth", 0], ["သင့်အမည်အပြည့်အစုံ", "Your full name", 0], ["အနည်းဆုံး ၆လုံး", "At least 6 characters", 0], ["Password ထပ်ရိုက်ပါ", "Confirm password", 0], ["Password အနည်းဆုံး ၆လုံး ရှိရပါမည်", "Password must be at least 6 characters", 0], ["Password ၂ခု တူညီရပါမည်", "Passwords must match", 0], ["Account ဖန်တီးပြီးပါပြီ! Email ထဲက Confirmation link ကို နှိပ်ပြီးမှ Login ဝင်ပါ။", "Account created! Please tap the confirmation link in your email, then log in.", 0], ["Gmail လိပ်စာ ထည့်ပါ", "Enter your Gmail", 0], ["Reset Link ပို့ပြီးပါပြီ — Email ကို စစ်ကြည့်ပါ။", "Reset link sent — check your email.", 0], ["ထပ်ရိုက်ပါ", "confirm", 0], ["Password ပြောင်းပြီးပါပြီ! ပြန်လည် Login ဝင်နိုင်ပါပြီ။", "Password changed! You can log in again.", 0], ["ပစ္စည်းအမည် (သို့) Order ID ဖြင့် ရှာပါ", "Search by item name or Order ID", 0], ["🔍 ပစ္စည်းနာမည်ဖြင့် ရှာပါ", "🔍 Search products", 0], ["📦 Track ကြည့်ရန်", "📦 Track", 0], ["🗑️ ဖျက်မည်", "🗑️ Delete", 0], ["အခြား (ကိုယ်တိုင် ရိုက်ထည့်ရန်)", "Other (type it in)", 0], ["အခြား (ကိုယ်တိုင် ရိုက်ထည့်ရန်", "Other (type it in", 0], ["ငွေချေမှု", "Payment", 0], ["ပို့ဆောင်ရန်", "Shipping", 0], ["SUWATI — စာမျက်နှာ ပြန်ဖွင့်ရန်", "SUWATI — reload page", 0], ["Menu ဖွင့်ရန်", "Open menu", 0], ["ခြင်းတောင်း", "Cart", 0], ["ပမာဏ အားလုံး ယာယီ ကုန်သွားပါသည်", "All amounts are temporarily sold out", 0], ["Order များ", "Orders", 0], ["Gift Card မရှိသေးပါ", "No gift cards yet", 0], ["ချစ်ရသူကို လက်ဆောင်ပေးဖို့ (သို့) ကိုယ်တိုင်သုံးဖို့ ဝယ်လို့ရပါတယ်", "Buy one as a gift for someone special — or for yourself", 0], ["🛒 Gift Card ဝယ်ရန်", "🛒 Buy Gift Card", 0], ["အမည် (Full Name)", "Full Name", 0], ["မြို့နယ် အမည် ရိုက်ထည့်ပါ", "Type the township name", 0], ["အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် (ဥပမာ - အမှတ် ၁၂၊ ဘူတာလမ်း၊ ကျည်တောင်ကန် ရပ်ကွက်)", "House no., street, ward (e.g. No. 12, Station Rd, Kyee Taung Kan Ward)", 0], ["ကတ်ထဲ ရေးပေးစေချင်တဲ့ စာ (ဥပမာ - Happy Birthday ချစ်သူ 🎂) — လက်ခံသူ အမည်/ပို့ချိန် စတာတွေလည်း ရေးနိုင်ပါသည်", "Message for the card (e.g. Happy Birthday 🎂) — you can also add the recipient's name / delivery time", 0], ["ဥပမာ TIKTOK10", "e.g. TIKTOK10", 0], ["ဥပမာ A1B2C3D4", "e.g. A1B2C3D4", 0], ["မှာယူစဉ်က Phone Number", "Phone number used when ordering", 0], ["Message ရေးပါ...", "Type a message...", 0], ["Message ရေးပါ", "Type a message", 0], ["ပို့ဆောင်", "Delivery", 0], ["ပြန်ပေး", "Returns", 0], ["ငွေ", "Payment", 0], ["ကုန်", "Stock", 0], ["ဆိုက်", "Size", 0], ["ဈေး", "Price", 0], ["နှင့်", "and", 0], ["ပြန်လဲ", "Exchange", 0], ["ကြာ", "Time", 0], ["မြို့နယ် ရွေးပါ", "Choose township", 0], ["တိုင်း/ပြည်နယ် အရင်ရွေးပါ", "Choose region first", 0], ["အခြား", "Other", 0], ["နေပြည်တော်", "Nay Pyi Taw", 1], ["နေပြည်တော် ပြည်ထောင်စုနယ်မြေ", "Nay Pyi Taw Union Territory", 1], ["ပုဗ္ဗသီရိ", "Pobbathiri", 1], ["ဇမ္ဗူသီရိ", "Zabuthiri", 1], ["ဒက္ခိဏသီရိ", "Dekkhinathiri", 1], ["ဥတ္တရသီရိ", "Ottarathiri", 1], ["ဇေယျာသီရိ", "Zeyarthiri", 1], ["ပျဉ်းမနား", "Pyinmana", 1], ["လယ်ဝေး", "Lewe", 1], ["တပ်ကုန်း", "Tatkon", 1], ["ရန်ကုန်တိုင်းဒေသကြီး", "Yangon Region", 1], ["အလုံ", "Ahlone", 1], ["ဗဟန်း", "Bahan", 1], ["ဒဂုံ", "Dagon", 1], ["ကြည့်မြင်တိုင်", "Kyimyindaing", 1], ["ကမာရွတ်", "Kamayut", 1], ["လသာ", "Latha", 1], ["လမ်းမတော်", "Lanmadaw", 1], ["လှိုင်", "Hlaing", 1], ["မရမ်းကုန်း", "Mayangon", 1], ["ပန်းဘဲတန်း", "Pabedan", 1], ["စမ်းချောင်း", "Sanchaung", 1], ["ကျောက်တံတား", "Kyauktada", 1], ["ဗိုလ်တထောင်", "Botahtaung", 1], ["ပုဇွန်တောင်", "Pazundaung", 1], ["ဆိပ်ကမ်း", "Seikkan", 1], ["ဒေါပုံ", "Dawbon", 1], ["မင်္ဂလာတောင်ညွန့်", "Mingala Taungnyunt", 1], ["တာမွေ", "Tamwe", 1], ["သာကေတ", "Thaketa", 1], ["သင်္ဃန်းကျွန်း", "Thingangyun", 1], ["ရန်ကင်း", "Yankin", 1], ["တောင်ဥက္ကလာပ", "South Okkalapa", 1], ["မြောက်ဥက္ကလာပ", "North Okkalapa", 1], ["မြောက်ဒဂုံ", "North Dagon", 1], ["တောင်ဒဂုံ", "South Dagon", 1], ["အရှေ့ဒဂုံ", "East Dagon", 1], ["ဒဂုံဆိပ်ကမ်း", "Dagon Seikkan", 1], ["အင်းစိန်", "Insein", 1], ["မင်္ဂလာဒုံ", "Mingaladon", 1], ["ရွှေပြည်သာ", "Shwepyitha", 1], ["လှိုင်သာယာ", "Hlaingthaya", 1], ["မှော်ဘီ", "Hmawbi", 1], ["လှည်းကူး", "Hlegu", 1], ["တိုက်ကြီး", "Taikkyi", 1], ["ထန်းတပင်", "Htantabin", 1], ["သန်လျင်", "Thanlyin", 1], ["ကျောက်တန်း", "Kyauktan", 1], ["သုံးခွ", "Thongwa", 1], ["ခရမ်း", "Kayan", 1], ["တွံတေး", "Twante", 1], ["ကော့မှူး", "Kawhmu", 1], ["ကွမ်းခြံကုန်း", "Kungyangon", 1], ["ဒလ", "Dala", 1], ["ဆိပ်ကြီးခနောင်တို", "Seikgyikanaungto", 1], ["ကိုကိုးကျွန်း", "Coco Islands", 1], ["မန္တလေးတိုင်းဒေသကြီး", "Mandalay Region", 1], ["အောင်မြေသာဇံ", "Aungmyethazan", 1], ["ချမ်းအေးသာဇံ", "Chanayethazan", 1], ["မဟာအောင်မြေ", "Mahaaungmye", 1], ["ချမ်းမြသာစည်", "Chanmyathazi", 1], ["ပြည်ကြီးတံခွန်", "Pyigyidagun", 1], ["အမရပူရ", "Amarapura", 1], ["ပုသိမ်ကြီး", "Patheingyi", 1], ["ပြင်ဦးလွင်", "Pyin Oo Lwin", 1], ["မတ္တရာ", "Madaya", 1], ["စဉ့်ကိုင်", "Sintgaing", 1], ["မိုးကုတ်", "Mogok", 1], ["သပိတ်ကျင်း", "Thabeikkyin", 1], ["ကျောက်ဆည်", "Kyaukse", 1], ["မြစ်သား", "Myittha", 1], ["တံတားဦး", "Tada-U", 1], ["စဉ့်ကူး", "Singu", 1], ["မြင်းခြံ", "Myingyan", 1], ["တောင်သာ", "Taungtha", 1], ["နွားထိုးကြီး", "Natogyi", 1], ["ငါန်းဇွန်", "Ngazun", 1], ["ကျောက်ပန်းတောင်း", "Kyaukpadaung", 1], ["မိတ္ထီလာ", "Meiktila", 1], ["ဝမ်းတွင်း", "Wundwin", 1], ["သာစည်", "Thazi", 1], ["မလှိုင်", "Mahlaing", 1], ["ရမည်းသင်း", "Yamethin", 1], ["ပျော်ဘွယ်", "Pyawbwe", 1], ["ညောင်ဦး", "Nyaung-U", 1], ["စစ်ကိုင်းတိုင်းဒေသကြီး", "Sagaing Region", 1], ["စစ်ကိုင်း", "Sagaing", 1], ["မုံရွာ", "Monywa", 1], ["ရွှေဘို", "Shwebo", 1], ["ကလေး", "Kalay", 1], ["တမူး", "Tamu", 1], ["ကသာ", "Katha", 1], ["ခန္တီး", "Hkamti", 1], ["ဟုမ္မလင်း", "Homalin", 1], ["ယင်းမာပင်", "Yinmabin", 1], ["မြင်းမူ", "Myinmu", 1], ["မြောင်", "Myaung", 1], ["ဒီပဲယင်း", "Tabayin", 1], ["ဘုတလင်", "Budalin", 1], ["ချောင်းဦး", "Chaung-U", 1], ["ကန့်ဘလူ", "Kanbalu", 1], ["ဝက်လက်", "Wetlet", 1], ["ပင်လည်ဘူး", "Pinlebu", 1], ["ဗန်းမောက်", "Banmauk", 1], ["အင်းတော်", "Indaw", 1], ["ထီးချိုင့်", "Tigyaing", 1], ["မကွေးတိုင်းဒေသကြီး", "Magway Region", 1], ["မကွေး", "Magway", 1], ["ပခုက္ကူ", "Pakokku", 1], ["မင်းဘူး", "Minbu", 1], ["သရက်", "Thayet", 1], ["ချောက်", "Chauk", 1], ["ရေနံချောင်း", "Yenangyaung", 1], ["တောင်တွင်းကြီး", "Taungdwingyi", 1], ["နတ်မောက်", "Natmauk", 1], ["ဂန့်ဂေါ", "Gangaw", 1], ["ဆော", "Saw", 1], ["ရေစကြို", "Yesagyo", 1], ["မြိုင်", "Myaing", 1], ["ပွင့်ဖြူ", "Pwintbyu", 1], ["စလင်း", "Salin", 1], ["အောင်လံ", "Aunglan", 1], ["မင်းလှ", "Minhla", 1], ["ဆင်ပေါင်ဝဲ", "Sinbaungwe", 1], ["တီလင်း", "Tilin", 1], ["ပဲခူးတိုင်းဒေသကြီး", "Bago Region", 1], ["ပဲခူး", "Bago", 1], ["တောင်ငူ", "Taungoo", 1], ["ပြည်", "Pyay", 1], ["သာယာဝတီ", "Tharrawaddy", 1], ["ညောင်လေးပင်", "Nyaunglebin", 1], ["ဒိုက်ဦး", "Daik-U", 1], ["ရွှေကျင်", "Shwegyin", 1], ["ဝေါ", "Waw", 1], ["ကဝ", "Kawa", 1], ["သနပ်ပင်", "Thanatpin", 1], ["အုတ်တွင်း", "Oktwin", 1], ["ဖြူး", "Phyu", 1], ["ရေတာရှည်", "Yedashe", 1], ["ပေါင်းတည်", "Paungde", 1], ["ပေါက်ခေါင်း", "Paukkaung", 1], ["လက်ပံတန်း", "Letpadan", 1], ["ဇီးကုန်း", "Zigon", 1], ["နတ်တလင်း", "Nattalin", 1], ["ရွှေတောင်", "Shwedaung", 1], ["ပန်းတောင်း", "Padaung", 1], ["သဲကုန်း", "Thegon", 1], ["ကြို့ပင်ကောက်", "Gyobingauk", 1], ["ဧရာဝတီတိုင်းဒေသကြီး", "Ayeyarwady Region", 1], ["ပုသိမ်", "Pathein", 1], ["ဟင်္သာတ", "Hinthada", 1], ["မြောင်းမြ", "Myaungmya", 1], ["ဖျာပုံ", "Pyapon", 1], ["မအူပင်", "Maubin", 1], ["လပွတ္တာ", "Labutta", 1], ["ပန်းတနော်", "Pantanaw", 1], ["ကျိုက်လတ်", "Kyaiklat", 1], ["ဘိုကလေး", "Bogale", 1], ["ဒေးဒရဲ", "Dedaye", 1], ["ဝါးခယ်မ", "Wakema", 1], ["အိမ်မဲ", "Einme", 1], ["ဇလွန်", "Zalun", 1], ["ကြံခင်း", "Kyangin", 1], ["လေးမျက်နှာ", "Lemyethna", 1], ["မြန်အောင်", "Myanaung", 1], ["ကျုံပျော်", "Kyonpyaw", 1], ["ငပုတော", "Ngaputaw", 1], ["ရေကြည်", "Yegyi", 1], ["ကန်ကြီးထောင့်", "Kangyidaunt", 1], ["ငါးသိုင်းချောင်း", "Ngathaingchaung", 1], ["သာပေါင်း", "Thabaung", 1], ["ကျောင်းကုန်း", "Kyaunggon", 1], ["အင်္ဂပူ", "Ingapu", 1], ["တနင်္သာရီတိုင်းဒေသကြီး", "Tanintharyi Region", 1], ["ထားဝယ်", "Dawei", 1], ["မြိတ်", "Myeik", 1], ["ကော့သောင်း", "Kawthaung", 1], ["ပုလော", "Palaw", 1], ["ရေဖြူ", "Yebyu", 1], ["လောင်းလုံ", "Launglon", 1], ["သရက်ချောင်း", "Thayetchaung", 1], ["ဘုတ်ပြင်း", "Bokpyin", 1], ["တနင်္သာရီ", "Tanintharyi", 1], ["ကျွန်းစု", "Kyunsu", 1], ["မွန်ပြည်နယ်", "Mon State", 1], ["မော်လမြိုင်", "Mawlamyine", 1], ["သထုံ", "Thaton", 1], ["ကျိုက်မရော", "Kyaikmaraw", 1], ["မုဒုံ", "Mudon", 1], ["ချောင်းဆုံ", "Chaungzon", 1], ["ပေါင်", "Paung", 1], ["ကျိုက်ထို", "Kyaikto", 1], ["ဘီးလင်း", "Bilin", 1], ["ရေး", "Ye", 1], ["သံဖြူဇရပ်", "Thanbyuzayat", 1], ["ကရင်ပြည်နယ်", "Kayin State", 1], ["ဘားအံ", "Hpa-An", 1], ["မြဝတီ", "Myawaddy", 1], ["ကော့ကရိတ်", "Kawkareik", 1], ["လှိုင်းဘွဲ့", "Hlaingbwe", 1], ["ဖာပွန်", "Hpapun", 1], ["သံတောင်ကြီး", "Thandaunggyi", 1], ["ကြာအင်းဆိပ်ကြီး", "Kyainseikgyi", 1], ["ကယားပြည်နယ်", "Kayah State", 1], ["လွိုင်ကော်", "Loikaw", 1], ["ဒီးမော့ဆို", "Demoso", 1], ["ဖရူဆို", "Hpruso", 1], ["ရှားတော", "Shadaw", 1], ["ဘောလခဲ", "Bawlakhe", 1], ["ဖားဆောင်း", "Hpasawng", 1], ["မယ်စဲ့", "Mese", 1], ["ရှမ်းပြည်နယ်", "Shan State", 1], ["တောင်ကြီး", "Taunggyi", 1], ["ကလော", "Kalaw", 1], ["အောင်ပန်း", "Aungban", 1], ["ညောင်ရွှေ", "Nyaungshwe", 1], ["ရွာငံ", "Ywangan", 1], ["ပင်းတယ", "Pindaya", 1], ["ပင်လောင်း", "Pinlaung", 1], ["ဟိုပုံး", "Hopong", 1], ["ဆီဆိုင်", "Hsihseng", 1], ["လွိုင်လင်", "Loilen", 1], ["နမ့်ဆန်", "Namhsan", 1], ["လားရှိုး", "Lashio", 1], ["သီပေါ", "Hsipaw", 1], ["ကျောက်မဲ", "Kyaukme", 1], ["နမ့်ခမ်း", "Namhkam", 1], ["မူဆယ်", "Muse", 1], ["ကွတ်ခိုင်", "Kutkai", 1], ["ဟိုပင်", "Hopang", 1], ["တန့်ယန်း", "Tangyan", 1], ["လောက်ကိုင်", "Laukkai", 1], ["ကွန်လုံ", "Kunlong", 1], ["ကျိုင်းတုံ", "Kengtung", 1], ["တာချီလိတ်", "Tachileik", 1], ["မိုင်းဆတ်", "Mong Hsat", 1], ["ရပ်စောက်", "Yatsauk", 1], ["ဖယ်ခုံ", "Pekon", 1], ["မိုင်းကိုင်", "Mong Kung", 1], ["ကချင်ပြည်နယ်", "Kachin State", 1], ["မြစ်ကြီးနား", "Myitkyina", 1], ["ဗန်းမော်", "Bhamo", 1], ["ပူတာအို", "Putao", 1], ["မိုးကောင်း", "Mogaung", 1], ["ဝိုင်းမော်", "Waingmaw", 1], ["ဖားကန့်", "Hpakant", 1], ["မိုးညှင်း", "Mohnyin", 1], ["ရွှေကူ", "Shwegu", 1], ["မံစီ", "Mansi", 1], ["မိုးမောက်", "Momauk", 1], ["ချီဖွေ", "Chipwi", 1], ["ဆော့လော်", "Tsawlaw", 1], ["တနိုင်း", "Tanai", 1], ["ချင်းပြည်နယ်", "Chin State", 1], ["ဟားခါး", "Hakha", 1], ["ဖလမ်း", "Falam", 1], ["တီးတိန်", "Tedim", 1], ["တွန်းဇံ", "Tonzang", 1], ["မင်းတပ်", "Mindat", 1], ["မတူပီ", "Matupi", 1], ["ကန်ပက်လက်", "Kanpetlet", 1], ["ပလက်ဝ", "Paletwa", 1], ["ထန်တလန်", "Thantlang", 1], ["ရခိုင်ပြည်နယ်", "Rakhine State", 1], ["စစ်တွေ", "Sittwe", 1], ["ကျောက်ဖြူ", "Kyaukphyu", 1], ["သံတွဲ", "Thandwe", 1], ["ရမ်းဗြဲ", "Ramree", 1], ["မာန်အောင်", "Manaung", 1], ["တောင်ကုတ်", "Toungup", 1], ["ဂွ", "Gwa", 1], ["မြောက်ဦး", "Mrauk-U", 1], ["ကျောက်တော်", "Kyauktaw", 1], ["မင်းပြား", "Minbya", 1], ["ပုဏ္ဏားကျွန်း", "Ponnagyun", 1], ["ရသေ့တောင်", "Rathedaung", 1], ["ဘူးသီးတောင်", "Buthidaung", 1], ["မောင်တော", "Maungdaw", 1], ["ပေါက်တော", "Pauktaw", 1], ["အမ်း", "Ann", 1]];
+const I18N_PAIRS = [["👤 ကိုယ်ရေး အချက်အလက်", "👤 Personal info", 1],["✏️ ပြင်မည်", "✏️ Edit", 1],["ဖုန်း", "Phone", 1],["မွေးနေ့", "Birthday", 1],["လိပ်စာ", "Address", 1],["မထည့်ရသေးပါ", "Not set", 1],["Password ပြောင်းမည်", "Change password", 1],["Password သတ်မှတ်မည်", "Set a password", 1],["Login ဝင်ပုံ · လုံခြုံရေး", "Sign-in method · Security", 1],["🎫 Prepaid (ကျပ်)", "🎫 Prepaid (MMK)", 1],["← Profile", "← Profile", 1],["🔐 Login ဝင်ပုံ", "🔐 Sign-in methods", 1],["Google ခလုတ်နဲ့ တစ်ချက်တည်း ဝင်", "One tap with Google", 1],["Gmail နဲ့ Password ရိုက်ပြီး ဝင်", "Sign in with Gmail and password", 1],["Password မသတ်မှတ်ရသေးပါ", "No password set yet", 1],["✓ ဖွင့်ထား", "✓ On", 1],["— မရှိ", "— Off", 1],["🔑 Password ပြောင်းမည်", "🔑 Change password", 1],["🔑 Password သတ်မှတ်မည်", "🔑 Set a password", 1],["လက်ရှိ PASSWORD", "CURRENT PASSWORD", 1],["လက်ရှိ Password မေ့နေလား?", "Forgot current password?", 1],["PASSWORD အသစ် (အနည်းဆုံး ၈ လုံး)", "NEW PASSWORD (min 8 characters)", 1],["PASSWORD အသစ် ထပ်ရိုက်ပါ", "CONFIRM NEW PASSWORD", 1],["PASSWORD ထပ်ရိုက်ပါ", "CONFIRM PASSWORD", 1],["Password အသစ် သိမ်းမည်", "Save new password", 1],["📱 ဖုန်းအားလုံးကနေ Logout", "📱 Log out everywhere", 1],["⎋ နေရာအားလုံးကနေ Logout", "⎋ Log out of all devices", 1],["✅ Google ဖြင့် အတည်ပြုပြီးပါပြီ", "✅ Confirmed with Google", 1],["Google ဖြင့် အတည်ပြုမည်", "Confirm with Google", 1],["Password ပြောင်းပြီးပါပြီ", "Password changed", 1],["Password သတ်မှတ်ပြီးပါပြီ", "Password set", 1],["📍 သိမ်းထားသော လိပ်စာ", "📍 Saved addresses", 1], ["💾 ဒီလိပ်စာကို သိမ်းထားမည်", "💾 Save this address", 1], ["အိမ်", "Home", 1], ["ရုံး", "Office", 1], ["ဆိုင်", "Shop", 1], ["⏳ PRE-ORDER — ကြိုမှာထားလို့ရပါသည်", "⏳ PRE-ORDER — order now, ships on arrival", 1], ["ပစ္စည်းရောက်တာနဲ့ အရင်ဆုံး ပို့ပေးပါမည်", "We'll ship to you first as soon as it arrives", 1], ["ကြိုမှာမည် →", "Pre-order →", 1], ["⏳ ကြိုမှာမည် (Pre-order)", "⏳ Pre-order now", 1], ["မူလ", "Default", 1], ["အသစ်ဆုံး", "Newest", 1], ["ဈေး နည်း → များ", "Price: low → high", 1], ["ဈေး များ → နည်း", "Price: high → low", 1], ["🔥 လျှော့ဈေး အများဆုံး", "🔥 Biggest discount", 1], ["⭐ Rating အကောင်းဆုံး", "⭐ Top rated", 1], ["👀 မကြာခင်က ကြည့်ခဲ့သည်", "👀 Recently viewed", 1], ["ရှင်းမည်", "Clear", 1], ["⭐ Review များ", "⭐ Reviews", 1], ["⭐ Review ရေးမည်", "⭐ Write a review", 1], ["ဒီပစ္စည်းကို ဘယ်လောက် ကြိုက်လဲ?", "How do you like this item?", 1], ["ကြယ်ပွင့် နှိပ်ပြီး ရွေးပါ", "Tap a star", 1], ["😞 မကြိုက်ပါ", "😞 Didn't like it", 1], ["😕 သိပ်မကောင်း", "😕 Not great", 1], ["🙂 အသင့်အတင့်", "🙂 Okay", 1], ["😊 ကောင်းတယ်", "😊 Good", 1], ["🤩 အရမ်းကြိုက်တယ်", "🤩 Love it", 1], ["📷 ပုံ ထည့်မည် (Optional)", "📷 Add a photo (optional)", 1], ["Review တင်မည်", "Post review", 1], ["✅ ဝယ်ယူပြီးသူ", "✅ Verified buyer", 1], ["⏳ သင့် Review ကို ဆိုင်က စစ်ဆေးနေပါသည် — မကြာခင် ပေါ်ပါမည်", "⏳ Your review is being checked — it will appear soon", 1], ["✅ သင့် Review ပေါ်နေပါပြီ — ကျေးဇူးတင်ပါတယ်", "✅ Your review is live — thank you", 1], ["Load လုပ်နေသည်...", "Loading...", 1], ["Review မရှိသေးပါ", "No reviews yet", 1], ["Review မရှိသေးပါ — ပထမဆုံး ရေးပေးပါ 🙏", "No reviews yet — be the first 🙏", 1], ["⏰ Sale ကုန်ရန်", "⏰ Sale ends in", 1], ["⏰ Sale ကုန်သွားပါပြီ", "⏰ Sale has ended", 1], ["ရက်", "days", 1], ["စက္ကန့်", "sec", 1], ["MEMBER TAG · အဖွဲ့ဝင်ကတ်", "MEMBER TAG", 1], ["ကိုယ်ရေး", "Profile", 1], ["ဖုန်းနံပါတ် (09xxxxxxxxx)", "Phone (09xxxxxxxxx)", 1], ["PASSWORD (အနည်းဆုံး ၆ လုံး)", "PASSWORD (min 6)", 1], ["Password ခိုင်မာမှု", "Password strength", 1], ["အားနည်း", "Weak", 1], ["သင့်တင့်", "Fair", 1], ["ကောင်း", "Good", 1], ["အရမ်းခိုင်မာ", "Strong", 1], ["PASSWORD ထပ်ရိုက်ပါ", "CONFIRM PASSWORD", 1], ["Login ဝင်ပြီးပါပြီ", "You're logged in", 1], ["Account ဖွင့်ပြီးပါပြီ", "Account created", 1], ["Account ဖွင့်ပြီးပါပြီ — Gmail ထဲက Confirmation Link ကို နှိပ်ပြီးမှ Login ဝင်ပါ", "Account created — tap the confirmation link in your Gmail, then log in", 1], ["OK — Gmail သွားစစ်မည်", "OK — I'll check Gmail", 1], ["ဆက်ပြီး ဈေးဝယ်မည် →", "Continue shopping →", 1], ["Gmail ထဲမှာ Space (ကွက်လပ်) မပါရပါ", "Gmail can't contain spaces", 1], ["Gmail မှာ @ မပါသေးပါ — ဥပမာ you@gmail.com", "Gmail is missing @ — e.g. you@gmail.com", 1], ["Gmail မှာ @ တစ်ခုပဲ ပါရပါမည်", "Gmail must contain only one @", 1], ["@ ရှေ့မှာ နာမည် ထည့်ပါ — ဥပမာ you@gmail.com", "Add your name before @ — e.g. you@gmail.com", 1], ["@ နောက်မှာ gmail.com လို အပြည့်အစုံ ထည့်ပါ", "Complete the part after @, like gmail.com", 1], ["Gmail (သို့) Password မှားနေပါသည်", "Wrong Gmail or password", 1], ["ဒီ Gmail နဲ့ Account ရှိပြီးသားပါ — Login ဝင်ပါ", "An account with this Gmail already exists — please log in", 1], ["Gmail ထဲက Confirmation Link ကို အရင် နှိပ်ပေးပါ", "Please tap the confirmation link in your Gmail first", 1], ["ခဏ စောင့်ပြီးမှ ပြန်စမ်းပါ", "Please wait a moment and try again", 1], ["Gmail လိပ်စာ ပုံစံ မှားနေပါသည်", "Invalid Gmail address", 1], ["Internet ချိတ်ဆက်မှု စစ်ပေးပါ", "Please check your internet connection", 1], ["အမည် ထည့်ပေးပါ", "Please enter your name", 1], ["ဖုန်းနံပါတ် ထည့်ပေးပါ", "Please enter your phone number", 1], ["ဖုန်းနံပါတ် မှန်အောင် ထည့်ပါ — ဥပမာ 09xxxxxxxxx", "Enter a valid phone number — e.g. 09xxxxxxxxx", 1], ["Password ထည့်ပါ", "Enter your password", 1], ["Password အနည်းဆုံး ၆ လုံး ရှိရပါမည်", "Password must be at least 6 characters", 1], ["Password ၂ ခု မတူပါ", "Passwords don't match", 1], ["✅ Reset Link ပို့ပြီးပါပြီ — Gmail ကို စစ်ကြည့်ပါ", "✅ Reset link sent — check your Gmail", 1], ["Streetwear Menswear ဆိုင် — Nay Pyi Taw ပုဗ္ဗသီရိမြို့ အခြေစိုက်။ Tee, Hoodie, Jacket, Pants, Accessories များ KBZPay ဖြင့် Online မှာယူနိုင်ပါသည်။", "Streetwear menswear store based in Pobbathiri, Nay Pyi Taw. Order tees, hoodies, jackets, pants and accessories online with KBZPay.", 0], ["ပစ္စည်းများ ▾", "Shop ▾", 0], ["အားလုံး", "All", 0], ["Post များ", "Posts", 0], ["မှာယူနည်း", "How to Order", 0], ["လိပ်စာ", "Location", 0], ["ဆက်သွယ်ရန်", "Contact", 0], ["လမ်းပေါ်က အမှန်တရား", "Truth from the Street", 0], ["နေပြည်တော် ပုဗ္ဗသီရိမြို့ကနေ အရည်အသွေးကောင်းတဲ့ အမျိုးသားဖက်ရှင် အင်္ကျီများကို ရွေးချယ်ဝယ်ယူပြီး ပြန်လည်ဖြန့်ဖြူး ရောင်းချပေးနေတဲ့ ဆိုင်ပါ။", "A Pobbathiri, Nay Pyi Taw store hand-picking quality menswear and bringing it to you.", 0], ["TikTok ကြည့်မည်", "Watch on TikTok", 0], ["Messenger ဖြင့် မှာယူမည်", "Order via Messenger", 0], ["Viber ဖြင့် ဆက်သွယ်မည်", "Contact via Viber", 0], ["SUWATI MEN FASHION သည် ကိုယ်တိုင် အင်္ကျီထုတ်လုပ်သည့် စက်ရုံမဟုတ်ပါ။ အရည်အသွေးကောင်းသော အမျိုးသားဖက်ရှင် ပစ္စည်းများကို ဂရုတစိုက် ရွေးချယ်ဝယ်ယူပြီး၊ နေပြည်တော် ပုဗ္ဗသီရိမြို့ကနေ ခိုင်မာတဲ့ ဈေးနှုန်းနဲ့ ပြန်လည်ဖြန့်ဖြူး ရောင်းချပေးနေတဲ့ ဆိုင်တစ်ခုပါ။ ပစ္စည်းတိုင်းကို ကိုယ်တိုင် စစ်ဆေးပြီးမှ ပြန်ရောင်းချပါတယ်။", "SUWATI MEN FASHION is not a factory. We carefully select quality menswear and resell it from Pobbathiri, Nay Pyi Taw at fair, stable prices. Every item is personally checked before it is sold.", 0], ["ဆိုင်ထဲက အသစ်ဆုံးတွေ", "Latest in Store", 0], ["Size — ပစ္စည်းတစ်ခုချင်းစီအောက်မှာ ကြည့်ပါ။ ဓာတ်ပုံအစစ်များကို Messenger ပို့ပေးပါမယ်။", "Sizes are listed under each item. We can send real photos via Messenger.", 0], ["ပစ္စည်းများ Load လုပ်နေသည်", "Loading products", 0], ["သတင်းနှင့် Promotion", "News & Promotions", 0], ["ဆိုင်ရဲ့ နောက်ဆုံးရ Drop, Promotion နဲ့ သတင်းများ", "Our latest drops, promotions and news", 0], ["Post များ Load လုပ်နေသည်", "Loading posts", 0], ["မှာယူနည်း သုံးဆင့်တည်း", "Order in 3 Easy Steps", 0], ["ကြိုက်တဲ့ ပစ္စည်းကို ရွေးပါ", "Pick what you like", 0], ["အထက်က ပစ္စည်းစာရင်းထဲက အရွယ်အစားနဲ့ အရေအတွက် ရွေးထားပါ။", "Choose the size and quantity from the products above.", 0], ["TikTok / Messenger ဖြင့် ဆက်သွယ်ပါ", "Contact us on TikTok / Messenger", 0], ["ပစ္စည်းအမည်၊ Size၊ ပို့ဆောင်လိပ်စာ ပို့ပေးပါ။", "Send the item name, size and delivery address.", 0], ["ငွေချေ + လက်ခံပါ", "Pay + Receive", 0], ["နေပြည်တော်အတွင်း ၁-၂ရက်၊ တခြားမြို့များ ၃-၅ရက်အတွင်း ပို့ဆောင်ပေးပါတယ်။", "Delivery in 1–2 days within Nay Pyi Taw, 3–5 days to other cities.", 0], ["ဆိုင်လိပ်စာ", "Store Address", 0], ["နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့၊ ကျည်တောင်ကန်", "Kyee Taung Kan, Pobbathiri, Nay Pyi Taw", 0], ["ဘူတာလမ်း အမှတ်(၁)ရပ်ကွက်", "Station Road, Ward No. 1", 0], ["Google Map ဖွင့်ရန်", "Open Google Maps", 0], ["နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့ — SUWATI MEN FASHION © 2026", "Pobbathiri, Nay Pyi Taw — SUWATI MEN FASHION © 2026", 0], ["စည်းမျဉ်းစည်းကမ်းများ", "Terms & Conditions", 0], ["မင်္ဂလာပါ", "Hello", 0], ["SUWATI MEN FASHION မှ ကြိုဆိုပါတယ်", "Welcome to SUWATI MEN FASHION", 0], ["Password ပြန်သတ်မှတ်ရန်", "Reset Password", 0], ["Gmail လိပ်စာ ထည့်ပါ — Password ပြန်သတ်မှတ်ရန် Link ပို့ပေးပါမယ်", "Enter your Gmail — we'll send you a reset link", 0], ["Reset Link ပို့မည်", "Send Reset Link", 0], ["← Login ကို ပြန်သွားမည်", "← Back to Login", 0], ["Account အသစ် ဖွင့်ရန်", "Create Account", 0], ["အမည် (Name)", "Name", 0], ["မွေးသက္ကရာဇ် (Date of Birth)", "Date of Birth", 0], ["ဖုန်းနံပါတ်", "Phone Number", 0], ["📍 နေရပ်လိပ်စာ", "📍 Home Address", 0], ["Sign Up နှိပ်ခြင်းဖြင့်", "By tapping Sign Up, you agree to the", 0], ["စည်းမျဉ်းများ", "Terms", 0], ["ကို သဘောတူပါသည်။", ".", 0], ["Google ဖြင့် Sign Up", "Sign up with Google", 0], ["Password မေ့နေပါသလား?", "Forgot password?", 0], ["Google ဖြင့် Login ဝင်မည်", "Log in with Google", 0], ["Google Login ဖြင့် ဝင်၍ မရပါ", "Couldn't log in with Google", 0], ["ဘောင်အားလုံး ဖြည့်ပေးပါ", "Please fill in all fields", 0], ["Password အသစ် သတ်မှတ်ရန်", "Set New Password", 0], ["Password အသစ် သိမ်းမည်", "Save New Password", 0], ["Load လုပ်နေသည်", "Loading", 0], ["အမည်", "Name", 0], ["ဖုန်း", "Phone", 0], ["မွေးသက္ကရာဇ်", "Birthday", 0], ["Profile ပြင်ဆင်ရန်", "Edit Profile", 0], ["လက်ကျန် ငွေပမာဏ", "Balance", 0], ["➕ ငွေဖြည့်ရန်", "➕ Top Up", 0], ["🎫 ကျွန်ုပ်၏ Prepaid Card ကြည့်ရန် (အပြင်ဆိုင်တွင် သုံးရန်)", "🎫 My Prepaid Card (use in store)", 0], ["Gift Card ဝယ်ရန်", "Buy Gift Card", 0], ["Code သုံးရန်", "Redeem Code", 0], ["🎁 ကျွန်ုပ်၏ Gift Card များ · History ကြည့်ရန်", "🎁 My Gift Cards · History", 0], ["📦 Order History ကြည့်ရန်", "📦 Order History", 0], ["← Profile ပြန်သွားရန်", "← Back to Profile", 0], ["Order History ကြည့်၍မရပါ", "Couldn't load order history", 0], ["⏰ ငွေလွှဲရန် စောင့်ဆဲ", "⏰ Awaiting payment", 0], ["ငွေချေမှု စစ်ဆေးဆဲ", "Verifying payment", 0], ["အတည်ပြုပြီး", "Confirmed", 0], ["ပြင်ဆင်နေဆဲ", "Preparing", 0], ["ပို့ဆောင်နေဆဲ", "Shipping", 0], ["ပေးအပ်ပြီး", "Delivered", 0], ["ပယ်ဖျက်", "Cancelled", 0], ["⏳ စစ်ဆေးဆဲ", "⏳ Pending", 0], ["✅ အသုံးပြုနိုင်ပြီ", "✅ Active", 0], ["☑️ အသုံးပြုပြီးသား", "☑️ Used", 0], ["❌ ငြင်းပယ်ခံရ", "❌ Rejected", 0], ["Order မှတ်တမ်း မရှိသေးပါ", "No orders yet", 0], ["ရှာဖွေမှုနှင့် ကိုက်ညီသော Order မတွေ့ပါ", "No matching orders", 0], ["🗑️ Order History အားလုံး ဖျက်မည်", "🗑️ Clear All Order History", 0], ["ဒီ Order History ကို ဖျက်မှာ သေချာပါသလား?", "Delete this order from history?", 0], ["ပြန်ယူလို့ မရပါ", "This can't be undone", 0], ["ဖျက်မည်", "Delete", 0], ["ဖျက်၍ မရပါ", "Couldn't delete", 0], ["Order History ဖျက်ပြီးပါပြီ", "Order removed from history", 0], ["Order History အားလုံးကို ဖျက်မှာ သေချာပါသလား?", "Clear your entire order history?", 0], ["အားလုံး ဖျက်မည်", "Delete All", 0], ["Order History အားလုံး ဖျက်ပြီးပါပြီ", "Order history cleared", 0], ["ကို ခြင်းထဲ ထည့်ပြီးပါပြီ", " added to cart", 0], ["ခြင်းထဲ ဗလာဖြစ်နေပါသည်", "Your cart is empty", 0], ["ပစ္စည်းများကို", "Tap", 0], ["ခြင်းထဲ ထည့်မည်", "Add to Cart", 0], ["နှိပ်ပြီး ထည့်လိုက်ပါ", "on items to add them", 0], ["ကျွန်ုပ်၏ ခြင်း", "My Cart", 0], ["စုစုပေါင်း", "Total", 0], ["Checkout ဆက်သွားမည် →", "Continue to Checkout →", 0], ["ဘယ်နှရက်", "How many days", 0], ["Size Chart ကို Product Detail Page ထဲမှာ ကြည့်နိုင်ပါတယ်။ Size ရွေးရာမှာ အခက်အခဲရှိရင် အောက်က Message ဘောင်ကနေ မေးနိုင်ပါတယ်။", "You can see the size chart on each product page. If you're unsure about sizing, ask us in the message box below.", 0], ["အရွယ်အစား", "Size", 0], ["ပစ္စည်း ချွတ်ယွင်းချက်ရှိမှသာ ပြန်လည် လဲလှယ်ပေးပါတယ်။ Order ရရှိပြီး ၂ရက်အတွင်း ဆက်သွယ်ပေးပါ။", "We exchange items only if they're defective. Please contact us within 2 days of receiving your order.", 0], ["KBZPay ဖြင့်သာ ငွေပေးချေလို့ရပါတယ်။ Order တင်ပြီးရင် QR Code ချက်ချင်း ပေါ်လာမှာပါ။", "We accept KBZPay only. The QR code appears right after you place your order.", 0], ["ပစ္စည်း Stock ရှိမရှိကို Product Page ပေါ်မှာ တိုက်ရိုက် ကြည့်လို့ရပါတယ် (Size/Color ရွေးရင် တိကျစွာ ပြပါမယ်)။", "Stock is shown live on each product page (exact stock appears once you choose size/color).", 0], ["ဈေးနှုန်းများကို ပစ္စည်းတစ်ခုချင်းစီအောက်မှာ တွေ့နိုင်ပါတယ်။", "Prices are shown under each item.", 0], ["ဈေးနှုန်း", "Price", 0], ["ADMIN နှင့် တိုက်ရိုက် စကားပြော", "Chat directly with ADMIN", 0], ["ပို့မည်", "Send", 0], ["Return/Refund Proof ပုံ ပို့ချင်ရင် 📎 ကို နှိပ်ပါ", "Tap 📎 to send a return/refund photo", 0], ["ADMIN ကို တိုက်ရိုက် Message ပို့ရန်", "Message ADMIN directly", 0], ["Message ပို့ရန် Login ဝင်ရန် လိုအပ်ပါသည် (Guest ဆိုရင် Messenger/Viber သုံးပါ)", "Please log in to send messages (guests can use Messenger/Viber)", 0], ["Login ဝင်ရန်", "Log In", 0], ["Messenger ဖြင့် ဆက်သွယ်ရန်", "Contact via Messenger", 0], ["မေးလေ့ရှိသော မေးခွန်းများ", "FAQ", 0], ["Message များ Load မလုပ်နိုင်ပါ", "Couldn't load messages", 0], ["Message မရှိသေးပါ — အောက်မှာ ရေးပို့နိုင်ပါတယ်", "No messages yet — write to us below", 0], ["ပုံ ပို့၍ မရပါ", "Couldn't send photo", 0], ["Message ပို့၍မရပါ", "Couldn't send message", 0], ["🎟️ Promo Code သုံးလို့ မရတော့ပါ", "🎟️ Promo code can no longer be used", 0], ["နောက်ပြန်သွားပြီး Promo ကို ဖြုတ်/ပြန်စစ်ပါ", "Go back and remove/recheck the promo", 0], ["တောင်းပန်ပါတယ် — Stock ကုန်သွားပါပြီ", "Sorry — out of stock", 0], ["Page ကို Refresh လုပ်ပြီး ပြန်ရွေးပေးပါ", "Please refresh the page and choose again", 0], ["ပစ္စည်းဈေးနှုန်း ပြောင်းသွားပါသည် — Page ကို Refresh လုပ်ပြီး ပြန်မှာပေးပါ", "Price has changed — please refresh and order again", 0], ["ငွေပေးချေမှု အတည်မပြုနိုင်ပါ — ထပ်ကြိုးစားပါ", "Couldn't confirm payment — please try again", 0], ["⏰ ငွေမလွှဲရသေးတဲ့ Order ၂ ခု ရှိနေပါသည် — အရင် Order တွေကို ငွေလွှဲ (သို့) ပယ်ဖျက်ပြီးမှ", "⏰ You have 2 unpaid orders — pay or cancel them first, then", 0], ["ငွေ နောက်မှ လွှဲမည်", "Pay Later", 0], ["ကို ထပ်သုံးနိုင်ပါသည်", " becomes available again", 0], ["ကို ယာယီ ပိတ်ထားပါသည် — Screenshot တင်ပြီး Order တင်ပေးပါ", " is temporarily off — please upload a screenshot to order", 0], ["ငွေပေးချေမှု ပုံစံ မမှန်ကန်ပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ", "Invalid payment — please refresh and try again", 0], ["Order တင်ခွင့် မရှိပါ — Page ကို Refresh လုပ်ပြီး ပြန်ကြိုးစားပါ", "Not allowed to place order — please refresh and try again", 0], ["🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု", "🎁 Gift Wrapping", 0], ["နေပြည်တော်အတွင်း", "Within Nay Pyi Taw", 0], ["အခြားမြို့များ (နေပြည်တော်ပြင်ပ)", "Other cities (outside Nay Pyi Taw)", 0], ["Royal Express Delivery Service မှ နှုန်းထားများအတိုင်း ကျသင့်ပါမည်", "Charged at Royal Express Delivery Service rates", 0], ["🚚 ပို့ဆောင်မည့် နေရာ ရွေးပါ", "🚚 Choose delivery area", 0], ["နေရာ ရွေးပါ", "Choose area", 0], ["Delivery ခ", "Delivery fee", 0], ["ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည်", "Pay the courier on delivery", 0], ["ဒီ Order စုစုပေါင်းထဲ မပါဝင်ပါ", "Not included in this order total", 0], ["🚚 Delivery ခ သည်", "🚚 Delivery fee", 0], ["🎉 ဒီ Order အတွက်", "🎉 You'll get", 0], ["ရပါမည် — ပစ္စည်းရောက်ပြီးနောက် Prepaid Card ထဲ အလိုအလျောက် ဝင်ပါမည်", " for this order — added to your Prepaid Card after delivery", 0], ["🎉 Login ဝင်ပြီး ဝယ်ရင်", "🎉 Log in to get", 0], ["ရနိုင်ပါသည် (Guest Order တွေမှာ Cashback မပါပါ)", " (no cashback for guest orders)", 0], ["💡 နောက်ထပ်", "💡 Buy", 0], ["ဖိုး ထပ်ဝယ်ရင် Cashback ရပါမည်", " more to get cashback", 0], ["🎟️ Promo Code ရှိပါသလား?", "🎟️ Have a promo code?", 0], ["Promo Code ရိုက်ထည့်ပါ", "Enter promo code", 0], ["စစ်ဆေးလို့ မရပါ", "Couldn't verify", 0], ["Promo Code မှားနေပါသည်", "Invalid promo code", 0], ["ကျပ်+ →", "MMK+ →", 0], ["Login ဝင်ပြီး ဝယ်ရင် ပစ္စည်းရောက်ပြီးနောက် Prepaid Card ထဲ အလိုအလျောက် ဝင်ပါမည်", "When logged in, it's added to your Prepaid Card automatically after delivery", 0], ["တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပါ", "Choose region / state", 0], ["အော်ဒါ အချက်အလက်", "Order Details", 0], ["📍 ပို့ဆောင်ရမည့် လိပ်စာ", "📍 Delivery Address", 0], ["ဆက်သွားမည် →", "Continue →", 0], ["← ပြန်သွားမည်", "← Back", 0], ["🎁 Gift အဖြစ် ထုပ်ပိုးပြီး ပို့ပေးစေချင်ပါသည်", "🎁 Gift-wrap my order", 0], ["လက်ဆောင်ထုပ်ပိုးမှု + ဆုတောင်းကတ် ပါဝင်ပါသည်", "Includes gift wrapping + greeting card", 0], ["အမည်၊ ဖုန်းနံပါတ် ဖြည့်ပေးပါ", "Please enter your name and phone number", 0], ["တိုင်းဒေသကြီး / ပြည်နယ် ရွေးပေးပါ", "Please choose a region / state", 0], ["မြို့နယ် ရွေးပေးပါ", "Please choose a township", 0], ["အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် ဖြည့်ပေးပါ", "Please enter house no., street and ward", 0], ["မြို့နယ်၊", " Township,", 0], ["ပို့ဆောင်မည့် နေရာ (Delivery Zone) ရွေးပေးပါ", "Please choose a delivery zone", 0], ["KBZPay QR Code ကို Scan လုပ်ပြီး ငွေပေးချေမှု ပြုလုပ်ပါ။", "Scan the KBZPay QR code to pay.", 0], ["အော်ဒါ အတည်ပြုရန်", "Confirm Order", 0], ["ပစ္စည်းရောက်မှ Delivery သမားကို ပေးချေရပါမည် (အထက်ပါ စုစုပေါင်းထဲ မပါဝင်ပါ)", "Pay the courier on delivery (not included in the total above)", 0], ["💰 PREPAID CARD (WALLET) — လက်ကျန်", "💰 PREPAID CARD (WALLET) — Balance", 0], ["KBZPAY ဖြင့် ငွေပေးချေရန်", "PAY WITH KBZPAY", 0], ["PAYMENT SCREENSHOT တင်ပါ", "UPLOAD PAYMENT SCREENSHOT", 0], ["Order တင်မည်", "Place Order", 0], ["ကျပ် နုတ်ပြီး", "MMK deducted", 0], ["လုပ်ဆောင်နေသည်", "Processing", 0], ["Stock မလုံလောက်တော့ပါ", "Not enough stock", 0], ["Wallet ဖြင့် ချက်ချင်း ဝယ်မည်", "Buy Now with Wallet", 0], ["Card လက်ကျန် မလုံလောက်ပါ", "Insufficient card balance", 0], ["Wallet ငွေ မလုံလောက်တော့ပါ", "Insufficient wallet balance", 0], ["ငွေ ပြန်အမ်းပြီးပါပြီ", "Refunded", 0], ["Prepaid Card ငွေ ပြန်အမ်းပြီးပါပြီ", "Refunded to Prepaid Card", 0], ["ငွေပေးချေပြီးကြောင်း Screenshot တင်ရန် လိုအပ်ပါသည်", "Please upload your payment screenshot", 0], ["JPG, JPEG, PNG ပုံဖိုင်သာ တင်ပေးပါ", "Only JPG, JPEG or PNG images", 0], ["Order ကို အရင်တင်ပြီး", "Place the order now and pay", 0], ["ကျပ်ကို နောက်မှ လွှဲမှာ သေချာပါသလား?", "MMK later?", 0], ["မတင်တော့ပါ", "Cancel", 0], ["တင်နေသည်", "Uploading", 0], ["တောင်းပန်ပါတယ်", "Sorry", 0], ["ပဲ ရှိတော့ပါတယ်။ အရေအတွက်ကို", " left. Quantity adjusted to", 0], ["ခု အဖြစ် ချိန်ညှိပေးလိုက်ပါပြီ — အဆင်ပြေရင်", " — if that's OK, tap", 0], ["ကို ထပ်နှိပ်ပေးပါ။", " again.", 0], ["လုံးဝ ကုန်သွားပါပြီ။ ခြင်းထဲက ဖယ်ရှားပေးလိုက်ပါပြီ — ကျန်တဲ့ ပစ္စည်းတွေနဲ့ ဆက်ပြီး Order တင်နိုင်ပါတယ်။", " is sold out and was removed from your cart — you can continue with the remaining items.", 0], ["Order ထဲက ပစ္စည်းအားလုံး Stock ကုန်သွားလို့ Order ပယ်ဖျက်လိုက်ပါပြီ", "All items are out of stock, so the order was cancelled", 0], ["Prepaid Card လက်ကျန် မလုံလောက်တော့ပါ — စာမျက်နှာ ပြန်ဖွင့်ပြီး ထပ်စမ်းပါ", "Insufficient Prepaid Card balance — please reload and try again", 0], ["Prepaid ငွေ ပြန်အမ်းပြီးပါပြီ", "Prepaid balance refunded", 0], ["Order တင်ပြီးပါပြီ", "Order Placed", 0], ["ကျေးဇူးတင်ပါတယ်", "Thank you", 0], ["ခဏစောင့်ဆိုင်းပေးပါ — ပြန်လည်ဆက်သွယ်ပေးပါမယ်။", "Please wait — we'll get back to you shortly.", 0], ["🧾 Receipt ကြည့်ရန်", "🧾 View Receipt", 0], ["ငွေလွှဲရန် စောင့်ဆဲ", "Awaiting payment", 0], ["နေပြည်တော်၊ ပုဗ္ဗသီရိမြို့", "Pobbathiri, Nay Pyi Taw", 0], ["ကျေးဇူးတင်ပါသည်!", "Thank you!", 0], ["✕ ပိတ်မည်", "✕ Close", 0], ["✅ အတည်ပြုပြီး", "✅ Confirmed", 0], ["🎉 Gift Card ငွေ Prepaid Card ထဲ ဝင်ပါပြီ", "🎉 Gift card added to your Prepaid Card", 0], ["ပမာဏ ရွေးပါ", "Choose amount", 0], ["ဝယ်ယူမည်", "Buy", 0], ["Payment Screenshot တင်ရန် လိုအပ်ပါသည်", "Payment screenshot is required", 0], ["တောင်းပန်ပါတယ် — ဒီပမာဏ Stock ကုန်သွားပါပြီ", "Sorry — this amount is out of stock", 0], ["✅ Gift Card ဝယ်ယူမှု တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Code ရပါမည်", "✅ Gift card request sent — you'll get the code once Admin confirms", 0], ["လက်ဆောင်ရထားတဲ့ Gift Card Code ကို ထည့်ပါ — ပမာဏအတိုင်း Prepaid Card ထဲ ချက်ချင်း ဝင်ပါမည်", "Enter a gift card code — the amount goes straight into your Prepaid Card", 0], ["သုံးမည်", "Redeem", 0], ["Code ထည့်ပါ", "Enter a code", 0], ["စစ်ဆေးနေသည်", "Checking", 0], ["မသိသော Error", "Unknown error", 0], ["🎉 Gift Card အောင်မြင်ပါသည်!", "🎉 Gift card redeemed!", 0], ["ကျပ် Wallet ထဲ ဝင်ပါပြီ", "MMK added to your wallet", 0], ["အသုံးပြုနိုင်ပြီ", "Active", 0], ["အတည်ပြုရန် စောင့်ဆိုင်းဆဲ", "Awaiting approval", 0], ["အသုံးပြုပြီးသား", "Used", 0], ["ငြင်းပယ်ခံရ", "Rejected", 0], ["“ယခုပဲ သုံးမည်” ကိုနှိပ်ရင် Prepaid Card ထဲ ငွေဖြည့်ပေးပါမည် — (သို့) Code ကို Copy ကူးပြီး လက်ဆောင်ပေးလို့ရပါတယ်", "Tap “Use Now” to add it to your Prepaid Card — or copy the code and gift it", 0], ["ငွေလွှဲ Screenshot ကို Admin စစ်ပြီး အတည်ပြုတာနဲ့ ဒီနေရာမှာ Code ပေါ်လာပါမည်", "The code appears here once Admin verifies your payment", 0], ["ဒီ Code ကို Prepaid Card ထဲ ဖြည့်ပြီးသားပါ", "This code has already been added to a Prepaid Card", 0], ["အကြောင်းရင်း", "Reason", 0], ["မေးစရာရှိရင် Chat မှာ မေးမြန်းပါ", "Questions? Ask us in Chat", 0], ["Admin မှ အတည်ပြုပြီးမှ Code ထွက်လာပါမည်", "The code appears after Admin approval", 0], ["ငွေလွှဲ အတည်ပြု၍ မရပါ", "Payment couldn't be verified", 0], ["ယခုပဲ သုံးမည်", "Use Now", 0], ["✓ ကူးပြီး", "✓ Copied", 0], ["📋 Code ကူးယူပြီးပါပြီ", "📋 Code copied", 0], ["ဒီ Gift Card", "Add this gift card", 0], ["ကျပ်) ကို ယခုပဲ Wallet ထဲ ထည့်သုံးမှာ သေချာပါသလား?", "MMK) to your wallet now?", 0], ["Gift Card သုံးမည်", "Use Gift Card", 0], ["Wallet ထဲ ထည့်မည်", "Add to Wallet", 0], ["အမည် (Account ဖွင့်စဉ်က သတ်မှတ်ပြီးသား — ပြောင်း၍မရပါ)", "Name (set at sign-up — can't be changed)", 0], ["Nickname (အလွတ်တန်း ပြောင်းလို့ရသည် — Chat/Website ပေါ်မှာ ဒီနာမည် ပြပါမည်)", "Nickname (change anytime — shown in chat and on the site)", 0], ["📍 လိပ်စာ", "📍 Address", 0], ["သိမ်းမည်", "Save", 0], ["ကတ်များ", "Cards", 0], ["ဝယ်ရန်", "Buy", 0], ["Code သုံး", "Redeem", 0], ["စစ်ဆေးဆဲ", "Pending", 0], ["သုံးလို့ရ", "Active", 0], ["သုံးပြီး", "Used", 0], ["ငြင်းပယ်", "Rejected", 0], ["Gift Card ဝယ်ယူ", "Gift card purchase", 0], ["Prepaid Card ထဲ ဖြည့်သုံး", "Redeemed to Prepaid Card", 0], ["Wallet ဝင်", "To wallet", 0], ["မှတ်တမ်း မရှိသေးပါ", "No history yet", 0], ["Gift Card ဝယ်တာ / သုံးတာ တွေ ဒီမှာ ပေါ်ပါမည်", "Your gift card purchases and redemptions will appear here", 0], ["ဝယ်ယူခဲ့သော", "Purchased", 0], ["ဖြည့်သုံးခဲ့သော", "Redeemed", 0], ["📰 Post များ", "📰 Posts", 0], ["🛍️ မှာယူနည်း", "🛍️ How to Order", 0], ["📞 ဆက်သွယ်ရန်", "📞 Contact", 0], ["Messenger မှ မေးမြန်းရန်", "Ask on Messenger", 0], ["🔔 ပြန်ရောက်ရင် အသိပေးမည်", "🔔 Notify me when back", 0], ["✅ ပြန်ရောက်ရင် အသိပေးပါမည်", "✅ We'll notify you", 0], ["Stock ပြန်ရောက်ရင် အသိပေးဖို့ Login ဝင်ထားဖို့ လိုပါတယ်။ Login ဝင်မလား?", "Please log in to get restock alerts. Log in now?", 0], ["Login ဝင်မည်", "Log In", 0], ["⚠️ မအောင်မြင်ပါ", "⚠️ Failed", 0], ["🔕 အသိပေးမှု ဖျက်လိုက်ပါပြီ", "🔕 Alert removed", 0], ["ပြန်ရောက်တာနဲ့ Chat", " — we'll notify you by Chat", 0], ["ဖြင့် အသိပေးပါမည်", " as soon as it's back", 0], ["iPhone မှာ Notification ရဖို့", "To get notifications on iPhone", 0], ["နှိပ်ပါ", "tap", 0], ["2) Home Screen က SUWATI App ကနေ ဖွင့်ပြီး Login ဝင်ပါ", "2) Open the SUWATI app from your Home Screen and log in", 0], ["3) Profile › 🔔 Notification ဖွင့်ပါ", "3) Turn on Profile › 🔔 Notification", 0], ["iOS 16.4 နှင့်အထက် လိုပါသည်", "Requires iOS 16.4 or later", 0], ["📲 Home Screen App လိုပါသည်", "📲 Home Screen app required", 0], ["⚠️ ဒီ Browser က Notification မရပါ", "⚠️ This browser doesn't support notifications", 0], ["Notification ကို ပိတ်ထားပါတယ်။ ဖုန်း Settings › Notifications (သို့) Browser Site Settings မှာ SUWATI ကို Allow ပေးပြီးမှ ပြန်ဖွင့်ပါ။", "Notifications are blocked. Allow SUWATI in your phone Settings › Notifications (or browser site settings), then try again.", 0], ["🔕 ခွင့်ပြုချက် ပိတ်ထားသည်", "🔕 Permission blocked", 0], ["🔕 Notification ခွင့်မပြုခဲ့ပါ", "🔕 Notifications not allowed", 0], ["⚠️ သိမ်းမရပါ", "⚠️ Couldn't save", 0], ["🔔 Notification ဖွင့်ပြီးပါပြီ — Order အခြေအနေ ပြောင်းတိုင်း ဖုန်းကို အသိပေးပါမည်", "🔔 Notifications on — we'll alert you whenever your order status changes", 0], ["⚠️ Notification ဖွင့်မရပါ", "⚠️ Couldn't enable notifications", 0], ["🔕 Notification ပိတ်လိုက်ပါပြီ", "🔕 Notifications off", 0], ["✅ ဒီဖုန်းကို Order အခြေအနေ၊ Admin စာ၊ Stock ပြန်ရောက်ကြောင်း အသိပေးနေပါသည်", "✅ This phone gets order updates, admin messages and restock alerts", 0], ["Order အတည်ပြု/ပို့ဆောင်/ရောက်ရှိ ဖြစ်တိုင်း ဖုန်းကို ချက်ချင်း အသိပေးမည်", "Get instant alerts when your order is confirmed, shipped or delivered", 0], ["📲 iPhone မှာ Home Screen App (Add to Home Screen) ကနေ ဖွင့်မှ Notification ရပါမည်", "📲 On iPhone, open from the Home Screen app (Add to Home Screen) to get notifications", 0], ["🔕 ဖုန်း Settings မှာ Notification ကို ပိတ်ထားပါသည်", "🔕 Notifications are off in phone Settings", 0], ["ဒီ Browser က Notification မရပါ", "This browser doesn't support notifications", 0], ["⏳ ပြန်ရောက်ရင် အသိပေးရန် စောင့်နေသော ပစ္စည်း", "⏳ Waiting for restock", 0], ["ပစ္စည်း ပြန်ရောက်တာနဲ့ ဖုန်းကို ချက်ချင်း Notification ပို့ပေးရမလား?", "Send a phone notification as soon as it's back in stock?", 0], ["Order အတည်ပြု / ပို့ဆောင်နေ / ရောက်ရှိ ဖြစ်တိုင်း ဖုန်းကို Notification ပို့ပေးရမလား?", "Get a phone notification when your order is confirmed / shipped / delivered?", 0], ["🔔 ဖုန်း Notification", "🔔 Phone Notifications", 0], ["🔔 ဖွင့်မည်", "🔔 Turn On", 0], ["နောက်မှ", "Later", 0], ["Order ID (8လုံး) နှင့် မှာယူစဉ်က ဖုန်းနံပါတ် ထည့်ပါ", "Enter your Order ID (8 characters) and the phone number used to order", 0], ["Track လုပ်မည်", "Track", 0], ["Order ID နှင့် ဖုန်းနံပါတ် နှစ်ခုစလုံး ဖြည့်ပါ", "Enter both Order ID and phone number", 0], ["ရှာနေသည်", "Searching", 0], ["Order မတွေ့ပါ — Order ID (သို့) ဖုန်းနံပါတ် ပြန်စစ်ပါ", "Order not found — check the Order ID or phone number", 0], ["ပယ်ဖျက်ပြီး (Cancelled)", "Cancelled", 0], ["ပယ်ဖျက်ရသည့် အကြောင်းရင်း", "Cancellation reason", 0], ["ပို့ဆောင်ရေးသမား စာသား/ပုံ", "Courier note/photo", 0], ["ငွေချေမည့် Card", "Paying with card", 0], ["ကျသင့်ငွေ", "Amount due", 0], ["ချေပြီးနောက် လက်ကျန်", "Balance after payment", 0], ["ငွေချေမည်", "Pay", 0], ["မချေတော့ပါ", "Cancel", 0], ["Prepaid Card ဖြင့် ငွေချေနေသည်", "Paying with Prepaid Card", 0], ["ငွေချေပြီးပါပြီ", "Payment complete", 0], ["ငွေချေ၍ မရပါ", "Payment failed", 0], ["Card လက်ကျန်", "Card balance", 0], ["အချိန်ကုန်သွားပါပြီ", "Time's up", 0], ["နာရီ", "h", 0], ["မိနစ်", "min", 0], ["⏰ ငွေလွှဲရန် ကျန်ချိန်", "⏰ Time left to pay", 0], ["လွှဲရမည့်ငွေ", "Amount to pay", 0], ["💸 ငွေလွှဲ Screenshot တင်မည်", "💸 Upload Payment Screenshot", 0], ["✕ Order ပယ်ဖျက်မည်", "✕ Cancel Order", 0], ["💸 ငွေလွှဲ Screenshot တင်ရန်", "💸 Upload Payment Screenshot", 0], ["Screenshot တင်မည်", "Upload Screenshot", 0], ["← Order History ပြန်သွားရန်", "← Back to Order History", 0], ["Screenshot ရွေးပါ", "Choose a screenshot", 0], ["တင်၍ မရပါ", "Upload failed", 0], ["✅ Screenshot တင်ပြီးပါပြီ — Admin စစ်ဆေးပြီးရင် အတည်ပြုပေးပါမည်", "✅ Screenshot uploaded — Admin will confirm after checking", 0], ["ဒီ Order ကို ပယ်ဖျက်မှာ သေချာပါသလား?", "Cancel this order?", 0], ["Prepaid Card ထဲ", "Prepaid Card refund:", 0], ["ကျပ် ပြန်ထည့်ပေးပါမည်", "MMK will be returned", 0], ["Order ပယ်ဖျက်မည်", "Cancel Order", 0], ["ပယ်ဖျက်မည်", "Cancel Order", 0], ["မဖျက်တော့ပါ", "Keep Order", 0], ["ပယ်ဖျက်၍ မရပါ", "Couldn't cancel", 0], ["Admin အတည်ပြုနေပြီ ဖြစ်နိုင်ပါသည်", "Admin may have already confirmed it", 0], ["Order ပယ်ဖျက်ပြီးပါပြီ", "Order cancelled", 0], ["Prepaid ငွေ ပြန်ထည့်ပြီးပါပြီ", "Prepaid balance returned", 0], ["ကျပ်နှင့်အထက် →", "MMK and above →", 0], ["ထပ်ရမည် — Card ထဲ စုစုပေါင်း", " bonus — total added to card:", 0], ["ဝင်ပါမည်", "", 0], ["ပမာဏ ရွေးပါ (ကျပ်)", "Choose amount (MMK)", 0], ["Gift Card မှာယူမည် (KBZPay)", "Order Gift Card (KBZPay)", 0], ["SIZE ရွေးပါ", "Choose SIZE", 0], ["အရောင် ရွေးပါ", "Choose COLOR", 0], ["Order မှာယူမည် (KBZPay)", "Order Now (KBZPay)", 0], ["Gift Card ဝယ်ဖို့ Login ဝင်ရန် လိုအပ်ပါသည်", "Please log in to buy a gift card", 0], ["🎫 Prepaid Card ဖြင့် ဝယ်ချင်ရင်", "🎫 To pay with Prepaid Card,", 0], ["Login ဝင်ပါ", "log in", 0], ["🎫 Prepaid Card ဖြင့် ဝယ်မည်", "🎫 Buy with Prepaid Card", 0], ["🎫 Prepaid Card လက်ကျန်", "🎫 Prepaid Card balance", 0], ["ကျပ်ပဲ ရှိလို့ ဒီပစ္စည်းအတွက် မလုံလောက်ပါ", "MMK — not enough for this item", 0], ["ငွေဖြည့်ရန်", "Top up", 0], ["ဒီလိုမျိုး ထပ်ကြည့်ရန်", "You may also like", 0], ["👆 ဘေးတိုက် ဆွဲပါ", "👆 Swipe sideways", 0], ["ကျပ်", " SUWATI MEN FASHION|MMK | SUWATI MEN FASHION", 0], ["🔗 Link ကူးယူပြီးပါပြီ — Messenger/Viber မှာ Paste လုပ်ပြီး Share နိုင်ပါပြီ", "🔗 Link copied — paste it in Messenger/Viber to share", 0], ["ဒီ Link ကို Copy ကူးပါ", "Copy this link", 0], ["ဒီ Product ကို မတွေ့တော့ပါ (ဖျက်ထား/ဖျောက်ထားနိုင်ပါသည်) — Ref", "This product is no longer available — Ref", 0], ["ကုန်သွားပါပြီ", "Sold out", 0], ["ကုန်သွားပြီ", "Sold out", 0], ["ခုပဲ ကျန်သည်", " left", 0], ["⚫ Sold Out — ကုန်သွားပြီ", "⚫ Sold Out", 0], ["✅ ရနိုင်သည်", "✅ In stock", 0], ["ရနိုင်သည်", "In stock", 0], ["ခုသာ ရှိပါသည်", " left", 0], ["ပစ္စည်းများ Load မလုပ်နိုင်ပါ", "Couldn't load products", 0], ["ရှာဖွေမှုနှင့် ကိုက်ညီသော ပစ္စည်း မတွေ့ပါ။", "No matching products.", 0], ["10,000 ကျပ်မှ", "From 10,000 MMK", 0], ["ဝယ်မည် →", "Buy →", 0], ["ပမာဏ ရွေးပြီး ဝယ်ရန်", "Choose amount & buy", 0], ["ပမာဏ ရွေးပြီး KBZPay ဖြင့် ဝယ်ယူနိုင်ပါသည်", "Choose an amount and pay with KBZPay", 0], ["မေးစရာရှိရင် Messenger ပို့ပါ", "Questions? Message us on Messenger", 0], ["⚫ ကုန်သွားပြီ", "⚫ Sold out", 0], ["⚫ ကုန်သွားပါပြီ", "⚫ Sold out", 0], ["လောလောဆယ် Post မရှိသေးပါ။", "No posts yet.", 0], ["အရောင်", "Color", 0], ["🛒 ခြင်းထဲ ထည့်မည်", "🛒 Add to Cart", 0], ["အသေးစိတ် ကြည့်ပြီး ဝယ်မည် →", "View details & buy →", 0], ["ကို App အဖြစ် ထည့်ရန်", " — add as an app:", 0], ["အောက်ခြေ/အပေါ်က", "Tap the", 0], ["ခလုတ်နှိပ် →", "button at the bottom/top →", 0], ["နားလည်ပြီ", "Got it", 0], ["App ကို ဖုန်းထဲ ထည့်မလား?", "Add the app to your phone?", 0], ["Home Screen ကနေ တစ်ချက်နှိပ်ရုံနဲ့ ဖွင့်လို့ရပါမည်", "Open it with one tap from your Home Screen", 0], ["📲 ထည့်မည်", "📲 Add", 0], ["App ထည့်ပြီးပါပြီ — Home Screen မှာ ကြည့်ပါ", "App added — check your Home Screen", 0], ["💰 Wallet ငွေဖြည့်ရန်", "💰 Top Up Wallet", 0], ["ဖြည့်လိုသော ပမာဏ (ကျပ်)", "Top-up amount (MMK)", 0], ["ဥပမာ 50000", "e.g. 50000", 0], ["တင်သွင်းမည်", "Submit", 0], ["ပမာဏ အနည်းဆုံး 1,000 ကျပ် ထည့်ပါ", "Minimum amount is 1,000 MMK", 0], ["ပမာဏ အနည်းဆုံး 1,000 ကျပ် ရွေးပါ", "Minimum amount is 1,000 MMK", 0], ["✅ Top-up တင်သွင်းပြီးပါပြီ — Admin အတည်ပြုပြီးရင် Wallet ထဲ ဝင်ပါမည်", "✅ Top-up submitted — it'll be added once Admin approves", 0], ["ကျပ် ပါ ထပ်ရပါမည်", " MMK bonus included", 0], ["🎫 ကျွန်ုပ်၏ Prepaid Card", "🎫 My Prepaid Card", 0], ["ဒီ Card ကို ဆိုင်ထဲမှာ Cashier ဆီ ပြပြီး Barcode Scan လုပ်ခိုင်း (သို့) Card Number + PIN ပေးလို့ ငွေရှင်းနိုင်ပါသည်", "Show this card to the cashier in store to scan the barcode, or give your card number + PIN to pay", 0], ["Card ရယူ၍ မရပါ", "Couldn't load card", 0], ["Card ကို လှန်ရန်", "Flip card", 0], ["Card ကို တို့ပြီး လှန်ပါ — နောက်ကျောမှာ Barcode နှင့် PIN ရှိပါသည်။ PIN ကြည့်ရန် အကွက်များပေါ် တို့ပါ", "Tap the card to flip it — the barcode and PIN are on the back. Tap the boxes to reveal the PIN", 0], ["ငွေဖြည့်ခြင်း", "Top-up", 0], ["Gift Card သုံးစွဲမှု", "Gift card redeemed", 0], ["ငွေပြန်အမ်းခြင်း", "Refund", 0], ["ဝယ်ယူမှု (Website)", "Purchase (Website)", 0], ["ဝယ်ယူမှု (ဆိုင်ထဲ)", "Purchase (In store)", 0], ["Cashback ရရှိမှု", "Cashback earned", 0], ["Cashback ပြန်နုတ်ခြင်း", "Cashback reversed", 0], ["⏳ စစ်ဆေးဆဲ Top-up Request", "⏳ Pending top-up requests", 0], ["❌ ငြင်းပယ်ခံရသော Request", "❌ Rejected requests", 0], ["✅ အတည်ပြုပြီးသား Top-up", "✅ Approved top-ups", 0], ["Usage History မရှိသေးပါ", "No usage history yet", 0], ["📋 Transaction Record အားလုံး", "📋 All transactions", 0], ["🔒 PIN မှားလို့ ပိတ်ထားသည်", "🔒 Locked (wrong PIN)", 0], ["❄️ ယာယီ ပိတ်ထားသည်", "❄️ Temporarily frozen", 0], ["🔒 Card လုံခြုံရေး", "🔒 Card Security", 0], ["⚠️ ဆိုင်မှာ PIN မှား ၅ ကြိမ် ရိုက်ခဲ့လို့ Card ကို ပိတ်ထားပါတယ်။ ကိုယ်တိုင် မဟုတ်ရင် အောက်မှာ PIN အသစ် ပြောင်းပါ — ပြောင်းတာနဲ့ ပြန်ဖွင့်ပါမည်။", "⚠️ Your card was locked after 5 wrong PIN attempts in store. If it wasn't you, change your PIN below — the card unlocks as soon as you do.", 0], ["Card ယာယီ ပိတ်ရန်", "Freeze card", 0], ["Card ပျောက်ရင် (သို့) PIN ပေါက်သွားရင် ပိတ်ထားပါ — ဆိုင်ထဲမှာ Card Number + PIN နဲ့ သုံးလို့ မရတော့ပါ", "Freeze it if your card is lost or your PIN leaked — it can't be used in store with card number + PIN", 0], ["🔑 PIN ပြောင်းရန်", "🔑 Change PIN", 0], ["PIN အဟောင်း", "Current PIN", 0], ["Card နောက်ကျောမှာ ကြည့်လို့ရ", "shown on the back of the card", 0], ["PIN အသစ် (ဂဏန်း ၄ လုံး)", "New PIN (4 digits)", 0], ["PIN အသစ် ထပ်ရိုက်ပါ", "Confirm new PIN", 0], ["PIN ပြောင်းမည်", "Change PIN", 0], ["ဒီ Card ကို ယာယီ ပိတ်မလား?", "Freeze this card?", 0], ["ပိတ်ထားစဉ် ဆိုင်ထဲမှာ Card Number + PIN နဲ့ ငွေရှင်းလို့ မရပါ။ နောက်မှ ဒီနေရာကနေ ပြန်ဖွင့်လို့ရပါတယ်။", "While frozen it can't be used in store with card number + PIN. You can unfreeze it here anytime.", 0], ["Card ပိတ်မည်", "Freeze Card", 0], ["❄️ ပိတ်မည်", "❄️ Freeze", 0], ["မအောင်မြင်ပါ", "Failed", 0], ["❄️ Card ကို ယာယီ ပိတ်လိုက်ပါပြီ", "❄️ Card frozen", 0], ["✅ Card ပြန်ဖွင့်ပြီးပါပြီ", "✅ Card unfrozen", 0], ["PIN အဟောင်း ဂဏန်း ၄ လုံး ထည့်ပါ", "Enter your current 4-digit PIN", 0], ["PIN အသစ်က ဂဏန်း ၄ လုံး ဖြစ်ရပါမည်", "New PIN must be 4 digits", 0], ["PIN အသစ် နှစ်ခု မတူပါ", "New PINs don't match", 0], ["ပြောင်းနေသည်", "Changing", 0], ["✅ PIN ပြောင်းပြီး Card ပြန်ဖွင့်ပါပြီ", "✅ PIN changed and card unlocked", 0], ["✅ PIN ပြောင်းပြီးပါပြီ", "✅ PIN changed", 0], ["Wishlist ထဲ ရှိသည်", "In Wishlist", 0], ["Wishlist ထဲ ထည့်ရန်", "Add to Wishlist", 0], ["Wishlist ဗလာဖြစ်နေပါသည်", "Your wishlist is empty", 0], ["ကြိုက်တဲ့ ပစ္စည်းပေါ်က ♡ ကို နှိပ်ပြီး ထည့်လိုက်ပါ", "Tap ♡ on items you like to save them", 0], ["Login ဝင်ထားရင် Wishlist ကို Device မရွေး Sync ဖြစ်ပါလိမ့်မယ်", "Log in to sync your wishlist across devices", 0], ["Login ဝင်ထားရင် ဒီ Wishlist ကို Device မရွေး ကြည့်လို့ရပါလိမ့်မယ်", "Log in to see this wishlist on any device", 0], ["ကျွန်ုပ်၏ Wishlist", "My Wishlist", 0], ["ပစ္စည်း မရှိတော့ပါ", "Item no longer available", 0], ["တန်းဝယ်မည်", "Buy Now", 0], ["Size/Color ရွေးရန် လိုအပ်ပါသည် — ပစ္စည်းစာမျက်နှာမှ ရွေးချယ်ပါ", "Please choose size/color on the product page", 0], ["ခြင်းထဲ ထည့်ပြီးပါပြီ", "Added to cart", 0], ["⚫ ဒီ Size/အရောင် ကုန်သွားပြီ", "⚫ This size/color is sold out", 0], ["ဒီ Size/အရောင် ရွေးချယ်မှု ကုန်သွားပါပြီ", "This size/color is sold out", 0], ["ကျပ် ဝယ်မှာ သေချာပါသလား?", "MMK — confirm purchase?", 0], ["Prepaid Card ဖြင့်", "Pay with Prepaid Card:", 0], ["Prepaid Card ငွေ မလုံလောက်တော့ပါ", "Insufficient Prepaid Card balance", 0], ["ပိတ်ရန်", "Close", 0], ["Prepaid Card ဖြင့် ပေးပြီး", "Paid by Prepaid Card", 0], ["⏰ ကျန်ချိန်", "⏰ Time left", 0], ["မတိုင်ခင်", "before", 0], ["ကျပ် ပေးပြီး", "MMK paid", 0], ["QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်", "QR code hasn't been set up yet", 0], ["အထိသာ", "only", 0], ["အမည် (Name", "Name", 0], ["မွေးသက္ကရာဇ် (Date of Birth", "Date of Birth", 0], ["သင့်အမည်အပြည့်အစုံ", "Your full name", 0], ["အနည်းဆုံး ၆လုံး", "At least 6 characters", 0], ["Password ထပ်ရိုက်ပါ", "Confirm password", 0], ["Password အနည်းဆုံး ၆လုံး ရှိရပါမည်", "Password must be at least 6 characters", 0], ["Password ၂ခု တူညီရပါမည်", "Passwords must match", 0], ["Account ဖန်တီးပြီးပါပြီ! Email ထဲက Confirmation link ကို နှိပ်ပြီးမှ Login ဝင်ပါ။", "Account created! Please tap the confirmation link in your email, then log in.", 0], ["Gmail လိပ်စာ ထည့်ပါ", "Enter your Gmail", 0], ["Reset Link ပို့ပြီးပါပြီ — Email ကို စစ်ကြည့်ပါ။", "Reset link sent — check your email.", 0], ["ထပ်ရိုက်ပါ", "confirm", 0], ["Password ပြောင်းပြီးပါပြီ! ပြန်လည် Login ဝင်နိုင်ပါပြီ။", "Password changed! You can log in again.", 0], ["ပစ္စည်းအမည် (သို့) Order ID ဖြင့် ရှာပါ", "Search by item name or Order ID", 0], ["🔍 ပစ္စည်းနာမည်ဖြင့် ရှာပါ", "🔍 Search products", 0], ["📦 Track ကြည့်ရန်", "📦 Track", 0], ["🗑️ ဖျက်မည်", "🗑️ Delete", 0], ["အခြား (ကိုယ်တိုင် ရိုက်ထည့်ရန်)", "Other (type it in)", 0], ["အခြား (ကိုယ်တိုင် ရိုက်ထည့်ရန်", "Other (type it in", 0], ["ငွေချေမှု", "Payment", 0], ["ပို့ဆောင်ရန်", "Shipping", 0], ["SUWATI — စာမျက်နှာ ပြန်ဖွင့်ရန်", "SUWATI — reload page", 0], ["Menu ဖွင့်ရန်", "Open menu", 0], ["ခြင်းတောင်း", "Cart", 0], ["ပမာဏ အားလုံး ယာယီ ကုန်သွားပါသည်", "All amounts are temporarily sold out", 0], ["Order များ", "Orders", 0], ["Gift Card မရှိသေးပါ", "No gift cards yet", 0], ["ချစ်ရသူကို လက်ဆောင်ပေးဖို့ (သို့) ကိုယ်တိုင်သုံးဖို့ ဝယ်လို့ရပါတယ်", "Buy one as a gift for someone special — or for yourself", 0], ["🛒 Gift Card ဝယ်ရန်", "🛒 Buy Gift Card", 0], ["အမည် (Full Name)", "Full Name", 0], ["မြို့နယ် အမည် ရိုက်ထည့်ပါ", "Type the township name", 0], ["အိမ်အမှတ်၊ လမ်း၊ ရပ်ကွက် (ဥပမာ - အမှတ် ၁၂၊ ဘူတာလမ်း၊ ကျည်တောင်ကန် ရပ်ကွက်)", "House no., street, ward (e.g. No. 12, Station Rd, Kyee Taung Kan Ward)", 0], ["ကတ်ထဲ ရေးပေးစေချင်တဲ့ စာ (ဥပမာ - Happy Birthday ချစ်သူ 🎂) — လက်ခံသူ အမည်/ပို့ချိန် စတာတွေလည်း ရေးနိုင်ပါသည်", "Message for the card (e.g. Happy Birthday 🎂) — you can also add the recipient's name / delivery time", 0], ["ဥပမာ TIKTOK10", "e.g. TIKTOK10", 0], ["ဥပမာ A1B2C3D4", "e.g. A1B2C3D4", 0], ["မှာယူစဉ်က Phone Number", "Phone number used when ordering", 0], ["Message ရေးပါ...", "Type a message...", 0], ["Message ရေးပါ", "Type a message", 0], ["ပို့ဆောင်", "Delivery", 0], ["ပြန်ပေး", "Returns", 0], ["ငွေ", "Payment", 0], ["ကုန်", "Stock", 0], ["ဆိုက်", "Size", 0], ["ဈေး", "Price", 0], ["နှင့်", "and", 0], ["ပြန်လဲ", "Exchange", 0], ["ကြာ", "Time", 0], ["မြို့နယ် ရွေးပါ", "Choose township", 0], ["တိုင်း/ပြည်နယ် အရင်ရွေးပါ", "Choose region first", 0], ["အခြား", "Other", 0], ["နေပြည်တော်", "Nay Pyi Taw", 1], ["နေပြည်တော် ပြည်ထောင်စုနယ်မြေ", "Nay Pyi Taw Union Territory", 1], ["ပုဗ္ဗသီရိ", "Pobbathiri", 1], ["ဇမ္ဗူသီရိ", "Zabuthiri", 1], ["ဒက္ခိဏသီရိ", "Dekkhinathiri", 1], ["ဥတ္တရသီရိ", "Ottarathiri", 1], ["ဇေယျာသီရိ", "Zeyarthiri", 1], ["ပျဉ်းမနား", "Pyinmana", 1], ["လယ်ဝေး", "Lewe", 1], ["တပ်ကုန်း", "Tatkon", 1], ["ရန်ကုန်တိုင်းဒေသကြီး", "Yangon Region", 1], ["အလုံ", "Ahlone", 1], ["ဗဟန်း", "Bahan", 1], ["ဒဂုံ", "Dagon", 1], ["ကြည့်မြင်တိုင်", "Kyimyindaing", 1], ["ကမာရွတ်", "Kamayut", 1], ["လသာ", "Latha", 1], ["လမ်းမတော်", "Lanmadaw", 1], ["လှိုင်", "Hlaing", 1], ["မရမ်းကုန်း", "Mayangon", 1], ["ပန်းဘဲတန်း", "Pabedan", 1], ["စမ်းချောင်း", "Sanchaung", 1], ["ကျောက်တံတား", "Kyauktada", 1], ["ဗိုလ်တထောင်", "Botahtaung", 1], ["ပုဇွန်တောင်", "Pazundaung", 1], ["ဆိပ်ကမ်း", "Seikkan", 1], ["ဒေါပုံ", "Dawbon", 1], ["မင်္ဂလာတောင်ညွန့်", "Mingala Taungnyunt", 1], ["တာမွေ", "Tamwe", 1], ["သာကေတ", "Thaketa", 1], ["သင်္ဃန်းကျွန်း", "Thingangyun", 1], ["ရန်ကင်း", "Yankin", 1], ["တောင်ဥက္ကလာပ", "South Okkalapa", 1], ["မြောက်ဥက္ကလာပ", "North Okkalapa", 1], ["မြောက်ဒဂုံ", "North Dagon", 1], ["တောင်ဒဂုံ", "South Dagon", 1], ["အရှေ့ဒဂုံ", "East Dagon", 1], ["ဒဂုံဆိပ်ကမ်း", "Dagon Seikkan", 1], ["အင်းစိန်", "Insein", 1], ["မင်္ဂလာဒုံ", "Mingaladon", 1], ["ရွှေပြည်သာ", "Shwepyitha", 1], ["လှိုင်သာယာ", "Hlaingthaya", 1], ["မှော်ဘီ", "Hmawbi", 1], ["လှည်းကူး", "Hlegu", 1], ["တိုက်ကြီး", "Taikkyi", 1], ["ထန်းတပင်", "Htantabin", 1], ["သန်လျင်", "Thanlyin", 1], ["ကျောက်တန်း", "Kyauktan", 1], ["သုံးခွ", "Thongwa", 1], ["ခရမ်း", "Kayan", 1], ["တွံတေး", "Twante", 1], ["ကော့မှူး", "Kawhmu", 1], ["ကွမ်းခြံကုန်း", "Kungyangon", 1], ["ဒလ", "Dala", 1], ["ဆိပ်ကြီးခနောင်တို", "Seikgyikanaungto", 1], ["ကိုကိုးကျွန်း", "Coco Islands", 1], ["မန္တလေးတိုင်းဒေသကြီး", "Mandalay Region", 1], ["အောင်မြေသာဇံ", "Aungmyethazan", 1], ["ချမ်းအေးသာဇံ", "Chanayethazan", 1], ["မဟာအောင်မြေ", "Mahaaungmye", 1], ["ချမ်းမြသာစည်", "Chanmyathazi", 1], ["ပြည်ကြီးတံခွန်", "Pyigyidagun", 1], ["အမရပူရ", "Amarapura", 1], ["ပုသိမ်ကြီး", "Patheingyi", 1], ["ပြင်ဦးလွင်", "Pyin Oo Lwin", 1], ["မတ္တရာ", "Madaya", 1], ["စဉ့်ကိုင်", "Sintgaing", 1], ["မိုးကုတ်", "Mogok", 1], ["သပိတ်ကျင်း", "Thabeikkyin", 1], ["ကျောက်ဆည်", "Kyaukse", 1], ["မြစ်သား", "Myittha", 1], ["တံတားဦး", "Tada-U", 1], ["စဉ့်ကူး", "Singu", 1], ["မြင်းခြံ", "Myingyan", 1], ["တောင်သာ", "Taungtha", 1], ["နွားထိုးကြီး", "Natogyi", 1], ["ငါန်းဇွန်", "Ngazun", 1], ["ကျောက်ပန်းတောင်း", "Kyaukpadaung", 1], ["မိတ္ထီလာ", "Meiktila", 1], ["ဝမ်းတွင်း", "Wundwin", 1], ["သာစည်", "Thazi", 1], ["မလှိုင်", "Mahlaing", 1], ["ရမည်းသင်း", "Yamethin", 1], ["ပျော်ဘွယ်", "Pyawbwe", 1], ["ညောင်ဦး", "Nyaung-U", 1], ["စစ်ကိုင်းတိုင်းဒေသကြီး", "Sagaing Region", 1], ["စစ်ကိုင်း", "Sagaing", 1], ["မုံရွာ", "Monywa", 1], ["ရွှေဘို", "Shwebo", 1], ["ကလေး", "Kalay", 1], ["တမူး", "Tamu", 1], ["ကသာ", "Katha", 1], ["ခန္တီး", "Hkamti", 1], ["ဟုမ္မလင်း", "Homalin", 1], ["ယင်းမာပင်", "Yinmabin", 1], ["မြင်းမူ", "Myinmu", 1], ["မြောင်", "Myaung", 1], ["ဒီပဲယင်း", "Tabayin", 1], ["ဘုတလင်", "Budalin", 1], ["ချောင်းဦး", "Chaung-U", 1], ["ကန့်ဘလူ", "Kanbalu", 1], ["ဝက်လက်", "Wetlet", 1], ["ပင်လည်ဘူး", "Pinlebu", 1], ["ဗန်းမောက်", "Banmauk", 1], ["အင်းတော်", "Indaw", 1], ["ထီးချိုင့်", "Tigyaing", 1], ["မကွေးတိုင်းဒေသကြီး", "Magway Region", 1], ["မကွေး", "Magway", 1], ["ပခုက္ကူ", "Pakokku", 1], ["မင်းဘူး", "Minbu", 1], ["သရက်", "Thayet", 1], ["ချောက်", "Chauk", 1], ["ရေနံချောင်း", "Yenangyaung", 1], ["တောင်တွင်းကြီး", "Taungdwingyi", 1], ["နတ်မောက်", "Natmauk", 1], ["ဂန့်ဂေါ", "Gangaw", 1], ["ဆော", "Saw", 1], ["ရေစကြို", "Yesagyo", 1], ["မြိုင်", "Myaing", 1], ["ပွင့်ဖြူ", "Pwintbyu", 1], ["စလင်း", "Salin", 1], ["အောင်လံ", "Aunglan", 1], ["မင်းလှ", "Minhla", 1], ["ဆင်ပေါင်ဝဲ", "Sinbaungwe", 1], ["တီလင်း", "Tilin", 1], ["ပဲခူးတိုင်းဒေသကြီး", "Bago Region", 1], ["ပဲခူး", "Bago", 1], ["တောင်ငူ", "Taungoo", 1], ["ပြည်", "Pyay", 1], ["သာယာဝတီ", "Tharrawaddy", 1], ["ညောင်လေးပင်", "Nyaunglebin", 1], ["ဒိုက်ဦး", "Daik-U", 1], ["ရွှေကျင်", "Shwegyin", 1], ["ဝေါ", "Waw", 1], ["ကဝ", "Kawa", 1], ["သနပ်ပင်", "Thanatpin", 1], ["အုတ်တွင်း", "Oktwin", 1], ["ဖြူး", "Phyu", 1], ["ရေတာရှည်", "Yedashe", 1], ["ပေါင်းတည်", "Paungde", 1], ["ပေါက်ခေါင်း", "Paukkaung", 1], ["လက်ပံတန်း", "Letpadan", 1], ["ဇီးကုန်း", "Zigon", 1], ["နတ်တလင်း", "Nattalin", 1], ["ရွှေတောင်", "Shwedaung", 1], ["ပန်းတောင်း", "Padaung", 1], ["သဲကုန်း", "Thegon", 1], ["ကြို့ပင်ကောက်", "Gyobingauk", 1], ["ဧရာဝတီတိုင်းဒေသကြီး", "Ayeyarwady Region", 1], ["ပုသိမ်", "Pathein", 1], ["ဟင်္သာတ", "Hinthada", 1], ["မြောင်းမြ", "Myaungmya", 1], ["ဖျာပုံ", "Pyapon", 1], ["မအူပင်", "Maubin", 1], ["လပွတ္တာ", "Labutta", 1], ["ပန်းတနော်", "Pantanaw", 1], ["ကျိုက်လတ်", "Kyaiklat", 1], ["ဘိုကလေး", "Bogale", 1], ["ဒေးဒရဲ", "Dedaye", 1], ["ဝါးခယ်မ", "Wakema", 1], ["အိမ်မဲ", "Einme", 1], ["ဇလွန်", "Zalun", 1], ["ကြံခင်း", "Kyangin", 1], ["လေးမျက်နှာ", "Lemyethna", 1], ["မြန်အောင်", "Myanaung", 1], ["ကျုံပျော်", "Kyonpyaw", 1], ["ငပုတော", "Ngaputaw", 1], ["ရေကြည်", "Yegyi", 1], ["ကန်ကြီးထောင့်", "Kangyidaunt", 1], ["ငါးသိုင်းချောင်း", "Ngathaingchaung", 1], ["သာပေါင်း", "Thabaung", 1], ["ကျောင်းကုန်း", "Kyaunggon", 1], ["အင်္ဂပူ", "Ingapu", 1], ["တနင်္သာရီတိုင်းဒေသကြီး", "Tanintharyi Region", 1], ["ထားဝယ်", "Dawei", 1], ["မြိတ်", "Myeik", 1], ["ကော့သောင်း", "Kawthaung", 1], ["ပုလော", "Palaw", 1], ["ရေဖြူ", "Yebyu", 1], ["လောင်းလုံ", "Launglon", 1], ["သရက်ချောင်း", "Thayetchaung", 1], ["ဘုတ်ပြင်း", "Bokpyin", 1], ["တနင်္သာရီ", "Tanintharyi", 1], ["ကျွန်းစု", "Kyunsu", 1], ["မွန်ပြည်နယ်", "Mon State", 1], ["မော်လမြိုင်", "Mawlamyine", 1], ["သထုံ", "Thaton", 1], ["ကျိုက်မရော", "Kyaikmaraw", 1], ["မုဒုံ", "Mudon", 1], ["ချောင်းဆုံ", "Chaungzon", 1], ["ပေါင်", "Paung", 1], ["ကျိုက်ထို", "Kyaikto", 1], ["ဘီးလင်း", "Bilin", 1], ["ရေး", "Ye", 1], ["သံဖြူဇရပ်", "Thanbyuzayat", 1], ["ကရင်ပြည်နယ်", "Kayin State", 1], ["ဘားအံ", "Hpa-An", 1], ["မြဝတီ", "Myawaddy", 1], ["ကော့ကရိတ်", "Kawkareik", 1], ["လှိုင်းဘွဲ့", "Hlaingbwe", 1], ["ဖာပွန်", "Hpapun", 1], ["သံတောင်ကြီး", "Thandaunggyi", 1], ["ကြာအင်းဆိပ်ကြီး", "Kyainseikgyi", 1], ["ကယားပြည်နယ်", "Kayah State", 1], ["လွိုင်ကော်", "Loikaw", 1], ["ဒီးမော့ဆို", "Demoso", 1], ["ဖရူဆို", "Hpruso", 1], ["ရှားတော", "Shadaw", 1], ["ဘောလခဲ", "Bawlakhe", 1], ["ဖားဆောင်း", "Hpasawng", 1], ["မယ်စဲ့", "Mese", 1], ["ရှမ်းပြည်နယ်", "Shan State", 1], ["တောင်ကြီး", "Taunggyi", 1], ["ကလော", "Kalaw", 1], ["အောင်ပန်း", "Aungban", 1], ["ညောင်ရွှေ", "Nyaungshwe", 1], ["ရွာငံ", "Ywangan", 1], ["ပင်းတယ", "Pindaya", 1], ["ပင်လောင်း", "Pinlaung", 1], ["ဟိုပုံး", "Hopong", 1], ["ဆီဆိုင်", "Hsihseng", 1], ["လွိုင်လင်", "Loilen", 1], ["နမ့်ဆန်", "Namhsan", 1], ["လားရှိုး", "Lashio", 1], ["သီပေါ", "Hsipaw", 1], ["ကျောက်မဲ", "Kyaukme", 1], ["နမ့်ခမ်း", "Namhkam", 1], ["မူဆယ်", "Muse", 1], ["ကွတ်ခိုင်", "Kutkai", 1], ["ဟိုပင်", "Hopang", 1], ["တန့်ယန်း", "Tangyan", 1], ["လောက်ကိုင်", "Laukkai", 1], ["ကွန်လုံ", "Kunlong", 1], ["ကျိုင်းတုံ", "Kengtung", 1], ["တာချီလိတ်", "Tachileik", 1], ["မိုင်းဆတ်", "Mong Hsat", 1], ["ရပ်စောက်", "Yatsauk", 1], ["ဖယ်ခုံ", "Pekon", 1], ["မိုင်းကိုင်", "Mong Kung", 1], ["ကချင်ပြည်နယ်", "Kachin State", 1], ["မြစ်ကြီးနား", "Myitkyina", 1], ["ဗန်းမော်", "Bhamo", 1], ["ပူတာအို", "Putao", 1], ["မိုးကောင်း", "Mogaung", 1], ["ဝိုင်းမော်", "Waingmaw", 1], ["ဖားကန့်", "Hpakant", 1], ["မိုးညှင်း", "Mohnyin", 1], ["ရွှေကူ", "Shwegu", 1], ["မံစီ", "Mansi", 1], ["မိုးမောက်", "Momauk", 1], ["ချီဖွေ", "Chipwi", 1], ["ဆော့လော်", "Tsawlaw", 1], ["တနိုင်း", "Tanai", 1], ["ချင်းပြည်နယ်", "Chin State", 1], ["ဟားခါး", "Hakha", 1], ["ဖလမ်း", "Falam", 1], ["တီးတိန်", "Tedim", 1], ["တွန်းဇံ", "Tonzang", 1], ["မင်းတပ်", "Mindat", 1], ["မတူပီ", "Matupi", 1], ["ကန်ပက်လက်", "Kanpetlet", 1], ["ပလက်ဝ", "Paletwa", 1], ["ထန်တလန်", "Thantlang", 1], ["ရခိုင်ပြည်နယ်", "Rakhine State", 1], ["စစ်တွေ", "Sittwe", 1], ["ကျောက်ဖြူ", "Kyaukphyu", 1], ["သံတွဲ", "Thandwe", 1], ["ရမ်းဗြဲ", "Ramree", 1], ["မာန်အောင်", "Manaung", 1], ["တောင်ကုတ်", "Toungup", 1], ["ဂွ", "Gwa", 1], ["မြောက်ဦး", "Mrauk-U", 1], ["ကျောက်တော်", "Kyauktaw", 1], ["မင်းပြား", "Minbya", 1], ["ပုဏ္ဏားကျွန်း", "Ponnagyun", 1], ["ရသေ့တောင်", "Rathedaung", 1], ["ဘူးသီးတောင်", "Buthidaung", 1], ["မောင်တော", "Maungdaw", 1], ["ပေါက်တော", "Pauktaw", 1], ["အမ်း", "Ann", 1]];
 const I18N_PHRASE_OK = new Set(['ကျပ်']);
 const I18N_EXACT_ONLY = new Set(['အားလုံး','အမည်','ဖုန်း','လိပ်စာ','အရောင်','ငွေ','ကုန်','ပို့ဆောင်','ဈေး','ဝယ်ရန်','ကတ်များ','ပြန်ပေး','ပြန်လဲ','ဖျက်မည်','သိမ်းမည်','သုံးမည်','ငွေချေ','နှင့်','အခြား']);
 let siteLang = 'my';
@@ -9203,10 +9790,10 @@ if(siteLang === 'en'){
   window.fxShake = el => restart(el, 'fx-shake');
 
   // ---------- ① Confetti ----------
-  function confetti(host, n){
+  function confetti(host, n, pal){
     if(reduce || !host) return;
     const box = document.createElement('div'); box.className = 'fx-confetti';
-    const colors = ['#D6FF3F', '#C13B1F', '#E9E4D8', '#141412', '#D6FF3F'];
+    const colors = pal || ['#D6FF3F', '#C13B1F', '#E9E4D8', '#141412', '#D6FF3F'];
     for(let i = 0; i < (n || 46); i++){
       const s = document.createElement('i');
       const ang = (Math.random() * 140 + 200) * Math.PI / 180;       // အပေါ်ဘက် ပန်းကန်ပုံ
@@ -9324,7 +9911,7 @@ if(siteLang === 'en'){
     document.body.appendChild(el);
     void el.offsetWidth; el.classList.add('show');
     try{ if(navigator.vibrate) navigator.vibrate([20, 60, 30]); }catch(e){}
-    if(!reduce) setTimeout(() => confetti(el.querySelector('.fx-gift-stage'), 42), 1250);
+    if(!reduce) setTimeout(() => confetti(el.querySelector('.fx-gift-stage'), 42, ['#C13B1F', '#efeae0', '#ff8a5c', '#141412', '#C13B1F']), 1250);
     // ငွေ Card ထဲ ကျဝင်ချိန်မှာ လက်ကျန် တက်
     const balEl = el.querySelector('.fgc-bal');
     if(oldBal !== null){
