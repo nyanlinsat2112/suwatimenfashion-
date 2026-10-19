@@ -1234,6 +1234,16 @@ label.pill-lbl > span, label.pill-lbl{ text-align:left; }
 #login-screen{ overflow-y:auto; }
 #login-screen .mfa-steps{ display:flex; flex-direction:column; gap:8px; }
 #login-screen .mfa-qr{ align-self:center; width:200px; height:200px; background:#fff; padding:8px; }
+/* 🤖 AI */
+body:not(.ai-on) .ai-only{ display:none !important; }
+#ai-desc-btn{ width:100%; margin-top:8px; }
+.ai-sum{ margin-top:10px; padding:12px 14px; border:1.5px dashed var(--acid-text, #d6ff3f); }
+.ai-sum-h{ font-weight:700; margin:0 0 8px; line-height:1.7; }
+.ai-sum-l{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.08em; opacity:.8; margin-top:8px; }
+.ai-sum ul{ margin:4px 0 0 18px; padding:0; line-height:1.8; }
+.ai-test{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--concrete, #555); }
+.ai-ans{ white-space:pre-wrap; margin-top:10px; line-height:1.8; }
+.ai-ans:not(:empty){ padding:10px 12px; border:1.5px solid var(--concrete, #555); }
 </style>
 </head>
 <body>
@@ -9797,7 +9807,7 @@ function postMakerInit(){
   function descOf(p){ const d = String(p.description || '').split(/\n|။/)[0].trim(); return d ? (d.length > 70 ? d.slice(0, 68) + '…' : d) : SOFT(p.name); }
   function toItem(p){ let st = { on:false, pct:0, orig:Number(p.price) || 0 }; try{ st = saleState(p); }catch(e){}
     return { src:p.id, name:p.name || '', mm:descOf(p), price:Number(st.orig || p.price) || 0, pct:st.on ? st.pct : 0, sp:st.on ? st.sp : 0,
-      sizes:String(p.sizes || '').split(/[,\s]+/).map(x => x.trim()).filter(Boolean).join(' ') || 'Free', tag:String(p.category || 'Fashion').replace(/[^A-Za-z0-9]/g, '') || 'Fashion',
+      sizes:String(p.sizes || '').split(/[,\s]+/).map(x => x.trim()).filter(Boolean).join(' ') || 'Free', tag:String(p.category || 'Fashion').replace(/[^A-Za-z0-9]/g, '') || 'Fashion', colors:String(p.colors || ''), cat:String(p.category || ''), desc:String(p.description || ''),
       url:(p.image_url || String(p.images || '').split(',')[0] || '').trim() };
   }
   const imgCache = {};
@@ -10374,12 +10384,23 @@ function postMakerInit(){
   $('ai-go').onclick = async () => {
     const btn = $('ai-go'); btn.classList.add('busy'); btn.textContent = '✨ AI ရေးနေသည်...';
     const box = $('caps'); box.innerHTML = ''; const names = { soft:'🌸 SOFT', happy:'✨ HAPPY', prem:'🤍 PREMIUM', cute:'🥰 CUTE' };
-    const seen = new Set(), list = []; for(let k = 0; k < 12 && list.length < 3; k++){ const c = genCaption(); const h = c.split('\n')[0]; if(!seen.has(h)){ seen.add(h); list.push(c); } }
+    let list = [], viaAI = false;
+    // 🤖 Gemini AI (api/ai.js) — Key မထည့်ရသေး/မရရင် အောက်က ပုံသေ Caption နဲ့ ရေး
+    if(window.suwatiAI && await suwatiAI.ready()){
+      try{
+        const p = P[cur], pct = pctV();
+        const r = await suwatiAI.call({ task:'caption', tone, lang, platform: plat, pct, desc: $('t-mm').value,
+          product:{ name:p.name, price:p.price, sale: pct ? saleP(p, pct) : 0, sizes:p.sizes, colors:p.colors, category:p.cat, description:p.desc },
+          items: mode === 'grid' ? P.map(x => ({ name:x.name, price: x.pct ? saleP(x, x.pct) : x.price })) : [] });
+        list = (r.captions || []).slice(0, 3); viaAI = list.length > 0;
+      }catch(e){ toast((window.suwatiAI && suwatiAI.errText(e)) || 'AI မရပါ'); }
+    }
+    if(!list.length){ const seen = new Set(); for(let k = 0; k < 12 && list.length < 3; k++){ const c = genCaption(); const h = c.split('\n')[0]; if(!seen.has(h)){ seen.add(h); list.push(c); } } }
     while(list.length < 3) list.push(genCaption());
-    await new Promise(r => setTimeout(r, 650));
+    if(!viaAI) await new Promise(r => setTimeout(r, 650));
     for(let i = 0; i < 3; i++){
       const d = document.createElement('div'); d.className = 'capc' + (i ? '' : ' sel');
-      d.innerHTML = `<div class="ch">OPTION ${i + 1} · ${names[tone]}<span>${plat === 'tt' ? 'TIKTOK' : 'FACEBOOK'}</span></div><div class="ct" contenteditable="true" spellcheck="false"></div>
+      d.innerHTML = `<div class="ch">OPTION ${i + 1} · ${names[tone]}${viaAI && i < list.length ? ' · 🤖 AI' : ''}<span>${plat === 'tt' ? 'TIKTOK' : 'FACEBOOK'}</span></div><div class="ct" contenteditable="true" spellcheck="false"></div>
         <div class="cb"><button type="button" data-a="use">✔️ ဒါသုံးမည်</button><button type="button" data-a="copy">📋 Copy</button></div>`;
       box.appendChild(d); await typeOut(d.querySelector('.ct'), list[i]);
     }
@@ -10844,6 +10865,180 @@ function qrPosterInit(){
 (function(){
   const card = document.getElementById('inv-value-card'), panel = document.getElementById('inventory-panel');
   if(card && panel && panel.firstElementChild !== card) panel.prepend(card);
+})();
+
+// =====================================================================
+// 🤖 AI (Google Gemini · api/ai.js) — Admin ဘက်
+//   ① Post ပုံထုတ် › Caption (post-maker.js ထဲက ✨ ခလုတ်က suwatiAI ကို သုံး)
+//   ② ပစ္စည်း › ဖော်ပြချက် AI ဖြင့် ရေး
+//   ③ ဒီနေ့ › AI အရောင်း အကျဉ်းချုပ်
+//   ④ Settings › Website Chat AI အလိုလို ဖြေ (ဖွင့်/ပိတ် · ဆိုင်ဖွင့်ချိန် · ဆိုင်အချက်အလက် · စမ်းမေး)
+// Vercel Environment Variables: GEMINI_API_KEY (+ Chat အတွက် SUPABASE_SERVICE_ROLE_KEY) · Supabase: AI-SETUP.sql
+// =====================================================================
+window.suwatiAI = (function(){
+  let st = null, pending = null;
+  async function check(force){
+    if(st && !force) return st;
+    if(pending && !force) return pending;
+    pending = fetch('/api/ai', { cache:'no-store' }).then(r => r.ok ? r.json() : { configured:false }).catch(() => ({ configured:false }))
+      .then(j => { st = j || { configured:false }; pending = null; document.body.classList.toggle('ai-on', !!st.configured); return st; });
+    return pending;
+  }
+  async function call(body){
+    const { data:{ session } } = await sb.auth.getSession();
+    const r = await fetch('/api/ai', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + (session && session.access_token || '') }, body: JSON.stringify(body) });
+    let j = {}; try{ j = await r.json(); }catch(e){}
+    if(!r.ok) throw Object.assign(new Error(j.error || ('HTTP ' + r.status)), { code: j.error || 'HTTP_' + r.status });
+    return j;
+  }
+  function errText(e){
+    const c = (e && (e.code || e.message)) || '';
+    if(/AI_NOT_CONFIGURED/.test(c)) return '🤖 AI မဖွင့်ရသေးပါ — Vercel မှာ GEMINI_API_KEY ထည့်ရန်';
+    if(/AI_RATE_LIMIT/.test(c)) return '🤖 AI (အခမဲ့) အသုံးများနေပါသည် — ၁ မိနစ်လောက်နေမှ ပြန်စမ်းပါ';
+    if(/AI_KEY_ERROR/.test(c)) return '🤖 Gemini API Key မှားနေ/ပိတ်ထားပုံရပါသည် — Key ပြန်စစ်ပါ';
+    if(/admin_only|login_required/.test(c)) return '🤖 AI သုံးခွင့် မရှိပါ — ပြန် Login ဝင်ပါ';
+    return '🤖 AI ရေး၍ မရပါ — ခဏနေမှ ပြန်စမ်းပါ';
+  }
+  check();
+  return { check, call, errText, ready: async () => !!(await check()).configured };
+})();
+
+// ---------- ② ပစ္စည်း ဖော်ပြချက် AI ဖြင့် ရေး ----------
+(function(){
+  const ta = document.getElementById('product-description'); if(!ta || document.getElementById('ai-desc-btn')) return;
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.id = 'ai-desc-btn'; btn.className = 'secondary ai-only'; btn.textContent = '🤖 AI ဖြင့် ဖော်ပြချက် ရေးမည်';
+  ta.insertAdjacentElement('afterend', btn);
+  const v = id => (document.getElementById(id)?.value || '').trim();
+  btn.addEventListener('click', async () => {
+    const name = v('product-name'); if(!name){ showToast('ပစ္စည်းနာမည် အရင်ထည့်ပါ'); document.getElementById('product-name')?.focus(); return; }
+    if(ta.value.trim() && !await adminConfirm('ရေးထားတဲ့ ဖော်ပြချက်ကို AI ရေးတာနဲ့ အစားထိုးမှာလား? (ရေးထားတာကို AI က အကြံအဖြစ် ယူပါမည်)')) return;
+    btn.disabled = true; const old = btn.textContent; btn.textContent = '🤖 ရေးနေသည်...';
+    try{
+      const r = await suwatiAI.call({ task:'describe', product:{ name, category:v('product-category'), subcategory:v('product-subcategory'), price:Number(v('product-price')) || 0,
+        sizes:v('product-sizes'), colors:v('product-colors'), note: ta.value.trim() } });
+      if(r.description){ ta.value = r.description; ta.dispatchEvent(new Event('input', { bubbles:true })); showToast('🤖 ဖော်ပြချက် ရေးပြီး — စစ်ပြီး ပြင်ချင်တာ ပြင်ပါ'); }
+    }catch(e){ showToast(suwatiAI.errText(e)); }
+    finally{ btn.disabled = false; btn.textContent = old; }
+  });
+})();
+
+// ---------- ③ ဒီနေ့ › AI အရောင်း အကျဉ်းချုပ် ----------
+(function(){
+  let lastHtml = '';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  function card(){
+    const c = document.createElement('div'); c.className = 'form-card ai-only ai-sum-card'; c.id = 'ai-sum-card';
+    c.innerHTML = `<h3>🤖 AI အရောင်း အကျဉ်းချုပ်</h3>
+      <div class="hint">ပြီးခဲ့တဲ့ ၁၄ ရက် အရောင်း၊ Stock နဲ့ ငွေဖြည့်ကို AI က ဖတ်ပြီး ဒီအပတ် လုပ်သင့်တာ အကြံပေးပါမည်</div>
+      <div id="ai-sum-out">${lastHtml}</div>
+      <button type="button" class="acid" id="ai-sum-btn" style="width:100%; margin-top:10px;">${lastHtml ? '🔄 ပြန်ရေးခိုင်းမည်' : '🤖 အကျဉ်းချုပ် ရေးခိုင်းမည်'}</button>`;
+    c.querySelector('#ai-sum-btn').addEventListener('click', run);
+    return c;
+  }
+  function ensure(){
+    const panel = document.getElementById('today-panel'); if(!panel || document.getElementById('ai-sum-card')) return;
+    const hero = panel.querySelector('.td-hero');
+    if(hero) hero.insertAdjacentElement('afterend', card()); else if(panel.querySelector('.td-grid')) panel.appendChild(card());
+  }
+  async function stats(){
+    const now = new Date(), d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate()), from = new Date(d0.getTime() - 13 * 864e5), from30 = new Date(d0.getTime() - 29 * 864e5);
+    const [o, p, t, g] = await Promise.all([
+      sb.from('orders').select('product_name, quantity, total_amount, order_status, sale_channel, created_at').gte('created_at', from30.toISOString()).limit(8000),
+      sb.from('products').select('name, price, stock_qty, status, is_gift_card, visible').limit(2000),
+      sb.from('wallet_topups').select('amount, status, created_at').eq('status', 'approved').gte('created_at', from.toISOString()).limit(3000),
+      sb.from('gift_cards').select('amount, status, created_at').gte('created_at', from.toISOString()).limit(3000),
+    ]);
+    const good = (o.data || []).filter(r => !['cancelled', 'awaiting_payment'].includes(r.order_status));
+    const day = d => { const x = new Date(d); return `${x.getMonth() + 1}/${x.getDate()}`; };
+    const byDay = {}, prodA = {}, prodB = {}, sold30 = {};
+    let online = 0, shop = 0;
+    for(const r of good){
+      const t0 = new Date(r.created_at); sold30[r.product_name] = (sold30[r.product_name] || 0) + Number(r.quantity || 0);
+      if(t0 < from) continue;
+      const k = day(t0); byDay[k] = (byDay[k] || 0) + Number(r.total_amount || 0);
+      if(r.sale_channel === 'in_store') shop += Number(r.total_amount || 0); else online += Number(r.total_amount || 0);
+      const bucket = t0 >= new Date(d0.getTime() - 6 * 864e5) ? prodA : prodB;
+      const e = bucket[r.product_name] = bucket[r.product_name] || { qty:0, ks:0 }; e.qty += Number(r.quantity || 0); e.ks += Number(r.total_amount || 0);
+    }
+    const top = (b) => Object.entries(b).sort((x, y) => y[1].ks - x[1].ks).slice(0, 8).map(([n, v]) => ({ name:n, qty:v.qty, ks:v.ks }));
+    const prods = (p.data || []).filter(x => x.visible !== false && !x.is_gift_card);
+    return {
+      period: '၁၄ ရက် (ယနေ့အပါ)', revenue_by_day: byDay, online_ks: online, shop_pos_ks: shop,
+      top_last_7_days: top(prodA), top_previous_7_days: top(prodB),
+      low_stock: prods.filter(x => Number(x.stock_qty || 0) <= 3).map(x => ({ name:x.name, stock:Number(x.stock_qty || 0) })).slice(0, 15),
+      no_sales_30_days: prods.filter(x => !sold30[x.name] && Number(x.stock_qty || 0) > 0).map(x => ({ name:x.name, stock:Number(x.stock_qty || 0), price:x.price })).slice(0, 15),
+      prepaid_topup_ks: (t.data || []).reduce((s, r) => s + Number(r.amount || 0), 0),
+      gift_card_ks: (g.data || []).filter(r => !['pending', 'rejected'].includes(r.status)).reduce((s, r) => s + Number(r.amount || 0), 0),
+    };
+  }
+  async function run(){
+    const btn = document.getElementById('ai-sum-btn'), out = document.getElementById('ai-sum-out');
+    btn.disabled = true; btn.textContent = '🤖 Data ဖတ်ပြီး ရေးနေသည်...';
+    try{
+      const r = await suwatiAI.call({ task:'summary', stats: await stats() });
+      lastHtml = `<div class="ai-sum">${r.headline ? `<p class="ai-sum-h">${esc(r.headline)}</p>` : ''}
+        ${(r.points || []).length ? `<div class="ai-sum-l">📊 တွေ့ရှိချက်</div><ul>${r.points.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+        ${(r.actions || []).length ? `<div class="ai-sum-l">✅ လုပ်သင့်တာ</div><ul>${r.actions.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : ''}
+        <div class="hint" style="margin-top:6px;">🕒 ${new Date().toLocaleString()} · AI ရေးတာမို့ ဂဏန်းကို Sales Report နဲ့ တိုက်စစ်ပါ</div></div>`;
+      out.innerHTML = lastHtml;
+    }catch(e){ showToast(suwatiAI.errText(e)); }
+    finally{ btn.disabled = false; btn.textContent = lastHtml ? '🔄 ပြန်ရေးခိုင်းမည်' : '🤖 အကျဉ်းချုပ် ရေးခိုင်းမည်'; }
+  }
+  if(typeof renderTodayPanel === 'function'){ const _r = renderTodayPanel; renderTodayPanel = async function(){ const x = await _r.apply(this, arguments); try{ ensure(); }catch(e){} return x; }; }
+  const panel = document.getElementById('today-panel');
+  if(panel) new MutationObserver(() => { if(!document.getElementById('ai-sum-card') && panel.querySelector('.td-hero')) ensure(); }).observe(panel, { childList:true });
+  ensure();
+})();
+
+// ---------- ④ Settings › Website Chat AI ----------
+(function(){
+  const panel = document.getElementById('settings-panel'); if(!panel || document.getElementById('ai-chat-card')) return;
+  const c = document.createElement('div'); c.className = 'form-card owner-only'; c.id = 'ai-chat-card';
+  c.innerHTML = `<h3>🤖 AI — Website Chat အလိုလို ဖြေ</h3>
+    <div id="ai-status" class="hint">စစ်နေသည်...</div>
+    <div class="hint">Customer က Website Chat မှာ မေးရင် ဆိုင်ရဲ့ ပစ္စည်း/ဈေး/Stock/Delivery အချက်အလက်ကို ကြည့်ပြီး AI က ဖြေပေးပါမည်။ AI ဖြေတဲ့စာက "🤖" နဲ့ စပါမည်။ Admin ကိုယ်တိုင် ဖြေပြီး ၂၀ မိနစ်အတွင်း AI မဝင်ပါ။ ဈေးလျှော့/ငွေပြန်အမ်း စတာတွေ ကတိမပေးဘဲ Admin ဆီ လွှဲပါမည်။<br>⚠️ အခမဲ့ Gemini မို့ Customer မေးခွန်းကို Google က ဖတ်/သုံး နိုင်ပါသည် (ဖုန်း/Email/Card နံပါတ် ဖျောက်ပြီးမှ ပို့ပါသည်)</div>
+    <label class="ps-lbl">AI ဖြေမည့် အချိန်</label>
+    <select id="ai-mode"><option value="off">⛔ ပိတ်ထား</option><option value="hours">🌙 ဆိုင်ပိတ်ချိန်မှသာ</option><option value="always">🟢 အမြဲ</option></select>
+    <div class="ps-dates" id="ai-hours-row"><div><label class="ps-lbl">ဆိုင်ဖွင့်ချိန်</label><input type="time" id="ai-open" value="09:00"></div><div><label class="ps-lbl">ဆိုင်ပိတ်ချိန်</label><input type="time" id="ai-close" value="21:00"></div></div>
+    <label class="ps-lbl">AI သိထားရမယ့် ဆိုင်အချက်အလက် (ဖွင့်ချိန်၊ လိပ်စာ၊ ပြန်လဲလို့ရလား၊ Size အကြံ စသည်)</label>
+    <textarea id="ai-info" rows="6" placeholder="ဥပမာ — ဆိုင်ဖွင့်ချိန် မနက် ၉ – ည ၉ · လိပ်စာ ပျဉ်းမနား ... · ပစ္စည်းရောက်ပြီး ၃ ရက်အတွင်း Size လဲလို့ရ (မဝတ်ရသေးရင်) · M = 55–65kg, L = 65–75kg"></textarea>
+    <button type="button" class="acid" id="ai-save" style="width:100%; margin-top:8px;">သိမ်းမည်</button>
+    <div class="ai-test">
+      <label class="ps-lbl">🧪 စမ်းမေးကြည့်ရန် (Customer လို မေးကြည့်ပါ)</label>
+      <input type="text" id="ai-q" placeholder="ဥပမာ — Polo M Black ရှိသေးလား? Delivery ခ ဘယ်လောက်လဲ?">
+      <button type="button" class="secondary" id="ai-ask" style="width:100%; margin-top:8px;">🤖 မေးကြည့်မည်</button>
+      <div id="ai-ans" class="ai-ans"></div>
+    </div>`;
+  const mfa = document.getElementById('mfa-card');
+  (mfa ? mfa : panel.firstElementChild)?.insertAdjacentElement('afterend', c) || panel.appendChild(c);
+  const $ = id => document.getElementById(id);
+  const sync = () => { $('ai-hours-row').style.display = $('ai-mode').value === 'hours' ? '' : 'none'; };
+  $('ai-mode').addEventListener('change', sync); sync();
+  async function load(){
+    const s = await suwatiAI.check(true);
+    $('ai-status').innerHTML = !s.configured ? '🔴 AI မဖွင့်ရသေးပါ — Vercel › Settings › Environment Variables မှာ <b>GEMINI_API_KEY</b> ထည့်ပြီး Redeploy လုပ်ပါ'
+      : !s.chat ? '🟡 Caption/ဖော်ပြချက်/အကျဉ်းချုပ် သုံးလို့ရပါပြီ · Chat အလိုလိုဖြေဖို့ <b>SUPABASE_SERVICE_ROLE_KEY</b> ပါ ထည့်ရန်'
+      : '🟢 AI အဆင်သင့် ဖြစ်ပါပြီ';
+    const { data, error } = await sb.from('admin_private_settings').select('ai_chat_mode, ai_open, ai_close, ai_shop_info').eq('id', 1).maybeSingle();
+    if(error){ $('ai-status').innerHTML += '<br>⚠️ Supabase မှာ <b>AI-SETUP.sql</b> Run ရန် လိုပါသည်'; return; }
+    if(data){ $('ai-mode').value = data.ai_chat_mode || 'off'; $('ai-open').value = data.ai_open || '09:00'; $('ai-close').value = data.ai_close || '21:00'; $('ai-info').value = data.ai_shop_info || ''; sync(); }
+  }
+  $('ai-save').addEventListener('click', async () => {
+    const payload = { id:1, ai_chat_mode:$('ai-mode').value, ai_open:$('ai-open').value || '09:00', ai_close:$('ai-close').value || '21:00', ai_shop_info:$('ai-info').value.trim().slice(0, 3000) };
+    const { error } = await sb.from('admin_private_settings').upsert(payload, { onConflict:'id' });
+    if(error){ showToast('Error: ' + error.message + ' — AI-SETUP.sql Run ရန်'); return; }
+    showToast('🤖 AI Chat Settings သိမ်းပြီးပါပြီ'); try{ logActivity('ai_chat_settings', payload.ai_chat_mode); }catch(e){}
+  });
+  $('ai-ask').addEventListener('click', async () => {
+    const q = $('ai-q').value.trim(); if(!q) return showToast('မေးခွန်း ရိုက်ပါ');
+    const b = $('ai-ask'), out = $('ai-ans'); b.disabled = true; b.textContent = '🤖 ဖြေနေသည်...'; out.textContent = '';
+    try{ const r = await suwatiAI.call({ task:'chat_test', question:q, shop_info:$('ai-info').value });
+      out.textContent = '🤖 ' + (r.answer || '') + (r.handoff ? '\n\n(→ ဒီမေးခွန်းကို Admin ဆီ လွှဲပါမည်)' : ''); }
+    catch(e){ out.textContent = suwatiAI.errText(e); }
+    finally{ b.disabled = false; b.textContent = '🤖 မေးကြည့်မည်'; }
+  });
+  document.querySelector('.tab-btn[data-tab="settings-panel"]')?.addEventListener('click', () => load());
 })();
 
 // ---------- ✨ Admin FX — Order အသစ်ဝင်ရင် Banner + Card ဖျတ်ခနဲလင်း + အသံ (🔔/🔕 ပိတ်လို့ရ) ----------
