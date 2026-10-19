@@ -1244,6 +1244,15 @@ body:not(.ai-on) .ai-only{ display:none !important; }
 .ai-test{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--concrete, #555); }
 .ai-ans{ white-space:pre-wrap; margin-top:10px; line-height:1.8; }
 .ai-ans:not(:empty){ padding:10px 12px; border:1.5px solid var(--concrete, #555); }
+
+/* ☁️ Cloud Backup စာရင်း — ခေါက်ထား */
+.ab-fold{border:2px solid var(--grey);margin:8px 0;}
+.ab-fold>summary{cursor:pointer;padding:14px 12px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.ab-fold>summary::-webkit-details-marker{display:none;}
+.ab-fold>summary::after{content:'▾';font-size:18px;transition:transform .2s;}
+.ab-fold[open]>summary::after{transform:rotate(180deg);}
+.ab-fold[open]>summary{border-bottom:1px dashed var(--grey);}
+.ab-fold .ab-table{margin:0;}
 </style>
 </head>
 <body>
@@ -7954,9 +7963,10 @@ async function listCloudBackups(){
       st.innerHTML = hrs !== null && hrs > 30 ? `⚠️ နောက်ဆုံး Backup ${Math.floor(hrs/24)} ရက်ကြာပြီ — Cron အလုပ်မလုပ်တာ ဖြစ်နိုင်ပါသည်` : `✅ နောက်ဆုံး Backup: ${last.at ? new Date(last.at).toLocaleString() : last.name}`;
       st.style.color = hrs !== null && hrs > 30 ? 'var(--warn-text)' : 'var(--acid-text)';
     }
-    box.innerHTML = `<table class="recon-table ab-table">${files.slice(0, 10).map((f, i) => `
+    // 📂 စာရင်းကို ပိတ်ထား — နှိပ်မှ ဖွင့်ပြ (နေ့တိုင်း တိုးလာလို့ အောက်ဆွဲရ မကြာအောင်)
+    box.innerHTML = `<details class="ab-fold"><summary>🗂️ Cloud Backup ဖိုင်များ (${Math.min(files.length, 10)}) — နှိပ်ပြီး ကြည့်ရန်</summary><table class="recon-table ab-table">${files.slice(0, 10).map((f, i) => `
       <tr><td>🗂️ ${f.name.replace('suwati-backup-','').replace('.json.gz','')}<br><span class="hint" style="margin:0;">${(f.size/1024).toFixed(0)} KB</span></td>
-      <td><button type="button" class="secondary ab-dl" data-path="${f.path}" data-name="${f.name}">⬇️ Download</button></td></tr>`).join('')}</table>`;
+      <td><button type="button" class="secondary ab-dl" data-path="${f.path}" data-name="${f.name}">⬇️ Download</button></td></tr>`).join('')}</table></details>`;
     box.querySelectorAll('.ab-dl').forEach(b => b.addEventListener('click', async () => {
       b.disabled = true;
       const { data, error } = await B.createSignedUrl(b.dataset.path, 300, { download: b.dataset.name });
@@ -10888,7 +10898,7 @@ window.suwatiAI = (function(){
     const { data:{ session } } = await sb.auth.getSession();
     const r = await fetch('/api/ai', { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + (session && session.access_token || '') }, body: JSON.stringify(body) });
     let j = {}; try{ j = await r.json(); }catch(e){}
-    if(!r.ok) throw Object.assign(new Error(j.error || ('HTTP ' + r.status)), { code: j.error || 'HTTP_' + r.status });
+    if(!r.ok) throw Object.assign(new Error(j.error || ('HTTP ' + r.status)), { code: j.error || 'HTTP_' + r.status, detail: j.detail || '' });
     return j;
   }
   function errText(e){
@@ -10897,7 +10907,9 @@ window.suwatiAI = (function(){
     if(/AI_RATE_LIMIT/.test(c)) return '🤖 AI (အခမဲ့) အသုံးများနေပါသည် — ၁ မိနစ်လောက်နေမှ ပြန်စမ်းပါ';
     if(/AI_KEY_ERROR/.test(c)) return '🤖 Gemini API Key မှားနေ/ပိတ်ထားပုံရပါသည် — Key ပြန်စစ်ပါ';
     if(/admin_only|login_required/.test(c)) return '🤖 AI သုံးခွင့် မရှိပါ — ပြန် Login ဝင်ပါ';
-    return '🤖 AI ရေး၍ မရပါ — ခဏနေမှ ပြန်စမ်းပါ';
+    if(/AI_REGION/.test(c)) return '🤖 Vercel Server ရှိရာ နိုင်ငံမှာ Gemini မရပါ — Vercel › Settings › Functions › Region ကို Washington D.C. (iad1) ပြောင်းပါ';
+    if(/HTTP_504|TIMEOUT/.test(c)) return '🤖 AI ဖြေတာ ကြာလွန်းသွားပါသည် — vercel.json ကို GitHub တင်ပြီး ပြန်စမ်းပါ';
+    return '🤖 AI ရေး၍ မရပါ — ခဏနေမှ ပြန်စမ်းပါ' + (c ? '\n(Error: ' + c + (e && e.detail ? ' · ' + String(e.detail).slice(0, 160) : '') + ')' : '');
   }
   check();
   return { check, call, errText, ready: async () => !!(await check()).configured };

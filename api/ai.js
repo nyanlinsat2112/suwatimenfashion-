@@ -61,7 +61,7 @@ async function sbService(path, opts = {}){
 }
 
 // ---------- Gemini ----------
-async function gemini(system, prompt, { json = true, temperature = 0.8, maxTokens = 2048 } = {}){
+async function gemini(system, prompt, { json = true, temperature = 0.8, maxTokens = 6000 } = {}){
   const key = env("GEMINI_API_KEY");
   if(!key){ const e = new Error("AI_NOT_CONFIGURED"); e.code = "AI_NOT_CONFIGURED"; throw e; }
   const models = [...new Set([env("GEMINI_MODEL"), "gemini-flash-latest", "gemini-flash-lite-latest", "gemini-2.5-flash", "gemini-2.0-flash"].filter(Boolean))];
@@ -79,15 +79,23 @@ async function gemini(system, prompt, { json = true, temperature = 0.8, maxToken
       if(r.status === 404){ last = new Error("model " + m + " not found"); break; }            // နောက် Model စမ်း
       if(r.status === 429){ if(attempt === 0){ await sleep(1500); continue; } const e = new Error("AI_RATE_LIMIT"); e.code = "AI_RATE_LIMIT"; throw e; }
       if(r.status >= 500){ last = new Error("gemini " + r.status); if(attempt === 0){ await sleep(800); continue; } break; }
-      if(!r.ok){ const t = await r.text(); const e = new Error("gemini " + r.status + " " + clip(t, 300)); e.code = r.status === 400 || r.status === 403 ? "AI_KEY_ERROR" : "AI_ERROR"; throw e; }
+      if(!r.ok){
+        const t = await r.text();
+        const e = new Error("gemini " + m + " " + r.status + " " + clip(t, 300));
+        e.code = /location is not supported|not available in your country|region/i.test(t) ? "AI_REGION"
+               : /API key|API_KEY|PERMISSION_DENIED|unregistered callers/i.test(t) ? "AI_KEY_ERROR"
+               : (r.status === 400 ? (last = e, null) : "AI_ERROR");
+        if(e.code === null) break;                                   // ဒီ Model နဲ့ မကိုက် (400) — နောက် Model စမ်း
+        throw e;
+      }
       const d = await r.json();
       const text = ((d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts) || []).map((p) => p.text || "").join("").trim();
-      if(!text){ last = new Error("empty answer"); break; }
+      if(!text){ last = new Error("empty answer from " + m + " (" + ((d.candidates && d.candidates[0] && d.candidates[0].finishReason) || (d.promptFeedback && d.promptFeedback.blockReason) || "?") + ")"); break; }
       if(!json) return text;
       const raw = text.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "");
       try{ return JSON.parse(raw); }catch(e){
         const m2 = raw.match(/\{[\s\S]*\}/); if(m2){ try{ return JSON.parse(m2[0]); }catch(_){} }
-        last = new Error("bad json"); break;
+        last = new Error("bad json from " + m); break;
       }
     }
   }
@@ -149,7 +157,7 @@ async function taskDescribe(b){
   const out = await gemini(
     `သင်က ${SHOP} ရဲ့ Website ပစ္စည်း ဖော်ပြချက် ရေးသူပါ။ ${VOICE} ပေးထားတဲ့ အချက်အလက်ကနေသာ ရေးပါ — အထည်အမျိုးအစား၊ Brand အစစ်/အတု စတာတွေ မသိရင် မထွင်ပါနဲ့။`,
     `ပစ္စည်း: ${clip(p.name, 80)}\nအမျိုးအစား: ${clip(p.category, 40)} ${clip(p.subcategory, 40)}\nဈေး: ${ks(p.price)} ကျပ်\nSize: ${clip(p.sizes, 80) || "-"}\nအရောင်: ${clip(p.colors, 80) || "-"}\nဆိုင်ရှင် မှတ်ချက်: ${clip(p.note || p.description, 300) || "-"}\n\nWebsite မှာ ပြမယ့် ဖော်ပြချက် စာကြောင်း ၃–၅ ကြောင်း (ဘယ်လိုဝတ်လို့ကောင်းလဲ၊ ဘာနဲ့တွဲလို့ရလဲ၊ Size ရွေးနည်း အကြံ) ရေးပါ။ Hashtag မထည့်ပါ။ JSON: {"description":"..."}`,
-    { temperature: 0.8, maxTokens: 1200 }
+    { temperature: 0.8, maxTokens: 4096 }
   );
   const d = noHtml(out && out.description);
   if(!d) throw Object.assign(new Error("empty"), { code: "AI_ERROR" });
@@ -160,7 +168,7 @@ async function taskSummary(b){
   const out = await gemini(
     `သင်က ${SHOP} ရဲ့ အရောင်း အကြံပေးပါ။ ဆိုင်ရှင်ကို မြန်မာလို တိုတို ရှင်းရှင်း ပြောပါ။ ပေးထားတဲ့ ဂဏန်းတွေကနေသာ ပြောပါ — မထွင်ပါနဲ့။ ငွေကို "ကျပ်" နဲ့ ရေးပါ။`,
     `Data (JSON):\n${stats}\n\nရေးရန်:\n1) "headline" — တစ်ကြောင်းတည်း အနှစ်ချုပ်\n2) "points" — တွေ့ရှိချက် ၃–၅ ခု (ရောင်းကောင်း/မကောင်း၊ ဘာတိုး/ကျ)\n3) "actions" — ဆိုင်ရှင် ဒီအပတ် လုပ်သင့်တာ ၂–၄ ခု (Stock ဖြည့်၊ Sale ချ၊ Post တင် စသည်)\nJSON: {"headline":"...","points":["..."],"actions":["..."]}`,
-    { temperature: 0.5, maxTokens: 1500 }
+    { temperature: 0.5, maxTokens: 6000 }
   );
   return {
     headline: noHtml(out && out.headline),
@@ -184,7 +192,7 @@ JSON: {"answer":"...","handoff":true|false}
 # ဆိုင်အချက်အလက်
 ${ctx}`,
     `${hist ? "ယခင် စကားဝိုင်း:\n" + hist + "\n\n" : ""}Customer ရဲ့ နောက်ဆုံး မေးခွန်း: ${clip(mask(question), 800)}`,
-    { temperature: 0.4, maxTokens: 900 }
+    { temperature: 0.4, maxTokens: 4096 }
   );
   let answer = noHtml(out && out.answer);
   const handoff = !!(out && out.handoff) || !answer;
