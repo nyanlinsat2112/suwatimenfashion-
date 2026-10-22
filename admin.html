@@ -1715,7 +1715,9 @@ html:is([data-theme],:not([data-theme])) .closing-method-card .cm-count{ font-fa
 html:is([data-theme],:not([data-theme])) .customer-card{ background:var(--s2); padding:16px; }
 html:is([data-theme],:not([data-theme])) .customer-card h4{ font-family:'Noto Sans Myanmar',sans-serif !important; }
 html:is([data-theme],:not([data-theme])) .customer-card .cstats{ font-family:var(--g-num); }
-html:is([data-theme],:not([data-theme])) .customer-card > div:has(> .view-orders-btn){ display:grid !important; grid-template-columns:repeat(3, minmax(0,1fr)) !important; gap:8px !important; }
+html:is([data-theme],:not([data-theme])) .customer-card > div:has(> .view-orders-btn){ display:grid !important; grid-template-columns:repeat(2, minmax(0,1fr)) !important; gap:8px !important; }
+html:is([data-theme],:not([data-theme])) .customer-card > div:has(> .view-orders-btn) > .delete-customer-btn{ grid-column:1 / -1; }
+html:is([data-theme],:not([data-theme])) .crm-strip .crm-open{ min-height:46px; border-radius:12px; font-size:13px !important; }
 html:is([data-theme],:not([data-theme])) .customer-card > div:has(> .view-orders-btn) > button{ min-width:0 !important; min-height:46px; padding:8px 6px !important; font-size:13px; line-height:1.3; border-radius:12px; }
 html:is([data-theme],:not([data-theme])) .customer-card .delete-customer-btn{ border-color:color-mix(in srgb, var(--rust) 55%, transparent) !important; }
 html:is([data-theme],:not([data-theme])) .crm-strip .crm-open{ height:40px !important; border-radius:12px; }
@@ -1906,6 +1908,37 @@ html:is([data-theme],:not([data-theme])) #salehistory-panel button[class*="refun
 @media (max-width:520px){ html:is([data-theme],:not([data-theme])) .category-drag-item .actions{ display:grid !important; grid-template-columns:44px 44px 1fr 1fr !important; } }
 html:is([data-theme],:not([data-theme])) .delivery-card div:has(> select + button){ display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) !important; gap:8px !important; margin-top:10px; }
 html:is([data-theme],:not([data-theme])) .delivery-card div:has(> select + button) > *{ width:100% !important; margin:0 !important; min-height:46px; border-radius:12px; }
+
+/* ===== ⚠️ Stock နည်း — ခလုတ်နှိပ်မှ ပွင့် (Oct 22) ===== */
+.ls-fold{ margin:10px 0 4px; }
+.ls-fold > summary{ list-style:none; cursor:pointer; display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:14px; border:1px solid color-mix(in srgb, var(--warn-text) 45%, transparent); background:color-mix(in srgb, var(--warn-text) 10%, transparent); font-weight:700; font-size:14px; }
+.ls-fold > summary::-webkit-details-marker{ display:none; }
+.ls-fold > summary .n{ font-family:var(--g-num, 'Space Mono',monospace); color:var(--warn-text); }
+.ls-fold > summary .out{ font-family:var(--g-num, 'Space Mono',monospace); color:var(--rust); font-size:12.5px; }
+.ls-fold > summary .chev{ margin-left:auto; transition:transform .2s; opacity:.7; }
+.ls-fold[open] > summary .chev{ transform:rotate(180deg); }
+.ls-fold[open] > summary{ border-bottom-left-radius:0; border-bottom-right-radius:0; }
+.ls-fold .lowstock-card{ margin:0 !important; border-top-left-radius:0 !important; border-top-right-radius:0 !important; border-top:0 !important; }
+
+/* ===== 📦 Orders — အတည်မပြုရသေး နှိပ်စစ် + ရက် ◀ ▶ (Oct 22) ===== */
+#revenue-stats > div.st-click{ cursor:pointer; border-radius:14px; padding:6px 10px; margin:-6px -10px; transition:background .2s, box-shadow .2s; position:relative; }
+#revenue-stats > div.st-click:hover{ background:var(--s2); }
+#revenue-stats > div.st-click .hint::after{ content:' 👆'; font-size:11px; }
+#revenue-stats > div.st-click .st-all{ font-size:11.5px; color:var(--grey); margin-top:2px; }
+#revenue-stats > div.st-click .st-all.hot{ color:var(--warn-text); font-weight:700; }
+#revenue-stats > div.st-click.on{ background:color-mix(in srgb, var(--warn-text) 14%, transparent); box-shadow:inset 0 0 0 1.5px var(--warn-text); }
+.ord-filter-bar{ display:flex; align-items:center; gap:10px; padding:12px 14px; margin:0 0 12px; border-radius:14px; background:color-mix(in srgb, var(--warn-text) 12%, transparent); border:1px solid color-mix(in srgb, var(--warn-text) 40%, transparent); font-weight:700; font-size:14px; }
+.ord-filter-bar button{ margin-left:auto; width:auto !important; padding:8px 12px !important; font-size:12.5px; border-radius:10px; }
+.date-nav{ display:grid; grid-template-columns:48px 1fr 48px; gap:8px; align-items:stretch; }
+.date-nav > input[type="date"]{ margin:0 !important; min-width:0; width:100% !important; text-align:center; }
+.date-nav > button{ width:48px !important; min-width:0 !important; padding:0 !important; margin:0 !important; font-size:18px; border-radius:12px; display:grid; place-items:center; }
+.date-nav-sub{ display:flex; gap:8px; margin-top:8px; }
+.date-nav-sub button{ flex:1; margin:0 !important; padding:9px 6px !important; font-size:12.5px; border-radius:12px; }
+.date-nav-lbl{ text-align:center; font-size:12px; color:var(--grey); margin-top:6px; }
+
+/* 🆔 Customer ID */
+.cid-badge{ display:inline-block; font:700 11px var(--g-num, 'Space Mono',monospace); letter-spacing:.04em; padding:3px 8px; border-radius:20px; background:var(--g-pri, #D6FF3F); color:var(--g-pri-ink, #141412); vertical-align:middle; margin-left:4px; }
+.cid-badge.guest{ background:transparent; color:var(--grey); border:1px solid var(--g-line, rgba(127,127,127,.35)); }
 </style>
 </head>
 <body>
@@ -2497,7 +2530,7 @@ html:is([data-theme],:not([data-theme])) .delivery-card div:has(> select + butto
     <div class="form-card">
       <h3>Customer Management</h3>
       <div class="hint">Order မှတ်တမ်းများမှ ဖောက်သည်စာရင်း အလိုအလျောက် ဖန်တီးထားပါသည်</div>
-      <input type="text" id="customer-search-input" placeholder="အမည် (သို့) ဖုန်းနံပါတ်ဖြင့် ရှာပါ..." style="margin-top:10px;">
+      <input type="text" id="customer-search-input" placeholder="အမည် · ဖုန်း · Customer ID (SUWATI-000001) ဖြင့် ရှာပါ..." style="margin-top:10px;">
       <div style="display:flex; gap:24px; flex-wrap:wrap; margin:14px 0;">
         <div>
           <div class="hint" style="margin:0;">ဖောက်သည် အရေအတွက်</div>
@@ -3776,12 +3809,14 @@ function renderLowStockAlert(products){
   const { low, out } = computeLowStock(products);
   if(!low.length && !out.length){ box.innerHTML = ''; return; }
   const row = i => `<div class="ls-row"><span>${i.name}${i.label?` <span class="ls-var">${i.label}</span>`:''}</span><b>${i.qty<=0?'ကုန်':i.qty+' ခု'}</b></div>`;
-  box.innerHTML = `<div class="form-card lowstock-card">
-      <h3>⚠️ Stock နည်းနေသော ပစ္စည်းများ ${low.length?`(${low.length})`:''}</h3>
+  const wasOpen = !!box.querySelector('details.ls-fold[open]');
+  box.innerHTML = `<details class="ls-fold"${wasOpen ? ' open' : ''}>
+    <summary>⚠️ Stock နည်းနေသော ပစ္စည်း <span class="n">${low.length}</span>${out.length ? ` <span class="out">· ❌ ကုန် ${out.length}</span>` : ''}<span class="chev">▾</span></summary>
+    <div class="form-card lowstock-card">
       <div class="hint">လက်ကျန် ${lowStockThreshold} ခု (သို့) အောက် — Stock ဖြည့်ရန် စဉ်းစားပါ (Settings မှာ အရေအတွက် ပြောင်းလို့ရ)</div>
       ${low.length ? low.map(row).join('') : '<div class="hint">မရှိပါ ✅</div>'}
       ${out.length ? `<details style="margin-top:10px;"><summary class="hint" style="cursor:pointer;">❌ ကုန်သွားပြီ (${out.length}) — နှိပ်ပြီး ကြည့်ရန်</summary>${out.map(row).join('')}</details>` : ''}
-    </div>`;
+    </div></details>`;
 }
 async function refreshLowStockBadge(){
   try{
@@ -12968,6 +13003,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
       const m = r.error ? (/qr_pay_charge|schema cache|function/i.test(r.error.message || '') ? '⚠️ QR-PAY.sql မ Run ရသေးပါ (Supabase)' : 'Error: ' + esc(r.error.message)) : '⚠️ ' + esc(d.message || 'မအောင်မြင်ပါ');
       return fail(m);
     }
+    window.__qrPanelUser = d.user_id || null;   // 🆔 customer-link.js က ID ပြ
     const name = d.name || 'Customer';
     const ini = (String(name).match(/[A-Za-zက-႟]/) || ['★'])[0].toUpperCase();
     const after = Number(d.balance) - amt;
@@ -13225,7 +13261,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
 
 // SUWATI ADMIN — 👥 Customer List: Online + ဆိုင်ထဲ ဝယ်တာ လူတစ်ယောက်တည်းကို တစ်ခုတည်း ပေါင်း
 //   အရင်: ဖုန်းနံပါတ်နဲ့ပဲ ခွဲလို့ Website ဖုန်း ≠ ဆိုင်မှာ ပြောတဲ့ဖုန်း ဆို ၂ ယောက် ဖြစ်
-//   အခု: Website Account (user_id) · ဖုန်း (09/+959 ညှိ) · Email — တစ်ခုခု တူရင် ပေါင်း
+//   အခု: 🆔 Customer ID (Website Account · SUWATI-000001) အလိုက် · Guest = ဖုန်း (09/+959 ညှိ) / Email · နာမည်နဲ့ မပေါင်း
 //   လိပ်စာ = "ဆိုင်ထဲ (In-Store)" မဟုတ်တဲ့ နောက်ဆုံး လိပ်စာ · ဖုန်း = Online ဖုန်း အရင် (CRM Tag မပျောက်စေ)
 //   customers.js + biz-tools.js (CRM) နောက်မှာ ထားရန်
 (function(){
@@ -13252,23 +13288,41 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
         items: rows.map(r => `${r.product_name}${r.size ? ' (' + r.size + (r.color ? ', ' + r.color : '') + ')' : ''} x${r.quantity}`).join(', ') };
     }).filter(o => !(o.sale_channel === 'in_store' && isWalkIn(o.customer_name) && !o.user_id));
 
-    // ② Union-Find — user_id / ဖုန်း / Email တူရင် လူတစ်ယောက်
+    // ② Customer ID (Website Account) အလိုက် — Account ၂ ခုကို ဘယ်တော့မှ မပေါင်း
+    //    Guest Order (Account မရှိ) = ဖုန်း/Email က Account တစ်ခုတည်းနဲ့ ကိုက်မှ အဲ့ Account ထဲ ထည့် · မဟုတ်ရင် ဖုန်း/Email အလိုက် Guest အုပ်စု
+    //    နာမည်နဲ့ မပေါင်း (Owner ဆုံးဖြတ် Oct 22 ည — နာမည်တူ လူကွဲ ဖြစ်နိုင်)
+    const emailOf = o => String(o.email || '').trim().toLowerCase();
+    const groups = {}, phoneU = {}, emailU = {};
+    sums.filter(o => o.user_id).forEach(o => {
+      (groups['u:' + o.user_id] = groups['u:' + o.user_id] || []).push(o);
+      const p = normPhone(o.phone), e = emailOf(o);
+      if(p) (phoneU[p] = phoneU[p] || new Set()).add(o.user_id);
+      if(e) (emailU[e] = emailU[e] || new Set()).add(o.user_id);
+    });
     const parent = {};
     const find = x => { while(parent[x] !== x){ parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
     const uni = (a, b) => { a = find(a); b = find(b); if(a !== b) parent[b] = a; };
-    const ids = o => { const r = []; if(o.user_id) r.push('u:' + o.user_id); const p = normPhone(o.phone); if(p) r.push('p:' + p);
-      const e = String(o.email || '').trim().toLowerCase(); if(e) r.push('e:' + e); if(!r.length) r.push('n:' + String(o.customer_name || '').trim().toLowerCase()); return r; };
-    sums.forEach(o => { const r = ids(o); r.forEach(x => { if(!(x in parent)) parent[x] = x; }); r.slice(1).forEach(x => uni(r[0], x)); });
+    const guests = [];
+    sums.filter(o => !o.user_id).forEach(o => {
+      const p = normPhone(o.phone), e = emailOf(o);
+      const cand = new Set([...(p && phoneU[p] || []), ...(e && emailU[e] || [])]);
+      if(cand.size === 1){ groups['u:' + [...cand][0]].push(o); return; }
+      const r = []; if(p) r.push('p:' + p); if(e) r.push('e:' + e); if(!r.length) r.push('x:' + guests.length + ':' + Math.random());
+      r.forEach(x => { if(!(x in parent)) parent[x] = x; }); r.slice(1).forEach(x => uni(r[0], x));
+      guests.push([o, r[0]]);
+    });
+    guests.forEach(([o, k]) => { const root = 'g:' + find(k); (groups[root] = groups[root] || []).push(o); });
 
-    const groups = {};
-    sums.forEach(o => { const root = find(ids(o)[0]); (groups[root] = groups[root] || []).push(o); });
+    // 🆔 Customer ID စာရင်း (CUSTOMER-ID.sql)
+    const cidMap = {};
+    try{ const { data: ids } = await sb.rpc('admin_customer_ids'); (ids || []).forEach(r => { cidMap[r.user_id] = r.customer_id; }); }catch(e){}
 
     const out = [];
     Object.values(groups).forEach(list => {
       list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));   // နောက်ဆုံး အရင်
       const online = list.filter(o => o.sale_channel !== 'in_store');
       const latest = list[0];
-      const primary = online[0] || latest;
+      const primary = online.find(o => o.user_id) || online[0] || latest;   // Website Account နဲ့ ဝယ်ထားတာ အရင်
       // Hide စစ် — အရင် Key ပုံစံ (phone || email || name) အကုန်
       const keys = new Set(); list.forEach(o => { const k = o.phone || o.email || o.customer_name; if(k) keys.add(k); });
       if([...keys].some(k => hiddenKeys.has(k))) return;
@@ -13283,7 +13337,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
         email: (list.find(o => o.email) || {}).email || '',
         address: addrOrder ? addrOrder.address : (latest.address || ''),
         orders: list, activeOrderCount: 0, totalSpent: 0,
-        isRegistered: !!uid, user_id: uid,
+        isRegistered: !!uid, user_id: uid, cid: uid ? (cidMap[uid] || '') : '',
         channel: online.length && list.some(o => o.sale_channel === 'in_store') ? 'both' : latest.sale_channel,
       };
       list.forEach(o => { if(o.order_status !== 'cancelled' && o.order_status !== 'awaiting_payment'){ c.totalSpent += o.total_amount; c.activeOrderCount += 1; } });
@@ -13302,7 +13356,17 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
   if(typeof renderCustomersList === 'function'){
     const _r = renderCustomersList;
     renderCustomersList = function(){
-      const r = _r.apply(this, arguments);
+      // 🆔 ID နဲ့ ရှာ (ဥပမာ suwati-000001 / 000001 / 1)
+      const q = typeof customerSearchQuery === 'string' ? customerSearchQuery : '';
+      const m = q.match(/^(?:suwati-?)?0*(\d{1,6})$/i);
+      let r;
+      if(m && q.length >= 1 && /^(suwati|\d)/i.test(q)){
+        const want = 'SUWATI-' + String(m[1]).padStart(6, '0');
+        const byId = allCustomers.filter(c => c.cid === want);
+        if(byId.length){ const keep = allCustomers, kq = customerSearchQuery; allCustomers = byId; customerSearchQuery = '';
+          try{ r = _r.apply(this, arguments); } finally { allCustomers = keep; customerSearchQuery = kq; } }
+        else r = _r.apply(this, arguments);
+      } else r = _r.apply(this, arguments);
       try{
         document.querySelectorAll('#customers-list .customer-card').forEach(card => {
           const c = allCustomers.find(x => x.key === card.dataset.key); if(!c || card.dataset.mg) return; card.dataset.mg = '1';
@@ -13311,6 +13375,8 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
             const extra = c.phones.filter(p => normPhone(p) !== normPhone(c.phone));
             det.innerHTML = det.innerHTML.replace(/(📞\s*)([^·<]*)/, (m, a, b) => `${a}${b.trim()} <span style="opacity:.6">(+ ${extra.map(x => String(x).replace(/[<>&"]/g, '')).join(', ')})</span> `);
           }
+          const h4 = card.querySelector('h4');
+          if(h4 && !h4.querySelector('.cid-badge')) h4.insertAdjacentHTML('beforeend', c.cid ? ` <span class="cid-badge" title="Customer ID — ပြင်လို့မရ">🆔 ${c.cid}</span>` : ' <span class="cid-badge guest" title="Website Account မရှိ">Guest</span>');
           if(c.channel === 'both'){ const h = card.querySelector('h4 .mono'); if(h) h.insertAdjacentHTML('afterend', ' <span class="mono" style="font-size:10px;color:#4da3ff;">[🌐 Online + 🏪 ဆိုင်ထဲ]</span>'); }
           const hist = card.querySelectorAll('.customer-order-history .coh-item');
           hist.forEach((el, i) => { const o = c.orders[i]; if(o) el.insertAdjacentHTML('afterbegin', `<span style="font-size:11px;opacity:.75">${o.sale_channel === 'in_store' ? '🏪 ဆိုင်ထဲ' : '🌐 Online'}</span> · `); });
@@ -13318,6 +13384,264 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
       }catch(e){ console.error(e); }
       return r;
     };
+  }
+})();
+
+// SUWATI ADMIN — 📦 Online Orders အပို (Oct 22)
+//   ① "အတည်မပြုရသေး Order" ဂဏန်းကို နှိပ်ရင် — ငွေချေမှု စစ်ဆေးဆဲ Order တွေ (ရက်မရွေး) စုပြ · ပြန်နှိပ် = အားလုံး
+//   ② ရက်စွဲ ◀ ▶ ခလုတ် (Orders · Delivery · Sale History · Activity Log · ငွေရှင်းချက်) + "ယနေ့" / "အားလုံး"
+//   orders.js / auth.js (Date Listener) နောက်မှာ ထားရန်
+(function(){
+  const $ = id => document.getElementById(id);
+
+  // ---------- ① အတည်မပြုရသေး ----------
+  let pendingOnly = false;
+  const statBox = $('stat-pending-orders') && $('stat-pending-orders').parentElement;
+  if(statBox && typeof loadOrders === 'function'){
+    statBox.classList.add('st-click'); statBox.setAttribute('role', 'button'); statBox.tabIndex = 0;
+    statBox.title = 'နှိပ်ပြီး အတည်မပြုရသေး Order တွေ ကြည့်ရန်';
+    const toggle = () => { pendingOnly = !pendingOnly; loadOrders(); if(pendingOnly) setTimeout(() => $('orders-list')?.scrollIntoView({ behavior:'smooth', block:'start' }), 350); };
+    statBox.addEventListener('click', toggle);
+    statBox.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); toggle(); } });
+
+    const _lo = loadOrders;
+    loadOrders = async function(){
+      const dateEl = $('orders-date-filter');
+      const saved = dateEl ? dateEl.value : '';
+      if(pendingOnly && dateEl) dateEl.value = '';          // ရက်မရွေး — အကုန်ထဲက ရှာ
+      let r;
+      try{ r = await _lo.apply(this, arguments); }
+      finally{ if(pendingOnly && dateEl) dateEl.value = saved; }
+      statBox.classList.toggle('on', pendingOnly);
+      // ရက်မရွေး အတည်မပြုရသေး စုစုပေါင်း (ရက်ရွေးထားရင်လည်း သိအောင်)
+      try{
+        const { data: pend } = await sb.from('orders').select('id, order_group_id, sale_channel').eq('order_status', 'pending_verification');
+        const n = new Set((pend || []).filter(o => o.sale_channel !== 'in_store').map(o => o.order_group_id || o.id)).size;
+        let tag = statBox.querySelector('.st-all'); if(!tag){ tag = document.createElement('div'); tag.className = 'st-all'; statBox.appendChild(tag); }
+        const dateOn = !!($('orders-date-filter') && $('orders-date-filter').value) && !pendingOnly;
+        tag.textContent = pendingOnly ? '✕ ပြန်နှိပ် = အားလုံး' : (dateOn ? `ရက်အားလုံး ${n} ခု · နှိပ်ကြည့်` : 'နှိပ်ကြည့်ရန်');
+        tag.classList.toggle('hot', n > 0 && !pendingOnly);
+      }catch(e){}
+      const list = $('orders-list'); if(!list) return r;
+      list.querySelector('.ord-filter-bar')?.remove();
+      if(pendingOnly){
+        let n = 0;
+        list.querySelectorAll('.order-card').forEach(c => {
+          const st = c.querySelector('.order-status-select')?.value;
+          const show = st === 'pending_verification'; c.style.display = show ? '' : 'none'; if(show) n++;
+        });
+        const bar = document.createElement('div'); bar.className = 'ord-filter-bar';
+        bar.innerHTML = `⏳ အတည်မပြုရသေး Order <span style="font-family:var(--g-num)">${n}</span> ခု <button type="button" class="secondary">✕ အားလုံး ပြန်ကြည့်</button>`;
+        bar.querySelector('button').onclick = toggle;
+        list.prepend(bar);
+        if(!n) bar.insertAdjacentHTML('afterend', '<p class="hint ord-none">✅ အတည်မပြုရသေး Order မရှိပါ</p>');
+      }
+      return r;
+    };
+    try{ window.loadOrders = loadOrders; }catch(e){}
+    // ရက်ပြောင်းရင် အတည်မပြုရသေး Filter ပိတ်
+    $('orders-date-filter')?.addEventListener('input', () => { pendingOnly = false; });
+    $('orders-clear-date-btn')?.addEventListener('pointerdown', () => { pendingOnly = false; });
+  }
+
+  // ---------- ② ရက်စွဲ ◀ ▶ ----------
+  const pad = n => String(n).padStart(2, '0');
+  const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const DAYS = ['တနင်္ဂနွေ', 'တနင်္လာ', 'အင်္ဂါ', 'ဗုဒ္ဓဟူး', 'ကြာသပတေး', 'သောကြာ', 'စနေ'];
+  function label(v){
+    if(!v) return '📅 ရက်အားလုံး';
+    const d = new Date(v + 'T00:00:00'), t = new Date(); t.setHours(0, 0, 0, 0);
+    const diff = Math.round((d - t) / 864e5);
+    const rel = diff === 0 ? 'ယနေ့' : diff === -1 ? 'မနေ့က' : diff === 1 ? 'မနက်ဖြန်' : (diff < 0 ? `${-diff} ရက်အရင်` : `${diff} ရက်နောက်`);
+    return `${DAYS[d.getDay()]} · ${rel}`;
+  }
+  function addNav(id, clearBtnId){
+    const inp = $(id); if(!inp || inp.dataset.nav) return;
+    inp.dataset.nav = '1';
+    const wrap = document.createElement('div'); wrap.className = 'date-nav';
+    const prev = document.createElement('button'), next = document.createElement('button');
+    prev.type = next.type = 'button'; prev.className = next.className = 'secondary';
+    prev.innerHTML = '◀'; next.innerHTML = '▶'; prev.setAttribute('aria-label', 'အရင်ရက်'); next.setAttribute('aria-label', 'နောက်ရက်');
+    inp.parentNode.insertBefore(wrap, inp);
+    const keepMargin = inp.style.marginTop; if(keepMargin){ wrap.style.marginTop = keepMargin; inp.style.marginTop = '0'; }
+    wrap.append(prev, inp, next);
+    const lbl = document.createElement('div'); lbl.className = 'date-nav-lbl'; wrap.after(lbl);
+    const fire = () => { lbl.textContent = label(inp.value); inp.dispatchEvent(new Event('input', { bubbles:true })); inp.dispatchEvent(new Event('change', { bubbles:true })); };
+    const shift = n => { const d = inp.value ? new Date(inp.value + 'T00:00:00') : new Date(); if(inp.value) d.setDate(d.getDate() + n); inp.value = ymd(d); fire(); };
+    prev.onclick = () => shift(-1); next.onclick = () => shift(1);
+    inp.addEventListener('change', () => { lbl.textContent = label(inp.value); });
+    // ယနေ့ / အားလုံး
+    const sub = document.createElement('div'); sub.className = 'date-nav-sub';
+    const today = document.createElement('button'); today.type = 'button'; today.className = 'secondary'; today.textContent = '📍 ယနေ့';
+    today.onclick = () => { inp.value = ymd(new Date()); fire(); };
+    sub.append(today);
+    const clr = clearBtnId && $(clearBtnId);
+    if(clr){ clr.style.marginTop = '0'; clr.style.width = ''; sub.append(clr); clr.addEventListener('click', () => setTimeout(() => { lbl.textContent = label(inp.value); }, 0)); }
+    lbl.after(sub);
+    lbl.textContent = label(inp.value);
+    // ကီးဘုတ် ← →
+    inp.addEventListener('keydown', e => { if(e.altKey || e.metaKey) return; if(e.key === 'PageUp'){ e.preventDefault(); shift(-1); } if(e.key === 'PageDown'){ e.preventDefault(); shift(1); } });
+  }
+  addNav('orders-date-filter', 'orders-clear-date-btn');
+  addNav('delivery-date-filter', 'delivery-clear-date-btn');
+  addNav('salehistory-date-filter', 'salehistory-clear-date-btn');
+  addNav('activitylog-date-filter', 'activitylog-clear-date-btn');
+})();
+
+// SUWATI ADMIN — 🆔 Customer ID ချိတ်ဆက် (Oct 22)
+//   ① POS — "🆔 Customer ID" အကွက် (SUWATI-000001 / 1 / Barcode) → အမည်/ဖုန်း ဖြည့် + Prepaid Card နံပါတ် ဖြည့် + ရောင်းတဲ့ Order ကို Account နဲ့ ချိတ် (user_id)
+//   ② POS — Card Number / QR နဲ့ ချေရင်လည်း Customer ID ပြ
+//   ③ Prepaid Card System › Customer Wallet — ID ပြ + ID နဲ့ ရှာ
+//   Server: CUSTOMER-ID.sql (admin_find_customer / admin_customer_ids) · money-stats / qr-pay-pos နောက်မှာ ထားရန်
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ks = n => Number(n || 0).toLocaleString('en-US');
+  const ID_RE = /^\s*(?:suwati[-\s]?)?0*(\d{1,6})\s*$/i;
+  const code = n => 'SUWATI-' + String(n).padStart(6, '0');
+
+  // ---------- ID Cache (user_id → SUWATI-000001) ----------
+  let idMap = null, idAt = 0, idP = null;
+  async function loadIds(force){
+    if(idMap && !force && Date.now() - idAt < 60000) return idMap;
+    if(idP) return idP;
+    idP = (async () => { const m = {}; try{ const { data } = await sb.rpc('admin_customer_ids'); (data || []).forEach(r => { m[r.user_id] = r.customer_id; }); }catch(e){} idMap = m; idAt = Date.now(); idP = null; return m; })();
+    return idP;
+  }
+  window.cidOf = async uid => uid ? ((await loadIds())[uid] || '') : '';
+
+  const css = `
+.pos-cid-wrap{ grid-column:1/-1; display:flex; gap:8px; }
+.pos-cid-wrap input{ flex:1; min-width:0; margin:0 !important; font-family:var(--g-num, 'Space Mono', monospace); letter-spacing:.04em; text-transform:uppercase; }
+.pos-cid-wrap button{ width:auto !important; margin:0 !important; padding:0 14px !important; white-space:nowrap; }
+.pos-cid-info{ grid-column:1/-1; display:none; align-items:center; gap:10px; padding:10px 12px; border-radius:14px; font-size:13px; line-height:1.5;
+  background:color-mix(in srgb, var(--g-pri, #D6FF3F) 12%, transparent); border:1px solid color-mix(in srgb, var(--g-pri, #D6FF3F) 40%, transparent); }
+.pos-cid-info.on{ display:flex; } .pos-cid-info.bad{ background:rgba(255,77,94,.1); border-color:rgba(255,77,94,.35); }
+.pos-cid-info .x{ margin-left:auto; width:30px !important; height:30px; padding:0 !important; border-radius:50%; flex:none; }
+.pos-cid-info small{ display:block; color:var(--grey); }
+.cid-chip{ display:inline-block; font:700 10.5px var(--g-num, 'Space Mono',monospace); padding:2px 7px; border-radius:20px; background:var(--g-pri, #D6FF3F); color:var(--g-pri-ink, #141412); vertical-align:middle; }`;
+  const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  // =====================================================================
+  // ① POS — Customer ID အကွက်
+  // =====================================================================
+  const nameEl = $('pos-customer-name'), phoneEl = $('pos-customer-phone');
+  if(nameEl && phoneEl){
+    const grid = nameEl.parentElement;
+    const wrap = document.createElement('div'); wrap.className = 'pos-cid-wrap';
+    wrap.innerHTML = `<input type="text" id="pos-customer-id" placeholder="🆔 Customer ID (ဥပမာ SUWATI-000001 / 1)" autocomplete="off" autocapitalize="characters" enterkeyhint="search">
+      <button type="button" class="secondary" id="pos-cid-scan" title="Scan">📷</button>`;
+    const info = document.createElement('div'); info.className = 'pos-cid-info'; info.id = 'pos-cid-info';
+    grid.insertBefore(wrap, nameEl); grid.insertBefore(info, nameEl);
+    const inp = $('pos-customer-id');
+    let seq = 0;
+    const showInfo = (html, bad) => { info.innerHTML = html || ''; info.classList.toggle('on', !!html); info.classList.toggle('bad', !!bad); };
+    function clearCust(keepInput){
+      window.__posIdCustomer = null; showInfo('');
+      if(!keepInput) inp.value = '';
+      [nameEl, phoneEl].forEach(e => { if(e.dataset.cid){ e.value = ''; delete e.dataset.cid; } });
+    }
+    async function find(raw){
+      const m = String(raw || '').match(ID_RE); if(!m){ showInfo('❓ Customer ID မဟုတ်ပါ — ဥပမာ SUWATI-000001', true); return false; }
+      const my = ++seq; showInfo('🔎 ရှာနေသည်...');
+      let d = null;
+      try{ const r = await sb.rpc('admin_find_customer', { p_code: m[1] }); if(r.error) throw r.error; d = r.data; }
+      catch(e){ if(my === seq) showInfo(/admin_find_customer|function|schema/i.test(e.message || '') ? '⚠️ CUSTOMER-ID.sql မ Run ရသေးပါ' : '⚠️ ' + esc(e.message || e), true); return false; }
+      if(my !== seq) return false;
+      if(!d){ window.__posIdCustomer = null; showInfo(`❌ ${code(m[1])} — Customer မတွေ့ပါ`, true); return false; }
+      // Online Order အသစ်ဆုံးက ဖုန်း (Customer List နဲ့ ကိုက်)
+      try{ const { data: lo } = await sb.from('orders').select('customer_name, phone').eq('user_id', d.user_id).order('created_at', { ascending:false }).limit(1);
+        const o = lo && lo[0]; if(o){ if(o.phone) d.phone = o.phone; if(!d.name && o.customer_name) d.name = o.customer_name; } }catch(e){}
+      window.__posIdCustomer = d;
+      inp.value = d.customer_id;
+      if(d.name){ nameEl.value = d.name; nameEl.dataset.cid = 1; }
+      if(d.phone){ phoneEl.value = d.phone; phoneEl.dataset.cid = 1; }
+      // 💳 Prepaid Card — နံပါတ် ဖြည့် (PIN ပဲ ရိုက်ရုံ)
+      const cardEl = $('pos-card-number');
+      if(d.card_number && cardEl && !cardEl.value.trim()){ cardEl.value = d.card_number; cardEl.dispatchEvent(new Event('input', { bubbles:true })); }
+      let due = 0; try{ due = getPosFinalTotal() || 0; }catch(e){}
+      showInfo(`<span><span class="cid-chip">🆔 ${esc(d.customer_id)}</span> <b>${esc(d.name || 'Customer')}</b>${d.phone ? ' · 📞 ' + esc(d.phone) : ''}
+        <small>${d.card_number ? `💳 Prepaid •••• ${esc(String(d.card_number).replace(/\D/g, '').slice(-4))} · လက်ကျန် <b>${ks(d.balance)}</b> ကျပ်${due && Number(d.balance) < due ? ' · ⚠️ မလောက်' : ''}` : '💳 Prepaid Card မထုတ်ရသေး'} · ဒီ Order ကို Account နဲ့ ချိတ်ပါမည်</small></span>
+        <button type="button" class="secondary x" aria-label="ဖြုတ်မည်">✕</button>`);
+      info.querySelector('.x').onclick = () => clearCust();
+      try{ navigator.vibrate && navigator.vibrate(30); }catch(e){}
+      return true;
+    }
+    window.posFindCustomer = find;
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); if(inp.value.trim()) find(inp.value); } });
+    inp.addEventListener('change', () => { if(inp.value.trim() && !(window.__posIdCustomer && window.__posIdCustomer.customer_id === inp.value.trim().toUpperCase())) find(inp.value); });
+    inp.addEventListener('input', () => { if(!inp.value.trim()) clearCust(true); });
+    $('pos-cid-scan').onclick = () => { if(typeof openScanner === 'function') openScanner(c => { find(c); return '🆔 ' + esc(c); }, { title:'🆔 Customer ID ကို Scan / ရိုက်ထည့်ပါ' }); };
+    // ပစ္စည်းရှာ အကွက် / USB Scanner — SUWATI-000001 ဝင်လာရင်
+    const search = $('pos-product-search');
+    if(search) search.addEventListener('keydown', e => {
+      if(e.key !== 'Enter') return; const v = search.value.trim();
+      if(!/^suwati[-\s]?\d{1,6}$/i.test(v)) return;
+      e.preventDefault(); e.stopImmediatePropagation(); search.value = ''; find(v);
+    }, true);
+    // နာမည်/ဖုန်း ကိုယ်တိုင် ပြင်ရင် ID ဖြည့်ချက် ဖြုတ်
+    [nameEl, phoneEl].forEach(el => el.addEventListener('input', () => { delete el.dataset.cid; }));
+
+    // 🔗 POS Order → user_id (Payment ဘာနဲ့ပဲ ချေချေ)
+    const _from = sb.from.bind(sb);
+    sb.from = function(t){
+      const q = _from(t); if(t !== 'orders' || !q || typeof q.insert !== 'function') return q;
+      const _ins = q.insert.bind(q);
+      q.insert = function(rows, ...rest){
+        try{
+          const c = window.__posIdCustomer, arr = Array.isArray(rows) ? rows : [rows];
+          if(c && c.user_id && arr.length && arr.every(x => x && x.sale_channel === 'in_store')){
+            arr.forEach(x => { if(!x.user_id) x.user_id = c.user_id; if(!x.customer_name || /^walk-?in/i.test(x.customer_name)) x.customer_name = c.name || x.customer_name; if(!x.phone && c.phone) x.phone = c.phone; });
+            setTimeout(() => clearCust(), 800);   // ရောင်းပြီး — နောက် Customer အတွက် ရှင်း
+          }
+        }catch(e){}
+        return _ins(rows, ...rest);
+      };
+      return q;
+    };
+  }
+
+  // =====================================================================
+  // ② Card Number / QR နဲ့ ချေရင် ID ပြ
+  // =====================================================================
+  const addCid = async (el, uid) => { if(!el || !uid || el.querySelector('.cid-chip')) return; const c = await window.cidOf(uid); if(c && !el.querySelector('.cid-chip')) el.insertAdjacentHTML('afterbegin', `<span class="cid-chip">🆔 ${esc(c)}</span> `); };
+  const cardInfo = $('pos-card-info');
+  if(cardInfo) new MutationObserver(() => { const c = window.__posCardCustomer; if(c && c.user_id && !cardInfo.hidden) addCid(cardInfo, c.user_id); }).observe(cardInfo, { childList:true, subtree:false, attributes:true });
+  const qrPanel = $('pos-qr-panel');
+  if(qrPanel) new MutationObserver(() => { const s = qrPanel.querySelector('.pq-cust small'); const uid = window.__qrPanelUser; if(s && uid) addCid(s, uid); }).observe(qrPanel, { childList:true });
+
+  // =====================================================================
+  // ③ Customer Wallet စာရင်း — ID ပြ + ID နဲ့ ရှာ
+  // =====================================================================
+  if(typeof loadCustomerWallets === 'function'){
+    const _l = loadCustomerWallets;
+    loadCustomerWallets = async function(){ await loadIds(true); return _l.apply(this, arguments); };
+    try{ window.loadCustomerWallets = loadCustomerWallets; }catch(e){}
+  }
+  if(typeof renderCustomerWalletsList === 'function'){
+    const _r = renderCustomerWalletsList;
+    renderCustomerWalletsList = function(){
+      const sEl = $('customer-wallets-search'); const q = sEl ? sEl.value.trim() : '';
+      if(sEl && !sEl.dataset.cidPh){ sEl.dataset.cidPh = 1; sEl.placeholder = 'အမည် · ဖုန်း · Card · Customer ID (SUWATI-000001) ဖြင့် ရှာပါ...'; }
+      const m = q.match(/^(?:suwati[-\s]?)0*(\d{1,6})$/i) || (/^\d{1,6}$/.test(q) && q.length <= 6 ? [q, q] : null);
+      let r;
+      const cache = (typeof customerWalletsCache !== 'undefined') ? customerWalletsCache : null;
+      if(m && cache && idMap){
+        const want = code(Number(m[1]));
+        const hit = cache.filter(w => idMap[w.user_id] === want);
+        if(hit.length){ const keep = customerWalletsCache; customerWalletsCache = hit; const kv = sEl.value; sEl.value = '';
+          try{ r = _r.apply(this, arguments); } finally { customerWalletsCache = keep; sEl.value = kv; } }
+        else r = _r.apply(this, arguments);
+      } else r = _r.apply(this, arguments);
+      try{
+        const items = [...document.querySelectorAll('#customer-wallets-list .list-item')];
+        const shown = (m && cache && idMap && cache.filter(w => idMap[w.user_id] === code(Number(m[1]))).length) ? cache.filter(w => idMap[w.user_id] === code(Number(m[1]))) : null;
+        const src = shown || (() => { const qq = q.toLowerCase(); let it = cache || []; if(qq) it = it.filter(w => (w.customer_name||'').toLowerCase().includes(qq) || (w.phone||'').toLowerCase().includes(qq) || (w.email||'').toLowerCase().includes(qq) || (w.card_number||'').replace(/\s/g,'').includes(qq.replace(/\s/g,''))); return it; })();
+        items.forEach((el, i) => { const w = src[i]; const h = el.querySelector('h4'); const c = w && idMap && idMap[w.user_id]; if(h && c && !h.querySelector('.cid-chip')) h.insertAdjacentHTML('beforeend', ` <span class="cid-chip">🆔 ${esc(c)}</span>`); });
+      }catch(e){}
+      return r;
+    };
+    try{ window.renderCustomerWalletsList = renderCustomerWalletsList; }catch(e){}
   }
 })();
 </script>

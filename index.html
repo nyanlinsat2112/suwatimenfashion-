@@ -2292,6 +2292,11 @@ html[data-theme="dark"] #checkout-modal-content:has(> .lq){
 @keyframes lqShrink{ to{ transform:scale(.05); opacity:0; border-radius:60px; } }
 /* Chat ဖွင့်ထားချိန် — Header ✕ ရှိလို့ အောက်ခြေ ခလုတ်ဝိုင်း ဖျောက် (ပို့ခလုတ်ကို မဖုံးအောင်) */
 body:has(.modal-overlay.open:not(.closing) > #checkout-modal-content > .lq) .chat-fab{ opacity:0; transform:scale(.6); pointer-events:none; transition:opacity .2s, transform .2s; }
+
+/* 🆔 Customer ID (Profile) */
+.pw-cid-row .pw-cid-v{ font-family:'Space Mono',monospace; letter-spacing:.04em; background:var(--acid); color:#141412; padding:2px 8px; border-radius:4px; }
+.pw-cid-row small{ opacity:.6; }
+.pc-front .pc-tags .muted.pc-cid{ color:#D6FF3F; letter-spacing:.12em; }
 </style>
 </head>
 <body>
@@ -5240,7 +5245,7 @@ async function renderProfileView(mode){
             <div class="pw-wm">MEMBER</div>
             <div class="pw-stripe"><span>× MEMBER × SUWATI × MEMBER ×</span></div>
             <div class="pw-ttl">SUWATI<i>.</i>MEMBER</div>
-            <div class="pw-tags"><b>MEN FASHION</b><span>${google ? 'GOOGLE ACCOUNT' : 'GMAIL ACCOUNT'}</span></div>
+            <div class="pw-tags"><b>MEN FASHION</b><span class="pw-cid">${esc(window.__myCid || (google ? 'GOOGLE ACCOUNT' : 'GMAIL ACCOUNT'))}</span></div>
             <div class="pw-lbl" style="top:19.5cqw">MEMBER NAME</div>
             <div class="pw-big" style="top:22.4cqw;font-size:6cqw;right:19cqw;overflow:hidden;text-overflow:ellipsis">${upName}</div>
             <div class="pw-div" style="top:34.6cqw"></div>
@@ -5252,6 +5257,7 @@ async function renderProfileView(mode){
       </div>
 
       <div class="pw-info">
+        <div class="pw-r pw-cid-row"><span>🆔 Customer ID</span><span><b class="pw-cid-v">${esc(window.__myCid || '…')}</b> <small title="ပြင်လို့ မရပါ">🔒</small></span></div>
         ${meta.nickname ? row('Nickname', meta.nickname) : ''}
         ${row('ဖုန်း', meta.phone)}
         ${row('မွေးနေ့', meta.dob)}
@@ -5261,6 +5267,14 @@ async function renderProfileView(mode){
     </div>
     ${typeof acctSecurityHtml === 'function' ? await acctSecurityHtml(mode) : '<button type="button" class="pf-logout" onclick="handleLogout()">⎋ Logout</button>'}`;
   pwStackInit();
+  // 🆔 Customer ID (CUSTOMER-ID.sql · ပြင်လို့မရ)
+  if(!window.__myCid || window.__myCidUser !== currentUser.id){
+    sb.rpc('my_customer_id').then(({ data }) => {
+      if(!data) { const r = box.querySelector('.pw-cid-row'); if(r) r.remove(); return; }
+      window.__myCid = data; window.__myCidUser = currentUser.id;
+      box.querySelectorAll('.pw-cid').forEach(e => e.textContent = data); box.querySelectorAll('.pw-cid-v').forEach(e => e.textContent = data);
+    }, () => { const r = box.querySelector('.pw-cid-row'); if(r) r.remove(); });
+  }
   if(typeof acctSecurityBind === 'function') acctSecurityBind(mode);
   if(typeof i18nNode === 'function') try{ i18nNode(box); }catch(_){}
 }
@@ -11380,6 +11394,13 @@ html[data-theme="dark"] .pc-qr{ background:var(--acid); color:#141412; box-shado
   // ---------------------------------------------------------------------
   // 🔗 Prepaid Card ထဲမှာသာ ခလုတ်
   // ---------------------------------------------------------------------
+  // 🆔 Customer ID ကို Prepaid Card ပေါ်မှာ ပြ (CUSTOMER-ID.sql · Card နဲ့ ID ချိတ်)
+  async function cardCid(){
+    let id = (window.__myCidUser === (currentUser && currentUser.id)) ? window.__myCid : null;
+    if(!id){ try{ const { data } = await sb.rpc('my_customer_id'); if(data){ id = data; window.__myCid = data; window.__myCidUser = currentUser.id; } }catch(e){} }
+    if(!id) return;
+    document.querySelectorAll('#prepaid-card-area .pc-front .pc-tags .muted').forEach(e => { e.textContent = id; e.classList.add('pc-cid'); });
+  }
   function addCardBtn(){
     const area = document.getElementById('prepaid-card-area'); if(!area || area.querySelector('.pc-qr') || !area.querySelector('.pc-stage')) return;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'pc-qr';
@@ -11388,7 +11409,7 @@ html[data-theme="dark"] .pc-qr{ background:var(--acid); color:#141412; box-shado
   }
   if(typeof openPrepaidCard === 'function'){
     const _o = openPrepaidCard;
-    openPrepaidCard = async function(){ const r = await _o.apply(this, arguments); try{ addCardBtn(); }catch(e){ console.error(e); } return r; };
+    openPrepaidCard = async function(){ const r = await _o.apply(this, arguments); try{ addCardBtn(); }catch(e){ console.error(e); } try{ cardCid(); }catch(e){} return r; };
     try{ window.openPrepaidCard = openPrepaidCard; }catch(e){}
   }
   if(typeof closeCheckout === 'function'){
