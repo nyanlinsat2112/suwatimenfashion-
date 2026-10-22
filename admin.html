@@ -13568,6 +13568,15 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
       return true;
     }
     window.posFindCustomer = find;
+    // 📷 POS ပစ္စည်း Scanner နဲ့ Member Card (QR/Barcode · SUWATI-000001) ကို Scan ရင်လည်း Customer ဖြည့်
+    if(typeof posAddByCode === 'function' && !posAddByCode.__cid){
+      const _add = posAddByCode;
+      posAddByCode = function(c){
+        if(/^\s*suwati[-\s]?\d{1,6}\s*$/i.test(String(c || ''))){ find(c); return '🆔 ' + esc(String(c).trim().toUpperCase()) + ' — Customer ဖြည့်ပြီ'; }
+        return _add.apply(this, arguments);
+      };
+      posAddByCode.__cid = 1;
+    }
     inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); if(inp.value.trim()) find(inp.value); } });
     inp.addEventListener('change', () => { if(inp.value.trim() && !(window.__posIdCustomer && window.__posIdCustomer.customer_id === inp.value.trim().toUpperCase())) find(inp.value); });
     inp.addEventListener('input', () => { if(!inp.value.trim()) clearCust(true); });
