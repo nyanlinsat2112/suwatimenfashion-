@@ -10306,6 +10306,989 @@ sb.channel('site-ticker-realtime')
 initAuth();
 renderCartBadge();
 renderWishlistBadge();
+
+// ===== js/site/qr-pay.js =====
+// SUWATI MEN FASHION — 📱 Prepaid Card QR ငွေချေ (ဆိုင်ထဲ)
+//   Prepaid Card › "ဆိုင်မှာ QR နဲ့ ငွေချေမည်" → QR (၆၀ စက္ကန့် တစ်ခါသုံး · Auto ပြောင်း) → ဆိုင် iPad က Scan
+//   → ဖုန်းမှာ SUWATI.PAY "ငွေချေမည်" → အမြဲ အတည်ပြု: Face ID (ဖွင့်ထားရင် · ၃ ခါမအောင်ရင် PIN) / Card PIN → ငွေဖြတ်
+//   Server: QR-PAY.sql (qr_pay_token / qr_pay_pending / qr_pay_approve(p_id, p_pin) / qr_pay_decline / qr_pay_void)
+//   card-plus.js နောက်မှာ ထားရန် (openPrepaidCard Wrap)
+//   Design: QP_STYLE = 'a' (Ticket) · 'b' (Dark Card) · 'c' (Card + QR)
+(function(){
+  const QP_STYLE = window.__qpStyle || 'a';
+  const PIN_STYLE = window.__qpPin || '6';
+  const QR_LIB = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+  const FACE_TRIES = 3;
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ks = n => Number(n || 0).toLocaleString('en-US');
+  const toast = (m) => { try{ showSiteToast(m); }catch(e){ console.log(m); } };
+  const b64uToBuf = (s) => { s = String(s).replace(/-/g, '+').replace(/_/g, '/'); while(s.length % 4) s += '='; return Uint8Array.from(atob(s), c => c.charCodeAt(0)); };
+  const bufToB64u = (b) => btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const bioWord = () => /iPhone|iPad/.test(navigator.userAgent) ? 'Face ID' : /Macintosh/.test(navigator.userAgent) ? 'Touch ID' : 'Face ID / လက်ဗွေ';
+  let libP = null;
+  const loadLib = () => libP || (libP = new Promise((ok, no) => {
+    if(window.qrcode) return ok(window.qrcode);
+    const s = document.createElement('script'); s.src = QR_LIB; s.async = true;
+    s.onload = () => window.qrcode ? ok(window.qrcode) : no(new Error('QR')); s.onerror = () => { libP = null; no(new Error('QR Library ယူ၍ မရပါ — Internet စစ်ပါ')); };
+    document.head.appendChild(s);
+  }));
+
+  // ---------------------------------------------------------------------
+  // 🎨 Style
+  // ---------------------------------------------------------------------
+  const css = `
+.qp-ov{ position:fixed; inset:0; z-index:10000; background:var(--concrete); color:var(--ink); display:flex; flex-direction:column; align-items:center;
+  overflow:auto; padding:calc(14px + env(safe-area-inset-top)) 16px calc(22px + env(safe-area-inset-bottom)); font-family:'Noto Sans Myanmar','Space Mono',sans-serif;
+  opacity:0; transform:translateY(18px); transition:opacity .25s, transform .35s cubic-bezier(.2,1,.3,1); }
+.qp-ov.show{ opacity:1; transform:none; }
+.qp-in{ width:100%; max-width:380px; display:flex; flex-direction:column; flex:1; position:relative; }
+.qp-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.qp-brand{ font:400 19px 'Archivo Black',sans-serif; letter-spacing:.3px; }
+.qp-brand i{ color:var(--rust); font-style:normal; }
+.qp-x{ width:40px; height:40px; border-radius:50%; border:2px solid var(--ink); background:transparent; color:inherit; font-size:20px; line-height:1; cursor:pointer; }
+.qp-main{ display:flex; flex-direction:column; }
+.qp-ttl{ font-weight:800; font-size:16px; }
+.qp-sub{ font-size:12.5px; color:var(--grey); line-height:1.7; margin:4px 0 14px; }
+.qp-sub b{ color:var(--ink); }
+.qp-qr{ position:relative; width:100%; aspect-ratio:1; margin:0 auto; }
+.qp-qr canvas{ width:100%; height:100%; display:block; image-rendering:pixelated; transition:opacity .25s, filter .25s; }
+.qp-qr.load canvas{ opacity:.12; filter:blur(4px); }
+.qp-spin{ position:absolute; inset:0; display:none; place-items:center; }
+.qp-qr.load .qp-spin{ display:grid; }
+.qp-spin i, .qp-wait i{ width:30px; height:30px; border-radius:50%; border:3px solid rgba(20,20,18,.18); border-top-color:#141412; animation:qpRot .8s linear infinite; }
+@keyframes qpRot{ to{ transform:rotate(360deg); } }
+.qp-qr.renew canvas{ animation:qpRenew .45s ease; }
+@keyframes qpRenew{ 0%{ opacity:.2; transform:scale(.97); } 100%{ opacity:1; transform:none; } }
+.qp-err{ display:none; color:var(--rust); font-size:13px; margin-top:10px; line-height:1.6; text-align:center; }
+.qp-bar{ height:5px; background:rgba(127,127,127,.22); overflow:hidden; }
+.qp-bar i{ display:block; height:100%; width:100%; background:currentColor; transform-origin:left; transition:transform 1s linear; }
+.qp-sec{ font-family:'Space Mono','Noto Sans Myanmar',monospace; font-weight:700; }
+.qp-tok{ font:700 10.5px 'Space Mono',monospace; letter-spacing:.14em; opacity:.55; }
+.qp-k{ font:700 9.5px 'Space Mono',monospace; letter-spacing:.16em; text-transform:uppercase; opacity:.6; }
+.qp-v{ font:700 15px 'Space Mono','Noto Sans Myanmar',monospace; }
+.qp-steps{ margin-top:16px; font-size:12px; color:var(--grey); line-height:1.95; }
+.qp-steps b{ color:var(--ink); }
+.qp-tip{ margin-top:8px; font-size:11.5px; color:var(--grey); }
+.qp-wait{ display:none; align-items:center; gap:10px; margin-top:14px; padding:12px 14px; border:2px solid #141412; background:#D6FF3F; color:#141412; font-weight:700; font-size:13px; }
+.qp-wait i{ width:20px; height:20px; flex:none; }
+.qp-ov.busy .qp-wait{ display:flex; }
+.qp-btn{ width:100%; margin-top:18px; padding:15px; border:2px solid #141412; background:#141412; color:#D6FF3F; font:800 15px 'Noto Sans Myanmar',sans-serif; cursor:pointer; box-shadow:4px 4px 0 #D6FF3F; }
+.qp-btn:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 #D6FF3F; }
+.qp-err .qp-btn{ margin-top:10px; padding:11px; }
+/* ===== ✓ ချေပြီး — Design ၃ မျိုး (QP_DONE: r · c · a) ===== */
+.qp-done{ position:fixed; inset:0; z-index:3; display:none; flex-direction:column; align-items:center; overflow:auto;
+  padding:calc(18px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom)); font-family:'Noto Sans Myanmar',sans-serif; }
+.qp-ov.paid .qp-done{ display:flex; } .qp-ov.paid .qp-main, .qp-ov.paid .qp-rail{ visibility:hidden; }
+@keyframes qpDraw{ to{ stroke-dashoffset:0; } }
+.qd-in{ width:100%; max-width:360px; flex:1; display:flex; flex-direction:column; }
+.qd-mono{ font-family:'Space Mono','Noto Sans Myanmar',monospace; }
+.qd-go{ width:100%; padding:15px; border:2px solid #141412; font:800 15px 'Noto Sans Myanmar',sans-serif; cursor:pointer; }
+.qd-go:active{ transform:translate(3px,3px); }
+.qd-link{ display:block; width:100%; margin-top:8px; padding:10px; background:none; border:0; color:inherit; opacity:.75; font:700 13px 'Noto Sans Myanmar',sans-serif; cursor:pointer; text-decoration:underline; text-underline-offset:4px; }
+.qd-acts{ margin-top:auto; padding-top:18px; }
+
+/* r · 🧾 ပြေစာ ထွက်လာ */
+.qp-done.d-r{ background:#E9E4D8; color:#141412; --ink:#141412; --grey:#6f695c; }
+html[data-theme="dark"] .qp-done.d-r{ background:#1E1D1A; color:#E9E4D8; --ink:#E9E4D8; --grey:#a39e91; }
+.qd-r-head{ text-align:center; margin:4px 0 14px; }
+.qd-r-head b{ display:block; font-size:18px; } .qd-r-head span{ font-size:12px; color:var(--grey); }
+.qd-slot{ height:16px; background:#141412; border-radius:10px; margin:0 6px; position:relative; z-index:2; box-shadow:inset 0 -5px 0 #2b2a26; }
+.qd-paperwrap{ overflow:hidden; margin:-8px 18px 0; padding:0 4px 18px; }
+.qd-paper{ background:#fff; color:#141412; padding:22px 18px 30px; position:relative; transform:translateY(-102%); animation:qdPrint 1.5s steps(14) .15s forwards;
+  -webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom/16px 10px repeat-x;
+  mask:linear-gradient(#000 0 0) top/100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom/16px 10px repeat-x; filter:drop-shadow(0 6px 10px rgba(0,0,0,.12)); }
+@keyframes qdPrint{ to{ transform:none; } }
+.qd-paper .lg{ text-align:center; font:400 22px 'Archivo Black',sans-serif; } .qd-paper .lg i{ color:#C13B1F; font-style:normal; }
+.qd-paper .sb{ text-align:center; font:700 9.5px 'Space Mono',monospace; letter-spacing:.2em; color:#666; margin-top:2px; }
+.qd-paper hr{ border:0; border-top:1.5px dashed #bbb; margin:12px 0; }
+.qd-row{ display:flex; justify-content:space-between; font:12px 'Space Mono','Noto Sans Myanmar',monospace; padding:3px 0; }
+.qd-row span{ color:#666; }
+.qd-tot{ display:flex; justify-content:space-between; align-items:center; border:2px solid #141412; padding:10px 12px; margin:10px 0; }
+.qd-tot span{ font:400 13px 'Archivo Black',sans-serif; } .qd-tot b{ font:400 24px 'Archivo Black',sans-serif; } .qd-tot small{ font:700 11px 'Noto Sans Myanmar',sans-serif; margin-left:3px; }
+.qd-stamp{ position:absolute; right:14px; bottom:30px; border:3px solid #C13B1F; color:#C13B1F; padding:4px 10px; font:400 20px 'Archivo Black',sans-serif; letter-spacing:.06em;
+  transform:rotate(-14deg) scale(2.4); opacity:0; animation:qdStamp .35s cubic-bezier(.3,1.6,.5,1) 1.75s forwards; mix-blend-mode:multiply; }
+.qd-stamp small{ display:block; font:700 8px 'Space Mono',monospace; letter-spacing:.12em; text-align:center; }
+@keyframes qdStamp{ to{ transform:rotate(-14deg) scale(1); opacity:.92; } }
+.qd-thx{ text-align:left; font-size:12px; color:#666; margin-top:12px; }
+.qp-done.d-r .qd-go{ background:#141412; color:#D6FF3F; box-shadow:4px 4px 0 #D6FF3F; }
+html[data-theme="dark"] .qp-done.d-r .qd-go{ background:#D6FF3F; color:#141412; box-shadow:4px 4px 0 #E9E4D8; }
+
+/* c · 💳 Card လက်ကျန် လျော့ */
+.qp-done.d-c{ background:#141412; color:#E9E4D8;
+  background-image:linear-gradient(rgba(214,255,63,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(214,255,63,.06) 1px,transparent 1px); background-size:22px 22px; }
+.qd-c-top{ display:flex; align-items:center; gap:12px; margin:8px 0 22px; }
+.qd-c-ok{ width:46px; height:46px; flex:none; border-radius:50%; background:#D6FF3F; color:#141412; display:grid; place-items:center; animation:qdPop .45s cubic-bezier(.3,1.7,.5,1) .2s backwards; }
+.qd-c-ok svg{ width:24px; height:24px; }
+@keyframes qdPop{ from{ transform:scale(0); } }
+.qd-c-top b{ display:block; font-size:18px; } .qd-c-top span{ font-size:12px; color:#a39e91; }
+.qd-cardbox{ position:relative; perspective:1200px; }
+.qd-card{ position:relative; aspect-ratio:856/540; container-type:inline-size; animation:qdFlip .9s cubic-bezier(.2,1,.3,1) .1s backwards; transform-style:preserve-3d; }
+@keyframes qdFlip{ from{ transform:rotateY(-160deg) translateY(30px); opacity:0; } 40%{ opacity:1; } }
+.qd-card .pc-face{ border-radius:4.2cqw; }
+.qd-minus{ position:absolute; left:50%; top:-18px; z-index:3; background:#C13B1F; color:#fff; font:400 20px 'Archivo Black',sans-serif; padding:6px 14px; border:2px solid #141412;
+  transform:translateX(-50%); animation:qdDrop 1.3s cubic-bezier(.5,0,.3,1) .9s both; box-shadow:3px 3px 0 #D6FF3F; white-space:nowrap; }
+@keyframes qdDrop{ 0%{ transform:translate(-50%,-30px); opacity:0; } 25%{ transform:translate(-50%,0); opacity:1; } 70%{ transform:translate(-50%,0); opacity:1; } 100%{ transform:translate(-50%,90px) scale(.6); opacity:0; } }
+.qd-c-list{ margin-top:22px; border-top:1px solid rgba(233,228,216,.15); }
+.qd-c-list div{ display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid rgba(233,228,216,.15); font-size:13px; }
+.qd-c-list span{ color:#a39e91; } .qd-c-list b{ font-family:'Space Mono','Noto Sans Myanmar',monospace; }
+.qd-c-list .amt b{ color:#D6FF3F; font:400 17px 'Archivo Black',sans-serif; }
+.qp-done.d-c .qd-go{ background:#D6FF3F; color:#141412; box-shadow:4px 4px 0 #E9E4D8; }
+
+/* a · ⚡ အစိမ်းဝါ PAID. */
+.qp-done.d-a{ background:#D6FF3F; color:#141412; overflow:hidden; }
+.qd-a-ring{ position:relative; width:84px; height:84px; margin:10px 0 6px; }
+.qd-a-ring i{ position:absolute; inset:0; border-radius:50%; background:#141412; display:grid; place-items:center; color:#D6FF3F; animation:qdPop .5s cubic-bezier(.3,1.7,.5,1) .1s backwards; }
+.qd-a-ring i svg{ width:44px; height:44px; } .qd-a-ring i path{ stroke-dasharray:40; stroke-dashoffset:40; animation:qpDraw .4s .5s forwards; }
+.qd-a-ring::before, .qd-a-ring::after{ content:''; position:absolute; inset:0; border-radius:50%; border:3px solid #141412; animation:qdBurst 1s ease-out .3s backwards; opacity:0; }
+.qd-a-ring::after{ animation-delay:.5s; }
+@keyframes qdBurst{ from{ transform:scale(.8); opacity:.7; } to{ transform:scale(2.4); opacity:0; } }
+.qd-big{ font:400 clamp(70px, 26vw, 104px)/.86 'Archivo Black',sans-serif; letter-spacing:-.02em; margin-top:8px; animation:qdSlam .5s cubic-bezier(.3,1.4,.5,1) .35s backwards; }
+.qd-big i{ color:#C13B1F; font-style:normal; }
+@keyframes qdSlam{ from{ transform:translateY(30px) scale(1.15); opacity:0; } }
+.qd-a-amt{ font:400 36px 'Archivo Black',sans-serif; margin-top:14px; } .qd-a-amt small{ font:700 13px 'Space Mono',monospace; margin-left:6px; }
+.qd-a-sub{ font-size:13px; font-weight:700; margin-top:2px; }
+.qd-a-box{ background:#141412; color:#E9E4D8; margin-top:20px; padding:4px 14px; }
+.qd-a-box div{ display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px dashed rgba(233,228,216,.2); font-size:12.5px; }
+.qd-a-box div:last-child{ border:0; } .qd-a-box span{ color:#a39e91; } .qd-a-box b{ font-family:'Space Mono','Noto Sans Myanmar',monospace; }
+.qd-a-box .hl b{ color:#D6FF3F; }
+.qp-done.d-a .qd-go{ background:#141412; color:#D6FF3F; box-shadow:4px 4px 0 #C13B1F; }
+.qd-conf{ position:absolute; top:-20px; width:10px; height:10px; pointer-events:none; animation:qdFall linear forwards; }
+@keyframes qdFall{ to{ transform:translateY(110vh) rotate(720deg); } }
+
+/* t · 🎟️ Ticket ဆုတ် (QR အပိုင်း ပြုတ်ကျ → PAID Stub ကျန်) */
+.qp-done.d-t{ background:#E9E4D8; color:#141412; --ink:#141412; --grey:#6f695c; }
+html[data-theme="dark"] .qp-done.d-t{ background:#141412; color:#E9E4D8; --ink:#E9E4D8; --grey:#a39e91; }
+.qd-t-wrap{ position:relative; margin-top:auto; }
+.qp-done.d-t .qd-acts{ margin-top:auto; }
+.qd-t-top{ background:#fff; border:2px solid #141412; border-bottom:0; transform-origin:12% 100%; position:relative; z-index:2; }
+.qd-t-top.tear{ animation:qdTear 1s cubic-bezier(.5,0,.75,0) forwards; }
+@keyframes qdTear{ 0%{ transform:none; } 18%{ transform:rotate(-3deg); } 30%{ transform:rotate(-2deg) translateY(4px); } 100%{ transform:translateY(120vh) rotate(-32deg); opacity:.9; } }
+.qd-t-top .h{ background:#141412; color:#E9E4D8; padding:11px 14px; display:flex; justify-content:space-between; font:400 14px 'Archivo Black',sans-serif; }
+.qd-t-top .h i{ color:#D6FF3F; font-style:normal; } .qd-t-top .h span{ font:700 9px 'Space Mono',monospace; letter-spacing:.18em; color:#D6FF3F; align-self:center; }
+.qd-t-top img{ display:block; width:calc(100% - 40px); margin:16px 20px 14px; border:2px solid #141412; image-rendering:pixelated; }
+.qd-t-cut{ height:0; border-top:2px dashed #141412; position:relative; z-index:3; }
+.qd-t-cut.gone{ border-top-color:#141412; }
+.qd-t-stub{ background:#fff; color:#141412; border:2px solid #141412; border-top:0; padding:18px 16px 16px; position:relative;
+  -webkit-mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) top left/51% 100% no-repeat, radial-gradient(circle 12px at 100% 0,#0000 98%,#000) top right/51% 100% no-repeat;
+  mask:radial-gradient(circle 12px at 0 0,#0000 98%,#000) top left/51% 100% no-repeat, radial-gradient(circle 12px at 100% 0,#0000 98%,#000) top right/51% 100% no-repeat; }
+.qd-t-stub .k{ font:700 9.5px 'Space Mono',monospace; letter-spacing:.18em; color:#777; }
+.qd-t-amt{ display:flex; align-items:flex-end; justify-content:space-between; margin:4px 0 12px; }
+.qd-t-amt b{ font:400 38px/1 'Archivo Black',sans-serif; } .qd-t-amt small{ font:700 13px 'Noto Sans Myanmar',sans-serif; margin-left:4px; }
+.qd-t-punch{ width:62px; height:62px; border-radius:50%; border:3px solid #C13B1F; color:#C13B1F; display:grid; place-items:center; text-align:center;
+  font:400 12px/1.05 'Archivo Black',sans-serif; transform:rotate(-12deg) scale(0); }
+.qd-t-punch small{ display:block; font:700 7.5px 'Space Mono',monospace; letter-spacing:.1em; }
+.qd-t-wrap.done .qd-t-punch{ animation:qdPunch .4s cubic-bezier(.3,1.7,.5,1) .15s forwards; }
+@keyframes qdPunch{ to{ transform:rotate(-12deg) scale(1); } }
+.qd-t-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px 12px; border-top:1.5px dashed #bbb; padding-top:12px; }
+.qd-t-grid b{ display:block; font:700 13px 'Space Mono','Noto Sans Myanmar',monospace; margin-top:2px; }
+.qd-t-grid .r{ text-align:right; }
+.qd-t-bars{ height:34px; margin-top:14px; background:repeating-linear-gradient(90deg,#141412 0 2px,transparent 2px 4px,#141412 4px 7px,transparent 7px 9px,#141412 9px 10px,transparent 10px 13px); opacity:.85; }
+.qd-t-msg{ text-align:center; margin-top:16px; font-weight:800; font-size:16px; opacity:0; transition:opacity .4s .3s; }
+.qd-t-wrap.done ~ .qd-t-msg{ opacity:1; }
+.qp-done.d-t .qd-go{ background:#141412; color:#D6FF3F; box-shadow:4px 4px 0 #C13B1F; }
+html[data-theme="dark"] .qp-done.d-t .qd-go{ background:#D6FF3F; color:#141412; box-shadow:4px 4px 0 #C13B1F; }
+
+/* f · 🛫 Split-flap ဘုတ် */
+.qp-done.d-f{ background:#0e0e0d; color:#E9E4D8; }
+.qd-f-top{ display:flex; justify-content:space-between; align-items:center; font:700 10px 'Space Mono',monospace; letter-spacing:.2em; color:#a39e91; margin:6px 0 18px; }
+.qd-f-top b{ color:#D6FF3F; } .qd-f-top i{ width:8px; height:8px; border-radius:50%; background:#D6FF3F; display:inline-block; margin-right:6px; animation:qdBlink 1s infinite; }
+@keyframes qdBlink{ 50%{ opacity:.2; } }
+.qd-board{ background:#1a1a18; border:2px solid #2b2a26; padding:14px 10px; border-radius:6px; box-shadow:inset 0 2px 0 rgba(255,255,255,.04), 0 18px 40px rgba(0,0,0,.5); }
+.qd-fl{ display:flex; justify-content:center; gap:5px; margin:6px 0; }
+.qd-ft{ position:relative; width:var(--w,42px); height:calc(var(--w,42px) * 1.38); background:#262624; border-radius:4px; display:grid; place-items:center; overflow:hidden;
+  font:400 calc(var(--w,42px) * .9) 'Archivo Black',sans-serif; color:#E9E4D8; box-shadow:inset 0 -2px 0 rgba(0,0,0,.4); }
+.qd-ft::after{ content:''; position:absolute; left:0; right:0; top:50%; height:1.5px; background:#0e0e0d; }
+.qd-ft.flip{ animation:qdFlap .09s linear; }
+@keyframes qdFlap{ 50%{ transform:scaleY(.15); filter:brightness(.6); } }
+.qd-fl.big .qd-ft{ --w:min(16vw, 66px); color:#D6FF3F; }
+.qd-fl.big .qd-ft.dot{ color:#C13B1F; }
+.qd-fl.sm .qd-ft{ --w:min(9vw, 34px); }
+.qd-fl .gap{ width:min(4vw, 14px); }
+.qd-f-cap{ text-align:center; font:700 9.5px 'Space Mono',monospace; letter-spacing:.2em; color:#6f695c; margin-top:6px; }
+.qd-f-rows{ margin-top:18px; font:12.5px 'Space Mono','Noto Sans Myanmar',monospace; }
+.qd-f-rows div{ display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center; padding:9px 0; border-bottom:1px solid #2b2a26; }
+.qd-f-rows span{ color:#a39e91; letter-spacing:.08em; } .qd-f-rows em{ border-bottom:1px dotted #3a3833; height:1px; }
+.qd-f-rows b{ color:#E9E4D8; } .qd-f-rows .ok b{ color:#D6FF3F; }
+.qd-f-msg{ text-align:center; margin-top:16px; font-weight:800; font-size:15px; }
+.qp-done.d-f .qd-go{ background:#D6FF3F; color:#141412; border-color:#D6FF3F; box-shadow:4px 4px 0 #C13B1F; }
+
+
+/* h · 🏷️ Hang-tag (ဈေးနှုန်းကတ်ပြား လွှဲ) */
+.qp-done.d-h{ background:#E9E4D8; color:#141412; --ink:#141412; --grey:#6f695c; }
+html[data-theme="dark"] .qp-done.d-h{ background:#1E1D1A; color:#E9E4D8; --ink:#E9E4D8; --grey:#a39e91; }
+.qd-h-rig{ position:relative; display:flex; flex-direction:column; align-items:center; margin:-18px auto 0; transform-origin:50% 0; animation:qdSwing 2.6s cubic-bezier(.3,.1,.3,1) .2s both; }
+@keyframes qdSwing{ 0%{ transform:translateY(-110%) rotate(0); } 22%{ transform:translateY(0) rotate(9deg); } 42%{ transform:rotate(-6deg); } 60%{ transform:rotate(3.5deg); } 78%{ transform:rotate(-1.5deg); } 100%{ transform:rotate(0); } }
+.qd-h-pin{ width:14px; height:14px; border-radius:50%; background:#141412; border:3px solid #C13B1F; position:relative; z-index:2; }
+.qd-h-str{ width:2px; height:56px; background:#C13B1F; margin-top:-2px; }
+.qd-h-tag{ width:250px; background:#141412; color:#E9E4D8; padding:34px 20px 18px; margin-top:-4px; position:relative; text-align:center;
+  clip-path:polygon(22% 0, 78% 0, 100% 12%, 100% 100%, 0 100%, 0 12%); }
+.qd-h-tag::before{ content:''; position:absolute; left:50%; top:12px; width:14px; height:14px; margin-left:-7px; border-radius:50%; background:#E9E4D8; box-shadow:inset 0 0 0 3px #C13B1F; }
+html[data-theme="dark"] .qd-h-tag::before{ background:#1E1D1A; }
+.qd-h-tag .br{ font:400 13px 'Archivo Black',sans-serif; letter-spacing:.06em; } .qd-h-tag .br i{ color:#C13B1F; font-style:normal; }
+.qd-h-tag .sold{ font:400 50px/1 'Archivo Black',sans-serif; color:#D6FF3F; margin:10px 0 4px; letter-spacing:-.01em; }
+.qd-h-tag .sold i{ color:#C13B1F; font-style:normal; }
+.qd-h-tag .am{ font:400 26px 'Archivo Black',sans-serif; } .qd-h-tag .am small{ font:700 11px 'Noto Sans Myanmar',sans-serif; margin-left:3px; }
+.qd-h-tag hr{ border:0; border-top:1.5px dashed rgba(233,228,216,.3); margin:14px 0 10px; }
+.qd-h-tag .rw{ display:flex; justify-content:space-between; font:11.5px 'Space Mono','Noto Sans Myanmar',monospace; padding:3px 0; }
+.qd-h-tag .rw span{ color:#a39e91; } .qd-h-tag .rw.hl b{ color:#D6FF3F; }
+.qd-h-tag .bc{ height:26px; margin-top:12px; background:repeating-linear-gradient(90deg,#E9E4D8 0 2px,transparent 2px 4px,#E9E4D8 4px 7px,transparent 7px 9px,#E9E4D8 9px 10px,transparent 10px 13px); opacity:.75; }
+.qd-h-msg{ text-align:center; font-weight:800; font-size:15px; margin-top:18px; animation:qdUp .4s 1.6s backwards; }
+@keyframes qdUp{ from{ opacity:0; transform:translateY(8px); } }
+.qp-done.d-h .qd-go{ background:#141412; color:#D6FF3F; box-shadow:4px 4px 0 #C13B1F; }
+html[data-theme="dark"] .qp-done.d-h .qd-go{ background:#D6FF3F; color:#141412; }
+
+/* g · 🛍️ Shopping Bag ကျလာ */
+.qp-done.d-g{ background:#C13B1F; color:#E9E4D8; overflow:hidden; }
+.qd-g-stage{ position:relative; height:300px; display:flex; justify-content:center; align-items:flex-end; margin-top:10px; }
+.qd-g-bag{ position:relative; width:200px; height:220px; animation:qdBagDrop .9s cubic-bezier(.5,0,.6,1.4) .2s both; transform-origin:50% 100%; }
+@keyframes qdBagDrop{ 0%{ transform:translateY(-140%); } 70%{ transform:translateY(0) scale(1.06,.92); } 85%{ transform:scale(.97,1.03); } 100%{ transform:none; } }
+.qd-g-h{ position:absolute; z-index:2; top:-40px; width:56px; height:56px; border:5px solid #141412; border-bottom:0; border-radius:30px 30px 0 0; }
+.qd-g-h.l{ left:38px; } .qd-g-h.r{ right:38px; }
+.qd-g-rc{ position:absolute; left:50%; top:-8px; width:100px; margin-left:-50px; background:#fff; color:#141412; padding:10px 10px 30px; text-align:center;
+  transform:translateY(60px) rotate(4deg); animation:qdRcUp .6s cubic-bezier(.3,1.5,.5,1) 1.15s forwards; z-index:0; }
+.qd-g-rc b{ font:400 15px 'Archivo Black',sans-serif; color:#C13B1F; display:block; } .qd-g-rc span{ font:700 8.5px 'Space Mono',monospace; letter-spacing:.12em; }
+@keyframes qdRcUp{ to{ transform:translateY(-58px) rotate(-6deg); } }
+.qd-g-body{ position:absolute; inset:0; background:#141412; z-index:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:14px;
+  box-shadow:inset 0 10px 0 #222220, 8px 8px 0 rgba(0,0,0,.25); }
+.qd-g-body .lg{ font:400 20px 'Archivo Black',sans-serif; color:#D6FF3F; } .qd-g-body .lg i{ color:#E9E4D8; font-style:normal; }
+.qd-g-body .ty{ font:700 9px 'Space Mono',monospace; letter-spacing:.24em; color:#a39e91; margin:4px 0 14px; }
+.qd-g-body .am{ font:400 30px 'Archivo Black',sans-serif; color:#E9E4D8; } .qd-g-body .am small{ display:block; font:700 10px 'Space Mono',monospace; letter-spacing:.2em; color:#a39e91; margin-top:2px; }
+.qd-g-shadow{ position:absolute; bottom:-10px; left:50%; width:210px; height:18px; margin-left:-105px; border-radius:50%; background:rgba(0,0,0,.25); animation:qdShadow .9s .2s both; }
+@keyframes qdShadow{ 0%{ transform:scale(.2); opacity:0; } 70%{ transform:scale(1.1); } }
+.qd-g-t{ text-align:center; margin-top:26px; } .qd-g-t b{ display:block; font-size:20px; } .qd-g-t span{ font-size:12.5px; opacity:.85; }
+.qd-g-list{ margin-top:18px; background:#E9E4D8; color:#141412; padding:4px 14px; }
+.qd-g-list div{ display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px dashed #c9c2b2; font-size:12.5px; }
+.qd-g-list div:last-child{ border:0; } .qd-g-list span{ color:#6f695c; } .qd-g-list b{ font-family:'Space Mono','Noto Sans Myanmar',monospace; }
+.qp-done.d-g .qd-go{ background:#D6FF3F; color:#141412; box-shadow:4px 4px 0 #141412; }
+
+/* x · 🚧 PAID Tape (ကြိုးတန်း ဖြတ်ကပ်) */
+.qp-done.d-x{ background:#141412; color:#E9E4D8; overflow:hidden; }
+.qd-x-zone{ position:relative; height:250px; margin:0 -18px; }
+.qd-tape{ position:absolute; left:-45%; right:-45%; top:50%; height:54px; display:flex; align-items:center; overflow:hidden; border-top:3px solid #141412; border-bottom:3px solid #141412; }
+.qd-tape span{ white-space:nowrap; font:400 28px 'Archivo Black',sans-serif; letter-spacing:.02em; animation:qdTape 7s linear infinite; padding-left:20px; }
+.qd-tape.t1{ background:#D6FF3F; color:#141412; transform:translateY(-70%) rotate(-11deg); animation:qdTapeIn1 .55s cubic-bezier(.2,1.2,.4,1) .2s backwards; }
+.qd-tape.t2{ background:#C13B1F; color:#E9E4D8; transform:translateY(10%) rotate(8deg); animation:qdTapeIn2 .55s cubic-bezier(.2,1.2,.4,1) .5s backwards; }
+.qd-tape.t2 span{ animation-direction:reverse; font-size:22px; }
+@keyframes qdTape{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+@keyframes qdTapeIn1{ from{ transform:translate(-110%,-70%) rotate(-11deg); } }
+@keyframes qdTapeIn2{ from{ transform:translate(110%,10%) rotate(8deg); } }
+.qd-x-card{ background:#E9E4D8; color:#141412; padding:18px 16px 14px; margin-top:4px; position:relative; animation:qdUp .45s .9s backwards; box-shadow:6px 6px 0 #D6FF3F; }
+.qd-x-card .k{ font:700 9.5px 'Space Mono','Noto Sans Myanmar',monospace; letter-spacing:.18em; color:#6f695c; }
+.qd-x-card .am{ font:400 40px/1.05 'Archivo Black',sans-serif; margin:2px 0 10px; } .qd-x-card .am small{ font:700 13px 'Noto Sans Myanmar',sans-serif; margin-left:4px; }
+.qd-x-card .gr{ display:grid; grid-template-columns:1fr 1fr; gap:10px; border-top:2px solid #141412; padding-top:10px; }
+.qd-x-card .gr b{ display:block; font:700 13px 'Space Mono','Noto Sans Myanmar',monospace; }
+.qd-x-card .gr .r{ text-align:right; }
+.qd-x-card .ok{ position:absolute; right:14px; top:14px; width:40px; height:40px; border-radius:50%; background:#141412; color:#D6FF3F; display:grid; place-items:center; }
+.qd-x-card .ok svg{ width:22px; height:22px; }
+.qd-x-msg{ text-align:center; margin-top:16px; font-weight:800; font-size:15px; }
+.qp-done.d-x .qd-go{ background:#D6FF3F; color:#141412; border-color:#D6FF3F; box-shadow:4px 4px 0 #C13B1F; }
+
+
+/* ===================== 🔐 PIN Sheet — Design ၆ မျိုး ===================== */
+.qa .qa-dots{ margin:8px 0 6px; }
+.qa .qa-pad [data-a="del"]{ font-family:-apple-system,system-ui,'Noto Sans Myanmar',sans-serif !important; font-size:21px !important; }
+/* ① Ticket (Bottom Sheet) */
+.qa-v1{ align-items:flex-end !important; padding:0 !important; }
+.qa-v1 .cp-auth-box{ max-width:440px; background:#F4F0E6; color:#141412; border-radius:0; padding:0 0 calc(10px + env(safe-area-inset-bottom)); border:2px solid #141412; border-bottom:0;
+  -webkit-backdrop-filter:none; backdrop-filter:none; transform:translateY(100%); opacity:1; transition:transform .38s cubic-bezier(.2,1,.3,1); box-shadow:0 -10px 40px rgba(0,0,0,.35); font-family:'Noto Sans Myanmar',sans-serif; }
+.qa-v1.show .cp-auth-box{ transform:none; }
+.qa-tk-h{ background:#141412; color:#E9E4D8; display:flex; justify-content:space-between; align-items:center; padding:12px 16px; }
+.qa-tk-h b{ font:400 15px 'Archivo Black',sans-serif; } .qa-tk-h b i{ color:#D6FF3F; font-style:normal; } .qa-tk-h span{ font:700 9px 'Space Mono',monospace; letter-spacing:.18em; color:#D6FF3F; }
+.qa-v1 .cp-auth-ic{ display:none; }
+.qa-v1 .cp-auth-t{ color:#141412; margin-top:14px; font-size:14px; }
+.qa-v1 .cp-auth-amt{ color:#141412; font-size:12px; padding:0 16px 14px; border-bottom:2px dashed #141412; position:relative; }
+.qa-v1 .cp-auth-amt b{ display:block; font:400 34px 'Archivo Black',sans-serif; color:#141412; margin-top:2px; }
+.qa-v1 .cp-auth-pin label{ color:#6f695c; margin-top:12px; }
+.qa-v1 .qa-dots{ gap:10px; } .qa-v1 .qa-dots i{ width:52px; height:60px; border-radius:0; border:2px solid #141412; background:#fff; position:relative; transform:none !important; }
+.qa-v1 .qa-dots i.on{ background:#fff; border-color:#141412; box-shadow:3px 3px 0 #C13B1F; }
+.qa-v1 .qa-dots i.on::after{ content:''; position:absolute; left:50%; top:50%; width:14px; height:14px; margin:-7px; border-radius:50%; background:#141412; }
+.qa-v1 .qa-pad{ padding:0 16px; gap:0; border-top:2px solid #141412; margin-top:14px; }
+.qa-v1 .qa-pad button{ width:100%; height:56px; border-radius:0; background:transparent; color:#141412; border-right:1px solid #cfc8b8; border-bottom:1px solid #cfc8b8; font:400 22px 'Archivo Black',sans-serif; }
+.qa-v1 .qa-pad button:nth-child(3n){ border-right:0; } .qa-v1 .qa-pad button:active{ background:#D6FF3F; }
+.qa-v1 .qa-pad button.ghost{ font-size:16px; }
+.qa-v1 .cp-auth-msg{ color:#C13B1F; } .qa-v1 .cp-auth-msg.ok{ color:#6f695c; }
+.qa-v1 .cp-auth-cancel{ color:#141412; border-top:2px solid #141412; margin-top:0; font-weight:700; }
+.qa-v1 .cp-auth-face{ padding:14px 16px 4px; } .qa-v1 .cp-auth-go{ border-radius:0; background:#141412; color:#D6FF3F; border:2px solid #141412; }
+.qa-v1 .cp-auth-link{ color:#141412; text-decoration:underline; }
+.qa-v1 .qa-tries i{ background:#cfc8b8; } .qa-v1 .qa-tries i.x{ background:#C13B1F; }
+
+/* ② Dark Full Screen (Bank App) */
+.qa-v2{ padding:0 !important; }
+.qa-v2 .cp-auth-box{ max-width:none; width:100%; height:100%; border-radius:0; background:#141412; display:flex; flex-direction:column; justify-content:center; padding:calc(30px + env(safe-area-inset-top)) 30px calc(20px + env(safe-area-inset-bottom)); }
+.qa-v2 .cp-auth-ic{ display:none; }
+.qa-v2 .cp-auth-amt{ order:-1; font-size:12px; color:#a39e91; } .qa-v2 .cp-auth-amt b{ display:block; font:400 40px 'Archivo Black',sans-serif; color:#E9E4D8; margin:4px 0 22px; }
+.qa-v2 .cp-auth-t{ font-size:16px; color:#E9E4D8; }
+.qa-v2 .cp-auth-pin label{ display:none; }
+.qa-v2 .qa-dots{ gap:18px; margin:18px 0 6px; } .qa-v2 .qa-dots i{ width:16px; height:16px; border-color:#5a574f; } .qa-v2 .qa-dots i.on{ background:#D6FF3F; border-color:#D6FF3F; box-shadow:0 0 14px rgba(214,255,63,.6); }
+.qa-v2 .qa-pad{ gap:16px 0; margin:26px auto 0; max-width:290px; }
+.qa-v2 .qa-pad button{ width:76px; height:76px; background:transparent; border:1.5px solid #3a3833; font:400 30px -apple-system,'Space Grotesk',sans-serif; color:#E9E4D8; }
+.qa-v2 .qa-pad button:active{ background:#D6FF3F; color:#141412; border-color:#D6FF3F; }
+.qa-v2 .qa-pad button.ghost{ border:0; font-size:22px; }
+.qa-v2 .cp-auth-cancel{ border:0; color:#a39e91; margin-top:18px; }
+.qa-v2 .cp-auth-go{ border-radius:40px; }
+
+/* ③ Acid Brutal */
+.qa-v3{ padding:0 !important; }
+.qa-v3 .cp-auth-box{ max-width:none; width:100%; height:100%; border-radius:0; background:#D6FF3F; color:#141412; display:flex; flex-direction:column; justify-content:center; text-align:left;
+  padding:calc(24px + env(safe-area-inset-top)) 22px calc(18px + env(safe-area-inset-bottom)); }
+.qa-v3 .cp-auth-ic{ display:none; }
+.qa-v3 .cp-auth-t{ order:-1; color:#141412; font:800 26px/1.5 'Noto Sans Myanmar',sans-serif; margin-bottom:10px; }
+.qa-v3 .cp-auth-amt{ color:#141412; font-size:13px; font-weight:700; } .qa-v3 .cp-auth-amt b{ color:#C13B1F; font:400 18px 'Archivo Black',sans-serif; }
+.qa-v3 .cp-auth-pin label{ display:none; }
+.qa-v3 .qa-dots{ justify-content:flex-start; gap:8px; margin:22px 0 8px; }
+.qa-v3 .qa-dots i{ width:62px; height:72px; border-radius:0; border:3px solid #141412; background:#D6FF3F; transform:none !important; position:relative; }
+.qa-v3 .qa-dots i.on{ background:#141412; }
+.qa-v3 .qa-dots i.on::after{ content:'✱'; position:absolute; inset:0; display:grid; place-items:center; color:#D6FF3F; font:400 26px 'Archivo Black',sans-serif; }
+.qa-v3 .cp-auth-msg{ color:#C13B1F; text-align:left; font-weight:700; } .qa-v3 .cp-auth-msg.ok{ color:#141412; }
+.qa-v3 .qa-pad{ gap:10px; margin-top:16px; }
+.qa-v3 .qa-pad button{ width:100%; height:62px; border-radius:0; background:#141412; color:#D6FF3F; font:400 24px 'Archivo Black',sans-serif; box-shadow:4px 4px 0 #C13B1F; }
+.qa-v3 .qa-pad button:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 #C13B1F; }
+.qa-v3 .qa-pad button.ghost{ background:transparent; color:#141412; box-shadow:none; border:3px solid #141412; }
+.qa-v3 .cp-auth-cancel{ color:#141412; border-top:3px solid #141412; margin-top:18px; font-weight:800; text-align:left; padding-left:0; }
+.qa-v3 .cp-auth-go{ border-radius:0; background:#141412; color:#D6FF3F; } .qa-v3 .cp-auth-link{ color:#141412; text-align:left; text-decoration:underline; }
+.qa-v3 .qa-tries{ justify-content:flex-start; } .qa-v3 .qa-tries i{ background:rgba(0,0,0,.2); }
+
+/* ④ Card နောက်ကျော */
+.qa-v4 .cp-auth-box{ max-width:340px; background:#1E1D1A; border-radius:24px; padding:18px 18px 10px; }
+.qa-cb{ position:relative; aspect-ratio:856/540; border-radius:14px; background-color:#141412; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 0 0 1px rgba(214,255,63,.25);
+  background-image:linear-gradient(rgba(214,255,63,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(214,255,63,.07) 1px,transparent 1px); background-size:13px 13px; text-align:left; animation:qaFlipIn .7s cubic-bezier(.2,1,.3,1); }
+@keyframes qaFlipIn{ from{ transform:perspective(800px) rotateY(-120deg); opacity:0; } }
+.qa-cb .mag{ position:absolute; left:0; right:0; top:14%; height:19%; background:#000; }
+.qa-cb .lb{ position:absolute; left:6%; top:42%; font:700 9px 'Space Mono',monospace; letter-spacing:.2em; color:#D6FF3F; }
+.qa-cb .sb{ position:absolute; left:6%; top:51%; font:700 7px 'Space Mono',monospace; letter-spacing:.16em; color:#a39e91; }
+.qa-v4 .cp-auth-ic{ display:none; }
+.qa-v4 .cp-auth-box{ display:flex; flex-direction:column; }
+.qa-v4 .cp-auth-pin:not([hidden]){ display:contents; }
+.qa-v4 .qa-cb{ order:1; } .qa-v4 .qa-dots{ order:2; } .qa-v4 .cp-auth-t{ order:3; margin-top:4px; } .qa-v4 .cp-auth-amt{ order:4; } .qa-v4 .qa-tries{ order:5; }
+.qa-v4 .cp-auth-msg{ order:6; } .qa-v4 .cp-auth-face{ order:7; } .qa-v4 .qa-pin-in{ order:8; } .qa-v4 .qa-pad{ order:9; } .qa-v4 .cp-auth-cancel{ order:10; }
+.qa-v4 .cp-auth-pin label{ display:none; }
+.qa-v4 .qa-dots{ position:relative; margin:-78px 0 40px 6%; justify-content:flex-start; gap:6px; z-index:2; }
+.qa-v4 .qa-dots i{ width:38px; height:44px; border-radius:6px; border:0; background:#E9E4D8; position:relative; transform:none !important; }
+.qa-v4 .qa-dots i.on{ background:#D6FF3F; }
+.qa-v4 .qa-dots i.on::after{ content:''; position:absolute; left:50%; top:50%; width:10px; height:10px; margin:-5px; border-radius:50%; background:#141412; }
+.qa-v4 .qa-pad button{ background:#2b2a26; }
+.qa-v4 .qa-pad button:active{ background:#D6FF3F; color:#141412; }
+
+/* ⑤ POS Terminal (LCD) */
+.qa-v5 .cp-auth-box{ max-width:320px; background:linear-gradient(#3a3a38,#232322); border-radius:28px 28px 34px 34px; padding:16px 16px 14px; box-shadow:0 24px 60px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.15); }
+.qa-term{ display:flex; justify-content:space-between; align-items:center; font:700 10px 'Space Mono',monospace; letter-spacing:.14em; color:#cfc9bb; padding:0 4px 10px; }
+.qa-term b{ color:#C13B1F; } .qa-term .led i{ display:inline-block; width:7px; height:7px; border-radius:50%; background:#5dff5d; margin-right:6px; box-shadow:0 0 8px #5dff5d; animation:qdBlink 1.2s infinite; }
+.qa-v5 .cp-auth-ic{ display:none; }
+.qa-v5 .cp-auth-t, .qa-v5 .cp-auth-amt, .qa-v5 .cp-auth-msg, .qa-v5 .cp-auth-pin label, .qa-v5 .qa-dots{ background:#b9c79a; color:#1d2414; margin:0; font-family:'Space Mono','Noto Sans Myanmar',monospace; text-align:left; padding:0 14px; }
+.qa-v5 .cp-auth-t{ border-radius:8px 8px 0 0; padding-top:12px; font-size:12px; box-shadow:inset 0 3px 6px rgba(0,0,0,.25); }
+.qa-v5 .cp-auth-amt{ font-size:11px; } .qa-v5 .cp-auth-amt b{ display:block; color:#1d2414; font:700 26px 'Space Mono',monospace; }
+.qa-v5 .cp-auth-msg{ min-height:16px; font-size:11px; color:#7a1a0a; } .qa-v5 .cp-auth-msg.ok{ color:#1d2414; }
+.qa-v5 .cp-auth-pin label{ font-size:11px; padding-top:4px; color:#1d2414; }
+.qa-v5 .qa-dots{ justify-content:flex-start; gap:10px; padding:4px 14px 14px; border-radius:0 0 8px 8px; }
+.qa-v5 .qa-dots i{ width:auto; height:auto; border:0; border-radius:0; background:none !important; transform:none !important; font:700 26px 'Space Mono',monospace; color:#1d2414; }
+.qa-v5 .qa-dots i::after{ content:'_'; } .qa-v5 .qa-dots i.on::after{ content:'*'; }
+.qa-v5 .qa-pad{ gap:9px; margin-top:16px; }
+.qa-v5 .qa-pad button{ width:100%; height:48px; border-radius:10px; background:linear-gradient(#5a5a57,#454543); color:#fff; font:700 19px 'Space Mono',monospace; box-shadow:0 3px 0 #151514, inset 0 1px 0 rgba(255,255,255,.2); }
+.qa-v5 .qa-pad button:active{ transform:translateY(2px); box-shadow:0 1px 0 #151514; }
+.qa-v5 .qa-pad button[data-a="del"]{ background:linear-gradient(#e8c33a,#c9a21c); color:#141412; }
+.qa-v5 .cp-auth-cancel{ margin-top:10px; border:0; border-radius:10px; background:linear-gradient(#d0452a,#a8321c); box-shadow:0 3px 0 #5a1a0e; font-weight:700; }
+.qa-v5 .cp-auth-face{ background:#b9c79a; padding:0 14px 12px; border-radius:0 0 8px 8px; } .qa-v5 .cp-auth-go{ border-radius:8px; } .qa-v5 .cp-auth-link{ color:#1d2414; }
+
+/* ⑥ Light iOS Sheet */
+.qa-v6{ align-items:flex-end !important; padding:0 !important; }
+.qa-v6 .cp-auth-box{ max-width:440px; background:#fff; color:#141412; border-radius:26px 26px 0 0; padding:10px 20px calc(14px + env(safe-area-inset-bottom)); -webkit-backdrop-filter:none; backdrop-filter:none;
+  transform:translateY(100%); opacity:1; transition:transform .38s cubic-bezier(.2,1,.3,1); font-family:-apple-system,'Noto Sans Myanmar',sans-serif; }
+.qa-v6 .cp-auth-box::before{ content:''; display:block; width:38px; height:5px; border-radius:5px; background:#d8d4cc; margin:0 auto 14px; }
+.qa-v6.show .cp-auth-box{ transform:none; }
+.qa-v6 .cp-auth-ic{ width:48px; height:48px; margin-bottom:6px; color:#141412; } .qa-v6 .cp-auth-key{ font-size:30px; }
+.qa-v6 .cp-auth-t{ color:#141412; font-size:16px; } .qa-v6 .cp-auth-amt{ color:#6f695c; } .qa-v6 .cp-auth-amt b{ color:#C13B1F; }
+.qa-v6 .cp-auth-pin label{ display:none; }
+.qa-v6 .qa-dots{ gap:10px; margin:16px 0 8px; } .qa-v6 .qa-dots i{ width:50px; height:56px; border-radius:14px; border:0; background:#f1eee7; position:relative; transform:none !important; }
+.qa-v6 .qa-dots i.on{ background:#141412; } .qa-v6 .qa-dots i.on::after{ content:''; position:absolute; left:50%; top:50%; width:12px; height:12px; margin:-6px; border-radius:50%; background:#D6FF3F; }
+.qa-v6 .cp-auth-msg{ color:#C13B1F; } .qa-v6 .cp-auth-msg.ok{ color:#6f695c; }
+.qa-v6 .qa-pad{ gap:8px; margin:14px -8px 0; }
+.qa-v6 .qa-pad button{ width:100%; height:52px; border-radius:12px; background:#f1eee7; color:#141412; font:500 24px -apple-system,sans-serif; }
+.qa-v6 .qa-pad button:active{ background:#d8d4cc; } .qa-v6 .qa-pad button.ghost{ background:none; }
+.qa-v6 .cp-auth-cancel{ color:#C13B1F; border-top:1px solid #eee; font-weight:600; }
+.qa-v6 .cp-auth-go{ background:#141412; color:#D6FF3F; } .qa-v6 .cp-auth-link{ color:#141412; }
+.qa-v6 .qa-tries i{ background:#e6e2d9; } .qa-v6 .qa-tries i.x{ background:#C13B1F; }
+
+/* ===== A · Ticket ===== */
+.qp-ov.v-a .qp-tk{ background:var(--surface); border:2px solid var(--ink); position:relative; box-shadow:6px 6px 0 var(--ink); }
+.qp-ov.v-a .qp-tk-h{ background:#141412; color:#E9E4D8; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; }
+.qp-ov.v-a .qp-tk-h b{ font:400 15px 'Archivo Black',sans-serif; } .qp-ov.v-a .qp-tk-h b i{ color:#D6FF3F; font-style:normal; }
+.qp-ov.v-a .qp-tk-h span{ font:700 9.5px 'Space Mono',monospace; letter-spacing:.18em; color:#D6FF3F; }
+.qp-ov.v-a .qp-tk-q{ padding:18px 22px 12px; }
+.qp-ov.v-a .qp-tk-q .qp-qr{ border:2px solid #141412; }
+.qp-ov.v-a .qp-tk-t{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:12px; color:var(--grey); }
+.qp-ov.v-a .qp-tk-t .qp-sec{ color:var(--ink); font-size:13px; }
+.qp-ov.v-a .qp-tk .qp-bar{ margin-top:8px; color:var(--rust); }
+.qp-ov.v-a .qp-cut{ position:relative; height:0; border-top:2px dashed var(--ink); margin:6px 0; }
+.qp-ov.v-a .qp-cut::before, .qp-ov.v-a .qp-cut::after{ content:''; position:absolute; top:-13px; width:24px; height:24px; border-radius:50%; background:var(--concrete); border:2px solid var(--ink); }
+.qp-ov.v-a .qp-cut::before{ left:-14px; clip-path:inset(0 0 0 50%); } .qp-ov.v-a .qp-cut::after{ right:-14px; clip-path:inset(0 50% 0 0); }
+.qp-ov.v-a .qp-tk-f{ display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px 16px 14px; }
+.qp-ov.v-a .qp-tk-f .r{ text-align:right; }
+.qp-ov.v-a .qp-tk-f .bal{ color:var(--rust); }
+.qp-ov.v-a .qp-tok{ grid-column:1/-1; text-align:center; margin-top:2px; }
+
+/* ===== B · Dark Card ===== */
+.qp-ov.v-b{ background:#141412; color:#E9E4D8; --grey:#a39e91; --ink:#E9E4D8;
+  background-image:linear-gradient(rgba(214,255,63,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(214,255,63,.06) 1px,transparent 1px); background-size:22px 22px; }
+.qp-ov.v-b .qp-in{ padding-right:34px; }
+.qp-ov.v-b .qp-rail{ position:fixed; top:0; bottom:0; right:0; width:34px; background:#D6FF3F; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.qp-ov.v-b .qp-rail span{ writing-mode:vertical-rl; font:400 15px 'Archivo Black',sans-serif; color:#141412; white-space:nowrap; letter-spacing:.06em; animation:qpRail 14s linear infinite; }
+@keyframes qpRail{ from{ transform:translateY(-25%); } to{ transform:translateY(0); } }
+.qp-ov.v-b .qp-brand{ color:#D6FF3F; } .qp-ov.v-b .qp-brand i{ color:#E9E4D8; }
+.qp-ov.v-b .qp-x{ border-color:#E9E4D8; }
+.qp-ov.v-b .qp-tags{ display:flex; gap:8px; margin:-6px 0 14px; font:700 9.5px 'Space Mono',monospace; letter-spacing:.16em; }
+.qp-ov.v-b .qp-tags b{ background:#C13B1F; padding:3px 7px; } .qp-ov.v-b .qp-tags span{ color:#a39e91; padding:3px 0; }
+.qp-ov.v-b .qp-bq{ background:#E9E4D8; padding:14px; position:relative; }
+.qp-ov.v-b .qp-bq::after{ content:''; position:absolute; inset:-6px; border:1.5px solid rgba(214,255,63,.45); pointer-events:none; }
+.qp-ov.v-b .qp-bt{ display:flex; align-items:flex-end; justify-content:space-between; margin-top:16px; }
+.qp-ov.v-b .qp-bt .qp-sec{ font:400 34px 'Archivo Black',sans-serif; color:#D6FF3F; line-height:1; }
+.qp-ov.v-b .qp-bt .qp-k{ display:block; margin-bottom:6px; }
+.qp-ov.v-b .qp-bt .r{ text-align:right; }
+.qp-ov.v-b .qp-bt .qp-v{ font:400 19px 'Archivo Black',sans-serif; }
+.qp-ov.v-b .qp-bar{ margin-top:10px; color:#D6FF3F; background:rgba(233,228,216,.15); }
+.qp-ov.v-b .qp-tok{ margin-top:8px; }
+.qp-ov.v-b .qp-steps{ border-top:1px solid rgba(233,228,216,.15); padding-top:12px; }
+.qp-ov.v-b .qp-spin i{ border-color:rgba(20,20,18,.2); border-top-color:#141412; }
+.qp-ov.v-b .qp-btn{ background:#D6FF3F; color:#141412; box-shadow:4px 4px 0 #E9E4D8; }
+
+/* ===== C · Card + QR ===== */
+.qp-ov.v-c .qp-cc{ position:relative; aspect-ratio:856/540; container-type:inline-size; z-index:2; animation:qpCardIn .6s cubic-bezier(.2,1.1,.3,1); }
+@keyframes qpCardIn{ from{ transform:translateY(30px) rotate(-3deg); opacity:0; } }
+.qp-ov.v-c .qp-cc .pc-face{ border-radius:4.2cqw; }
+.qp-ov.v-c .qp-pocket{ position:relative; margin:-16cqw 10px 0; background:var(--surface); border:2px solid var(--ink); padding:calc(16cqw + 14px) 18px 16px; z-index:1;
+  animation:qpPocket .7s .25s cubic-bezier(.2,1.1,.3,1) backwards; }
+.qp-ov.v-c .qp-in{ container-type:inline-size; }
+@keyframes qpPocket{ from{ transform:translateY(-40px); opacity:0; } }
+.qp-ov.v-c .qp-pocket .qp-qr{ width:82%; }
+.qp-ov.v-c .qp-ct{ display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; font-size:12.5px; color:var(--grey); }
+.qp-ov.v-c .qp-ct svg{ width:24px; height:24px; transform:rotate(-90deg); flex:none; }
+.qp-ov.v-c .qp-ct circle{ fill:none; stroke-width:4; } .qp-ov.v-c .qp-ct .bg{ stroke:rgba(127,127,127,.25); }
+.qp-ov.v-c .qp-ct .fg{ stroke:var(--rust); stroke-linecap:round; stroke-dasharray:62.8; transition:stroke-dashoffset 1s linear; }
+.qp-ov.v-c .qp-ct .qp-sec{ color:var(--ink); }
+.qp-ov.v-c .qp-tok{ text-align:center; margin-top:4px; }
+.qp-ov.v-c .qp-ttl{ text-align:center; margin-top:18px; }
+.qp-ov.v-c .qp-sub{ text-align:center; }
+
+/* ===== Card ထဲက ခလုတ် ===== */
+.pc-qr{ width:100%; margin-top:12px; height:52px; display:flex; align-items:center; justify-content:center; gap:9px; border:2px solid #141412; background:#141412; color:#D6FF3F;
+  font:800 14.5px 'Noto Sans Myanmar',sans-serif; cursor:pointer; box-shadow:4px 4px 0 var(--acid); transition:transform .12s, box-shadow .12s; }
+.pc-qr:active{ transform:translate(3px,3px); box-shadow:1px 1px 0 var(--acid); }
+.pc-qr svg{ width:20px; height:20px; }
+html[data-theme="dark"] .pc-qr{ background:var(--acid); color:#141412; box-shadow:4px 4px 0 #E9E4D8; }
+
+/* ===== 🔐 အတည်ပြု Sheet (cp-auth ပုံစံ) ===== */
+.qa-tries[hidden]{ display:none; }
+.qa-tries{ display:flex; justify-content:center; gap:6px; margin-top:8px; }
+.qa-tries i{ width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.22); }
+.qa-tries i.x{ background:#ff6b5a; }
+.qa-dots{ display:flex; justify-content:center; gap:12px; margin:6px 0 4px; }
+.qa-dots i{ width:14px; height:14px; border-radius:50%; border:2px solid #E9E4D8; transition:background .15s, transform .15s; }
+.qa-dots i.on{ background:#D6FF3F; border-color:#D6FF3F; transform:scale(1.1); }
+.qa-pin-in{ position:absolute; opacity:0; pointer-events:none; width:1px; height:1px; }
+.qa-pad{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+.qa-pad button{ height:48px; border-radius:50%; width:48px; margin:0 auto; border:0; background:rgba(255,255,255,.12); color:#fff; font:600 20px -apple-system,'Space Mono',sans-serif; cursor:pointer; }
+.qa-pad button:active{ background:rgba(255,255,255,.3); }
+.qa-pad button.ghost{ background:none; font-size:13px; }
+@media (prefers-reduced-motion: reduce){ .qp-ov, .qd-paper, .qd-stamp, .qd-card, .qd-minus, .qd-big, .qd-conf, .qd-t-top, .qd-t-punch, .qd-ft, .qd-h-rig, .qd-g-bag, .qd-g-rc, .qd-tape, .qd-tape span, .qd-x-card, .qp-cc, .qp-pocket, .qp-rail span{ transition:none !important; animation:none !important; stroke-dashoffset:0 !important; } }`;
+  const st = document.createElement('style'); st.id = 'qp-css'; st.textContent = css; document.head.appendChild(st);
+
+  const QR_IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>';
+  const FACE = `<svg viewBox="0 0 70 70" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 20V12a6 6 0 0 1 6-6h8M50 6h8a6 6 0 0 1 6 6v8M64 50v8a6 6 0 0 1-6 6h-8M20 64h-8a6 6 0 0 1-6-6v-8"/><path d="M24 26v5M46 26v5M35 28v12h-3M26 47c5 4 13 4 18 0"/></svg>`;
+  const OK = `<svg viewBox="0 0 70 70" fill="none" stroke="#34c759" stroke-width="4" stroke-linecap="round"><path d="M35 4a31 31 0 1 1 0 62a31 31 0 1 1 0-62M22 36l9 9 17-19"/></svg>`;
+
+  // ---------------------------------------------------------------------
+  // 🔳 QR — ကရင်မ်နောက်ခံ · အနက်ကွက် · အလယ် "S." Logo
+  // ---------------------------------------------------------------------
+  function draw(canvas, text){
+    const q = window.qrcode(0, 'H'); q.addData(text); q.make();
+    const n = q.getModuleCount(), m = 3, cells = n + m * 2, px = Math.max(6, Math.floor(720 / cells));
+    canvas.width = canvas.height = cells * px;
+    const c = canvas.getContext('2d');
+    c.fillStyle = '#E9E4D8'; c.fillRect(0, 0, canvas.width, canvas.height);
+    // အလယ် Logo အကွက် (Module grid နဲ့ ကိုက်)
+    let L = Math.round(n * 0.27); if((n - L) % 2) L++;
+    const s0 = (n - L) / 2, s1 = s0 + L;
+    c.fillStyle = '#141412';
+    for(let r = 0; r < n; r++) for(let k = 0; k < n; k++){
+      if(r >= s0 && r < s1 && k >= s0 && k < s1) continue;
+      if(q.isDark(r, k)) c.fillRect((k + m) * px, (r + m) * px, px, px);
+    }
+    const lx = (s0 + m) * px, size = L * px;
+    c.fillRect(lx, lx, size, size);
+    c.fillStyle = '#E9E4D8'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = `900 ${Math.round(size * 0.62)}px Arial, Helvetica, sans-serif`;
+    c.fillText('S', lx + size * 0.47, lx + size * 0.53);
+    c.fillStyle = '#C13B1F';
+    const d = Math.round(size * 0.13); c.fillRect(Math.round(lx + size * 0.70), Math.round(lx + size * 0.72), d, d);
+  }
+
+  // ---------------------------------------------------------------------
+  // 📱 QR Screen
+  // ---------------------------------------------------------------------
+  let S = null;
+  const holder = () => { try{ return String(currentUser.user_metadata?.full_name || currentUser.email || '').toUpperCase(); }catch(e){ return ''; } };
+  function cardFace(){
+    return `<div class="pc-face pc-front">
+      <svg class="pc-outline" viewBox="0 0 856 540" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><text x="28" y="522" textLength="668" lengthAdjust="spacingAndGlyphs" font-family="Archivo Black, sans-serif" font-size="216" fill="none" stroke="#D6FF3F" stroke-width="2" opacity=".28">SUWATI</text></svg>
+      <div class="pc-stripe" aria-hidden="true"><span>SUWATI ✕ PAY ✕ SUWATI ✕ PAY</span></div>
+      <div class="pc-title">SUWATI<i>.</i>PREPAID CARD</div>
+      <div class="pc-tags"><span class="pc-badge">IN-STORE PAY</span><span class="muted">NAY PYI TAW</span></div>
+      <div class="pc-bal-label">AVAILABLE BALANCE</div>
+      <div class="pc-bal"><span class="qp-balv">—</span><small>MMK</small></div>
+      <div class="pc-divider"></div>
+      <div class="pc-num">•••• •••• •••• <span class="qp-l4">••••</span></div>
+      <div class="pc-holder-label">CARDHOLDER NAME</div>
+      <div class="pc-holder">${esc(holder())}</div></div>`;
+  }
+  const QRBOX = `<div class="qp-qr load"><canvas width="10" height="10" aria-label="ငွေချေ QR"></canvas><div class="qp-spin"><i></i></div></div>`;
+  const STEPS = `<div class="qp-steps">① Cashier က QR ကို Scan ဖတ်ပါမည်<br>② <b>SUWATI.PAY</b> ပေါ်လာရင် ငွေပမာဏ စစ်ပြီး <b>ငွေချေမည်</b> နှိပ်ပါ<br>③ <b>Card PIN</b> (သို့) <b>${bioWord()}</b> ဖြင့် အတည်ပြုမှ ငွေဖြတ်ပါမည်</div>
+    <div class="qp-tip">☀️ Screen အလင်း မြှင့်ထားရင် Scan ပိုမြန်ပါသည် · QR တစ်ခုကို တစ်ခါသာ သုံးလို့ရ</div>`;
+  const WAIT = `<div class="qp-wait"><i></i>ဆိုင်က ငွေတောင်းနေပါသည် — အတည်ပြုပါ</div>`;
+  const ERR = `<div class="qp-err" role="alert"></div>`;
+  function mainHtml(){
+    if(QP_STYLE === 'a') return `
+      <div class="qp-ttl">📱 ဆိုင်မှာ QR နဲ့ ငွေချေမည်</div>
+      <div class="qp-sub">ဒီ Ticket ကို Cashier ကို ပြပါ — Scan ပြီးရင် <b>သင်ကိုယ်တိုင် အတည်ပြုမှ</b> ငွေဖြတ်ပါမည်</div>
+      <div class="qp-tk">
+        <div class="qp-tk-h"><b>SUWATI<i>.</i>PAY</b><span>IN-STORE · ONE-TIME</span></div>
+        <div class="qp-tk-q">${QRBOX}
+          <div class="qp-tk-t"><span>⏱ QR အသစ် ပြောင်းရန်</span><span class="qp-sec"><b class="qp-s">60</b>s</span></div>
+          <div class="qp-bar"><i></i></div>${ERR}</div>
+        <div class="qp-cut"></div>
+        <div class="qp-tk-f">
+          <div><div class="qp-k">Card</div><div class="qp-v">•••• <span class="qp-l4">••••</span></div></div>
+          <div class="r"><div class="qp-k">Balance</div><div class="qp-v bal"><span class="qp-balv">—</span> Ks</div></div>
+          <div class="qp-tok">SWP-····</div>
+        </div>
+      </div>${WAIT}${STEPS}`;
+    if(QP_STYLE === 'c') return `
+      <div class="qp-cc">${cardFace()}</div>
+      <div class="qp-pocket">${QRBOX}
+        <div class="qp-ct"><svg viewBox="0 0 24 24"><circle class="bg" cx="12" cy="12" r="10"/><circle class="fg" cx="12" cy="12" r="10"/></svg><span><b class="qp-sec qp-s">60</b> စက္ကန့်ကြာရင် QR အသစ်</span></div>
+        <div class="qp-tok">SWP-····</div>${ERR}</div>
+      <div class="qp-ttl">📱 Cashier ကို ဒီ QR ပြပါ</div>
+      <div class="qp-sub">Scan ပြီးရင် ဒီဖုန်းမှာ ငွေပမာဏ ပေါ်လာပြီး<br><b>သင်ကိုယ်တိုင် အတည်ပြုမှ</b> ငွေဖြတ်ပါမည်</div>${WAIT}${STEPS}`;
+    // B · Dark Card (မူလ)
+    return `
+      <div class="qp-tags"><b>IN-STORE PAY</b><span>ONE-TIME QR · •••• <span class="qp-l4">••••</span></span></div>
+      <div class="qp-bq">${QRBOX}</div>
+      <div class="qp-bt">
+        <div><span class="qp-k">Valid</span><span class="qp-sec"><span class="qp-s">60</span>s</span></div>
+        <div class="r"><span class="qp-k">Balance · MMK</span><span class="qp-v qp-balv">—</span></div>
+      </div>
+      <div class="qp-bar"><i></i></div>
+      <div class="qp-tok">SWP-····</div>${ERR}${WAIT}${STEPS}`;
+  }
+
+  async function newToken(){
+    if(!S) return;
+    const box = S.el.querySelector('.qp-qr'), err = S.el.querySelector('.qp-err');
+    const first = !S.tok;
+    if(first) box.classList.add('load'); err.style.display = 'none';
+    try{
+      const [{ data, error }] = await Promise.all([ sb.rpc('qr_pay_token'), loadLib() ]);
+      if(!S) return;
+      if(error || !data) throw new Error(/NO_CARD/.test(error?.message || '') ? 'Prepaid Card မရှိသေးပါ' : /RATE/.test(error?.message || '') ? 'ခဏနားပြီးမှ ထပ်စမ်းပါ' : (error?.message || 'QR ယူ၍ မရပါ'));
+      S.tok = data.token; S.ttl = Number(data.ttl) || 60; S.exp = Date.now() + S.ttl * 1000;
+      draw(S.el.querySelector('canvas'), data.token);
+      box.classList.remove('load', 'renew'); void box.offsetWidth; if(!first) box.classList.add('renew');
+      S.el.querySelectorAll('.qp-tok').forEach(t => t.textContent = data.token.slice(0, 8) + '····' + data.token.slice(-4));
+      S.el.querySelectorAll('.qp-balv').forEach(b => b.textContent = ks(data.balance));
+      if(data.card_last4){ S.last4 = data.card_last4; } if(data.card_last4) S.el.querySelectorAll('.qp-l4').forEach(b => b.textContent = data.card_last4);
+      tick();
+    }catch(e){
+      if(!S) return;
+      box.classList.remove('load');
+      err.innerHTML = '⚠️ ' + esc(e.message || e) + '<br><button type="button" class="qp-btn" onclick="qrPayRetry()">↻ ထပ်စမ်းမည်</button>';
+      err.style.display = 'block'; S.exp = 0;
+    }
+  }
+  window.qrPayRetry = () => newToken();
+
+  function tick(){
+    if(!S || !S.exp) return;
+    const left = Math.max(0, Math.ceil((S.exp - Date.now()) / 1000)), f = left / (S.ttl || 60);
+    S.el.querySelectorAll('.qp-s').forEach(b => b.textContent = left);
+    S.el.querySelectorAll('.qp-bar i').forEach(b => b.style.transform = `scaleX(${f})`);
+    const fg = S.el.querySelector('.qp-ct .fg'); if(fg) fg.style.strokeDashoffset = String(62.8 * (1 - f));
+    if(left <= 0 && !S.busy){ S.exp = 0; newToken(); }
+  }
+
+  async function poll(){
+    if(!S || S.busy || S.polling || document.hidden) return;
+    S.polling = true;
+    try{
+      const { data } = await sb.rpc('qr_pay_pending');
+      if(S && data && data.id && data.id !== S.seen) handle(data);
+    }catch(e){}finally{ if(S) S.polling = false; }
+  }
+
+
+  // 🔐 PIN Sheet Design ၆ မျိုး (PIN_STYLE 1–6) — အပေါ်ဆုံး အလှဆင်
+  const QA_DECO = {
+    '1': `<div class="qa-tk-h"><b>SUWATI<i>.</i>PAY</b><span>CONFIRM · ONE-TIME</span></div>`,
+    '4': `<div class="qa-cb"><div class="mag"></div><div class="lb">SECURITY PIN</div><div class="sb">TYPE YOUR 4-DIGIT CARD PIN</div></div>`,
+    '5': `<div class="qa-term"><span>SUWATI<b>▪</b>POS-PAY</span><span class="led"><i></i>SECURE</span></div>`,
+  };
+  // ---------------------------------------------------------------------
+  // 🔐 အတည်ပြု — Face ID (ဖွင့်ထားရင် · ၃ ခါ မအောင်ရင် PIN) / Card PIN · ငွေဖြတ်တာ Server မှာ
+  // ---------------------------------------------------------------------
+  async function bioState(){
+    let st = window.__cpBio;
+    if(!st){ try{ const { data } = await sb.rpc('passkey_status'); st = { enabled: !!(data && data.enabled), creds: (data && data.credentials) || [] }; window.__cpBio = st; }catch(e){ st = { enabled:false, creds:[] }; } }
+    let ready = false;
+    try{ ready = !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }catch(e){}
+    return { ...st, ready };
+  }
+
+  function authPay(req){
+    // resolve → approve ရလဒ် { ok, remaining } / null (ပယ်)
+    return new Promise(async resolve => {
+      const amount = Number(req.amount) || 0, word = bioWord();
+      const bio = await bioState();
+      const useFace = bio.enabled && bio.ready && bio.creds.length;
+      const el = document.createElement('div'); el.className = 'cp-auth qa qa-v' + PIN_STYLE; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true');
+      el.innerHTML = `
+        <div class="cp-auth-box">${QA_DECO[PIN_STYLE] || ''}
+          <div class="cp-auth-ic">${FACE}</div>
+          <div class="cp-auth-t">${word} ဖြင့် အတည်ပြုပါ</div>
+          <div class="cp-auth-amt">🏪 SUWATI ဆိုင်ထဲ — <b>${ks(amount)}</b> ကျပ်</div>
+          <div class="qa-tries" hidden>${'<i></i>'.repeat(FACE_TRIES)}</div>
+          <div class="cp-auth-msg" role="alert"></div>
+          <div class="cp-auth-face"><button type="button" class="cp-auth-go" data-a="face">🙂 ${word} ဖြင့် အတည်ပြု</button>
+            <button type="button" class="cp-auth-link" data-a="pin">🔑 Card PIN သုံးမည်</button></div>
+          <div class="cp-auth-pin" hidden>
+            <label>Card PIN ၄ လုံး</label>
+            <div class="qa-dots"><i></i><i></i><i></i><i></i></div>
+            <input class="qa-pin-in" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="Card PIN">
+            <div class="qa-pad">${[1,2,3,4,5,6,7,8,9].map(n => `<button type="button" data-n="${n}">${n}</button>`).join('')}<span aria-hidden="true"></span><button type="button" data-n="0">0</button><button type="button" class="ghost" data-a="del">⌫</button></div>
+          </div>
+          <button type="button" class="cp-auth-cancel">ပယ်ဖျက်မည်</button>
+        </div>`;
+      document.body.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('show'));
+      const $ = s => el.querySelector(s);
+      let done = false, fails = 0, pin = '', busy = false, faceLocked = !useFace;
+      const msg = (m, ok) => { const x = $('.cp-auth-msg'); x.textContent = m || ''; x.classList.toggle('ok', !!ok); if(m && !ok){ x.classList.remove('shake'); void x.offsetWidth; x.classList.add('shake'); } };
+      const close = (v) => { if(done) return; done = true; el.classList.remove('show'); setTimeout(() => el.remove(), 260); resolve(v); };
+      const success = (label, v) => { $('.cp-auth-ic').innerHTML = OK; $('.cp-auth-t').textContent = label; msg('', true); el.classList.add('ok'); $('.cp-auth-pin').hidden = true; $('.cp-auth-face').hidden = true; try{ navigator.vibrate && navigator.vibrate(25); }catch(e){} setTimeout(() => close(v), 550); };
+      const paint = () => el.querySelectorAll('.qa-dots i').forEach((d, i) => d.classList.toggle('on', i < pin.length));
+      const tries = () => { const t = $('.qa-tries'); t.hidden = !fails; t.querySelectorAll('i').forEach((d, i) => d.classList.toggle('x', i < fails)); };
+      const showPin = (why) => { faceLocked = true;
+        $('.cp-auth-face').hidden = true; $('.cp-auth-pin').hidden = false; $('.qa-tries').hidden = true;
+        $('.cp-auth-t').textContent = 'Card PIN ဖြင့် အတည်ပြုပါ'; $('.cp-auth-ic').innerHTML = '<span class="cp-auth-key">🔑</span>';
+        msg(why || '', !why); pin = ''; paint(); setTimeout(() => { try{ $('.qa-pin-in').focus({ preventScroll:true }); }catch(e){} }, 60);
+      };
+
+      const approve = async (p) => {
+        const r = await sb.rpc('qr_pay_approve', p ? { p_id: req.id, p_pin: p } : { p_id: req.id });
+        if(r.error) return { ok:false, message: r.error.message };
+        return r.data || { ok:false, message:'မအောင်မြင်ပါ' };
+      };
+
+      // Challenge ကြိုယူ (ခလုတ်နှိပ်တာနဲ့ Face ID ချက်ချင်း ခေါ်နိုင်ရန် — Safari)
+      let ch = null;
+      const prep = () => sb.rpc('passkey_challenge').then(r => { ch = r.data || null; }, () => {});
+      if(useFace) prep(); else showPin();
+
+      $('[data-a="face"]').onclick = async (ev) => {
+        const b = ev.currentTarget; if(busy) return; busy = true; b.disabled = true; msg('');
+        try{
+          if(!ch) await prep();
+          if(!ch) throw new Error('Challenge ယူ၍ မရပါ — Internet စစ်ပါ');
+          const a = await navigator.credentials.get({ publicKey:{ challenge: b64uToBuf(ch), rpId: location.hostname, userVerification:'required', timeout:60000,
+            allowCredentials: bio.creds.map(c => ({ type:'public-key', id:b64uToBuf(c.id), transports:['internal','hybrid'] })) } });
+          ch = null; msg('စစ်နေသည်...', true);
+          const { data: sess } = await sb.auth.getSession();
+          const res = await fetch(SUPABASE_URL + '/functions/v1/passkey-verify', { method:'POST',
+            headers:{ 'Content-Type':'application/json', apikey:SUPABASE_ANON_KEY, Authorization:'Bearer ' + (sess?.session?.access_token || '') },
+            body: JSON.stringify({ credentialId: bufToB64u(a.rawId), clientDataJSON: bufToB64u(a.response.clientDataJSON), authenticatorData: bufToB64u(a.response.authenticatorData), signature: bufToB64u(a.response.signature) }) });
+          let j = {}; try{ j = await res.json(); }catch(_){}
+          if(!res.ok || !j.ok) throw new Error(j.error || 'Server စစ်ဆေးမှု မအောင်မြင်ပါ');
+          const d = await approve(null);
+          if(d.ok) return success(word + ' အတည်ပြုပြီး', d);
+          if(d.need_pin){ faceLocked = true; return showPin(d.message || 'Card PIN ရိုက်ပါ'); }
+          return close(d);   // လက်ကျန်မလောက် စသည်
+        }catch(e){
+          fails++; tries(); prep();
+          if(fails >= FACE_TRIES){ faceLocked = true; showPin(word + ' ' + FACE_TRIES + ' ကြိမ် မအောင်မြင်ပါ — Card PIN ဖြင့် ဆက်လုပ်ပါ'); }
+          else msg(word + ' မအောင်မြင်ပါ — ထပ်စမ်းပါ (' + fails + '/' + FACE_TRIES + ')');
+        }finally{ busy = false; b.disabled = false; }
+      };
+      $('[data-a="pin"]').onclick = () => showPin();
+      const inp = $('.qa-pin-in');
+      const submit = async () => {
+        if(busy || pin.length !== 4) return; busy = true; msg('စစ်နေသည်...', true);
+        try{
+          const d = await approve(pin);
+          if(d.ok) return success('PIN မှန်ပါသည်', d);
+          if(d.pin_error || d.need_pin){ msg(d.message || 'PIN မမှန်ပါ'); pin = ''; inp.value = ''; paint(); return; }
+          return close(d);
+        }finally{ busy = false; }
+      };
+      const press = (k) => { if(busy) return; if(k === 'del') pin = pin.slice(0, -1); else if(pin.length < 4) pin += k; inp.value = pin; paint(); if(pin.length === 4) submit(); };
+      el.querySelectorAll('.qa-pad [data-n]').forEach(b => b.onclick = () => press(b.dataset.n));
+      $('[data-a="del"]').onclick = () => press('del');
+      inp.addEventListener('input', () => { pin = inp.value.replace(/\D/g, '').slice(0, 4); inp.value = pin; paint(); if(pin.length === 4) submit(); });
+      el.addEventListener('keydown', e => { if(!$('.cp-auth-pin').hidden && document.activeElement !== inp){ if(/^\d$/.test(e.key)) press(e.key); else if(e.key === 'Backspace') press('del'); } });
+      $('.cp-auth-cancel').onclick = () => close(null);
+    });
+  }
+
+  async function handle(req){
+    S.seen = req.id; S.busy = true; S.el.classList.add('busy');
+    try{ navigator.vibrate && navigator.vibrate([30, 40, 30]); }catch(e){}
+    try{ window.suwatiSfx && suwatiSfx.msg && suwatiSfx.msg(); }catch(e){}
+    const amount = Number(req.amount) || 0;
+    const ctl = await prepaidPayAnim.confirm(amount);
+    if(!S) return;
+    const decline = async () => { try{ await sb.rpc('qr_pay_decline', { p_id: req.id }); }catch(e){} };
+    if(!ctl){
+      await decline();
+      toast('❌ ငွေချေမှုကို ပယ်လိုက်ပါပြီ — ဆိုင်ကို အသိပေးပြီးပါပြီ');
+      S.busy = false; S.el.classList.remove('busy'); newToken(); return;
+    }
+    const d = await authPay(req);
+    if(!d || !d.ok){
+      await ctl.fail(d ? (d.message || 'ငွေချေ၍ မရပါ') : '🔐 အတည်ပြုချက် မရှိ — ငွေမဖြတ်ပါ');
+      await decline();   // ဆိုင်ဘက်ကို "မချေရ" ချက်ချင်း သိစေ
+      if(!S) return;
+      S.busy = false; S.el.classList.remove('busy'); newToken(); return;
+    }
+    await ctl.success(d.remaining);
+    if(!S) return;
+    paid(amount, d.remaining, req);
+  }
+
+  const CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const whenTxt = () => { const d = new Date(); const M = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${d.getDate()} ${M[d.getMonth()]} ${d.getFullYear()} · ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+  const DONE = {
+    r: (i) => `<div class="qd-in">
+        <div class="qd-r-head"><b>ငွေချေပြီးပါပြီ ✓</b><span>ပြေစာ ထုတ်နေသည်...</span></div>
+        <div class="qd-slot"></div>
+        <div class="qd-paperwrap"><div class="qd-paper">
+          <div class="lg">SUWATI<i>.</i>MEN</div><div class="sb">SUWATI.PAY · IN-STORE RECEIPT</div><hr>
+          <div class="qd-row"><span>DATE</span><b>${i.when}</b></div>
+          <div class="qd-row"><span>REF #</span><b>${i.ref}</b></div>
+          <div class="qd-row"><span>CARD</span><b>PREPAID •••• ${i.last4}</b></div>
+          <div class="qd-tot"><span>TOTAL</span><b>${ks(i.amount)}<small>ကျပ်</small></b></div>
+          <div class="qd-row"><span>ချေခင် လက်ကျန်</span><b>${ks(i.before)}</b></div>
+          <div class="qd-row"><span>ချေပြီး လက်ကျန်</span><b>${ks(i.remaining)}</b></div><hr>
+          <div class="qd-thx">ကျေးဇူးတင်ပါသည် 🙏<br>SUWATI MEN FASHION</div>
+          <div class="qd-stamp">PAID<small>${i.time}</small></div>
+        </div></div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း ကြည့်မည်</button></div></div>`,
+    c: (i) => `<div class="qd-in">
+        <div class="qd-c-top"><div class="qd-c-ok">${CHECK}</div><div><b>ငွေချေပြီးပါပြီ</b><span>SUWATI MEN FASHION · ဆိုင်ထဲ</span></div></div>
+        <div class="qd-cardbox"><div class="qd-minus">−${ks(i.amount)}</div><div class="qd-card">${cardFace()}</div></div>
+        <div class="qd-c-list">
+          <div class="amt"><span>ချေလိုက်ငွေ</span><b>${ks(i.amount)} ကျပ်</b></div>
+          <div><span>Card လက်ကျန်</span><b>${ks(i.remaining)} ကျပ်</b></div>
+          <div><span>အချိန်</span><b>${i.when}</b></div>
+          <div><span>Ref #</span><b>${i.ref}</b></div>
+        </div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း</button></div></div>`,
+    a: (i) => `<div class="qd-in">
+        <div class="qd-a-ring"><i>${CHECK}</i></div>
+        <div class="qd-big">PAID<i>.</i></div>
+        <div class="qd-a-amt">${ks(i.amount)}<small>MMK</small></div>
+        <div class="qd-a-sub">SUWATI MEN FASHION မှာ ငွေချေပြီးပါပြီ</div>
+        <div class="qd-a-box">
+          <div class="hl"><span>Card လက်ကျန်</span><b>${ks(i.remaining)} ကျပ်</b></div>
+          <div><span>Card</span><b>•••• ${i.last4}</b></div>
+          <div><span>အချိန်</span><b>${i.when}</b></div>
+          <div><span>Ref #</span><b>${i.ref}</b></div>
+        </div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း</button></div></div>`,
+    t: (i) => `<div class="qd-in">
+        <div class="qd-t-wrap">
+          <div class="qd-t-top"><div class="h"><span style="font:400 14px 'Archivo Black',sans-serif;color:#E9E4D8;letter-spacing:0">SUWATI<i>.</i>PAY</span><span>IN-STORE · ONE-TIME</span></div>${i.qr ? `<img src="${i.qr}" alt="">` : ''}</div>
+          <div class="qd-t-cut"></div>
+          <div class="qd-t-stub">
+            <div class="k">PAID · SUWATI MEN FASHION</div>
+            <div class="qd-t-amt"><div><b>${ks(i.amount)}</b><small>ကျပ်</small></div><div class="qd-t-punch"><div>PAID<small>${i.time}</small></div></div></div>
+            <div class="qd-t-grid">
+              <div><div class="k">CARD</div><b>•••• ${i.last4}</b></div><div class="r"><div class="k">BALANCE</div><b style="color:#C13B1F">${ks(i.remaining)}</b></div>
+              <div><div class="k">DATE</div><b>${i.when}</b></div><div class="r"><div class="k">REF #</div><b>${i.ref}</b></div>
+            </div>
+            <div class="qd-t-bars"></div>
+          </div>
+        </div>
+        <div class="qd-t-msg">✓ ငွေချေပြီးပါပြီ — ကျေးဇူးတင်ပါသည် 🙏</div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း</button></div></div>`,
+    f: (i) => `<div class="qd-in">
+        <div class="qd-f-top"><span><i></i>SUWATI<b>.</b>PAY</span><span>${i.time} · IN-STORE</span></div>
+        <div class="qd-board">
+          <div class="qd-fl big" data-fl="PAID."></div>
+          <div class="qd-fl" data-fl="${String(ks(i.amount)).padStart(7, ' ')}"></div>
+          <div class="qd-f-cap">AMOUNT · MMK</div>
+        </div>
+        <div class="qd-f-rows">
+          <div class="ok"><span>STATUS</span><em></em><b>✓ ငွေချေပြီး</b></div>
+          <div><span>CARD</span><em></em><b>•••• ${i.last4}</b></div>
+          <div class="ok"><span>BALANCE</span><em></em><b>${ks(i.remaining)} ကျပ်</b></div>
+          <div><span>DATE</span><em></em><b>${i.when}</b></div>
+          <div><span>REF #</span><em></em><b>${i.ref}</b></div>
+        </div>
+        <div class="qd-f-msg">SUWATI MEN FASHION — ကျေးဇူးတင်ပါသည် 🙏</div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း</button></div></div>`,
+    h: (i) => `<div class="qd-in">
+        <div class="qd-h-rig"><div class="qd-h-pin"></div><div class="qd-h-str"></div>
+          <div class="qd-h-tag">
+            <div class="br">SUWATI<i>.</i>MEN</div>
+            <div class="sold">PAID<i>.</i></div>
+            <div class="am">${ks(i.amount)}<small>ကျပ်</small></div><hr>
+            <div class="rw"><span>CARD</span><b>•••• ${i.last4}</b></div>
+            <div class="rw hl"><span>လက်ကျန်</span><b>${ks(i.remaining)}</b></div>
+            <div class="rw"><span>DATE</span><b>${i.when}</b></div>
+            <div class="rw"><span>REF #</span><b>${i.ref}</b></div>
+            <div class="bc"></div>
+          </div></div>
+        <div class="qd-h-msg">✓ ငွေချေပြီးပါပြီ — ဝတ်ဆင်ရတာ ပျော်ပါစေ 🙏</div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း</button></div></div>`,
+    g: (i) => `<div class="qd-in">
+        <div class="qd-g-stage"><div class="qd-g-bag">
+          <div class="qd-g-h l"></div><div class="qd-g-h r"></div>
+          <div class="qd-g-rc"><b>PAID ✓</b><span>${i.time} · ${i.ref}</span></div>
+          <div class="qd-g-body"><div class="lg">SUWATI<i>.</i>MEN</div><div class="ty">THANK YOU</div><div class="am">${ks(i.amount)}<small>MMK · PAID</small></div></div>
+          <div class="qd-g-shadow"></div></div></div>
+        <div class="qd-g-t"><b>ငွေချေပြီးပါပြီ 🛍️</b><span>SUWATI MEN FASHION · ဆိုင်ထဲ ဝယ်ယူမှု</span></div>
+        <div class="qd-g-list">
+          <div><span>Card လက်ကျန်</span><b>${ks(i.remaining)} ကျပ်</b></div>
+          <div><span>Card</span><b>•••• ${i.last4}</b></div>
+          <div><span>အချိန်</span><b>${i.when}</b></div>
+        </div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း</button></div></div>`,
+    x: (i) => { const r1 = 'PAID ✓ PAID ✓ PAID ✓ PAID ✓ PAID ✓ PAID ✓ '; const r2 = `${ks(i.amount)} MMK · SUWATI.PAY · `.repeat(4);
+      return `<div class="qd-in">
+        <div class="qd-x-zone"><div class="qd-tape t1"><span>${r1 + r1}</span></div><div class="qd-tape t2"><span>${r2 + r2}</span></div></div>
+        <div class="qd-x-card"><div class="ok">${CHECK}</div>
+          <div class="k">ငွေချေပြီး · SUWATI MEN FASHION</div>
+          <div class="am">${ks(i.amount)}<small>ကျပ်</small></div>
+          <div class="gr"><div><div class="k">CARD</div><b>•••• ${i.last4}</b></div><div class="r"><div class="k">BALANCE</div><b style="color:#C13B1F">${ks(i.remaining)}</b></div>
+            <div><div class="k">DATE</div><b>${i.when}</b></div><div class="r"><div class="k">REF #</div><b>${i.ref}</b></div></div>
+        </div>
+        <div class="qd-x-msg">ကျေးဇူးတင်ပါသည် 🙏</div>
+        <div class="qd-acts"><button type="button" class="qd-go" data-qd="done">ပြီးပါပြီ</button><button type="button" class="qd-link" data-qd="hist">📜 အသုံးပြုမှု မှတ်တမ်း</button></div></div>`; },
+  };
+
+  function paid(amount, remaining, req){
+    clearInterval(S.tick); clearInterval(S.poll); S.exp = 0;
+    const kind = DONE[window.__qpDone] ? window.__qpDone : 't';
+    const now = new Date();
+    const i = { amount, remaining, before: Number(remaining) + Number(amount), last4: S.last4 || '••••', ref: String(req && req.id || '').slice(0, 8).toUpperCase() || '—',
+      qr: (() => { try{ return S.el.querySelector('.qp-qr canvas').toDataURL('image/png'); }catch(e){ return ''; } })(),
+      when: whenTxt(), time: String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') };
+    const d = S.el.querySelector('.qp-done'); d.className = 'qp-done d-' + kind; d.innerHTML = DONE[kind](i);
+    S.el.classList.remove('busy'); S.el.classList.add('paid');
+    d.querySelector('[data-qd="done"]').onclick = () => close();
+    d.querySelector('[data-qd="hist"]').onclick = () => { close(true); if(typeof openWalletHistory === 'function') openWalletHistory(); };
+    const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // c — Card လက်ကျန် ဂဏန်း လျော့သွား
+    d.querySelectorAll('.qp-balv').forEach(b => {
+      b.textContent = ks(i.before);
+      if(reduced){ b.textContent = ks(remaining); return; }
+      setTimeout(() => { const t0 = performance.now(), from = i.before, to = Number(remaining);
+        const step = t => { const k = Math.min(1, (t - t0) / 900), e = 1 - Math.pow(1 - k, 3); b.textContent = ks(Math.round(from + (to - from) * e)); if(k < 1 && b.isConnected) requestAnimationFrame(step); };
+        requestAnimationFrame(step); }, 1500);
+    });
+    d.querySelectorAll('.qp-l4').forEach(b => b.textContent = i.last4);
+    // r — ပြေစာ Print အသံ
+    if(kind === 'r'){ try{ window.suwatiSfx && suwatiSfx.print && suwatiSfx.print(); }catch(e){} setTimeout(() => { const h = d.querySelector('.qd-r-head span'); if(h) h.textContent = 'SUWATI MEN FASHION · ဆိုင်ထဲ ဝယ်ယူမှု'; }, 1700); }
+    // t — Ticket ဆုတ်: QR အပိုင်း ပြုတ်ကျ → Stub အပေါ်ရွှေ့ (FLIP)
+    if(kind === 't'){
+      const w = d.querySelector('.qd-t-wrap'), top = d.querySelector('.qd-t-top'), cut = d.querySelector('.qd-t-cut');
+      const finish = () => { const before = cut.getBoundingClientRect().top; top.style.display = 'none'; cut.classList.add('gone');
+        const dy = before - cut.getBoundingClientRect().top; w.style.transform = `translateY(${dy}px)`; void w.offsetWidth;
+        w.style.transition = 'transform .55s cubic-bezier(.2,1.2,.4,1)'; w.style.transform = ''; w.classList.add('done');
+        try{ navigator.vibrate && navigator.vibrate(30); }catch(e){} };
+      if(reduced) finish();
+      else setTimeout(() => { top.classList.add('tear'); try{ window.suwatiSfx && suwatiSfx.brush && suwatiSfx.brush(.35); }catch(e){} setTimeout(finish, 950); }, 700);
+    }
+    // f — Split-flap ဘုတ်
+    if(kind === 'f'){
+      const CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      d.querySelectorAll('.qd-fl').forEach((row, ri) => {
+        const txt = row.dataset.fl;
+        row.innerHTML = [...txt].map(c => c === ' ' ? '<span class="gap"></span>' : `<span class="qd-ft${c === '.' ? ' dot' : ''}" data-c="${esc(c)}"> </span>`).join('');
+        row.querySelectorAll('.qd-ft').forEach((t, k) => {
+          const fin = t.dataset.c; if(reduced){ t.textContent = fin; return; }
+          let n = 6 + k * 2 + ri * 5;
+          const go = () => { if(!t.isConnected) return; t.classList.remove('flip'); void t.offsetWidth; t.classList.add('flip');
+            t.textContent = --n <= 0 ? fin : (/[0-9]/.test(fin) ? String(Math.random() * 10 | 0) : CH[Math.random() * CH.length | 0]);
+            if(n > 0) setTimeout(go, 70); };
+          setTimeout(go, 250 + ri * 120);
+        });
+      });
+    }
+    // a — Confetti
+    if(kind === 'a' && !reduced){
+      const C = ['#141412', '#C13B1F', '#E9E4D8', '#141412'];
+      for(let k = 0; k < 38; k++){ const c = document.createElement('i'); c.className = 'qd-conf';
+        c.style.cssText = `left:${Math.random() * 100}%;background:${C[k % C.length]};animation-duration:${1.8 + Math.random() * 1.6}s;animation-delay:${.3 + Math.random() * .6}s;width:${6 + Math.random() * 8}px;height:${6 + Math.random() * 8}px`;
+        d.appendChild(c); }
+    }
+    const n = document.getElementById('pc-bal-num'); if(n){ n.textContent = ks(remaining); n.dataset.v = remaining; }
+  }
+
+  async function open(){
+    if(typeof currentUser === 'undefined' || !currentUser){ toast('Login ဝင်ပြီးမှ QR နဲ့ ငွေချေလို့ရပါမည်'); return; }
+    close(true);
+    const el = document.createElement('div'); el.className = 'qp-ov v-' + QP_STYLE; el.id = 'qp-ov';
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'QR ဖြင့် ငွေချေ');
+    el.innerHTML = `
+      ${QP_STYLE === 'b' ? '<div class="qp-rail" aria-hidden="true"><span>× SUWATI × PAY × SUWATI × PAY × SUWATI × PAY × SUWATI × PAY × SUWATI × PAY × SUWATI × PAY ×</span></div>' : ''}
+      <div class="qp-in">
+        <div class="qp-top"><span class="qp-brand">SUWATI<i>.</i>PAY</span><button type="button" class="qp-x" aria-label="ပိတ်မည်" onclick="closeQrPay()">×</button></div>
+        <div class="qp-main">${mainHtml()}</div>
+        <div class="qp-done" aria-live="polite"></div>
+      </div>`;
+    document.body.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    S = { el, tok:null, exp:0, ttl:60, busy:false, seen:null };
+    S.tick = setInterval(tick, 1000);
+    S.poll = setInterval(poll, 1500);
+    S.onVis = () => { if(!document.hidden && S && !S.busy && (!S.exp || S.exp < Date.now() + 3000)) newToken(); };
+    document.addEventListener('visibilitychange', S.onVis);
+    S.onKey = e => { if(e.key === 'Escape' && S && !S.busy && !document.querySelector('.pp-anim, .cp-auth')) close(); };
+    document.addEventListener('keydown', S.onKey);
+    try{ if(navigator.wakeLock) S.lock = await navigator.wakeLock.request('screen'); }catch(e){}
+    newToken();
+  }
+
+  function close(silent){
+    if(!S) return;
+    const s = S; S = null;
+    clearInterval(s.tick); clearInterval(s.poll);
+    document.removeEventListener('visibilitychange', s.onVis); document.removeEventListener('keydown', s.onKey);
+    try{ s.lock && s.lock.release(); }catch(e){}
+    const wasPaid = s.el.classList.contains('paid');
+    if(!wasPaid) sb.rpc('qr_pay_void').then(() => {}, () => {});
+    s.el.classList.remove('show'); setTimeout(() => s.el.remove(), silent ? 0 : 280);
+    if(wasPaid && !silent && document.getElementById('prepaid-card-area') && typeof openPrepaidCard === 'function') openPrepaidCard();
+  }
+  window.openQrPay = open;
+  window.closeQrPay = () => close();
+
+  // ---------------------------------------------------------------------
+  // 🔗 Prepaid Card ထဲမှာသာ ခလုတ်
+  // ---------------------------------------------------------------------
+  function addCardBtn(){
+    const area = document.getElementById('prepaid-card-area'); if(!area || area.querySelector('.pc-qr') || !area.querySelector('.pc-stage')) return;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'pc-qr';
+    b.innerHTML = QR_IC + ' ဆိုင်မှာ QR နဲ့ ငွေချေမည်'; b.onclick = open;
+    const acts = area.querySelector('.pc-acts'); acts ? acts.before(b) : area.querySelector('.pc-stage').after(b);
+  }
+  if(typeof openPrepaidCard === 'function'){
+    const _o = openPrepaidCard;
+    openPrepaidCard = async function(){ const r = await _o.apply(this, arguments); try{ addCardBtn(); }catch(e){ console.error(e); } return r; };
+    try{ window.openPrepaidCard = openPrepaidCard; }catch(e){}
+  }
+  if(typeof closeCheckout === 'function'){
+    const _c = closeCheckout;
+    closeCheckout = function(){ if(S && !S.busy) close(true); return _c.apply(this, arguments); };
+  }
+})();
+
 </script>
 </body>
 </html>

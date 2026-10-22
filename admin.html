@@ -12859,6 +12859,212 @@ function toggleAdminTheme(){
   try{ if(typeof salesChartInstance!=='undefined' && salesChartInstance) renderSalesChart(); }catch(e){}
 }
 syncAdminThemeBtn();
+
+// ===== js/admin/qr-pay-pos.js =====
+// SUWATI ADMIN — 📱 POS › Prepaid Card QR ငွေချေ
+//   Prepaid (သို့) ခွဲပေး › Prepaid ရွေးရင် "Customer QR Scan" ခလုတ် → ကင်မရာ/USB Scanner (SWP-…)
+//   → qr_pay_charge → Customer ဖုန်းမှာ အတည်ပြုတာ စောင့် (qr_pay_status ၁.၅ စက္ကန့်) → ချေပြီးရင် ရောင်းမှု Auto ပြီး
+//   pos_debit_by_card ကို "QR:<id>" နဲ့ ခေါ်ရင် qr_pay_verify သို့ လွှဲ (ငွေ ထပ်မဖြတ်)
+//   Server: QR-PAY.sql · pos-glass.js / openScanner (admin-extra) နောက်မှာ ထားရန်
+(function(){
+  const $ = id => document.getElementById(id);
+  const area = $('pos-prepaid-card-area'); if(!area) return;
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ks = n => Number(n || 0).toLocaleString('en-US');
+
+  const css = `
+#pos-prepaid-card-area .pq-btn, #pos-prepaid-card-area .pq-panel, #pos-prepaid-card-area .pq-or{ grid-column:1/-1; }
+.pq-btn{ width:100%; display:flex; align-items:center; justify-content:center; gap:10px; padding:15px 12px; border-radius:16px; font-weight:700; font-size:15px;
+  background:var(--g-pri, #D6FF3F); color:var(--g-pri-ink, #141412); border:0; cursor:pointer; position:relative; }
+#pos-prepaid-card-area #pos-card-scan{ background:var(--s2, rgba(255,255,255,.06)) !important; color:var(--concrete, inherit) !important; border:1px solid var(--g-line, rgba(127,127,127,.3)) !important; box-shadow:none !important; }
+.pq-btn svg{ width:22px; height:22px; }
+.pq-btn small{ font-weight:600; opacity:.7; font-size:12px; }
+.pq-or{ display:flex; align-items:center; gap:10px; font-size:11.5px; color:var(--grey); margin:2px 0; }
+.pq-or::before, .pq-or::after{ content:''; flex:1; height:1px; background:var(--g-line, rgba(127,127,127,.3)); }
+.pq-panel{ display:none; border:1px solid var(--g-line, rgba(127,127,127,.3)); background:var(--s2, rgba(255,255,255,.05)); border-radius:18px; padding:14px; animation:pqIn .3s cubic-bezier(.2,1.2,.4,1); }
+.pq-panel.on{ display:block; }
+@keyframes pqIn{ from{ transform:translateY(10px); opacity:0; } }
+.pq-cust{ display:flex; align-items:center; gap:12px; }
+.pq-av{ width:46px; height:46px; border-radius:50%; background:#7b3fe4; color:#fff; display:grid; place-items:center; font-weight:700; font-size:16px; flex:none; }
+.pq-cust b{ display:block; font-size:15.5px; }
+.pq-cust small{ font-size:12px; color:var(--grey); font-family:var(--g-num, monospace); }
+.pq-nums{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:12px 0; }
+.pq-nums div{ border:1px solid var(--g-line, rgba(127,127,127,.3)); border-radius:12px; padding:9px 10px; }
+.pq-nums span{ display:block; font-size:11px; color:var(--grey); }
+.pq-nums b{ font:700 16px var(--g-num, monospace); }
+.pq-nums .ok{ color:var(--g-pri, #3f6600); }
+html[data-theme="light"] .pq-nums .ok{ color:#3f6600; }
+.pq-nums .bad{ color:#ff4d5e; }
+.pq-st{ display:flex; align-items:center; gap:10px; padding:12px; border-radius:14px; font-size:13.5px; line-height:1.5;
+  background:rgba(200,240,72,.1); border:1px solid rgba(200,240,72,.3); }
+html[data-theme="light"] .pq-st{ background:rgba(95,143,0,.08); border-color:rgba(95,143,0,.3); }
+.pq-st i{ width:22px; height:22px; border-radius:50%; border:3px solid rgba(127,127,127,.25); border-top-color:var(--g-pri, #5f8f00); animation:pqRot .8s linear infinite; flex:none; }
+html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
+@keyframes pqRot{ to{ transform:rotate(360deg); } }
+.pq-st.err{ background:rgba(255,77,94,.1); border-color:rgba(255,77,94,.35); color:#ff4d5e; }
+.pq-st.err i, .pq-st.done i{ display:none; }
+.pq-st.done{ font-weight:700; }
+.pq-st small{ display:block; color:var(--grey); font-size:11.5px; }
+.pq-act{ display:flex; gap:8px; margin-top:10px; }
+.pq-act button{ flex:1; padding:11px; border-radius:12px; font-size:13.5px; }
+.pq-time{ font-family:var(--g-num, monospace); }`;
+  const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  const IC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>';
+  area.insertAdjacentHTML('afterbegin', `
+    <button type="button" class="acid full pq-btn" id="pos-qr-btn">${IC}<span>Customer ဖုန်း QR ကို Scan ဖတ်မည်</span></button>
+    <div class="pq-panel" id="pos-qr-panel" aria-live="polite"></div>
+    <div class="pq-or" id="pos-qr-or">သို့မဟုတ် Card Number + PIN ရိုက်ထည့်ပါ</div>`);
+  const btn = $('pos-qr-btn'), panel = $('pos-qr-panel');
+
+  let Q = null;   // { id, amount, timer, t0 }
+  const method = () => $('pos-payment-method')?.value;
+  function prepaidAmount(){
+    const m = method();
+    if(m === 'Prepaid Card') return getPosFinalTotal();
+    if(m === 'Split' && $('pos-split-method')?.value === 'Prepaid Card'){ const s = getPosSplit(); return (s.cash > 0 && s.cash < s.final) ? s.other : 0; }
+    return 0;
+  }
+
+  function show(html){ panel.innerHTML = html; panel.classList.add('on'); btn.style.display = 'none'; }
+  function reset(){ if(Q){ clearInterval(Q.timer); Q = null; } panel.classList.remove('on'); panel.innerHTML = ''; btn.style.display = ''; }
+  function fail(msg, keep){
+    if(Q){ clearInterval(Q.timer); }
+    const s = panel.querySelector('.pq-st');
+    if(s){ s.className = 'pq-st err'; s.innerHTML = '<i></i><span>' + msg + '</span>'; }
+    else show(`<div class="pq-st err"><i></i><span>${msg}</span></div>`);
+    const a = panel.querySelector('.pq-act'); if(a) a.innerHTML = '<button type="button" class="acid" id="pq-again">📷 QR ပြန် Scan မည်</button><button type="button" class="secondary" id="pq-close">ပိတ်မည်</button>';
+    else panel.insertAdjacentHTML('beforeend', '<div class="pq-act"><button type="button" class="acid" id="pq-again">📷 QR ပြန် Scan မည်</button><button type="button" class="secondary" id="pq-close">ပိတ်မည်</button></div>');
+    $('pq-again').onclick = () => { reset(); scan(); };
+    $('pq-close').onclick = reset;
+    Q = null;
+    try{ navigator.vibrate && navigator.vibrate([40, 60, 40]); }catch(e){}
+  }
+
+  function scan(){
+    if(!posCart.length){ showToast('ပစ္စည်း ထည့်ပါဦး'); return; }
+    const amt = prepaidAmount();
+    if(!(amt > 0)){
+      if(method() === 'Split'){ setPosNumpadTarget('pos-split-cash'); showToast('💵 ငွေသား ပမာဏကို အရင် ရိုက်ထည့်ပါ — ကျန်ငွေကို QR နဲ့ ချေပါမည်'); }
+      return;
+    }
+    openScanner(code => {
+      const c = String(code || '').trim().toUpperCase();
+      if(!/^SWP-[0-9A-F]{10,}$/.test(c)) return '❓ SUWATI.PAY QR မဟုတ်ပါ — Customer ဖုန်းမှာ Profile › "ဆိုင်မှာ QR နဲ့ ငွေချေမည်" ဖွင့်ခိုင်းပါ';
+      setTimeout(() => charge(c), 0);
+      return '✅ QR ဖတ်ပြီး — Customer ဖုန်းကို ငွေတောင်းနေသည်...';
+    }, { title: '📱 Customer ရဲ့ SUWATI.PAY QR ကို Scan ဖတ်ပါ' });
+    setTimeout(() => { const m = $('scan-manual'); if(m) m.placeholder = '(သို့) USB Scanner / SWP-… ရိုက်ထည့်ပါ'; const l = $('scan-last'); if(l) l.textContent = 'Customer ဖုန်းထဲက QR ကို ဘောင်ထဲ ထားပါ'; }, 30);
+  }
+
+  async function charge(token){
+    if(Q) return;
+    const amt = prepaidAmount(); if(!(amt > 0)) return;
+    const n = posCart.reduce((s, i) => s + (Number(i.quantity) || 0), 0);
+    show('<div class="pq-st"><i></i><span>QR စစ်ဆေးနေသည်...</span></div>');
+    let r;
+    try{ r = await sb.rpc('qr_pay_charge', { p_token: token, p_amount: amt, p_note: `POS · ${n} ခု` }); }catch(e){ r = { error: e }; }
+    const d = r.data || {};
+    if(r.error || !d.ok){
+      const m = r.error ? (/qr_pay_charge|schema cache|function/i.test(r.error.message || '') ? '⚠️ QR-PAY.sql မ Run ရသေးပါ (Supabase)' : 'Error: ' + esc(r.error.message)) : '⚠️ ' + esc(d.message || 'မအောင်မြင်ပါ');
+      return fail(m);
+    }
+    const name = d.name || 'Customer';
+    const ini = (String(name).match(/[A-Za-zက-႟]/) || ['★'])[0].toUpperCase();
+    const after = Number(d.balance) - amt;
+    show(`
+      <div class="pq-cust"><div class="pq-av">${esc(ini)}</div><div><b>${esc(name)}</b><small>${d.phone ? esc(d.phone) + ' · ' : ''}Card •••• ${esc(d.card_last4 || '----')}</small></div></div>
+      <div class="pq-nums">
+        <div><span>လက်ကျန်</span><b>${ks(d.balance)}</b></div>
+        <div><span>ချေမည့်ငွေ</span><b>${ks(amt)}</b></div>
+        <div><span>ကျန်မည်</span><b class="${d.enough ? 'ok' : 'bad'}">${d.enough ? ks(after) + ' ✓' : 'မလောက်'}</b></div>
+      </div>
+      <div class="pq-st"><i></i><span>Customer ဖုန်းမှာ အတည်ပြုတာ စောင့်နေသည်... <small>ဖုန်းမှာ "ငွေချေမည်" နှိပ်ခိုင်းပါ · <span class="pq-time" id="pq-left">2:00</span></small></span></div>
+      <div class="pq-act"><button type="button" class="secondary" id="pq-cancel">✕ ပယ်မည်</button></div>`);
+    $('pq-cancel').onclick = async () => { const id = Q && Q.id; reset(); if(id) try{ await sb.rpc('qr_pay_cancel', { p_id: id }); }catch(e){} showToast('QR ငွေတောင်းခံမှု ပယ်လိုက်ပါပြီ'); };
+    if(!d.enough){
+      try{ await sb.rpc('qr_pay_cancel', { p_id: d.id }); }catch(e){}
+      return fail(`⚠️ Card လက်ကျန် ${ks(d.balance)} ကျပ်သာ ရှိပါသည် — <b>🔀 ခွဲပေး</b> (ငွေသား + Prepaid) နဲ့ ပြန်ချေပါ`);
+    }
+    Q = { id: d.id, amount: amt, t0: Date.now(), busy: false };
+    Q.timer = setInterval(check, 1500);
+  }
+
+  async function check(){
+    if(!Q || Q.busy) return;
+    const left = Math.max(0, 120 - Math.floor((Date.now() - Q.t0) / 1000));
+    const el = $('pq-left'); if(el) el.textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+    Q.busy = true;
+    let s = null;
+    try{ const r = await sb.rpc('qr_pay_status', { p_id: Q.id }); s = r.data; }catch(e){}
+    if(!Q) return; Q.busy = false;
+    if(!s) return;
+    if(s.status === 'paid') return done(s);
+    if(s.status === 'declined') return fail('❌ Customer က ငွေမချေပါ (ပယ်လိုက်/အတည်ပြုချက် မရ)');
+    if(s.status === 'expired') return fail('⏱️ အချိန်ကုန်သွားပါပြီ — QR ပြန် Scan ပါ');
+    if(s.status === 'void') return fail('ငွေတောင်းခံမှု ပယ်ပြီးသားပါ');
+  }
+
+  function done(s){
+    const q = Q; clearInterval(q.timer);
+    if(Number(s.amount) !== Number(prepaidAmount())){
+      Q = null;
+      return fail('⚠️ ခြင်း ပြောင်းသွားလို့ ပမာဏ မကိုက်တော့ပါ — Customer ငွေ ' + ks(s.amount) + ' ကျပ် ချေပြီးသားပါ။ Admin › Prepaid Card မှာ ပြန်အမ်းပေးပါ');
+    }
+    const stEl = panel.querySelector('.pq-st');
+    if(stEl){ stEl.className = 'pq-st done'; stEl.innerHTML = `<i></i><span>✅ Customer ချေပြီး — ${ks(s.amount)} ကျပ် · ကျန် ${ks(s.remaining)} ကျပ်<small>ပြေစာ ထုတ်နေသည်...</small></span>`; }
+    const a = panel.querySelector('.pq-act'); if(a) a.remove();
+    try{ navigator.vibrate && navigator.vibrate(40); }catch(e){}
+    try{ window.adminSfx && adminSfx.coin && adminSfx.coin(); }catch(e){}
+    // မူလ "ရောင်းပြီး" Flow ကို ပြန်သုံး (pos_debit_by_card → qr_pay_verify)
+    $('pos-card-number').value = 'QR:' + q.id;
+    $('pos-card-pin').value = 'QR';
+    Q = { id: q.id, completing: true };
+    setTimeout(() => { $('pos-complete-sale-btn').click(); }, 350);
+  }
+
+  // pos_debit_by_card → QR ဖြစ်ရင် qr_pay_verify
+  (function patch(){
+    if(typeof sb === 'undefined' || !sb || sb.__qrPatched) return;
+    sb.__qrPatched = true;
+    const _rpc = sb.rpc.bind(sb);
+    sb.rpc = function(fn, args, opts){
+      if(fn === 'pos_debit_by_card' && args && /^QR:/.test(String(args.p_card_number || ''))){
+        const id = String(args.p_card_number).slice(3);
+        return (async () => {
+          const r = await _rpc('qr_pay_verify', { p_id: id, p_amount: args.p_amount });
+          setTimeout(() => { if(Q && Q.completing) reset(); }, 1200);
+          return r;
+        })();
+      }
+      return _rpc(fn, args, opts);
+    };
+  })();
+
+  btn.addEventListener('click', scan);
+
+  // Payment Method ပြောင်းရင် စောင့်နေတာ ပယ်
+  const onMethod = async () => {
+    if(Q && !Q.completing && !prepaidAmount()){ const id = Q.id; reset(); try{ await sb.rpc('qr_pay_cancel', { p_id: id }); }catch(e){} }
+  };
+  $('pos-payment-method')?.addEventListener('change', onMethod);
+  $('pos-split-method')?.addEventListener('change', onMethod);
+
+  // USB / Bluetooth Scanner — ပစ္စည်းရှာ အကွက်ထဲ SWP-… ဝင်လာရင် QR ငွေချေ
+  const search = $('pos-product-search');
+  if(search) search.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    const v = search.value.trim().toUpperCase();
+    if(!/^SWP-[0-9A-F]{10,}$/.test(v)) return;
+    e.preventDefault(); e.stopImmediatePropagation(); search.value = '';
+    if(!prepaidAmount()){
+      const sel = $('pos-payment-method'); if(sel){ sel.value = 'Prepaid Card'; sel.dispatchEvent(new Event('change', { bubbles:true })); }
+    }
+    document.getElementById('pg-paybar')?.click();   // ဖုန်း/iPad — ခြင်း Popup ဖွင့်
+    charge(v);
+  }, true);
+})();
+
 </script>
 </body>
 </html>
