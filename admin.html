@@ -6416,7 +6416,7 @@ function buildReceiptHtmlDoc(rows, paymentMethod, groupId, extra){
     <hr class="solid">
     <div class="footer">
       <div class="thanks">ကျေးဇူးတင်ပါသည်!</div>
-      <div class="sub">SUWATI MEN FASHION · @swtmenfashion517</div>
+      <div class="sub">SUWATI MEN FASHION · @menfashion321</div>
     </div>
   </div>
 </body></html>`;
@@ -6483,7 +6483,7 @@ function buildGiftCardReceiptHtml(code, amount, customerName){
     <hr class="solid">
     <div class="footer">
       <div class="thanks">ကျေးဇူးတင်ပါသည်!</div>
-      <div class="sub">SUWATI MEN FASHION · @swtmenfashion517</div>
+      <div class="sub">SUWATI MEN FASHION · @menfashion321</div>
     </div>
   </div>
   <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
@@ -13316,6 +13316,15 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     // 🆔 Customer ID စာရင်း (CUSTOMER-ID.sql)
     const cidMap = {};
     try{ const { data: ids } = await sb.rpc('admin_customer_ids'); (ids || []).forEach(r => { cidMap[r.user_id] = r.customer_id; }); }catch(e){}
+    // 👤 Website Member = Account နာမည် (Signup တုန်းက) ကိုပဲ ပြ — Checkout မှာ တခြားသူအတွက် နာမည်ပြောင်းရိုက်လည်း မပြောင်း
+    const acctName = {}, acctPhone = {};
+    try{
+      const uids = [...new Set(sums.filter(o => o.user_id).map(o => o.user_id))];
+      for(let i = 0; i < uids.length; i += 200){
+        const { data: us } = await sb.rpc('admin_customer_names', { p_ids: uids.slice(i, i + 200) });
+        (us || []).forEach(u => { const n = String(u.full_name || '').trim(); if(n) acctName[u.user_id] = n; const ph = String(u.phone || '').trim(); if(ph) acctPhone[u.user_id] = ph; });
+      }
+    }catch(e){}
 
     const out = [];
     Object.values(groups).forEach(list => {
@@ -13329,9 +13338,14 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
       const uid = (list.find(o => o.user_id) || {}).user_id || null;
       const addrOrder = list.find(o => !isStoreAddr(o.address));
       const phones = []; { const seen = new Set(); [primary, ...list].forEach(o => { const n = normPhone(o.phone); if(n && !seen.has(n)){ seen.add(n); phones.push(o.phone); } }); }
+      const orderName = (online[0] && online[0].customer_name) || list.find(o => !isWalkIn(o.customer_name))?.customer_name || latest.customer_name;
+      const name = (uid && acctName[uid]) || orderName;
+      // Order မှာ ရိုက်ခဲ့တဲ့ တခြားနာမည်များ (တခြားသူအတွက် မှာပေးတာ စသည်)
+      const otherNames = []; { const seen = new Set([String(name || '').trim().toLowerCase()]);
+        list.forEach(o => { const n = String(o.customer_name || '').trim(); const k = n.toLowerCase(); if(n && !isWalkIn(n) && !seen.has(k)){ seen.add(k); otherNames.push(n); } }); }
       const c = {
         key: primary.phone || primary.email || primary.customer_name,
-        name: (online[0] && online[0].customer_name) || list.find(o => !isWalkIn(o.customer_name))?.customer_name || latest.customer_name,
+        name, otherNames, acctNamed: !!(uid && acctName[uid]), acctPhone: (uid && acctPhone[uid]) || '',
         phone: primary.phone || phones[0] || '',
         phones,
         email: (list.find(o => o.email) || {}).email || '',
@@ -13371,9 +13385,20 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
         document.querySelectorAll('#customers-list .customer-card').forEach(card => {
           const c = allCustomers.find(x => x.key === card.dataset.key); if(!c || card.dataset.mg) return; card.dataset.mg = '1';
           const det = card.querySelector('.cdetails');
-          if(det && c.phones && c.phones.length > 1 && c.phones.some(p => normPhone(p) !== normPhone(c.phone))){
-            const extra = c.phones.filter(p => normPhone(p) !== normPhone(c.phone));
-            det.innerHTML = det.innerHTML.replace(/(📞\s*)([^·<]*)/, (m, a, b) => `${a}${b.trim()} <span style="opacity:.6">(+ ${extra.map(x => String(x).replace(/[<>&"]/g, '')).join(', ')})</span> `);
+          // 📞 Website Member = Account ဖုန်း အဓိက · Order မှာ ရိုက်ခဲ့တဲ့ တခြားဖုန်း = ( ) ထဲ  (c.phone/CRM Key မပြောင်း)
+          const mainPh = c.acctPhone || c.phone;
+          const extra = (c.phones || []).filter(p => normPhone(p) && normPhone(p) !== normPhone(mainPh));
+          if(det && (extra.length || mainPh !== c.phone)){
+            const ce = x => String(x).replace(/[<>&"]/g, '');
+            det.innerHTML = det.innerHTML.replace(/(📞\s*)([^·<]*)/, (m, a) => `${a}${ce(mainPh || '-')}${extra.length ? ` <span style="opacity:.6">(${extra.map(ce).join(', ')})</span>` : ''} `);
+          }
+          if(det && c.otherNames && c.otherNames.length){
+            det.insertAdjacentHTML('beforeend', `<div class="cm-alt-names" style="font-size:12px;opacity:.75;margin-top:4px;">📦 Order မှာ သုံးခဲ့တဲ့ နာမည်: ${c.otherNames.map(x => String(x).replace(/[<>&"]/g, '')).join(', ')}</div>`);
+          }
+          // Website Member နာမည် = Account နာမည် (Admin က ပြင်လို့ မရ · Order နာမည်တွေ မပြောင်းစေရန်)
+          if(c.acctNamed){
+            const eb = card.querySelector('.edit-name-btn');
+            if(eb){ eb.style.display = 'none'; const ob = eb.parentElement && eb.parentElement.querySelector('.view-orders-btn'); if(ob){ ob.style.gridColumn = '1 / -1'; ob.style.flexBasis = '100%'; } }
           }
           const h4 = card.querySelector('h4');
           if(h4 && !h4.querySelector('.cid-badge')) h4.insertAdjacentHTML('beforeend', c.cid ? ` <span class="cid-badge" title="Customer ID — ပြင်လို့မရ">🆔 ${c.cid}</span>` : ' <span class="cid-badge guest" title="Website Account မရှိ">Guest</span>');
