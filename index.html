@@ -9644,11 +9644,25 @@ function drawerToggleCat(btn){
   if(open) setTimeout(() => { const r = w.getBoundingClientRect(); if(r.bottom > innerHeight - 20) w.scrollIntoView({ block:'nearest', behavior: hdrReduce() ? 'auto' : 'smooth' }); }, 320);
 }
 // Logo နှိပ်ရင် စာမျက်နှာ အသစ်ပြန်ဖွင့် (Refresh)
+//   Browser က ကြည့်လက်စ နေရာကို ပြန်မသွားစေဘဲ အပေါ်ဆုံးကနေ စဖွင့်
 function hdrReload(el){
   try{ (el || document.querySelector('.hdr-logo'))?.classList.add('hdr-reloading'); }catch(e){}
   try{ history.replaceState(null, '', location.pathname); }catch(e){}
-  setTimeout(() => location.reload(), hdrReduce() ? 0 : 260);
+  try{ sessionStorage.setItem('suwati_top', '1'); }catch(e){}
+  try{ history.scrollRestoration = 'manual'; }catch(e){}
+  setTimeout(() => { try{ window.scrollTo({ top:0, left:0, behavior:'instant' }); }catch(e){ window.scrollTo(0, 0); } location.reload(); }, hdrReduce() ? 0 : 260);
 }
+(function hdrTopAfterReload(){
+  let flag = false; try{ flag = sessionStorage.getItem('suwati_top') === '1'; sessionStorage.removeItem('suwati_top'); }catch(e){}
+  if(!flag) return;
+  try{ history.scrollRestoration = 'manual'; }catch(e){}
+  const top = () => { try{ window.scrollTo({ top:0, left:0, behavior:'instant' }); }catch(e){ window.scrollTo(0, 0); } };
+  top(); requestAnimationFrame(top);
+  addEventListener('load', () => { top(); setTimeout(top, 60); setTimeout(top, 350); }, { once:true });
+  addEventListener('pageshow', top, { once:true });
+  // နောက်ပိုင်း ပုံမှန် Refresh တွေအတွက် Browser ပုံမှန်အတိုင်း ပြန်ထား
+  setTimeout(() => { try{ history.scrollRestoration = 'auto'; }catch(e){} }, 1500);
+})();
 function drawerGoProducts(){
   const t = document.getElementById('filter-chips') || document.getElementById('product-grid');
   if(t) setTimeout(() => window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 90, behavior: hdrReduce() ? 'auto' : 'smooth' }), 120);
