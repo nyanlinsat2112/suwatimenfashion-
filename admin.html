@@ -12860,7 +12860,6 @@ function toggleAdminTheme(){
 }
 syncAdminThemeBtn();
 
-// ===== js/admin/qr-pay-pos.js =====
 // SUWATI ADMIN — 📱 POS › Prepaid Card QR ငွေချေ
 //   Prepaid (သို့) ခွဲပေး › Prepaid ရွေးရင် "Customer QR Scan" ခလုတ် → ကင်မရာ/USB Scanner (SWP-…)
 //   → qr_pay_charge → Customer ဖုန်းမှာ အတည်ပြုတာ စောင့် (qr_pay_status ၁.၅ စက္ကန့်) → ချေပြီးရင် ရောင်းမှု Auto ပြီး
@@ -12986,7 +12985,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
       try{ await sb.rpc('qr_pay_cancel', { p_id: d.id }); }catch(e){}
       return fail(`⚠️ Card လက်ကျန် ${ks(d.balance)} ကျပ်သာ ရှိပါသည် — <b>🔀 ခွဲပေး</b> (ငွေသား + Prepaid) နဲ့ ပြန်ချေပါ`);
     }
-    Q = { id: d.id, amount: amt, t0: Date.now(), busy: false };
+    Q = { id: d.id, amount: amt, t0: Date.now(), busy: false, cust: { user_id: d.user_id || null, name: d.name || '', phone: d.phone || '' } };
     Q.timer = setInterval(check, 1500);
   }
 
@@ -13019,6 +13018,10 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     // မူလ "ရောင်းပြီး" Flow ကို ပြန်သုံး (pos_debit_by_card → qr_pay_verify)
     $('pos-card-number').value = 'QR:' + q.id;
     $('pos-card-pin').value = 'QR';
+    // Customer အမည်/ဖုန်း မဖြည့်ထားရင် Website Account ကနေ ဖြည့် + Order ကို Account နဲ့ ချိတ် (Customer List မကွဲစေ)
+    const cn = $('pos-customer-name'), cp = $('pos-customer-phone');
+    if(q.cust){ if(cn && !cn.value.trim() && q.cust.name) cn.value = q.cust.name; if(cp && !cp.value.trim() && q.cust.phone) cp.value = q.cust.phone; }
+    window.__qrOrderUser = q.cust && q.cust.user_id ? { uid: q.cust.user_id, at: Date.now() } : null;
     Q = { id: q.id, completing: true };
     setTimeout(() => { $('pos-complete-sale-btn').click(); }, 350);
   }
@@ -13028,6 +13031,21 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     if(typeof sb === 'undefined' || !sb || sb.__qrPatched) return;
     sb.__qrPatched = true;
     const _rpc = sb.rpc.bind(sb);
+    const _from = sb.from.bind(sb);
+    sb.from = function(t){
+      const b = _from(t);
+      if(t !== 'orders' || !window.__qrOrderUser) return b;
+      const _ins = b.insert.bind(b);
+      b.insert = function(rows, o){
+        const u = window.__qrOrderUser; window.__qrOrderUser = null;
+        if(u && Date.now() - u.at < 60000){
+          const add = r => (r && r.sale_channel === 'in_store' && !r.user_id) ? Object.assign({}, r, { user_id: u.uid }) : r;
+          rows = Array.isArray(rows) ? rows.map(add) : add(rows);
+        }
+        return _ins(rows, o);
+      };
+      return b;
+    };
     sb.rpc = function(fn, args, opts){
       if(fn === 'pos_debit_by_card' && args && /^QR:/.test(String(args.p_card_number || ''))){
         const id = String(args.p_card_number).slice(3);
@@ -13065,6 +13083,243 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
   }, true);
 })();
 
+// SUWATI ADMIN — 📷 Scanner အသစ် (QR + Barcode မြန်မြန် · iPad/iPhone Safari ပါ)
+//   iPad Safari မှာ BarcodeDetector မရှိလို့ အရင်က html5-qrcode (နှေး · QR ဘောင်နိမ့်လို့ QR မဖတ်နိုင်) ကို သုံးခဲ့
+//   → ZXing (WebAssembly) BarcodeDetector Ponyfill + ကင်မရာ Resolution မြင့် + Auto Focus + အလယ်ပိုင်းကိုပဲ ဖြတ်ဖတ်
+//   openScanner(onCode, opts) / closeScanner() ကို အစားထိုး (POS ပစ္စည်း · Card Barcode · QR ငွေချေ အကုန် ဒါသုံး)
+//   admin-extra.js (openScanner မူလ) နောက်မှာ ထားရန်
+(function(){
+  const PONY = 'https://cdn.jsdelivr.net/npm/barcode-detector@3.2.2/dist/iife/ponyfill.js';
+  const WANT = ['qr_code', 'code_128', 'ean_13', 'ean_8', 'code_39', 'upc_a'];
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const css = `
+.scan-ov .scan-view.sp{ position:relative; width:100%; aspect-ratio:4/3; max-height:58vh; background:#000; overflow:hidden; border-radius:14px; }
+.scan-view.sp video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.scan-view.sp .sp-dim{ position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(transparent 0, transparent 0) center/0 0; box-shadow:inset 0 0 0 9999px rgba(0,0,0,0); }
+.scan-view.sp .sp-box{ position:absolute; left:50%; top:50%; width:72%; height:78%; transform:translate(-50%,-50%); border-radius:16px; box-shadow:0 0 0 9999px rgba(0,0,0,.42); pointer-events:none; transition:border-color .2s; }
+.scan-view.sp .sp-box i{ position:absolute; width:34px; height:34px; border:4px solid #D6FF3F; }
+.scan-view.sp .sp-box i:nth-child(1){ left:-2px; top:-2px; border-right:0; border-bottom:0; border-radius:14px 0 0 0; }
+.scan-view.sp .sp-box i:nth-child(2){ right:-2px; top:-2px; border-left:0; border-bottom:0; border-radius:0 14px 0 0; }
+.scan-view.sp .sp-box i:nth-child(3){ left:-2px; bottom:-2px; border-right:0; border-top:0; border-radius:0 0 0 14px; }
+.scan-view.sp .sp-box i:nth-child(4){ right:-2px; bottom:-2px; border-left:0; border-top:0; border-radius:0 0 14px 0; }
+.scan-view.sp .sp-line{ position:absolute; left:6%; right:6%; height:2px; background:#D6FF3F; box-shadow:0 0 12px #D6FF3F; top:12%; animation:spLine 1.6s ease-in-out infinite alternate; }
+@keyframes spLine{ to{ top:86%; } }
+.scan-view.sp.hit .sp-box{ box-shadow:0 0 0 9999px rgba(0,0,0,.42), inset 0 0 0 4px #34c759; }
+.scan-view.sp .sp-st{ position:absolute; left:10px; bottom:10px; font:600 11px 'Space Grotesk','Noto Sans Myanmar',sans-serif; color:#fff; background:rgba(0,0,0,.55); padding:4px 9px; border-radius:20px; }
+.scan-view.sp .sp-torch{ position:absolute; right:10px; bottom:10px; width:40px; height:40px; border-radius:50%; border:0; background:rgba(0,0,0,.55); color:#fff; font-size:18px; display:none; }
+.scan-view.sp .sp-torch.on{ background:#D6FF3F; color:#141412; }
+.scan-view.sp .sp-zoom{ position:absolute; right:10px; top:10px; display:none; gap:4px; }
+.scan-view.sp .sp-zoom button{ min-width:40px; height:32px; border-radius:16px; border:0; background:rgba(0,0,0,.55); color:#fff; font:700 12px 'Space Grotesk',sans-serif; padding:0 8px; }
+.scan-view.sp .sp-zoom button.on{ background:#D6FF3F; color:#141412; }`;
+  const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+  // ---------- Detector (Chrome/Android = မူလ · Safari = ZXing) ----------
+  let detP = null;
+  function loadScript(src){
+    return new Promise((ok, no) => { const s = document.createElement('script'); s.src = src; s.async = true; s.onload = ok; s.onerror = () => no(new Error('Scanner Library ယူ၍ မရပါ — Internet စစ်ပါ')); document.head.appendChild(s); });
+  }
+  async function makeDetector(){
+    // မူလ BarcodeDetector က QR + Code128 နှစ်မျိုးလုံး ရရင် သုံး
+    try{
+      if('BarcodeDetector' in window && typeof window.BarcodeDetector.getSupportedFormats === 'function'){
+        const sup = await window.BarcodeDetector.getSupportedFormats();
+        if(sup.includes('qr_code') && sup.includes('code_128')) return new window.BarcodeDetector({ formats: WANT.filter(f => sup.includes(f)) });
+      }
+    }catch(e){}
+    if(!window.BarcodeDetectionAPI) await loadScript(PONY);
+    const BD = window.BarcodeDetectionAPI.BarcodeDetector;
+    const d = new BD({ formats: WANT });
+    return d;
+  }
+  const getDetector = () => detP || (detP = makeDetector().catch(e => { detP = null; throw e; }));
+  // Admin ဖွင့်ပြီး ခဏနေ ကြိုယူထား (ပထမဆုံး Scan မြန်အောင်)
+  setTimeout(() => { if(document.getElementById('pos-panel')) getDetector().then(d => { try{ const c = document.createElement('canvas'); c.width = c.height = 8; d.detect(c).catch(() => {}); }catch(e){} }, () => {}); }, 4000);
+
+  // ---------- Scanner ----------
+  let S = null;
+  window.openScanner = openScanner = async function(onCode, opts){
+    opts = opts || {};
+    closeScanner();
+    const ov = document.createElement('div'); ov.className = 'scan-ov'; ov.id = 'scan-ov';
+    ov.innerHTML = `<div class="scan-box"><div class="scan-h">${esc(opts.title || '📷 Barcode / QR Scan')}</div>
+      <div id="scan-view" class="scan-view sp"><video id="scan-video" playsinline muted autoplay></video>
+        <div class="sp-box"><i></i><i></i><i></i><i></i></div><div class="sp-line"></div>
+        <div class="sp-st" id="sp-st">ကင်မရာ ဖွင့်နေသည်...</div><button type="button" class="sp-torch" id="sp-torch" aria-label="မီး">🔦</button><div class="sp-zoom" id="sp-zoom"></div></div>
+      <div class="scan-last" id="scan-last">Barcode / QR ကို ဘောင်ထဲ ထားပါ · ၁၅–၂၅ စင်တီမီတာ အကွာ</div>
+      <input type="text" id="scan-manual" placeholder="(သို့) Code ရိုက်ထည့်ပါ / USB Scanner" autocapitalize="characters" autocomplete="off">
+      <button type="button" class="secondary" id="scan-close">ပိတ်မည်</button></div>`;
+    document.body.appendChild(ov);
+    document.getElementById('scan-close').onclick = closeScanner;
+    const man = document.getElementById('scan-manual');
+    man.addEventListener('keydown', e => { if(e.key === 'Enter' && man.value.trim()){ handle(man.value.trim()); man.value = ''; } });
+    const stEl = document.getElementById('sp-st'), view = document.getElementById('scan-view');
+    let last = '', lastAt = 0;
+    const handle = code => {
+      if(code === last && Date.now() - lastAt < 1800) return;
+      last = code; lastAt = Date.now();
+      const msg = onCode(code);
+      const el = document.getElementById('scan-last'); if(el) el.innerHTML = msg || esc(code);
+      view.classList.add('hit'); setTimeout(() => view.classList.remove('hit'), 400);
+      try{ const ac = new (window.AudioContext || window.webkitAudioContext)(); const o = ac.createOscillator(); o.frequency.value = 1180; o.connect(ac.destination); o.start(); setTimeout(() => { o.stop(); ac.close(); }, 90); }catch(e){}
+      try{ navigator.vibrate && navigator.vibrate(60); }catch(e){}
+      if(!opts.continuous) setTimeout(closeScanner, 450);
+    };
+    const me = S = { handle, stream:null, run:true };
+    try{
+      const [det, stream] = await Promise.all([
+        getDetector(),
+        navigator.mediaDevices.getUserMedia({ audio:false, video:{ facingMode:{ ideal:'environment' }, width:{ ideal:1920 }, height:{ ideal:1080 } } }),
+      ]);
+      if(S !== me){ stream.getTracks().forEach(t => t.stop()); return; }
+      me.stream = stream;
+      const v = document.getElementById('scan-video'); v.srcObject = stream; await v.play().catch(() => {});
+      const track = stream.getVideoTracks()[0];
+      // Auto focus · Zoom · မီး (ရရင်)
+      try{
+        const cap = track.getCapabilities ? track.getCapabilities() : {};
+        const adv = {};
+        if(cap.focusMode && cap.focusMode.includes('continuous')) adv.focusMode = 'continuous';
+        if(Object.keys(adv).length) await track.applyConstraints({ advanced:[adv] });
+        if(cap.torch){ const tb = document.getElementById('sp-torch'); tb.style.display = 'block'; let on = false; tb.onclick = async () => { on = !on; try{ await track.applyConstraints({ advanced:[{ torch:on }] }); tb.classList.toggle('on', on); }catch(e){} }; }
+        if(cap.zoom && cap.zoom.max > 1){
+          const z = document.getElementById('sp-zoom'); z.style.display = 'flex';
+          const steps = [1, 1.5, 2].filter(x => x >= (cap.zoom.min || 1) && x <= cap.zoom.max);
+          z.innerHTML = steps.map((x, i) => `<button type="button" data-z="${x}" class="${i === 0 ? 'on' : ''}">${x}×</button>`).join('');
+          z.onclick = async e => { const b = e.target.closest('button'); if(!b) return; try{ await track.applyConstraints({ advanced:[{ zoom:Number(b.dataset.z) }] }); z.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); }catch(_){} };
+        }
+      }catch(e){}
+      stEl.textContent = '🔍 ဖတ်နေသည်...';
+      // အလယ်ပိုင်း (ဘောင်ထဲ) ကိုပဲ ဖြတ်ပြီး ဖတ် — မြန် + တိကျ
+      const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently:true });
+      let n = 0;
+      const loop = async () => {
+        if(!me.run || S !== me) return;
+        const vw = v.videoWidth, vh = v.videoHeight;
+        if(vw && vh){
+          const full = (n++ % 4) === 3;   // ၄ ခါ တစ်ခါ Frame အပြည့်
+          const cw = full ? vw : Math.round(vw * .78), ch = full ? vh : Math.round(vh * .84);
+          const sx = (vw - cw) / 2, sy = (vh - ch) / 2, k = Math.min(1, 1280 / cw);
+          cv.width = Math.round(cw * k); cv.height = Math.round(ch * k);
+          cx.drawImage(v, sx, sy, cw, ch, 0, 0, cv.width, cv.height);
+          try{ const r = await det.detect(cv); if(r && r[0] && r[0].rawValue && me.run) handle(String(r[0].rawValue).trim()); }catch(e){}
+        }
+        if(me.run) me.t = setTimeout(loop, 40);
+      };
+      loop();
+    }catch(e){
+      const el = document.getElementById('scan-last');
+      const m = e && e.name === 'NotAllowedError' ? 'ကင်မရာ ခွင့်ပြုချက် မရှိပါ — Safari › aA › Website Settings › Camera › Allow' : (e.message || e);
+      if(el) el.innerHTML = `⚠️ ${esc(m)} — Code ကို အောက်မှာ ရိုက်ထည့်ပါ (သို့) USB/Bluetooth Scanner သုံးပါ`;
+      stEl.textContent = '⚠️ ကင်မရာ မရ';
+      setTimeout(() => man.focus(), 100);
+    }
+  };
+  window.closeScanner = closeScanner = function(){
+    if(S){ S.run = false; clearTimeout(S.t); try{ S.stream && S.stream.getTracks().forEach(t => t.stop()); }catch(e){} S = null; }
+    try{ if(typeof __scan !== 'undefined' && __scan){ clearTimeout(__scan.raf); __scan.stream && __scan.stream.getTracks().forEach(t => t.stop()); __scan.q && __scan.q.stop().catch(() => {}); __scan = null; } }catch(e){}
+    document.getElementById('scan-ov')?.remove();
+  };
+})();
+
+// SUWATI ADMIN — 👥 Customer List: Online + ဆိုင်ထဲ ဝယ်တာ လူတစ်ယောက်တည်းကို တစ်ခုတည်း ပေါင်း
+//   အရင်: ဖုန်းနံပါတ်နဲ့ပဲ ခွဲလို့ Website ဖုန်း ≠ ဆိုင်မှာ ပြောတဲ့ဖုန်း ဆို ၂ ယောက် ဖြစ်
+//   အခု: Website Account (user_id) · ဖုန်း (09/+959 ညှိ) · Email — တစ်ခုခု တူရင် ပေါင်း
+//   လိပ်စာ = "ဆိုင်ထဲ (In-Store)" မဟုတ်တဲ့ နောက်ဆုံး လိပ်စာ · ဖုန်း = Online ဖုန်း အရင် (CRM Tag မပျောက်စေ)
+//   customers.js + biz-tools.js (CRM) နောက်မှာ ထားရန်
+(function(){
+  if(typeof loadCustomers !== 'function') return;
+  const normPhone = p => { let d = String(p || '').replace(/\D/g, ''); if(!d) return ''; if(d.startsWith('959')) d = '0' + d.slice(2); else if(d.startsWith('9') && d.length >= 8 && d.length <= 11) d = '0' + d; return d; };
+  const isStoreAddr = a => !a || /in-?store|အပြင်ဆိုင်|ဆိုင်ထဲ/i.test(String(a));
+  const isWalkIn = n => !n || String(n).trim() === 'Walk-in Customer';
+
+  loadCustomers = async function(){
+    const { data: orders, error } = await sb.from('orders').select('*').order('created_at', { ascending:false });
+    const { data: hidden } = await sb.from('hidden_customers').select('customer_key');
+    const hiddenKeys = new Set((hidden || []).map(h => h.customer_key));
+    if(error || !orders) return;
+
+    // ① Order (order_group_id) တစ်ခုချင်း
+    const gm = {};
+    orders.forEach(o => { const k = o.order_group_id || o.id; (gm[k] = gm[k] || []).push(o); });
+    const sums = Object.values(gm).map(rows => {
+      rows.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      const f = rows[0];
+      return { customer_name: f.customer_name, phone: f.phone, email: f.email, address: f.address, created_at: f.created_at, order_status: f.order_status,
+        sale_channel: f.sale_channel || 'online', user_id: f.user_id,
+        total_amount: rows.reduce((s, r) => s + Number(r.total_amount), 0),
+        items: rows.map(r => `${r.product_name}${r.size ? ' (' + r.size + (r.color ? ', ' + r.color : '') + ')' : ''} x${r.quantity}`).join(', ') };
+    }).filter(o => !(o.sale_channel === 'in_store' && isWalkIn(o.customer_name) && !o.user_id));
+
+    // ② Union-Find — user_id / ဖုန်း / Email တူရင် လူတစ်ယောက်
+    const parent = {};
+    const find = x => { while(parent[x] !== x){ parent[x] = parent[parent[x]]; x = parent[x]; } return x; };
+    const uni = (a, b) => { a = find(a); b = find(b); if(a !== b) parent[b] = a; };
+    const ids = o => { const r = []; if(o.user_id) r.push('u:' + o.user_id); const p = normPhone(o.phone); if(p) r.push('p:' + p);
+      const e = String(o.email || '').trim().toLowerCase(); if(e) r.push('e:' + e); if(!r.length) r.push('n:' + String(o.customer_name || '').trim().toLowerCase()); return r; };
+    sums.forEach(o => { const r = ids(o); r.forEach(x => { if(!(x in parent)) parent[x] = x; }); r.slice(1).forEach(x => uni(r[0], x)); });
+
+    const groups = {};
+    sums.forEach(o => { const root = find(ids(o)[0]); (groups[root] = groups[root] || []).push(o); });
+
+    const out = [];
+    Object.values(groups).forEach(list => {
+      list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));   // နောက်ဆုံး အရင်
+      const online = list.filter(o => o.sale_channel !== 'in_store');
+      const latest = list[0];
+      const primary = online[0] || latest;
+      // Hide စစ် — အရင် Key ပုံစံ (phone || email || name) အကုန်
+      const keys = new Set(); list.forEach(o => { const k = o.phone || o.email || o.customer_name; if(k) keys.add(k); });
+      if([...keys].some(k => hiddenKeys.has(k))) return;
+      const uid = (list.find(o => o.user_id) || {}).user_id || null;
+      const addrOrder = list.find(o => !isStoreAddr(o.address));
+      const phones = []; { const seen = new Set(); [primary, ...list].forEach(o => { const n = normPhone(o.phone); if(n && !seen.has(n)){ seen.add(n); phones.push(o.phone); } }); }
+      const c = {
+        key: primary.phone || primary.email || primary.customer_name,
+        name: (online[0] && online[0].customer_name) || list.find(o => !isWalkIn(o.customer_name))?.customer_name || latest.customer_name,
+        phone: primary.phone || phones[0] || '',
+        phones,
+        email: (list.find(o => o.email) || {}).email || '',
+        address: addrOrder ? addrOrder.address : (latest.address || ''),
+        orders: list, activeOrderCount: 0, totalSpent: 0,
+        isRegistered: !!uid, user_id: uid,
+        channel: online.length && list.some(o => o.sale_channel === 'in_store') ? 'both' : latest.sale_channel,
+      };
+      list.forEach(o => { if(o.order_status !== 'cancelled' && o.order_status !== 'awaiting_payment'){ c.totalSpent += o.total_amount; c.activeOrderCount += 1; } });
+      out.push(c);
+    });
+
+    allCustomers = out.sort((a, b) => b.totalSpent - a.totalSpent);
+    document.getElementById('stat-total-customers').textContent = allCustomers.length;
+    const avg = allCustomers.length ? allCustomers.reduce((s, c) => s + c.totalSpent, 0) / allCustomers.length : 0;
+    document.getElementById('stat-avg-spend').textContent = Math.round(avg).toLocaleString() + ' ကျပ်';
+    renderCustomersList();
+  };
+  try{ window.loadCustomers = loadCustomers; }catch(e){}
+
+  // ကတ်ပေါ်မှာ — ဖုန်းအပို · 🌐+🏪 ဝယ်ပုံ · Order စာရင်းမှာ ဆိုင်ထဲ/Online အမှတ်အသား
+  if(typeof renderCustomersList === 'function'){
+    const _r = renderCustomersList;
+    renderCustomersList = function(){
+      const r = _r.apply(this, arguments);
+      try{
+        document.querySelectorAll('#customers-list .customer-card').forEach(card => {
+          const c = allCustomers.find(x => x.key === card.dataset.key); if(!c || card.dataset.mg) return; card.dataset.mg = '1';
+          const det = card.querySelector('.cdetails');
+          if(det && c.phones && c.phones.length > 1 && c.phones.some(p => normPhone(p) !== normPhone(c.phone))){
+            const extra = c.phones.filter(p => normPhone(p) !== normPhone(c.phone));
+            det.innerHTML = det.innerHTML.replace(/(📞\s*)([^·<]*)/, (m, a, b) => `${a}${b.trim()} <span style="opacity:.6">(+ ${extra.map(x => String(x).replace(/[<>&"]/g, '')).join(', ')})</span> `);
+          }
+          if(c.channel === 'both'){ const h = card.querySelector('h4 .mono'); if(h) h.insertAdjacentHTML('afterend', ' <span class="mono" style="font-size:10px;color:#4da3ff;">[🌐 Online + 🏪 ဆိုင်ထဲ]</span>'); }
+          const hist = card.querySelectorAll('.customer-order-history .coh-item');
+          hist.forEach((el, i) => { const o = c.orders[i]; if(o) el.insertAdjacentHTML('afterbegin', `<span style="font-size:11px;opacity:.75">${o.sale_channel === 'in_store' ? '🏪 ဆိုင်ထဲ' : '🌐 Online'}</span> · `); });
+        });
+      }catch(e){ console.error(e); }
+      return r;
+    };
+  }
+})();
 </script>
 </body>
 </html>

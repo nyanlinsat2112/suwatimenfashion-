@@ -10907,13 +10907,13 @@ html[data-theme="dark"] .pc-qr{ background:var(--acid); color:#141412; box-shado
   // 🔳 QR — ကရင်မ်နောက်ခံ · အနက်ကွက် · အလယ် "S." Logo
   // ---------------------------------------------------------------------
   function draw(canvas, text){
-    const q = window.qrcode(0, 'H'); q.addData(text); q.make();
+    const q = window.qrcode(0, 'H'); q.addData(text, 'Alphanumeric'); q.make();   // Alphanumeric = ကွက်နည်း · ကွက်ကြီး → Scan ပိုမြန်
     const n = q.getModuleCount(), m = 3, cells = n + m * 2, px = Math.max(6, Math.floor(720 / cells));
     canvas.width = canvas.height = cells * px;
     const c = canvas.getContext('2d');
     c.fillStyle = '#E9E4D8'; c.fillRect(0, 0, canvas.width, canvas.height);
     // အလယ် Logo အကွက် (Module grid နဲ့ ကိုက်)
-    let L = Math.round(n * 0.27); if((n - L) % 2) L++;
+    let L = Math.round(n * 0.24); if((n - L) % 2) L++;
     const s0 = (n - L) / 2, s1 = s0 + L;
     c.fillStyle = '#141412';
     for(let r = 0; r < n; r++) for(let k = 0; k < n; k++){
@@ -11396,7 +11396,6 @@ html[data-theme="dark"] .pc-qr{ background:var(--acid); color:#141412; box-shado
     closeCheckout = function(){ if(S && !S.busy) close(true); return _c.apply(this, arguments); };
   }
 })();
-
 </script>
 </body>
 </html>
