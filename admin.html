@@ -1939,6 +1939,226 @@ html:is([data-theme],:not([data-theme])) .delivery-card div:has(> select + butto
 /* 🆔 Customer ID */
 .cid-badge{ display:inline-block; font:700 11px var(--g-num, 'Space Mono',monospace); letter-spacing:.04em; padding:3px 8px; border-radius:20px; background:var(--g-pri, #D6FF3F); color:var(--g-pri-ink, #141412); vertical-align:middle; margin-left:4px; }
 .cid-badge.guest{ background:transparent; color:var(--grey); border:1px solid var(--g-line, rgba(127,127,127,.35)); }
+
+/* #####################################################################
+   ✅ ဆိုင်ဖွင့်/ပိတ် Checklist (shop-day.js · Oct 23)
+   ##################################################################### */
+html:is([data-theme],:not([data-theme])) #shopday-panel{ --sd-ok:#7fd36b; --sd-hot:#ff7a5c; --sd-acc:var(--g-pri); }
+html[data-theme="light"] #shopday-panel{ --sd-ok:#2f7d1e; --sd-hot:#c13b1f; }
+html:is([data-theme],:not([data-theme])) .sd-wrap{ max-width:720px; margin:0 auto; padding:4px 0 120px; }
+html:is([data-theme],:not([data-theme])) .sd-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; margin:2px 2px 14px; }
+html:is([data-theme],:not([data-theme])) .sd-date span{ display:block; font-size:13px; color:var(--grey); }
+html:is([data-theme],:not([data-theme])) .sd-date b{ display:block; font-family:var(--g-num); font-size:22px; font-weight:700; letter-spacing:-.01em; margin-top:2px; }
+html:is([data-theme],:not([data-theme])) .sd-edit-btn{ flex-shrink:0; border-radius:12px; border:1px solid var(--g-line); background:var(--s3); color:var(--concrete); font-size:13px; padding:8px 12px; cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-warn{ border:1px dashed var(--sd-hot); color:var(--sd-hot); background:color-mix(in srgb, var(--sd-hot) 8%, transparent); border-radius:14px; padding:10px 12px; font-size:12.5px; line-height:1.6; margin-bottom:12px; }
+html:is([data-theme],:not([data-theme])) .sd-seg{ display:grid; grid-template-columns:1fr 1fr; gap:4px; padding:4px; border-radius:16px; background:var(--g-card); border:1px solid var(--g-line); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); margin-bottom:12px; }
+html:is([data-theme],:not([data-theme])) .sd-seg-btn{ display:flex; align-items:center; justify-content:center; gap:8px; border:0; background:transparent; color:var(--concrete); border-radius:12px; padding:11px 8px; font-size:14px; font-weight:600; cursor:pointer; transition:background .2s, color .2s; }
+html:is([data-theme],:not([data-theme])) .sd-seg-btn.on{ background:var(--g-pri); color:var(--g-pri-ink); box-shadow:0 4px 14px rgba(0,0,0,.18); }
+html:is([data-theme],:not([data-theme])) .sd-seg-n{ font-family:var(--g-num); font-size:12px; padding:2px 7px; border-radius:999px; background:var(--s3); color:inherit; }
+html:is([data-theme],:not([data-theme])) .sd-seg-btn.on .sd-seg-n{ background:rgba(0,0,0,.14); }
+html[data-theme="light"] .sd-seg-btn.on .sd-seg-n{ background:rgba(255,255,255,.2); }
+html:is([data-theme],:not([data-theme])) .sd-seg-btn.ok:not(.on) .sd-seg-n{ background:color-mix(in srgb, var(--sd-ok) 22%, transparent); color:var(--sd-ok); }
+
+html:is([data-theme],:not([data-theme])) .sd-prog{ position:relative; display:flex; align-items:center; gap:16px; padding:16px 18px; border-radius:22px; background:var(--g-card); border:1px solid var(--g-line); box-shadow:var(--g-sh); -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); margin-bottom:12px; }
+html:is([data-theme],:not([data-theme])) .sd-ring{ width:78px; height:78px; flex-shrink:0; transform:rotate(-90deg); }
+html:is([data-theme],:not([data-theme])) .sd-ring circle{ fill:none; stroke-width:8; }
+html:is([data-theme],:not([data-theme])) .sd-ring-bg{ stroke:var(--s3); }
+html:is([data-theme],:not([data-theme])) .sd-ring-fg{ stroke:var(--sd-acc); stroke-linecap:round; transition:stroke-dashoffset .7s cubic-bezier(.3,.9,.3,1); }
+html:is([data-theme],:not([data-theme])) .ph-close .sd-ring-fg{ stroke:#9db4ff; }
+html[data-theme="light"] .ph-close .sd-ring-fg{ stroke:#3b4f9a; }
+html:is([data-theme],:not([data-theme])) .sd-ring-t{ position:absolute; left:18px; top:50%; width:78px; transform:translateY(-50%); text-align:center; }
+html:is([data-theme],:not([data-theme])) .sd-ring-t b{ font-family:var(--g-num); font-size:22px; font-weight:700; }
+html:is([data-theme],:not([data-theme])) .sd-ring-t small{ font-size:12px; opacity:.6; }
+html:is([data-theme],:not([data-theme])) .sd-prog-tx{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+html:is([data-theme],:not([data-theme])) .sd-prog-tx > b{ font-size:16px; }
+html:is([data-theme],:not([data-theme])) .sd-prog-tx span{ font-size:13px; color:var(--grey); }
+html:is([data-theme],:not([data-theme])) .sd-prog-tx span b{ color:var(--concrete); font-family:var(--g-num); }
+html:is([data-theme],:not([data-theme])) .sd-time{ font-family:var(--g-num); font-size:12px !important; }
+
+html:is([data-theme],:not([data-theme])) .sd-sales{ padding:14px; border-radius:22px; background:var(--g-card); border:1px solid var(--g-line); box-shadow:var(--g-sh); margin-bottom:12px; }
+html:is([data-theme],:not([data-theme])) .sd-sales-h{ font-size:13.5px; font-weight:700; margin:0 2px 10px; }
+html:is([data-theme],:not([data-theme])) .sd-sales-g{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+html:is([data-theme],:not([data-theme])) .sd-sc{ background:var(--s2); border:1px solid var(--g-line); border-radius:14px; padding:10px; min-width:0; }
+html:is([data-theme],:not([data-theme])) .sd-sc span{ display:block; font-size:11.5px; color:var(--grey); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+html:is([data-theme],:not([data-theme])) .sd-sc b{ font-family:var(--g-num); font-size:20px; font-weight:700; }
+html:is([data-theme],:not([data-theme])) .sd-sc i{ font-style:normal; font-size:11px; color:var(--grey); margin-left:3px; }
+html:is([data-theme],:not([data-theme])) .sd-sc-big{ grid-column:1 / -1; display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 8px; }
+html:is([data-theme],:not([data-theme])) .sd-sc-big span{ width:100%; }
+html:is([data-theme],:not([data-theme])) .sd-sc-big b{ font-size:30px; color:var(--sd-acc); }
+html[data-theme="light"] .sd-sc-big b{ color:var(--concrete); }
+
+html:is([data-theme],:not([data-theme])) .sd-fin{ display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:20px; margin-bottom:12px; flex-wrap:wrap;
+  background:color-mix(in srgb, var(--sd-ok) 14%, var(--g-card)); border:1px solid color-mix(in srgb, var(--sd-ok) 40%, transparent); animation:sdIn .45s cubic-bezier(.3,.9,.3,1) both; }
+html:is([data-theme],:not([data-theme])) .sd-fin-close{ background:color-mix(in srgb, #6d7fd6 18%, var(--g-card)); border-color:color-mix(in srgb, #6d7fd6 45%, transparent); }
+html:is([data-theme],:not([data-theme])) .sd-fin-e{ font-size:34px; line-height:1; }
+html:is([data-theme],:not([data-theme])) .sd-fin > div:nth-child(2){ flex:1; min-width:180px; }
+html:is([data-theme],:not([data-theme])) .sd-fin b{ display:block; font-size:16px; }
+html:is([data-theme],:not([data-theme])) .sd-fin span{ display:block; font-size:12.5px; color:var(--grey); margin-top:2px; }
+html:is([data-theme],:not([data-theme])) .sd-fin-b{ border:0; border-radius:12px; padding:10px 14px; font-weight:700; background:var(--g-pri); color:var(--g-pri-ink); cursor:pointer; }
+
+html:is([data-theme],:not([data-theme])) .sd-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+html:is([data-theme],:not([data-theme])) .sd-item{ display:flex; align-items:flex-start; gap:12px; padding:13px 12px 13px 13px; border-radius:18px; background:var(--g-card); border:1px solid var(--g-line);
+  -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); transition:opacity .25s, border-color .25s, transform .2s; animation:sdIn .4s cubic-bezier(.3,.9,.3,1) both; animation-delay:calc(var(--i) * 35ms); }
+html:is([data-theme],:not([data-theme])) .sd-item.next{ border-color:color-mix(in srgb, var(--sd-acc) 60%, transparent); box-shadow:0 0 0 3px color-mix(in srgb, var(--sd-acc) 14%, transparent), var(--g-sh); }
+html[data-theme="light"] .sd-item.next{ border-color:rgba(31,29,26,.35); box-shadow:0 0 0 3px rgba(31,29,26,.06), var(--g-sh); }
+html:is([data-theme],:not([data-theme])) .sd-item.done{ opacity:.62; }
+html:is([data-theme],:not([data-theme])) .sd-item.done .sd-t{ text-decoration:line-through; text-decoration-color:color-mix(in srgb, var(--concrete) 45%, transparent); }
+html:is([data-theme],:not([data-theme])) .sd-chk{ position:relative; flex-shrink:0; width:34px; height:34px; border-radius:50%; border:2px solid color-mix(in srgb, var(--concrete) 30%, transparent); background:transparent; color:var(--concrete); cursor:pointer; padding:0; display:grid; place-items:center; margin-top:1px; transition:background .2s, border-color .2s, transform .15s; }
+html:is([data-theme],:not([data-theme])) .sd-chk:active{ transform:scale(.9); }
+html:is([data-theme],:not([data-theme])) .sd-item.next .sd-chk{ border-color:var(--sd-acc); }
+html[data-theme="light"] .sd-item.next .sd-chk{ border-color:var(--concrete); }
+html:is([data-theme],:not([data-theme])) .sd-chk-n{ font-family:var(--g-num); font-size:13px; font-weight:700; opacity:.75; }
+html:is([data-theme],:not([data-theme])) .sd-chk svg{ position:absolute; inset:0; margin:auto; width:20px; height:20px; fill:none; stroke:#141412; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:24; stroke-dashoffset:24; }
+html:is([data-theme],:not([data-theme])) .sd-item.done .sd-chk{ background:var(--sd-ok); border-color:var(--sd-ok); }
+html[data-theme="light"] .sd-item.done .sd-chk svg{ stroke:#fff; }
+html:is([data-theme],:not([data-theme])) .sd-item.done .sd-chk-n{ opacity:0; }
+html:is([data-theme],:not([data-theme])) .sd-item.done .sd-chk svg{ stroke-dashoffset:0; transition:stroke-dashoffset .35s .05s ease-out; }
+html:is([data-theme],:not([data-theme])) .sd-item.pop .sd-chk{ background:var(--sd-ok); border-color:var(--sd-ok); animation:sdPop .32s ease-out; }
+html:is([data-theme],:not([data-theme])) .sd-item.pop .sd-chk-n{ opacity:0; }
+html:is([data-theme],:not([data-theme])) .sd-item.pop .sd-chk svg{ stroke-dashoffset:0; transition:stroke-dashoffset .3s ease-out; }
+html:is([data-theme],:not([data-theme])) .sd-body{ flex:1; min-width:0; }
+html:is([data-theme],:not([data-theme])) .sd-t{ font-size:15px; font-weight:600; line-height:1.45; }
+html:is([data-theme],:not([data-theme])) .sd-ico{ margin-right:6px; }
+html:is([data-theme],:not([data-theme])) .sd-d{ display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; font-size:12.5px; color:var(--grey); margin-top:3px; line-height:1.5; }
+html:is([data-theme],:not([data-theme])) .sd-cnt{ font-family:var(--g-num); font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap; }
+html:is([data-theme],:not([data-theme])) .sd-cnt.hot{ color:var(--sd-hot); background:color-mix(in srgb, var(--sd-hot) 14%, transparent); }
+html:is([data-theme],:not([data-theme])) .sd-cnt.ok{ color:var(--sd-ok); background:color-mix(in srgb, var(--sd-ok) 14%, transparent); }
+html:is([data-theme],:not([data-theme])) .sd-by{ font-size:11.5px; color:var(--sd-ok); margin-top:4px; font-family:var(--g-num); }
+html:is([data-theme],:not([data-theme])) .sd-go{ flex-shrink:0; align-self:center; border:1px solid var(--g-line); background:var(--s3); color:var(--concrete); border-radius:12px; padding:9px 12px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+html:is([data-theme],:not([data-theme])) .sd-item.next .sd-go{ background:var(--g-pri); color:var(--g-pri-ink); border-color:transparent; }
+html:is([data-theme],:not([data-theme])) .sd-go span{ display:inline-block; transition:transform .2s; }
+html:is([data-theme],:not([data-theme])) .sd-go:hover span{ transform:translateX(3px); }
+html:is([data-theme],:not([data-theme])) .sd-cash{ margin-top:8px; }
+html:is([data-theme],:not([data-theme])) .sd-cash-exp{ font-size:12px; color:var(--grey); margin-bottom:6px; }
+html:is([data-theme],:not([data-theme])) .sd-cash-exp b, html:is([data-theme],:not([data-theme])) .sd-cash-res b{ font-family:var(--g-num); color:var(--concrete); }
+html:is([data-theme],:not([data-theme])) .sd-cash-res{ font-size:13px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+html:is([data-theme],:not([data-theme])) .sd-cash-in{ display:flex; gap:6px; }
+html:is([data-theme],:not([data-theme])) .sd-cash-in input{ flex:1; min-width:0; margin:0 !important; border-radius:12px !important; font-family:var(--g-num); font-size:16px; padding:9px 12px; }
+html:is([data-theme],:not([data-theme])) .sd-cash-save{ flex-shrink:0; border:0; border-radius:12px; padding:0 14px; font-weight:700; background:var(--g-pri); color:var(--g-pri-ink); cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-foot{ text-align:center; font-size:11.5px; color:var(--grey); margin-top:16px; }
+html:is([data-theme],:not([data-theme])) .sd-filled input{ box-shadow:0 0 0 2px color-mix(in srgb, var(--sd-ok, #7fd36b) 50%, transparent) !important; }
+
+/* Header Chip */
+html:is([data-theme],:not([data-theme])) header #sd-chip.secondary{ width:auto !important; height:34px !important; display:inline-flex; align-items:center; gap:6px; border-radius:999px !important; padding:6px 12px 6px 8px; font-family:var(--g-num); font-size:13px; font-weight:700; position:relative; overflow:hidden; }
+html:is([data-theme],:not([data-theme])) #sd-chip::before{ content:""; position:absolute; inset:0; background:var(--g-pri); opacity:.16; transform-origin:left; transform:scaleX(var(--p, 0)); transition:transform .5s; }
+html:is([data-theme],:not([data-theme])) #sd-chip.ok::before{ transform:scaleX(1); opacity:.12; }
+html:is([data-theme],:not([data-theme])) #sd-chip > span{ position:relative; }
+
+/* "ပြီးပြီ" Bar (တခြား Tab ထဲ ရောက်နေချိန်) */
+html:is([data-theme],:not([data-theme])) #sd-return{ position:fixed; left:12px; right:12px; bottom:calc(14px + env(safe-area-inset-bottom,0px)); z-index:450; max-width:560px; margin:0 auto; display:flex; align-items:center; gap:10px; padding:8px 8px 8px 8px; border-radius:20px;
+  background:color-mix(in srgb, var(--g-solid) 82%, transparent); border:1px solid var(--g-line); box-shadow:0 14px 40px rgba(0,0,0,.35); -webkit-backdrop-filter:blur(22px) saturate(1.4); backdrop-filter:blur(22px) saturate(1.4); color:var(--concrete);
+  transform:translateY(140%); transition:transform .38s cubic-bezier(.3,.9,.3,1); }
+html:is([data-theme],:not([data-theme])) #sd-return.in{ transform:none; }
+@media (max-width:699px){ html:is([data-theme],:not([data-theme])) #sd-return{ bottom:calc(84px + env(safe-area-inset-bottom,0px)); } }
+html:is([data-theme],:not([data-theme])) .sd-r-back{ flex-shrink:0; width:40px; height:40px; border-radius:14px; border:1px solid var(--g-line); background:var(--s3); color:var(--concrete); font-size:24px; line-height:1; cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-r-tx{ flex:1; min-width:0; }
+html:is([data-theme],:not([data-theme])) .sd-r-tx span{ display:block; font-size:11px; color:var(--grey); font-family:var(--g-num); }
+html:is([data-theme],:not([data-theme])) .sd-r-tx b{ display:block; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+html:is([data-theme],:not([data-theme])) .sd-r-done{ flex-shrink:0; border:0; border-radius:14px; padding:11px 14px; font-weight:700; font-size:14px; background:var(--g-pri); color:var(--g-pri-ink); cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-r-done.is-done{ background:var(--sd-ok, #7fd36b); color:#141412; }
+
+/* App ဖွင့်ရင် သတိပေး */
+html:is([data-theme],:not([data-theme])) .sd-ask{ position:fixed; left:12px; right:12px; top:calc(70px + env(safe-area-inset-top,0px)); z-index:460; max-width:480px; margin:0 auto; display:flex; align-items:center; gap:10px; padding:12px; border-radius:20px;
+  background:color-mix(in srgb, var(--g-solid) 86%, transparent); border:1px solid var(--g-line); box-shadow:0 14px 40px rgba(0,0,0,.35); -webkit-backdrop-filter:blur(22px); backdrop-filter:blur(22px); color:var(--concrete);
+  transform:translateY(-30px); opacity:0; transition:transform .38s cubic-bezier(.3,.9,.3,1), opacity .3s; }
+html:is([data-theme],:not([data-theme])) .sd-ask.in{ transform:none; opacity:1; }
+html:is([data-theme],:not([data-theme])) .sd-ask-e{ font-size:30px; }
+html:is([data-theme],:not([data-theme])) .sd-ask-tx{ flex:1; min-width:0; }
+html:is([data-theme],:not([data-theme])) .sd-ask-tx b{ display:block; font-size:14px; }
+html:is([data-theme],:not([data-theme])) .sd-ask-tx span{ display:block; font-size:11.5px; color:var(--grey); }
+html:is([data-theme],:not([data-theme])) .sd-ask-go{ border:0; border-radius:12px; padding:10px 14px; font-weight:700; background:var(--g-pri); color:var(--g-pri-ink); cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-ask-x{ border:0; background:transparent; color:var(--grey); font-size:16px; cursor:pointer; padding:6px; }
+
+/* 🎉 အားလုံးပြီး */
+html:is([data-theme],:not([data-theme])) .sd-cele{ position:fixed; inset:0; z-index:9000; display:grid; place-items:center; padding:20px; background:rgba(8,8,7,.55); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); opacity:0; transition:opacity .3s; overflow:hidden; }
+html:is([data-theme],:not([data-theme])) .sd-cele.in{ opacity:1; }
+html:is([data-theme],:not([data-theme])) .sd-cele-card{ position:relative; width:min(360px, 100%); border-radius:28px; overflow:hidden; text-align:center; background:var(--g-solid); color:var(--concrete); border:1px solid var(--g-line); box-shadow:0 30px 80px rgba(0,0,0,.45);
+  transform:translateY(30px) scale(.94); transition:transform .5s cubic-bezier(.2,1.2,.3,1); padding-bottom:20px; }
+html:is([data-theme],:not([data-theme])) .sd-cele.in .sd-cele-card{ transform:none; }
+html:is([data-theme],:not([data-theme])) .sd-cele-sky{ position:relative; height:170px; overflow:hidden; background:linear-gradient(180deg, #ffd59a 0%, #ffb27a 45%, #f4e3c8 100%); }
+html:is([data-theme],:not([data-theme])) .c-close .sd-cele-sky{ background:linear-gradient(180deg, #0d1330 0%, #1f2a5a 60%, #3a3f6e 100%); }
+html:is([data-theme],:not([data-theme])) .sd-sun{ position:absolute; left:50%; bottom:-40px; width:110px; height:110px; margin-left:-55px; border-radius:50%; background:radial-gradient(circle, #fff7d6 0%, #ffd34d 55%, #ff9f3d 100%); box-shadow:0 0 60px 20px rgba(255,200,80,.55); animation:sdRise 1.4s cubic-bezier(.2,.9,.3,1) .15s both; }
+html:is([data-theme],:not([data-theme])) .sd-rays{ position:absolute; left:50%; bottom:15px; width:260px; height:260px; margin:0 0 -130px -130px; border-radius:50%; background:repeating-conic-gradient(rgba(255,255,255,.35) 0 6deg, transparent 6deg 22deg); animation:sdSpin 18s linear infinite, sdFade 1.2s .6s both; -webkit-mask:radial-gradient(circle, #000 30%, transparent 70%); mask:radial-gradient(circle, #000 30%, transparent 70%); }
+html:is([data-theme],:not([data-theme])) .sd-moon{ position:absolute; right:22%; top:26px; width:62px; height:62px; border-radius:50%; background:#f5efd8; box-shadow:inset -14px -6px 0 0 #d8d0b0, 0 0 40px 10px rgba(245,239,216,.25); animation:sdFloat 1.2s cubic-bezier(.2,.9,.3,1) both; }
+html:is([data-theme],:not([data-theme])) .sd-star{ position:absolute; left:var(--x); top:var(--y); width:3px; height:3px; border-radius:50%; background:#fff; animation:sdTw 2.2s ease-in-out var(--d) infinite; }
+html:is([data-theme],:not([data-theme])) .sd-shop{ position:absolute; left:0; right:0; bottom:8px; font-size:42px; filter:drop-shadow(0 6px 10px rgba(0,0,0,.25)); }
+html:is([data-theme],:not([data-theme])) .c-close .sd-shop{ filter:brightness(.7) drop-shadow(0 6px 10px rgba(0,0,0,.4)); }
+html:is([data-theme],:not([data-theme])) .sd-cele-card h3{ font-size:21px; line-height:1.5; margin:18px 18px 6px; font-weight:800; }
+html:is([data-theme],:not([data-theme])) .sd-cele-card p{ font-size:13px; color:var(--grey); margin:0 22px 14px; line-height:1.6; }
+html:is([data-theme],:not([data-theme])) .sd-cele-sum{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 18px 14px; }
+html:is([data-theme],:not([data-theme])) .sd-cele-sum div{ background:var(--s2); border:1px solid var(--g-line); border-radius:14px; padding:10px; }
+html:is([data-theme],:not([data-theme])) .sd-cele-sum span{ display:block; font-size:11px; color:var(--grey); }
+html:is([data-theme],:not([data-theme])) .sd-cele-sum b{ font-family:var(--g-num); font-size:18px; }
+html:is([data-theme],:not([data-theme])) .sd-cele-sum small{ font-size:11px; opacity:.6; }
+html:is([data-theme],:not([data-theme])) .sd-cele-ok{ border:0; border-radius:16px; padding:13px 26px; font-weight:800; font-size:15px; background:var(--g-pri); color:var(--g-pri-ink); cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-confetti{ position:absolute; inset:0; pointer-events:none; }
+html:is([data-theme],:not([data-theme])) .sd-confetti i{ position:absolute; top:-20px; left:var(--x); border-radius:2px; animation:sdFall var(--t) cubic-bezier(.3,.6,.5,1) var(--dl) forwards; }
+
+/* ✏️ စာရင်းပြင် */
+html:is([data-theme],:not([data-theme])) .sd-ed-dim{ position:fixed; inset:0; z-index:8000; background:rgba(8,8,7,.5); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; align-items:flex-end; justify-content:center; }
+@media (min-width:700px){ html:is([data-theme],:not([data-theme])) .sd-ed-dim{ align-items:center; } }
+html:is([data-theme],:not([data-theme])) .sd-ed{ width:min(560px, 100%); max-height:88vh; overflow:auto; background:var(--g-solid); color:var(--concrete); border:1px solid var(--g-line); border-radius:24px 24px 0 0; padding:16px 14px calc(16px + env(safe-area-inset-bottom,0px)); animation:sdUp .35s cubic-bezier(.3,.9,.3,1); }
+@media (min-width:700px){ html:is([data-theme],:not([data-theme])) .sd-ed{ border-radius:24px; } }
+html:is([data-theme],:not([data-theme])) .sd-ed-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; font-size:16px; }
+html:is([data-theme],:not([data-theme])) .sd-ed-x{ border:0; background:var(--s3); color:var(--concrete); width:34px; height:34px; border-radius:50%; cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-ed-time{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:13.5px; margin:0 2px 10px; }
+html:is([data-theme],:not([data-theme])) .sd-ed-time input{ width:auto !important; margin:0 !important; border-radius:10px !important; font-family:var(--g-num); }
+html:is([data-theme],:not([data-theme])) .sd-ed-list{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+html:is([data-theme],:not([data-theme])) .sd-ed-row{ background:var(--s2); border:1px solid var(--g-line); border-radius:16px; padding:10px; display:flex; flex-direction:column; gap:6px; }
+html:is([data-theme],:not([data-theme])) .sd-ed-row input, html:is([data-theme],:not([data-theme])) .sd-ed-row select{ margin:0 !important; border-radius:10px !important; font-size:14px; padding:8px 10px; min-width:0; }
+html:is([data-theme],:not([data-theme])) .sd-ed-r1{ display:flex; gap:6px; }
+html:is([data-theme],:not([data-theme])) .sd-ed-ico{ width:52px !important; flex-shrink:0; text-align:center; font-size:18px !important; }
+html:is([data-theme],:not([data-theme])) .sd-ed-title{ flex:1; font-weight:600; }
+html:is([data-theme],:not([data-theme])) .sd-ed-desc{ font-size:12.5px !important; }
+html:is([data-theme],:not([data-theme])) .sd-ed-r2{ display:flex; gap:6px; align-items:center; }
+html:is([data-theme],:not([data-theme])) .sd-ed-r2 select{ flex:1; }
+html:is([data-theme],:not([data-theme])) .sd-ed-cash{ flex:1; font-size:12.5px; color:var(--grey); }
+html:is([data-theme],:not([data-theme])) .sd-ed-mv, html:is([data-theme],:not([data-theme])) .sd-ed-del{ flex-shrink:0; width:38px; height:38px; border-radius:10px; border:1px solid var(--g-line); background:var(--s3); color:var(--concrete); cursor:pointer; font-size:15px; }
+html:is([data-theme],:not([data-theme])) .sd-ed-mv:disabled{ opacity:.3; }
+html:is([data-theme],:not([data-theme])) .sd-ed-add{ width:100%; margin-top:10px; border:1.5px dashed var(--g-line); background:transparent; color:var(--concrete); border-radius:14px; padding:12px; font-weight:600; cursor:pointer; }
+html:is([data-theme],:not([data-theme])) .sd-ed-f{ display:flex; gap:8px; margin-top:12px; }
+html:is([data-theme],:not([data-theme])) .sd-ed-f button{ flex:1; border-radius:14px !important; }
+
+@keyframes sdIn{ from{ opacity:0; transform:translateY(10px); } }
+@keyframes sdUp{ from{ transform:translateY(40px); opacity:0; } }
+@keyframes sdPop{ 50%{ transform:scale(1.22); } }
+@keyframes sdRise{ from{ transform:translateY(90px); } }
+@keyframes sdSpin{ to{ transform:rotate(360deg); } }
+@keyframes sdFade{ from{ opacity:0; } }
+@keyframes sdFloat{ from{ transform:translateY(30px); opacity:0; } }
+@keyframes sdTw{ 50%{ opacity:.2; } }
+@keyframes sdFall{ to{ transform:translate(var(--dx), 110vh) rotate(var(--r)); } }
+@media (prefers-reduced-motion: reduce){ html:is([data-theme],:not([data-theme])) .sd-item, html:is([data-theme],:not([data-theme])) .sd-fin, html:is([data-theme],:not([data-theme])) .sd-sun, html:is([data-theme],:not([data-theme])) .sd-moon, html:is([data-theme],:not([data-theme])) .sd-rays, html:is([data-theme],:not([data-theme])) .sd-star{ animation:none !important; } }
+@media (max-width:420px){ html:is([data-theme],:not([data-theme])) .sd-go{ padding:9px 10px; font-size:12.5px; } html:is([data-theme],:not([data-theme])) .sd-t{ font-size:14.5px; } html:is([data-theme],:not([data-theme])) .sd-prog{ padding:14px; } }
+
+@media (max-width:520px){
+  html:is([data-theme],:not([data-theme])) header #sd-chip.secondary{ width:38px !important; height:38px !important; padding:0 !important; justify-content:center; gap:0; }
+  html:is([data-theme],:not([data-theme])) header #sd-chip .sd-chip-n{ display:none; }
+  html:is([data-theme],:not([data-theme])) header #sd-chip[data-left]:not([data-left=""]):not([data-left="0"])::after{ content:attr(data-left); position:absolute; right:-4px; top:-4px; min-width:16px; height:16px; box-sizing:border-box; display:grid; place-items:center; font-size:10px; line-height:1; padding:0 4px; border-radius:999px; background:var(--g-pri); color:var(--g-pri-ink); }
+  html:is([data-theme],:not([data-theme])) header #sd-chip{ overflow:visible; }
+  html:is([data-theme],:not([data-theme])) header #sd-chip::before{ border-radius:inherit; }
+  html:is([data-theme],:not([data-theme])) header #sd-chip.ok .sd-chip-n{ display:none; }
+}
+/* ✅ Checklist — ပြီးပြီ ခလုတ် · 💡 ထပ်ထည့် Task (Oct 24) */
+html:is([data-theme],:not([data-theme])) .sd-ok-btn{ border-color:color-mix(in srgb, var(--sd-ok) 45%, transparent); color:var(--sd-ok); background:color-mix(in srgb, var(--sd-ok) 10%, transparent); }
+html:is([data-theme],:not([data-theme])) .sd-item.next .sd-ok-btn{ background:var(--g-pri); color:var(--g-pri-ink); border-color:transparent; }
+html:is([data-theme],:not([data-theme])) .sd-ok-btn.sd-last{ padding:10px 14px; font-weight:800; }
+html:is([data-theme],:not([data-theme])) .sd-sug{ margin-top:14px; border-radius:18px; border:1px dashed var(--g-line); background:color-mix(in srgb, var(--g-card) 60%, transparent); overflow:hidden; }
+html:is([data-theme],:not([data-theme])) .sd-sug summary{ list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 14px; font-size:14px; font-weight:600; }
+html:is([data-theme],:not([data-theme])) .sd-sug summary::-webkit-details-marker{ display:none; }
+html:is([data-theme],:not([data-theme])) .sd-sug summary b{ font-family:var(--g-num); font-size:12px; padding:2px 9px; border-radius:999px; background:var(--s3); }
+html:is([data-theme],:not([data-theme])) .sd-sug summary::after{ content:"›"; font-size:20px; line-height:1; color:var(--grey); transition:transform .2s; margin-left:auto; }
+html:is([data-theme],:not([data-theme])) .sd-sug summary b{ margin-left:auto; }
+html:is([data-theme],:not([data-theme])) .sd-sug summary b + *{ margin-left:0; }
+html:is([data-theme],:not([data-theme])) .sd-sug[open] summary::after{ transform:rotate(90deg); }
+html:is([data-theme],:not([data-theme])) .sd-sug-list{ display:flex; flex-direction:column; gap:6px; padding:0 10px 4px; }
+html:is([data-theme],:not([data-theme])) .sd-sug-row{ display:flex; align-items:center; gap:10px; padding:10px; border-radius:14px; background:var(--s2); border:1px solid var(--g-line); animation:sdIn .3s both; }
+html:is([data-theme],:not([data-theme])) .sd-sug-ico{ font-size:20px; flex-shrink:0; width:26px; text-align:center; }
+html:is([data-theme],:not([data-theme])) .sd-sug-tx{ flex:1; min-width:0; }
+html:is([data-theme],:not([data-theme])) .sd-sug-tx b{ display:block; font-size:13.5px; font-weight:600; line-height:1.45; }
+html:is([data-theme],:not([data-theme])) .sd-sug-tx span{ display:block; font-size:11.5px; color:var(--grey); line-height:1.5; }
+html:is([data-theme],:not([data-theme])) .sd-sug-add{ flex-shrink:0; border-radius:12px; padding:8px 11px; font-size:12.5px; font-weight:700; white-space:nowrap; }
+html:is([data-theme],:not([data-theme])) .sd-sug-note{ font-size:11.5px; color:var(--grey); text-align:center; margin:8px 0 12px; }
 </style>
 </head>
 <body>
@@ -13677,6 +13897,595 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     };
     try{ window.renderCustomerWalletsList = renderCustomerWalletsList; }catch(e){}
   }
+})();
+
+// =====================================================================
+// SUWATI ADMIN — ✅ ဆိုင်ဖွင့်/ပိတ် Checklist (Oct 23)
+//   🌅 ဆိုင်ဖွင့်ချိန် / 🌙 ဆိုင်ပိတ်ချိန် လုပ်ရမယ့်အရာ စာရင်း — တစ်ဆင့်ချင်း
+//   · Task တိုင်း "လုပ်ရန် →" = သက်ဆိုင်ရာ Tab ကို တန်းဖွင့် · ပြီးရင် ✓
+//   · အကုန်ပြီး → "ဒီနေ့ ဆိုင်ဖွင့်ဖို့ အဆင်သင့်ဖြစ်ပါပြီ" / "ဒီနေ့ ပင်ပန်းသွားပါပြီ"
+//   · Data: shop_day_checks (ဒီနေ့ ✓ များ · Staff အားလုံး မျှသုံး) · shop_checklist_config (Owner စာရင်းပြင်)
+//     SQL: SHOP-DAY.sql — မ Run ရသေးရင် ဒီစက်ထဲ (localStorage) မှာသာ မှတ်
+//   ADMIN_JS ထဲ 'customer-link' နောက်မှာ ထားရန် (closing.js / orders-plus.js နောက်)
+// =====================================================================
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const today = () => (typeof localYMD === 'function' ? localYMD() : new Date().toISOString().slice(0,10));
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const buzz = n => { try{ if(!reduce.matches) navigator.vibrate?.(n || 10); }catch(e){} };
+  const lsGet = (k, d) => { try{ const v = localStorage.getItem('suwati_sd_' + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } };
+  const lsSet = (k, v) => { try{ localStorage.setItem('suwati_sd_' + k, JSON.stringify(v)); }catch(e){} };
+  const role = () => (typeof currentAdminRole !== 'undefined' ? currentAdminRole : 'owner');
+  const isOwner = () => role() === 'owner';
+  const tabBtn = panelId => document.querySelector(`.tab-btn[data-tab="${panelId}"]`);
+  const canSee = panelId => { const b = tabBtn(panelId); return !!b && b.style.display !== 'none' && b.closest('.tabs-group')?.style.display !== 'none'; };
+  const fmtTime = iso => { try{ const d = new Date(iso); return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }catch(e){ return ''; } };
+  const who = r => { const e = String(r?.done_by_email || ''); return e ? (e === (typeof currentAdminEmail !== 'undefined' ? currentAdminEmail : '') ? 'ကိုယ်တိုင်' : e.split('@')[0]) : ''; };
+  const MM_DAY = ['တနင်္ဂနွေ','တနင်္လာ','အင်္ဂါ','ဗုဒ္ဓဟူး','ကြာသပတေး','သောကြာ','စနေ'];
+
+  // ---------- Link ချိတ်လို့ရတဲ့ နေရာများ ----------
+  const T = {
+    none:            { label:'— Link မချိတ် (ကိုယ်တိုင် လုပ်ရမည့်အရာ) —' },
+    pos:             { label:'🏪 POS', tab:'pos-panel' },
+    orders:          { label:'🌐 Online Orders (အားလုံး)', tab:'orders-panel' },
+    'orders-pending':{ label:'⏳ အတည်မပြုရသေး Order', tab:'orders-panel', after(){ const s = $('stat-pending-orders')?.parentElement; if(s && !s.classList.contains('on')) setTimeout(() => s.click(), 250); } },
+    delivery:        { label:'🚚 Delivery', tab:'delivery-panel' },
+    messages:        { label:'💬 Chat / Messages', tab:'messages-panel' },
+    inventory:       { label:'📦 Stock / Inventory', tab:'inventory-panel', after(){ setTimeout(() => { const d = document.querySelector('#inventory-panel .ls-fold, .ls-fold'); if(d){ d.open = true; d.scrollIntoView({ behavior:'smooth', block:'start' }); } }, 300); } },
+    wallet:          { label:'🎫 Prepaid Card (ငွေဖြည့်)', tab:'wallet-panel' },
+    giftcard:        { label:'🎁 Gift Card', tab:'giftcard-panel' },
+    today:           { label:'📊 ဒီနေ့ အကျဉ်းချုပ်', tab:'today-panel' },
+    'cash-close':    { label:'💵 ငွေရှင်းချက် · ငွေသား စာရင်းပိတ်', tab:'salesreport-panel', after(){ const i = $('closing-date-input'); if(i) i.value = today(); setTimeout(() => { $('closing-report-btn')?.click(); setTimeout(() => $('cash-close-card')?.scrollIntoView({ behavior:'smooth', block:'start' }), 450); }, 120); } },
+    salesreport:     { label:'📈 Sales Report', tab:'salesreport-panel' },
+    salehistory:     { label:'🧾 Sale History', tab:'salehistory-panel' },
+    customers:       { label:'👥 Customers', tab:'customers-panel' },
+    reviews:         { label:'⭐ Review', tab:'reviews-panel' },
+    products:        { label:'👕 ပစ္စည်းများ', tab:'products-panel' },
+    sale:            { label:'🔥 Sale & Bundle', tab:'sale-panel' },
+    promo:           { label:'🎟️ Promo & Cashback', tab:'promo-panel' },
+    postmaker:       { label:'📱 Post ပုံထုတ်', tab:'post-maker-panel' },
+    profit:          { label:'💹 အမြတ်စာရင်း', tab:'profit-panel' },
+    activitylog:     { label:'📋 Activity Log', tab:'activitylog-panel' },
+    settings:        { label:'⚙️ Settings (Backup)', tab:'settings-panel' },
+  };
+  // Task တစ်ခုနဲ့ ဆိုင်တဲ့ Live ဂဏန်း (ဥပမာ Chat မဖတ်ရသေး ၃)
+  const COUNT_OF = { messages:'chat', 'orders-pending':'pending', orders:'pending', delivery:'delivery', inventory:'lowstock', wallet:'wallet', giftcard:'gift' };
+  const COUNT_TXT = { chat:'မဖတ်ရသေး', pending:'အတည်မပြုရသေး', delivery:'ပို့ရန်', lowstock:'နည်း/ကုန်', wallet:'စောင့်နေ', gift:'စောင့်နေ' };
+
+  const DEFAULT = {
+    shop_open:'07:00', shop_close:'18:00',   // ဆိုင် ဖွင့်/ပိတ်ချိန်
+    open_time:'08:00', close_time:'20:00',   // Checklist စစ်ချိန် (ဆိုင်ပိတ် Checklist ကို စောလည်း လုပ်လို့ရ)
+    open:[
+      { key:'cash-open', icon:'💵', title:'ဗီရိုထဲ အမ်းငွေ ရေတွက်', desc:'မနေ့က ချန်ထားခဲ့တဲ့ ငွေနဲ့ ကိုက်/မကိုက် စစ်', kind:'cash' },
+      { key:'chat',      icon:'💬', title:'Chat စာ စစ်ပြီး ပြန်ဖြေ', desc:'ညက ဝင်ထားတဲ့ Customer စာတွေ', target:'messages' },
+      { key:'orders',    icon:'⏳', title:'Online Order စစ် (ငွေလွှဲ အတည်ပြု)', desc:'Screenshot စစ်ပြီး Confirm', target:'orders-pending' },
+      { key:'delivery',  icon:'🚚', title:'ဒီနေ့ ပို့ရမယ့် Delivery', desc:'ထုပ်ပိုး · ပို့မယ့်သူ ခွဲ', target:'delivery' },
+      { key:'stock',     icon:'📦', title:'Stock စစ် (နည်း/ကုန်)', desc:'ဆိုင်ထဲ ပစ္စည်း ခင်း · Size စုံ', target:'inventory' },
+      { key:'wallet',    icon:'🎫', title:'Card ငွေဖြည့် တောင်းဆိုမှု', desc:'Prepaid ငွေဖြည့် Approve', target:'wallet' },
+      { key:'pos',       icon:'🏪', title:'POS · Scanner · Printer အသင့်', desc:'iPad အားပြည့် · Scanner စမ်းဖတ်', target:'pos' },
+    ],
+    close:[
+      { key:'today',     icon:'📊', title:'ဒီနေ့ ရောင်းစာရင်း ကြည့်', desc:'ရောင်းအား · ငွေဝင် စစ်', target:'today' },
+      { key:'orders',    icon:'🌐', title:'Order အားလုံး ကိုင်တွယ်ပြီး', desc:'အတည်မပြုရသေး မကျန်စေနဲ့', target:'orders-pending' },
+      { key:'delivery',  icon:'🚚', title:'Delivery ပို့ပြီး Status ပြင်', desc:'ပို့ပြီးသား = Delivered', target:'delivery' },
+      { key:'chat',      icon:'💬', title:'Chat အားလုံး ပြန်ဖြေပြီး', desc:'မဖြေရသေး မကျန်စေနဲ့', target:'messages' },
+      { key:'cash-close',icon:'💰', title:'ငွေရှင်း · ဗီရိုငွေ ရေတွက်ပြီး စာရင်းပိတ်', desc:'စာရင်းပိတ်ရင် ✓ အလိုလို', target:'cash-close' },
+      { key:'restock',   icon:'📝', title:'မနက်ဖြန် Stock ဖြည့်ရန် မှတ်', desc:'ကုန်သွားတဲ့ Size တွေ', target:'inventory' },
+      { key:'lock',      icon:'🔒', title:'မီးပိတ် · တံခါးသော့ခတ် · iPad အားသွင်း', desc:'', target:'none' },
+    ],
+  };
+
+  // 💡 ထပ်ထည့်လို့ရတဲ့ Task (Owner — "＋ ထည့်" နှိပ်ရုံ)
+  const SUGGEST = {
+    open:[
+      { key:'s-clean',   icon:'🧹', title:'ဆိုင်သန့်ရှင်း · ကြမ်းတိုက် · မှန်သုတ်', desc:'', target:'none' },
+      { key:'s-display', icon:'👕', title:'ပစ္စည်း ခင်း · Mannequin အဝတ်လဲ', desc:'ရောင်းကောင်း/အသစ် ရှေ့ထား', target:'none' },
+      { key:'s-power',   icon:'💡', title:'မီး · AC · သီချင်း ဖွင့်', desc:'', target:'none' },
+      { key:'s-device',  icon:'📶', title:'Wi-Fi · Printer စက္ကူ · ငွေအမ်းအကြွေ', desc:'', target:'none' },
+      { key:'s-sale',    icon:'🔥', title:'ဒီနေ့ Sale / Bundle စစ်', desc:'ကုန်ဆုံးရက် · ဈေးမှန်', target:'sale' },
+      { key:'s-promo',   icon:'🎟️', title:'Promo Code / Cashback စစ်', desc:'', target:'promo' },
+      { key:'s-gift',    icon:'🎁', title:'Gift Card တောင်းဆိုမှု', desc:'ငွေလွှဲ စစ်ပြီး Approve', target:'giftcard' },
+      { key:'s-review',  icon:'⭐', title:'Review အသစ် ကြည့်/ပြန်ဖြေ', desc:'', target:'reviews' },
+      { key:'s-post',    icon:'📣', title:'ဒီနေ့ Facebook / TikTok Post တင်', desc:'ပစ္စည်းအသစ် · Sale', target:'postmaker' },
+      { key:'s-tag',     icon:'🏷️', title:'ဈေး Tag · Barcode Label စစ်', desc:'ပစ္စည်းအသစ် Label ကပ်', target:'products' },
+    ],
+    close:[
+      { key:'s-history', icon:'🧾', title:'Sale History စစ် (ပယ်/ပြန်အမ်း)', desc:'မှားရောင်းထားတာ ရှိမရှိ', target:'salehistory' },
+      { key:'s-profit',  icon:'💹', title:'ဒီနေ့ အမြတ် ကြည့်', desc:'', target:'profit' },
+      { key:'s-gift',    icon:'🎁', title:'Gift Card / Card ငွေဖြည့် စစ်', desc:'စောင့်နေတာ မကျန်စေနဲ့', target:'wallet' },
+      { key:'s-cust',    icon:'👥', title:'Customer မှတ်ချက် / Tag ထည့်', desc:'ဒီနေ့ လာဝယ်သူ', target:'customers' },
+      { key:'s-stockin', icon:'📥', title:'ပစ္စည်းဝင် Stock ထည့်ပြီး', desc:'ဒီနေ့ ရောက်လာတဲ့ ပစ္စည်း', target:'inventory' },
+      { key:'s-log',     icon:'📋', title:'Staff Activity Log ကြည့်', desc:'', target:'activitylog' },
+      { key:'s-backup',  icon:'☁️', title:'Backup စစ်', desc:'ဒီနေ့ Backup ရှိ/မရှိ', target:'settings' },
+      { key:'s-post',    icon:'📣', title:'မနက်ဖြန် Post စီစဉ်', desc:'', target:'postmaker' },
+      { key:'s-bank',    icon:'🏦', title:'ငွေ ဘဏ်သွင်း / မီးခံသေတ္တာ သိမ်း', desc:'', target:'none' },
+      { key:'s-clean',   icon:'🧹', title:'ဆိုင်သန့်ရှင်း · အမှိုက်ပစ်', desc:'', target:'none' },
+    ],
+  };
+
+  let cfg = lsGet('cfg', null) || JSON.parse(JSON.stringify(DEFAULT));
+  let checks = { open:{}, close:{} };
+  let counts = {}, sales = null, yFloat = null, cashClosedToday = false;
+  let phase = null, dbOK = true, loadedDay = '', loading = null, editing = null;
+
+  // ---------- Tab ခလုတ် + Panel + Header Chip ----------
+  const main = document.querySelector('#admin-nav .tabs-main');
+  if(!main) return;
+  const btn = document.createElement('button');
+  btn.className = 'tab-btn main-tab'; btn.dataset.tab = 'shopday-panel'; btn.id = 'shopday-tab-btn';
+  btn.innerHTML = '<span class="mt-icon">✅</span><span class="nt">ဆိုင်ဖွင့်/ပိတ် Checklist</span><span class="ns">Checklist</span><span id="shopday-badge" class="tab-count-badge" style="display:none;"></span>';
+  main.prepend(btn);
+  const panel = document.createElement('div');
+  panel.className = 'panel'; panel.id = 'shopday-panel';
+  const todayPanel = $('today-panel');
+  todayPanel ? todayPanel.before(panel) : document.getElementById('dashboard').appendChild(panel);
+  const chip = document.createElement('button');
+  chip.type = 'button'; chip.id = 'sd-chip'; chip.className = 'secondary'; chip.title = 'ဆိုင်ဖွင့်/ပိတ် Checklist';
+  chip.innerHTML = '<span class="sd-chip-ico">🌅</span><span class="sd-chip-n">0/0</span>';
+  const themeBtn = $('admin-theme-btn');
+  themeBtn ? themeBtn.before(chip) : null;
+  chip.addEventListener('click', () => openPanel());
+
+  function showPanel(){
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active'); panel.classList.add('active');
+    hideReturn(); document.querySelectorAll('.sd-ask').forEach(x => x.remove());
+    load(true);
+  }
+  btn.addEventListener('click', showPanel);
+  function openPanel(ph){
+    if(ph) phase = ph;
+    try{ window.closeAdminNavSheet?.(); }catch(e){}
+    btn.click(); window.scrollTo({ top:0, behavior:'auto' });
+  }
+  window.openShopDayChecklist = openPanel;
+
+  // ---------- Data ----------
+  const list = ph => (cfg[ph] || []).filter(t => t && t.key);
+  const visible = ph => list(ph);   // Link ခွင့်မရှိလည်း ✓ လုပ်လို့ရ (ခလုတ်သာ ဖျောက်)
+  const doneN = ph => visible(ph).filter(t => checks[ph][t.key]).length;
+  const allDone = ph => visible(ph).length > 0 && doneN(ph) === visible(ph).length;
+
+  async function loadCfg(){
+    try{
+      const { data, error } = await sb.from('shop_checklist_config').select('*').eq('id', 1).maybeSingle();
+      if(error) throw error;
+      if(data && data.items && Array.isArray(data.items.open)){ cfg = Object.assign(JSON.parse(JSON.stringify(DEFAULT)), data.items); lsSet('cfg', cfg); }
+    }catch(e){ dbOK = false; }
+  }
+  async function loadChecks(){
+    const d = today();
+    const local = lsGet('chk_' + d, null);
+    try{
+      const { data, error } = await sb.from('shop_day_checks').select('*').eq('day', d);
+      if(error) throw error;
+      const c = { open:{}, close:{} };
+      (data || []).forEach(r => { if(c[r.phase] && r.task_key !== '__done') c[r.phase][r.task_key] = r; });
+      checks = c; dbOK = true;
+    }catch(e){ dbOK = false; checks = local || { open:{}, close:{} }; }
+  }
+  async function loadCounts(){
+    const c = {};
+    const q = async (k, fn) => { try{ c[k] = await fn(); }catch(e){} };
+    const d = today(), s = new Date(d + 'T00:00:00').toISOString(), e = new Date(d + 'T23:59:59.999').toISOString();
+    await Promise.all([
+      q('chat', async () => (await sb.from('chat_messages').select('id', { count:'exact', head:true }).eq('sender','customer').eq('read_by_admin', false)).count || 0),
+      q('pending', async () => { const { data } = await sb.from('orders').select('id, order_group_id, sale_channel').eq('order_status','pending_verification'); return new Set((data || []).filter(o => o.sale_channel !== 'in_store').map(o => o.order_group_id || o.id)).size; }),
+      q('delivery', async () => { const { data } = await sb.from('orders').select('id, order_group_id, sale_channel').eq('order_status','confirmed'); return new Set((data || []).filter(o => o.sale_channel !== 'in_store').map(o => o.order_group_id || o.id)).size; }),
+      q('wallet', async () => (await sb.from('wallet_topups').select('id', { count:'exact', head:true }).eq('status','pending')).count || 0),
+      q('gift', async () => (await sb.from('gift_cards').select('id', { count:'exact', head:true }).eq('status','pending')).count || 0),
+      q('lowstock', async () => {
+        const [{ data: ps }, { data: st }] = await Promise.all([
+          sb.from('products').select('id, stock_qty, status, visible'),
+          sb.from('settings').select('low_stock_threshold').limit(1),
+        ]);
+        const th = Number(st?.[0]?.low_stock_threshold ?? 2);
+        return (ps || []).filter(p => p.visible !== false && p.status !== 'preorder' && Number(p.stock_qty || 0) <= th).length;
+      }),
+      q('_sales', async () => {
+        const { data } = await sb.from('orders').select('id, order_group_id, total_amount, order_status, sale_channel, quantity, created_at').gte('created_at', s).lte('created_at', e);
+        const rows = (data || []).filter(o => o.order_status !== 'cancelled' && o.order_status !== 'awaiting_payment' && String(o.created_at || '') >= s);
+        const g = k => new Set(rows.filter(k).map(o => o.order_group_id || o.id)).size;
+        sales = { total: rows.reduce((a, o) => a + (Number(o.total_amount) || 0), 0), items: rows.reduce((a, o) => a + (Number(o.quantity) || 0), 0),
+          shop: g(o => o.sale_channel === 'in_store'), online: g(o => o.sale_channel !== 'in_store') };
+      }),
+      q('_cash', async () => {
+        const { data } = await sb.from('cash_closings').select('closing_date, denominations, created_at').order('created_at', { ascending:false }).limit(20);
+        const rows = data || [];
+        cashClosedToday = rows.some(r => r.closing_date === d);
+        const prev = rows.filter(r => r.closing_date < d).sort((a, b) => String(b.closing_date).localeCompare(a.closing_date) || String(b.created_at).localeCompare(a.created_at))[0];
+        yFloat = prev && prev.denominations && prev.denominations._next_float != null ? Number(prev.denominations._next_float) || 0 : null;
+      }),
+    ]);
+    counts = c;
+  }
+  async function load(full){
+    if(loading) return loading;
+    loading = (async () => {
+      if(!panel.innerHTML) panel.innerHTML = '<p class="hint" style="padding:20px;">Load လုပ်နေသည်...</p>';
+      if(full || loadedDay !== today()) await loadCfg();
+      await Promise.all([loadChecks(), loadCounts()]);
+      loadedDay = today();
+      // 💰 ငွေသား စာရင်းပိတ်ပြီးသား ဆိုရင် ✓ အလိုလို
+      if(cashClosedToday){ const t = list('close').find(x => x.target === 'cash-close'); if(t && !checks.close[t.key]) await setCheck('close', t.key, true, null, true); }
+      if(!phase) phase = allDone('open') ? 'close' : 'open';
+      render(); syncChip();
+    })();
+    try{ await loading; } finally { loading = null; }
+  }
+
+  async function setCheck(ph, key, on, value, silent){
+    const d = today();
+    const row = { day:d, phase:ph, task_key:key, value: value ?? null, done_by: (typeof currentAdminUserId !== 'undefined' ? currentAdminUserId : null), done_by_email: (typeof currentAdminEmail !== 'undefined' ? currentAdminEmail : null), done_at: new Date().toISOString() };
+    const wasAll = allDone(ph);
+    if(on) checks[ph][key] = row; else delete checks[ph][key];
+    lsSet('chk_' + d, checks);
+    if(dbOK){
+      try{
+        const r = on ? await sb.from('shop_day_checks').upsert(row, { onConflict:'day,phase,task_key' })
+                     : await sb.from('shop_day_checks').delete().eq('day', d).eq('phase', ph).eq('task_key', key);
+        if(r && r.error) throw r.error;
+      }catch(e){ dbOK = false; if(!silent) showToast?.('⚠️ SHOP-DAY.sql မ Run ရသေး — ဒီစက်ထဲမှာသာ မှတ်ထားပါမည်'); }
+    }
+    syncChip();
+    if(!silent && on && !wasAll && allDone(ph)){
+      const k = 'cele_' + d + '_' + ph;
+      if(dbOK){ try{ await sb.from('shop_day_checks').upsert({ ...row, task_key:'__done', value:null }, { onConflict:'day,phase,task_key' }); }catch(e){} }
+      try{ logActivity?.(ph === 'open' ? 'shop_opened' : 'shop_closed', ph === 'open' ? `ဆိုင်ဖွင့် Checklist ပြီး (${d})` : `ဆိုင်ပိတ် Checklist ပြီး (${d})`); }catch(e){}
+      if(!lsGet(k, false)){ lsSet(k, true); setTimeout(() => celebrate(ph), 380); }
+    }
+  }
+
+  // ---------- Render ----------
+  function render(){
+    if(!panel.isConnected) return;
+    const d = new Date();
+    const ph = phase || 'open';
+    const items = visible(ph), n = doneN(ph), tot = items.length, pct = tot ? Math.round(n / tot * 100) : 0;
+    const nextIdx = items.findIndex(t => !checks[ph][t.key]);
+    const seg = p => { const a = visible(p).length, b = doneN(p); return `<button type="button" class="sd-seg-btn${p === ph ? ' on' : ''}${allDone(p) ? ' ok' : ''}" data-ph="${p}">${p === 'open' ? '🌅 ဆိုင်ဖွင့်ချိန်' : '🌙 ဆိုင်ပိတ်ချိန်'}<span class="sd-seg-n">${allDone(p) ? '✓' : b + '/' + a}</span></button>`; };
+    const C = 2 * Math.PI * 34;
+    const greet = d.getHours() < 12 ? 'မင်္ဂလာ နံနက်ခင်းပါ ☀️' : d.getHours() < 17 ? 'မင်္ဂလာ နေ့လယ်ခင်းပါ 🌤️' : 'မင်္ဂလာ ညနေခင်းပါ 🌆';
+    const time = ph === 'open' ? cfg.open_time : cfg.close_time;
+
+    const salesHtml = ph === 'close' && sales ? `
+      <div class="sd-sales">
+        <div class="sd-sales-h">💰 ဒီနေ့ တစ်နေ့တာ ရောင်းစာရင်း</div>
+        <div class="sd-sales-g">
+          <div class="sd-sc sd-sc-big"><span>စုစုပေါင်း ရောင်းရငွေ</span><b data-count="${sales.total}">${sales.total.toLocaleString()}</b><i>ကျပ်</i></div>
+          <div class="sd-sc"><span>🏪 ဆိုင်ထဲ</span><b>${sales.shop}</b><i>ကြိမ်</i></div>
+          <div class="sd-sc"><span>🌐 Online</span><b>${sales.online}</b><i>Order</i></div>
+          <div class="sd-sc"><span>👕 ပစ္စည်း</span><b>${sales.items}</b><i>ထည်</i></div>
+        </div>
+      </div>` : '';
+
+    const itemHtml = (t, i) => {
+      const done = checks[ph][t.key];
+      const tg = T[t.target] || T.none;
+      const linkOk = tg.tab && canSee(tg.tab);
+      const ck = COUNT_OF[t.target];
+      const cv = ck != null ? counts[ck] : undefined;
+      const cnt = (cv == null || done) ? '' : cv > 0 ? `<span class="sd-cnt hot">${COUNT_TXT[ck]} ${cv}</span>` : `<span class="sd-cnt ok">✓ ရှင်းပြီ</span>`;
+      let cash = '';
+      if(t.kind === 'cash'){
+        const v = done && done.value != null ? Number(done.value) : null;
+        const diff = v != null && yFloat != null ? v - yFloat : null;
+        cash = `<div class="sd-cash">
+          ${yFloat != null ? `<div class="sd-cash-exp">မနေ့က ချန်ထားခဲ့ <b>${yFloat.toLocaleString()}</b> ကျပ်</div>` : ''}
+          ${done ? `<div class="sd-cash-res">ရေတွက်ရ <b>${(v || 0).toLocaleString()}</b> ကျပ် ${diff == null ? '' : diff === 0 ? '<span class="sd-cnt ok">✓ ကိုက်</span>' : `<span class="sd-cnt hot">${diff > 0 ? '+' : ''}${diff.toLocaleString()}</span>`}</div>`
+                 : `<div class="sd-cash-in"><input type="number" inputmode="numeric" min="0" step="100" placeholder="ရေတွက်ရ ငွေ (ကျပ်)" data-cash="${esc(t.key)}"><button type="button" class="sd-cash-save" data-cashsave="${esc(t.key)}">သိမ်း ✓</button></div>`}
+        </div>`;
+      }
+      return `<li class="sd-item${done ? ' done' : ''}${i === nextIdx ? ' next' : ''}" style="--i:${i}">
+        <button type="button" class="sd-chk" data-key="${esc(t.key)}" aria-label="${done ? 'ပြီးပြီ — ပြန်ဖြုတ်ရန်' : 'ပြီးကြောင်း ✓ လုပ်ရန်'}" aria-pressed="${!!done}">
+          <span class="sd-chk-n">${i + 1}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7"/></svg>
+        </button>
+        <div class="sd-body">
+          <div class="sd-t"><span class="sd-ico">${esc(t.icon || '•')}</span>${esc(t.title)}</div>
+          ${(t.desc || cnt) ? `<div class="sd-d">${esc(t.desc || '')}${cnt}</div>` : ''}
+          ${cash}
+          ${done ? `<div class="sd-by">✓ ${esc(who(done))} · ${fmtTime(done.done_at)}</div>` : ''}
+        </div>
+        ${linkOk ? `<button type="button" class="sd-go" data-go="${esc(t.key)}">${done ? 'ကြည့်' : 'လုပ်ရန်'} <span aria-hidden="true">→</span></button>`
+          : (!done && t.kind !== 'cash') ? `<button type="button" class="sd-go sd-ok-btn${ph === 'close' && i === items.length - 1 ? ' sd-last' : ''}" data-ok="${esc(t.key)}">${ph === 'close' && i === items.length - 1 ? '🔒 ပြီးပြီ' : 'ပြီးပြီ ✓'}</button>` : ''}
+      </li>`;
+    };
+
+    const doneCard = allDone(ph) ? (ph === 'open'
+      ? `<div class="sd-fin sd-fin-open"><div class="sd-fin-e">🌅</div><div><b>ဒီနေ့ ဆိုင်ဖွင့်ဖို့ အဆင်သင့်ဖြစ်ပါပြီ!</b><span>ရောင်းအားကောင်းပါစေ 🙏 · ဆိုင်ပိတ်ရင် (${esc(cfg.shop_close)} နောက်) ဆိုင်ပိတ် Checklist</span></div><button type="button" class="sd-fin-b" data-ph="close">🌙 ဆိုင်ပိတ်ချိန် →</button></div>`
+      : `<div class="sd-fin sd-fin-close"><div class="sd-fin-e">🌙</div><div><b>ဒီနေ့ ပင်ပန်းသွားပါပြီ</b><span>ဆိုင်ပိတ်ပြီးပါပြီ — အနားယူပါ · မနက်ဖြန် ပြန်တွေ့မယ် ✨</span></div></div>`) : '';
+
+    panel.innerHTML = `
+      <div class="sd-wrap ph-${ph}">
+        <div class="sd-head">
+          <div class="sd-date"><span>${esc(greet)}</span><b>${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} · ${MM_DAY[d.getDay()]}နေ့</b></div>
+          ${isOwner() ? '<button type="button" class="sd-edit-btn" id="sd-edit-open">✏️ စာရင်းပြင်</button>' : ''}
+        </div>
+        ${dbOK ? '' : '<div class="sd-warn">⚠️ <b>SHOP-DAY.sql</b> မ Run ရသေးပါ — ✓ တွေကို ဒီစက်ထဲမှာသာ မှတ်ထားပါမည် (Staff အချင်းချင်း မမြင်ရ)</div>'}
+        <div class="sd-seg">${seg('open')}${seg('close')}</div>
+        <div class="sd-prog">
+          <svg class="sd-ring" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="34" class="sd-ring-bg"/><circle cx="40" cy="40" r="34" class="sd-ring-fg" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct / 100)}"/></svg>
+          <div class="sd-ring-t"><b>${pct}<small>%</small></b></div>
+          <div class="sd-prog-tx">
+            <b>${ph === 'open' ? '🌅 ဆိုင်ဖွင့်ချိန် စစ်ရန်' : '🌙 ဆိုင်ပိတ်ချိန် စစ်ရန်'}</b>
+            <span>${allDone(ph) ? 'အားလုံး ပြီးပါပြီ 🎉' : `${n} / ${tot} ပြီး · ကျန် <b>${tot - n}</b> ခု`}</span>
+            <span class="sd-time">${ph === 'open' ? `🏪 ဆိုင်ဖွင့် ${esc(cfg.shop_open)} · ⏰ ${esc(time)} လောက် စစ်` : `🏪 ဆိုင်ပိတ် ${esc(cfg.shop_close)} · ⏰ ${esc(time)} မတိုင်ခင် (စောလည်း ရ)`}</span>
+          </div>
+        </div>
+        ${salesHtml}
+        ${doneCard}
+        <ol class="sd-list">${items.map(itemHtml).join('') || '<p class="hint">စာရင်း မရှိသေးပါ — ✏️ စာရင်းပြင် မှာ ထည့်ပါ</p>'}</ol>
+        ${isOwner() ? sugHtml(ph) : ''}
+        <p class="sd-foot">✓ တွေကို Staff အားလုံး မြင်ရပါမည် · ညသန်းခေါင်ကျော်ရင် စာရင်းအသစ် ပြန်စ</p>
+      </div>`;
+
+    panel.querySelectorAll('.sd-seg-btn, .sd-fin-b').forEach(b => b.addEventListener('click', () => { phase = b.dataset.ph; buzz(6); render(); window.scrollTo({ top:0, behavior:'smooth' }); }));
+    panel.querySelectorAll('.sd-chk').forEach(b => b.addEventListener('click', async () => {
+      const t = list(ph).find(x => x.key === b.dataset.key); if(!t) return;
+      const on = !checks[ph][t.key];
+      if(on && t.kind === 'cash'){ panel.querySelector(`[data-cash="${CSS.escape(t.key)}"]`)?.focus(); showToast?.('💵 ရေတွက်ရ ငွေ ထည့်ပြီး "သိမ်း ✓" နှိပ်ပါ'); return; }
+      if(!on && !await adminConfirm(`"${t.title}" ကို ✓ ပြန်ဖြုတ်မလား?`)) return;
+      buzz(on ? 14 : 6);
+      const li = b.closest('.sd-item'); if(on && li){ li.classList.add('pop'); }
+      await setCheck(ph, t.key, on);
+      setTimeout(render, on ? 260 : 0);
+    }));
+    panel.querySelectorAll('.sd-go').forEach(b => b.addEventListener('click', () => go(ph, b.dataset.go)));
+    panel.querySelectorAll('.sd-cash-save').forEach(b => b.addEventListener('click', async () => {
+      const inp = panel.querySelector(`[data-cash="${CSS.escape(b.dataset.cashsave)}"]`);
+      const v = inp && inp.value !== '' ? Math.max(0, Number(inp.value) || 0) : null;
+      if(v == null){ inp?.focus(); showToast?.('ရေတွက်ရ ငွေ ထည့်ပါ'); return; }
+      buzz(14);
+      await setCheck(ph, b.dataset.cashsave, true, v);
+      try{ lsSet('float_' + today(), v); }catch(e){}
+      render();
+    }));
+    panel.querySelectorAll('[data-cash]').forEach(i => i.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); panel.querySelector(`[data-cashsave="${CSS.escape(i.dataset.cash)}"]`)?.click(); } }));
+    $('sd-edit-open')?.addEventListener('click', openEditor);
+    panel.querySelectorAll('[data-ok]').forEach(b => b.addEventListener('click', async () => {
+      const li = b.closest('.sd-item'); if(li) li.classList.add('pop');
+      buzz(14); await setCheck(ph, b.dataset.ok, true); setTimeout(render, 260);
+    }));
+    panel.querySelectorAll('[data-sug]').forEach(b => b.addEventListener('click', async () => {
+      const sg = (SUGGEST[ph] || []).find(x => x.key === b.dataset.sug); if(!sg || list(ph).some(x => x.key === sg.key)) return;
+      buzz(10);
+      cfg[ph] = list(ph).concat([JSON.parse(JSON.stringify(sg))]);
+      const det = panel.querySelector('.sd-sug'); const wasOpen = det && det.open;
+      await saveCfg(true);
+      render(); syncChip();
+      const d2 = panel.querySelector('.sd-sug'); if(d2 && wasOpen) d2.open = true;
+      showToast?.(`➕ "${sg.title}" ထည့်ပြီးပါပြီ`);
+    }));
+    // ရောင်းရငွေ Count-up
+    const big = panel.querySelector('.sd-sc-big b[data-count]');
+    if(big && !reduce.matches){ const to = Number(big.dataset.count) || 0, t0 = performance.now(); const step = now => { const p = Math.min(1, (now - t0) / 700), e = 1 - Math.pow(1 - p, 3); big.textContent = Math.round(to * e).toLocaleString(); if(p < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
+  }
+
+  function sugHtml(ph){
+    const have = new Set(list(ph).map(t => t.key));
+    const arr = (SUGGEST[ph] || []).filter(t => !have.has(t.key));
+    if(!arr.length) return '';
+    return `<details class="sd-sug"><summary><span>💡 ထပ်ထည့်လို့ရတဲ့ Task</span><b>${arr.length}</b></summary>
+      <div class="sd-sug-list">${arr.map(t => `<div class="sd-sug-row"><span class="sd-sug-ico">${esc(t.icon)}</span><div class="sd-sug-tx"><b>${esc(t.title)}</b><span>${esc(t.desc || '')}${t.target && t.target !== 'none' ? `${t.desc ? ' · ' : ''}🔗 ${esc((T[t.target] || {}).label || '')}` : ''}</span></div><button type="button" class="sd-sug-add" data-sug="${esc(t.key)}">＋ ထည့်</button></div>`).join('')}</div>
+      <p class="sd-sug-note">ထည့်ပြီးရင် ✏️ စာရင်းပြင် မှာ အစဉ်ရွှေ့/ဖျက်လို့ရ</p></details>`;
+  }
+  async function saveCfg(quiet){
+    lsSet('cfg', cfg);
+    try{ const r = await sb.from('shop_checklist_config').upsert({ id:1, items:cfg, updated_at:new Date().toISOString() }, { onConflict:'id' }); if(r && r.error) throw r.error; return true; }
+    catch(e){ if(!quiet) showToast?.('⚠️ SHOP-DAY.sql မ Run ရသေး — ဒီစက်ထဲမှာသာ သိမ်းထားပါမည်'); return false; }
+  }
+
+  // ---------- "လုပ်ရန် →" — Tab ဖွင့် + အောက်ခြေမှာ "ပြီးပြီ" Bar ----------
+  let ret = null;
+  function go(ph, key){
+    const t = list(ph).find(x => x.key === key); if(!t) return;
+    const tg = T[t.target]; if(!tg || !tg.tab) return;
+    const b = tabBtn(tg.tab); if(!b) return;
+    buzz(8);
+    b.click(); window.scrollTo({ top:0, behavior:'auto' });
+    try{ tg.after?.(); }catch(e){}
+    showReturn(ph, t);
+  }
+  function showReturn(ph, t){
+    hideReturn();
+    ret = document.createElement('div'); ret.id = 'sd-return';
+    const done = !!checks[ph][t.key];
+    ret.innerHTML = `<button type="button" class="sd-r-back" aria-label="Checklist ကို ပြန်သွား">‹</button>
+      <div class="sd-r-tx"><span>${ph === 'open' ? '🌅 ဆိုင်ဖွင့်' : '🌙 ဆိုင်ပိတ်'} · ${doneN(ph)}/${visible(ph).length}</span><b>${esc(t.icon || '')} ${esc(t.title)}</b></div>
+      ${done ? '<button type="button" class="sd-r-done is-done">✓ ပြီးပြီ</button>' : '<button type="button" class="sd-r-done">✓ ပြီးပြီ</button>'}`;
+    document.body.appendChild(ret);
+    requestAnimationFrame(() => ret && ret.classList.add('in'));
+    ret.querySelector('.sd-r-back').onclick = () => { phase = ph; openPanel(); };
+    ret.querySelector('.sd-r-done').onclick = async () => {
+      if(t.kind === 'cash'){ phase = ph; openPanel(); return; }
+      buzz(14);
+      if(!checks[ph][t.key]) await setCheck(ph, t.key, true);
+      phase = ph; openPanel();
+    };
+  }
+  function hideReturn(){ if(ret){ ret.remove(); ret = null; } }
+  // တခြား Tab သွားရင် (Checklist ကနေ မဟုတ်ဘဲ) Bar ကို ဆက်ထား — Checklist Tab ပြန်ရောက်ရင်သာ ဖျောက်
+
+  // ---------- Header Chip / Badge ----------
+  function syncChip(){
+    const ph = allDone('open') ? 'close' : 'open';
+    const a = visible(ph).length, b = doneN(ph);
+    const fin = allDone('open') && allDone('close');
+    chip.querySelector('.sd-chip-ico').textContent = fin ? '😴' : ph === 'open' ? '🌅' : '🌙';
+    chip.querySelector('.sd-chip-n').textContent = fin ? 'ပိတ်ပြီး' : `${b}/${a}`;
+    chip.classList.toggle('ok', fin); chip.dataset.left = fin ? '' : String(a - b);
+    chip.style.setProperty('--p', a ? b / a : 0);
+    const badge = $('shopday-badge');
+    const left = fin ? 0 : a - b;
+    if(badge){ badge.textContent = left > 9 ? '9+' : left || ''; badge.style.display = left ? 'flex' : 'none'; }
+    const hide = role() === 'delivery';
+    btn.style.display = hide ? 'none' : ''; chip.style.display = hide ? 'none' : '';
+  }
+
+  // ---------- 🎉 အားလုံးပြီး Animation ----------
+  function celebrate(ph){
+    const open = ph === 'open';
+    const box = document.createElement('div'); box.className = 'sd-cele ' + (open ? 'c-open' : 'c-close');
+    const s = sales || { total:0, shop:0, online:0, items:0 };
+    box.innerHTML = `<div class="sd-cele-card" role="dialog" aria-modal="true">
+        <div class="sd-cele-sky">${open ? '<div class="sd-sun"></div><div class="sd-rays"></div>' : '<div class="sd-moon"></div>' + Array.from({ length:14 }, (_, i) => `<i class="sd-star" style="--x:${(i * 37) % 100}%;--y:${(i * 53) % 70}%;--d:${(i % 5) * .3}s"></i>`).join('')}<div class="sd-shop">🏪</div></div>
+        <h3>${open ? 'ဒီနေ့ ဆိုင်ဖွင့်ဖို့<br>အဆင်သင့်ဖြစ်ပါပြီ!' : 'ဒီနေ့ ပင်ပန်းသွားပါပြီ'}</h3>
+        <p>${open ? 'အားလုံး စစ်ပြီးပါပြီ ✓ · ဒီနေ့ ရောင်းအားကောင်းပါစေ 🙏' : 'ဆိုင်ပိတ် Checklist အားလုံး ပြီးပါပြီ · ကောင်းကောင်း အနားယူပါ 🌙'}</p>
+        ${open ? '' : `<div class="sd-cele-sum"><div><span>ဒီနေ့ ရောင်းရငွေ</span><b>${s.total.toLocaleString()} <small>ကျပ်</small></b></div><div><span>ဆိုင်ထဲ / Online</span><b>${s.shop} / ${s.online}</b></div></div>`}
+        <button type="button" class="sd-cele-ok">${open ? 'ဆိုင်ဖွင့်မယ် 🚀' : 'ဆိုင်ပိတ်မယ် 👋'}</button>
+      </div>`;
+    document.body.appendChild(box);
+    if(open) confetti(box);
+    requestAnimationFrame(() => box.classList.add('in'));
+    try{ window.playNotificationSound?.(); }catch(e){}
+    buzz([20, 40, 20]);
+    const close = () => { box.classList.remove('in'); setTimeout(() => box.remove(), 320); if(open){ phase = 'open'; render(); } window.scrollTo({ top:0, behavior: reduce.matches ? 'auto' : 'smooth' }); };
+    box.querySelector('.sd-cele-ok').onclick = close;
+    box.addEventListener('click', e => { if(e.target === box) close(); });
+  }
+  function confetti(host){
+    if(reduce.matches) return;
+    const cols = ['#D6FF3F', '#C13B1F', '#E9E4D8', '#ffb347', '#7fd1a8'];
+    const wrap = document.createElement('div'); wrap.className = 'sd-confetti';
+    for(let i = 0; i < 44; i++){
+      const p = document.createElement('i');
+      p.style.cssText = `--x:${Math.random() * 100}%;--r:${Math.random() * 720 - 360}deg;--dx:${Math.random() * 120 - 60}px;--t:${1.6 + Math.random() * 1.4}s;--dl:${Math.random() * .4}s;background:${cols[i % cols.length]};width:${6 + Math.random() * 6}px;height:${8 + Math.random() * 8}px;`;
+      wrap.appendChild(p);
+    }
+    host.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 3600);
+  }
+
+  // ---------- ✏️ စာရင်းပြင် (Owner) ----------
+  function openEditor(){
+    if(!isOwner()) return;
+    editing = JSON.parse(JSON.stringify(cfg));
+    let eph = phase || 'open';
+    const box = document.createElement('div'); box.className = 'sd-ed-dim';
+    box.innerHTML = '<div class="sd-ed" role="dialog" aria-modal="true" aria-label="Checklist စာရင်းပြင်"></div>';
+    document.body.appendChild(box);
+    const ed = box.querySelector('.sd-ed');
+    const opts = sel => Object.entries(T).map(([k, v]) => `<option value="${k}"${k === (sel || 'none') ? ' selected' : ''}>${esc(v.label)}</option>`).join('');
+    const draw = () => {
+      const arr = editing[eph];
+      ed.innerHTML = `
+        <div class="sd-ed-h"><b>✏️ Checklist စာရင်းပြင်</b><button type="button" class="sd-ed-x" aria-label="ပိတ်">✕</button></div>
+        <div class="sd-seg sd-ed-seg"><button type="button" class="sd-seg-btn${eph === 'open' ? ' on' : ''}" data-eph="open">🌅 ဆိုင်ဖွင့်</button><button type="button" class="sd-seg-btn${eph === 'close' ? ' on' : ''}" data-eph="close">🌙 ဆိုင်ပိတ်</button></div>
+        <label class="sd-ed-time">🏪 ${eph === 'open' ? 'ဆိုင်ဖွင့်ချိန်' : 'ဆိုင်ပိတ်ချိန်'} <input type="time" id="sd-ed-shop" value="${esc(eph === 'open' ? editing.shop_open : editing.shop_close)}"></label>
+        <label class="sd-ed-time">⏰ Checklist ${eph === 'open' ? 'စစ်ချိန်' : 'အပြီးစစ်ရမည့်ချိန်'} <input type="time" id="sd-ed-time" value="${esc(eph === 'open' ? editing.open_time : editing.close_time)}"></label>
+        <ol class="sd-ed-list">${arr.map((t, i) => `
+          <li class="sd-ed-row" data-i="${i}">
+            <div class="sd-ed-r1"><input class="sd-ed-ico" value="${esc(t.icon || '')}" maxlength="4" aria-label="Icon"><input class="sd-ed-title" value="${esc(t.title)}" placeholder="လုပ်ရမည့်အရာ" aria-label="ခေါင်းစဉ်"></div>
+            <input class="sd-ed-desc" value="${esc(t.desc || '')}" placeholder="အသေးစိတ် (မထည့်လည်းရ)" aria-label="အသေးစိတ်">
+            <div class="sd-ed-r2">${t.kind === 'cash' ? '<span class="sd-ed-cash">💵 အမ်းငွေ ရေတွက် အကွက်</span>' : `<select class="sd-ed-tg" aria-label="Link ချိတ်မည့်နေရာ">${opts(t.target)}</select>`}
+              <button type="button" class="sd-ed-mv" data-mv="-1" ${i === 0 ? 'disabled' : ''} aria-label="အပေါ်တင်">↑</button><button type="button" class="sd-ed-mv" data-mv="1" ${i === arr.length - 1 ? 'disabled' : ''} aria-label="အောက်ချ">↓</button><button type="button" class="sd-ed-del" aria-label="ဖျက်">🗑</button></div>
+          </li>`).join('')}</ol>
+        <button type="button" class="sd-ed-add">＋ လုပ်ရမည့်အရာ အသစ်ထည့်</button>
+        <div class="sd-ed-f"><button type="button" class="secondary sd-ed-reset">မူလအတိုင်း</button><button type="button" class="acid sd-ed-save">💾 သိမ်းမည်</button></div>`;
+      const sync = () => {
+        ed.querySelectorAll('.sd-ed-row').forEach(r => {
+          const t = editing[eph][+r.dataset.i]; if(!t) return;
+          t.icon = r.querySelector('.sd-ed-ico').value.trim(); t.title = r.querySelector('.sd-ed-title').value.trim(); t.desc = r.querySelector('.sd-ed-desc').value.trim();
+          const s = r.querySelector('.sd-ed-tg'); if(s) t.target = s.value;
+        });
+        const tm = $('sd-ed-time'); if(tm && tm.value) editing[eph === 'open' ? 'open_time' : 'close_time'] = tm.value;
+        const ts = $('sd-ed-shop'); if(ts && ts.value) editing[eph === 'open' ? 'shop_open' : 'shop_close'] = ts.value;
+      };
+      ed.querySelector('.sd-ed-x').onclick = () => box.remove();
+      ed.querySelectorAll('[data-eph]').forEach(b => b.onclick = () => { sync(); eph = b.dataset.eph; draw(); });
+      ed.querySelectorAll('.sd-ed-mv').forEach(b => b.onclick = () => { sync(); const i = +b.closest('.sd-ed-row').dataset.i, j = i + (+b.dataset.mv); const a = editing[eph]; [a[i], a[j]] = [a[j], a[i]]; draw(); });
+      ed.querySelectorAll('.sd-ed-del').forEach(b => b.onclick = () => { sync(); editing[eph].splice(+b.closest('.sd-ed-row').dataset.i, 1); draw(); });
+      ed.querySelector('.sd-ed-add').onclick = () => { sync(); editing[eph].push({ key:'c' + Date.now().toString(36), icon:'📌', title:'', desc:'', target:'none' }); draw(); const rs = ed.querySelectorAll('.sd-ed-title'); rs[rs.length - 1]?.focus(); };
+      ed.querySelector('.sd-ed-reset').onclick = async () => { if(!await adminConfirm('Checklist ကို မူလ စာရင်းအတိုင်း ပြန်ထားမလား?')) return; editing = JSON.parse(JSON.stringify(DEFAULT)); draw(); };
+      ed.querySelector('.sd-ed-save').onclick = async () => {
+        sync();
+        ['open', 'close'].forEach(p => { editing[p] = editing[p].filter(t => t.title); });
+        cfg = editing; lsSet('cfg', cfg);
+        let ok = true;
+        try{ const r = await sb.from('shop_checklist_config').upsert({ id:1, items:cfg, updated_at:new Date().toISOString() }, { onConflict:'id' }); if(r && r.error) throw r.error; }
+        catch(e){ ok = false; }
+        showToast?.(ok ? '✅ Checklist စာရင်း သိမ်းပြီးပါပြီ' : '⚠️ SHOP-DAY.sql မ Run ရသေး — ဒီစက်ထဲမှာသာ သိမ်းထားပါမည်');
+        try{ logActivity?.('checklist_edited', 'ဆိုင်ဖွင့်/ပိတ် Checklist စာရင်း ပြင်ဆင်'); }catch(e){}
+        box.remove(); phase = eph; render(); syncChip();
+      };
+    };
+    draw();
+    box.addEventListener('click', e => { if(e.target === box) box.remove(); });
+  }
+
+  // ---------- 💵 ငွေရှင်းချက်နဲ့ ချိတ် — မနက် ရေတွက်ထားတဲ့ အမ်းငွေကို Opening မှာ ဖြည့် · စာရင်းပိတ်ရင် ✓ ----------
+  if(typeof renderCashCloseArea === 'function'){
+    const _r = renderCashCloseArea;
+    renderCashCloseArea = function(dateStr){
+      const out = _r.apply(this, arguments);
+      try{
+        const f = $('cc-float');
+        const t = list('open').find(x => x.kind === 'cash');
+        const v = dateStr === today() && t && checks.open[t.key] && checks.open[t.key].value != null ? Number(checks.open[t.key].value) : null;
+        if(f && !f.value && v != null){ f.value = v; f.dispatchEvent(new Event('input', { bubbles:true })); f.closest('div')?.classList.add('sd-filled'); }
+      }catch(e){}
+      return out;
+    };
+  }
+  if(typeof saveCashClosing === 'function'){
+    const _s = saveCashClosing;
+    saveCashClosing = async function(){
+      const dateStr = (typeof cashCloseState !== 'undefined' && cashCloseState) ? cashCloseState.dateStr : '';
+      const out = await _s.apply(this, arguments);
+      try{
+        if(dateStr === today()){
+          const { data } = await sb.from('cash_closings').select('id').eq('closing_date', dateStr).limit(1);
+          const t = list('close').find(x => x.target === 'cash-close');
+          if((data || []).length && t && !checks.close[t.key]){ cashClosedToday = true; await setCheck('close', t.key, true); if(ret){ const b = ret.querySelector('.sd-r-done'); if(b){ b.classList.add('is-done'); } } }
+        }
+      }catch(e){}
+      return out;
+    };
+  }
+
+  // ---------- ⏰ App ဖွင့်ရင် သတိပေး (တစ်နေ့ တစ်ခါ) ----------
+  function maybePrompt(){
+    if(role() === 'delivery' || document.querySelector('.sd-cele, .sd-ask')) return;
+    const d = today(), now = new Date(), hm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const minus30 = t => { const [h, m] = String(t || '20:00').split(':').map(Number); const x = h * 60 + m - 30; return `${String(Math.floor(x / 60)).padStart(2,'0')}:${String(x % 60).padStart(2,'0')}`; };
+    let ph = null;
+    if(!allDone('open') && !lsGet('ask_' + d + '_open', false) && !Object.keys(checks.close).length) ph = 'open';
+    else if(allDone('open') && !allDone('close') && hm >= (cfg.shop_close || minus30(cfg.close_time)) && !lsGet('ask_' + d + '_close', false)) ph = 'close';
+    if(!ph || panel.classList.contains('active')) return;
+    lsSet('ask_' + d + '_' + ph, true);
+    const a = visible(ph).length, b = doneN(ph);
+    const ask = document.createElement('div'); ask.className = 'sd-ask';
+    ask.innerHTML = `<div class="sd-ask-e">${ph === 'open' ? '🌅' : '🌙'}</div><div class="sd-ask-tx"><b>${ph === 'open' ? 'ဆိုင်ဖွင့် Checklist စမလား?' : 'ဆိုင်ပိတ်ချိန် ရောက်ပါပြီ 🌙'}</b><span>${ph === 'open' ? 'ငွေ · Chat · Order · Delivery · Stock' : 'ရောင်းစာရင်း · ငွေရှင်း · Order'} — ${b}/${a} ပြီး</span></div><button type="button" class="sd-ask-go">စမည်</button><button type="button" class="sd-ask-x" aria-label="နောက်မှ">✕</button>`;
+    document.body.appendChild(ask);
+    requestAnimationFrame(() => ask.classList.add('in'));
+    const bye = () => { ask.classList.remove('in'); setTimeout(() => ask.remove(), 300); };
+    ask.querySelector('.sd-ask-go').onclick = () => { bye(); openPanel(ph); };
+    ask.querySelector('.sd-ask-x').onclick = bye;
+    setTimeout(bye, 15000);
+  }
+
+  // Dashboard ပေါ်လာရင် (Login ပြီး) Load + သတိပေး · ၂ မိနစ်တစ်ခါ ဂဏန်း Refresh · ရက်ပြောင်းရင် စာရင်းအသစ်
+  let started = false;
+  const start = () => {
+    const dash = $('dashboard');
+    if(started || !dash || getComputedStyle(dash).display === 'none') return;
+    started = true;
+    syncChip();
+    setTimeout(() => load(true).then(() => setTimeout(maybePrompt, 1200)), 900);
+  };
+  new MutationObserver(start).observe($('dashboard'), { attributes:true, attributeFilter:['style', 'class'] });
+  start();
+  setInterval(() => {
+    if(!started || document.hidden) return;
+    if(loadedDay && loadedDay !== today()){ phase = null; load(true); return; }
+    if(panel.classList.contains('active')) load(false); else loadChecks().then(syncChip);
+  }, 120000);
+  document.addEventListener('visibilitychange', () => { if(!document.hidden && started){ if(loadedDay !== today()) phase = null; load(false).then(() => setTimeout(maybePrompt, 800)); } });
+  $('refresh-btn')?.addEventListener('click', () => { if(panel.classList.contains('active')) load(true); });
+  // Role သတ်မှတ်ပြီးချိန် (Delivery ဆို ဖျောက်)
+  new MutationObserver(() => syncChip()).observe($('admin-email-display') || document.body, { childList:true, characterData:true, subtree:true });
 })();
 </script>
 </body>
