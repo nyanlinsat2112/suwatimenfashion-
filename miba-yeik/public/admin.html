@@ -1,0 +1,1272 @@
+<!doctype html>
+<html lang="my">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Miba Yeik Admin</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#1d4fa3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+Myanmar:wght@400;500;700&display=swap">
+<style>
+
+/* Layout: workshop floor app — blue shop bar, job tickets with plate tags, bottom tab nav, slide-up sheets; money in Ks with lakh (သိန်း) scale on charts */
+:root{
+  --bg:#eceff1; --surface:#ffffff; --sunk:#f5f7f8; --ink:#1b232b; --muted:#5b6772; --line:#d3d9de;
+  --accent:#f0a500; --accent-ink:#1b232b; --steel:#2e4a5f;
+  --ok:#2c8a55; --warn:#b86e00; --bad:#bf3a2b; --info:#2f6ea8;
+  --plate-bg:#ffffff; --plate-ink:#111;
+  --hdr-bg:#1d4fa3; --hdr-name:#e3121b; --hdr-stroke:#ffffff;
+  --bar:#2f6ea8; --bar2:#f0a500; --grid:#dde3e8;
+  --f-body:"Noto Sans Myanmar","Padauk","Myanmar Text",system-ui,sans-serif;
+  --f-num:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11161b; --surface:#1a2129; --sunk:#151b21; --ink:#e5e9ed; --muted:#93a0ab; --line:#2b3540;
+  --accent:#f5b62a; --accent-ink:#11161b; --steel:#8fb4cf;
+  --ok:#4cbf7f; --warn:#e9a03b; --bad:#ef6a5a; --info:#6aa7de;
+  --plate-bg:#e9ecef; --plate-ink:#111; --bar:#6aa7de; --bar2:#f5b62a; --grid:#26303a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11161b; --surface:#1a2129; --sunk:#151b21; --ink:#e5e9ed; --muted:#93a0ab; --line:#2b3540;
+  --accent:#f5b62a; --accent-ink:#11161b; --steel:#8fb4cf;
+  --ok:#4cbf7f; --warn:#e9a03b; --bad:#ef6a5a; --info:#6aa7de;
+  --plate-bg:#e9ecef; --plate-ink:#111; --bar:#6aa7de; --bar2:#f5b62a; --grid:#26303a; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.6;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--hdr-bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.muted{color:var(--muted)}
+
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--hdr-bg);color:#fff;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:8px;
+  display:flex;align-items:center;gap:12px;border-bottom:4px solid var(--accent)}
+.shop{display:inline-grid;justify-items:center;line-height:1.05;font-weight:700;color:var(--hdr-name);-webkit-text-stroke:3px var(--hdr-stroke);paint-order:stroke fill}
+.shop .l1{font-size:21px;line-height:1.45}
+.shop .l2{font-family:var(--f-num);font-size:19px;letter-spacing:.04em;text-transform:uppercase}
+.hright{margin-left:auto;display:grid;justify-items:end;gap:3px;min-width:0}
+.who{border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.12);color:#fff;border-radius:99px;padding:1px 10px;font-size:12px;white-space:nowrap;max-width:46vw;overflow:hidden;text-overflow:ellipsis}
+.hright small{font-size:11px;color:#fff;opacity:.85;display:flex;gap:6px;align-items:center}
+.demo{font-family:var(--f-num);font-weight:600;font-size:11px;letter-spacing:.08em;background:var(--accent);color:#1b232b;padding:0 6px;border-radius:3px}
+
+main{max-width:820px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px;display:grid;gap:18px}
+h2{font-size:15px;margin:0;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h2 .count{font-family:var(--f-num);font-size:15px;color:var(--muted);font-weight:600}
+h3{font-size:14px;margin:0}
+.sec{display:grid;gap:10px;min-width:0}
+.hint{font-size:12px;color:var(--muted);font-weight:400}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.stat b{display:block;font-family:var(--f-num);font-size:24px;line-height:1.15;font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat span{font-size:12px;color:var(--muted)}
+.stat em{font-style:normal;font-size:12px;color:var(--muted);font-family:var(--f-num)}
+.stat.money{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.stat.money span,.stat.money em{color:var(--accent-ink);opacity:.75}
+.stat.alert b{color:var(--bad)} .stat.good b{color:var(--ok)}
+
+.plate{display:inline-flex;align-items:center;gap:6px;background:var(--plate-bg);color:var(--plate-ink);border:2px solid #222;border-radius:4px;
+  padding:0 7px;font-family:var(--f-num);font-weight:700;font-size:18px;letter-spacing:.04em;line-height:1.5;white-space:nowrap}
+.plate i{font-style:normal;font-size:11px;font-weight:600;background:#222;color:#fff;padding:0 4px;border-radius:2px;letter-spacing:.06em}
+.plate.sm{font-size:15px;border-width:1.5px;padding:0 5px}
+
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px;display:grid;grid-template-columns:1fr auto;gap:4px 10px;text-align:left;width:100%;border-left:5px solid var(--st,var(--line))}
+.ticket:hover{border-color:var(--muted);border-left-color:var(--st)}
+.ticket .meta{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 12px;color:var(--muted);font-size:13px}
+.ticket .amt{font-family:var(--f-num);font-size:18px;font-weight:600;text-align:right}
+.pill{display:inline-block;font-size:12px;font-weight:500;padding:1px 8px;border-radius:99px;background:color-mix(in srgb,var(--st) 16%,transparent);color:var(--st);white-space:nowrap}
+.s-waiting{--st:var(--info)} .s-working{--st:var(--warn)} .s-done{--st:var(--ok)} .s-paid{--st:var(--muted)} .s-bad{--st:var(--bad)} .s-ok{--st:var(--ok)} .s-warn{--st:var(--warn)}
+
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:13px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.list{display:grid;gap:8px}
+.row{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;align-items:center;gap:10px;text-align:left;width:100%}
+button.row:hover{border-color:var(--muted)}
+.row .grow{flex:1;min-width:0}
+.row .sub{color:var(--muted);font-size:12px}
+.row .right{text-align:right;white-space:nowrap}
+.bar{height:5px;background:var(--sunk);border-radius:3px;overflow:hidden;margin-top:4px}
+.bar>span{display:block;height:100%;background:var(--ok)}
+.bar.low>span{background:var(--warn)} .bar.out>span{background:var(--bad)}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--ok)}
+.dot.low{background:var(--warn)} .dot.out{background:var(--bad)}
+.stepper{display:flex;align-items:center;border:1px solid var(--line);border-radius:5px;flex:none;background:var(--surface)}
+.stepper button{border:0;background:none;width:30px;height:30px;font-size:17px}
+.stepper b{min-width:28px;text-align:center;font-family:var(--f-num);font-size:17px}
+.empty{color:var(--muted);text-align:center;padding:18px;border:1px dashed var(--line);border-radius:6px;font-size:13px}
+
+nav{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:flex;
+  padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+nav button{flex:1;border:0;background:none;padding:8px 2px 10px;font-size:12px;color:var(--muted);display:grid;justify-items:center;gap:2px;border-top:3px solid transparent;min-width:0}
+nav button svg{width:22px;height:22px}
+nav button[aria-current="page"]{color:var(--ink);border-top-color:var(--accent);font-weight:700}
+.fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:6;background:var(--accent);color:var(--accent-ink);
+  border:0;border-radius:28px;padding:12px 18px;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.25);display:flex;gap:6px;align-items:center}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:9px 14px;font-weight:500}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.btn.dark{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.block{width:100%;padding:13px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.link{border:0;background:none;color:var(--bad);font-size:13px;padding:4px}
+.tlink{border:0;background:none;color:var(--info);font-size:13px;padding:0;text-decoration:underline}
+
+.sheet{position:fixed;inset:0;z-index:20;background:rgba(10,14,18,.55);display:flex;align-items:flex-end;justify-content:center}
+.panel{background:var(--bg);width:100%;max-width:660px;max-height:92%;overflow-y:auto;border-radius:14px 14px 0 0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px calc(20px + env(safe-area-inset-bottom,0px));display:grid;gap:14px}
+@media (prefers-reduced-motion:no-preference){.panel{animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
+.panel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.panel-head .x{margin-left:auto;border:0;background:var(--surface);border-radius:50%;width:34px;height:34px;font-size:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;display:grid;gap:10px;min-width:0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;min-width:0}
+.flow{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.flow button{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 4px;font-size:13px}
+.flow button[aria-pressed="true"]{background:var(--st);border-color:var(--st);color:#fff;font-weight:700}
+.line{display:flex;gap:8px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.line .grow{flex:1;min-width:0}
+.tag{font-size:11px;padding:0 6px;border-radius:3px;background:var(--sunk);color:var(--muted);border:1px solid var(--line);white-space:nowrap}
+.addgrid{display:flex;flex-wrap:wrap;gap:6px;max-height:220px;overflow-y:auto}
+.add{border:1px solid var(--line);background:var(--sunk);border-radius:6px;padding:6px 10px;font-size:13px;text-align:left;line-height:1.35}
+.add small{display:block;color:var(--muted);font-family:var(--f-num);font-size:14px}
+.add.fav{border-color:color-mix(in srgb,var(--accent) 60%,var(--line));background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.add:disabled{opacity:.4}
+.sumrow{display:flex;justify-content:space-between;gap:10px;font-size:13px}
+.sumrow span:last-child{font-family:var(--f-num);font-size:16px}
+.total{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;gap:10px}
+.total b{font-family:var(--f-num);font-size:30px}
+.change{display:flex;justify-content:space-between;align-items:baseline;padding:8px 10px;border-radius:6px;background:var(--sunk);font-size:13px}
+.change b{font-family:var(--f-num);font-size:22px}
+label.f{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+label.f input,label.f select,label.f textarea,.search,.inp{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:9px 11px;color:var(--ink);width:100%;min-width:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 10px;font-size:13px}
+.seg button[aria-pressed="true"]{border:2px solid var(--ink);font-weight:700;padding:6px 9px}
+.check{display:flex;gap:8px;align-items:center;font-size:13px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;text-align:left;display:grid;gap:2px}
+.tile:hover{border-color:var(--muted)}
+.tile b{font-size:14px} .tile span{font-size:12px;color:var(--muted);line-height:1.45}
+.lock{font-size:11px;font-family:var(--f-num);letter-spacing:.06em;color:var(--bad);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-left:4px}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{font-weight:500;color:var(--muted);font-size:12px;background:var(--sunk)}
+td.n,th.n{text-align:right;font-family:var(--f-num);font-size:15px;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 8px 4px}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-family:var(--f-num);font-size:19px}
+.hbar{display:grid;grid-template-columns:minmax(80px,32%) 1fr auto;gap:8px;align-items:center;font-size:13px}
+.hbar .tr{height:10px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.hbar .tr span{display:block;height:100%;background:var(--bar)}
+.hbar .v{font-family:var(--f-num);font-size:15px;text-align:right}
+
+.receipt{background:#fffdf7;color:#1b1b1b;border-radius:4px;padding:18px 16px;font-size:13px;display:grid;gap:7px;
+  -webkit-mask:radial-gradient(circle 6px at 50% 0,transparent 98%,#000) 0 0/16px 51% repeat-x,radial-gradient(circle 6px at 50% 100%,transparent 98%,#000) 0 100%/16px 51% repeat-x}
+.receipt .rname{display:grid;justify-items:center;font-weight:700;color:#d0101a;line-height:1.1}
+.receipt .rname .l1{font-size:20px;line-height:1.5}
+.receipt .rname .l2{font-family:var(--f-num);font-size:17px;letter-spacing:.05em;text-transform:uppercase}
+.receipt .c{text-align:center;color:#555;font-size:12px}
+.receipt hr{border:0;border-top:1px dashed #999;margin:2px 0;width:100%}
+.receipt .r{display:flex;justify-content:space-between;gap:10px}
+.receipt .r span:last-child{font-family:var(--f-num);font-size:15px;white-space:nowrap}
+.receipt .big span:last-child{font-size:24px;font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(150px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:6px;font-size:13px;max-width:90vw;text-align:center}
+@media (max-width:440px){.two,.three{grid-template-columns:1fr}.stat b{font-size:21px}}
+
+/* base reset (own site) */
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+/* ---- app additions ---- */
+header{--hdr-bg:var(--brand-bg,#1d4fa3)}
+header .shop{color:var(--brand-fg,#e3121b)}
+body::before{background:var(--brand-bg,#1d4fa3)}
+.topbusy{position:fixed;left:0;right:0;top:0;height:3px;z-index:40;background:linear-gradient(90deg,transparent,var(--accent),transparent);background-size:40% 100%;background-repeat:no-repeat;animation:busy 1s linear infinite}
+@keyframes busy{from{background-position:-40% 0}to{background-position:140% 0}}
+@media (prefers-reduced-motion:reduce){.topbusy{animation:none;background:var(--accent)}}
+.gate{min-height:100vh;display:grid;place-items:center;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px;background:
+  linear-gradient(180deg,var(--steel-bg) 0 210px,var(--bg) 210px)}
+.gcard{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px 20px;display:grid;gap:14px;box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.gbrand{display:flex;align-items:center;gap:10px;color:#fff;justify-content:center;margin-bottom:6px}
+.gbrand .mark{font-family:var(--f-num);font-weight:700;font-size:15px;letter-spacing:.06em;background:#fff;color:#111;border:2px solid #111;border-radius:4px;padding:0 6px;line-height:1.5}
+.gbrand b{font-family:var(--f-num);font-size:30px;letter-spacing:.04em;font-weight:700}
+.gtabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.gtabs button{border:0;background:var(--sunk);padding:9px;font-weight:500;color:var(--muted)}
+.gtabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:700;box-shadow:inset 0 -3px 0 var(--accent)}
+.gmsg{font-size:13px;padding:8px 10px;border-radius:6px;background:var(--sunk)}
+.gmsg.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,var(--surface))}
+.gmsg.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,var(--surface))}
+.acct{display:grid;gap:6px}
+.acct button{display:flex;justify-content:space-between;gap:8px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--sunk);border-radius:8px;padding:9px 12px}
+.acct button small{color:var(--muted);font-size:12px}
+.loading{color:var(--muted);text-align:center;padding:40px 10px}
+.banner{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:8px;background:color-mix(in srgb,var(--accent) 18%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 55%,var(--line));font-size:13px;text-align:left;width:100%}
+.banner b{display:block}
+.banner.bad{background:color-mix(in srgb,var(--bad) 10%,var(--surface));border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+.paybox{display:grid;gap:4px;padding:12px;border-radius:8px;border:1px dashed var(--line);background:var(--sunk)}
+.paybox .big{font-family:var(--f-num);font-size:26px;font-weight:700;letter-spacing:.02em}
+.copyrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.copyrow code{font-size:13px;background:var(--sunk);border:1px solid var(--line);border-radius:5px;padding:4px 8px;overflow-wrap:anywhere;min-width:0}
+.swatch{width:36px;height:36px;border-radius:6px;border:1px solid var(--line);padding:0}
+:root{--steel-bg:#1d4fa3}
+
+@media print{body>*{display:none!important}body>#sheet{display:block!important;position:static;background:none}#sheet .panel{max-height:none;overflow:visible;background:#fff;padding:0}#sheet .panel>*{display:none!important}#sheet .panel>#rcpt{display:grid!important;-webkit-mask:none;mask:none}}
+
+.gname{display:grid;justify-items:center;color:#e3121b;-webkit-text-stroke:4px #fff;paint-order:stroke fill;font-weight:700;line-height:1.05}
+.gname .a{font-size:36px;line-height:1.5}.gname .b{font-family:var(--f-num);font-size:26px;letter-spacing:.05em;text-transform:uppercase}
+
+</style>
+</head>
+<body>
+<div id="busy" class="topbusy" hidden></div>
+<div id="gate" hidden></div>
+<div id="appshell" hidden>
+<header id="hdr">
+  <div class="shop" id="shopname"><span class="l1"></span><span class="l2"></span></div>
+  <div class="hright"><button class="who" data-a="account" id="who"></button><small><span class="demo" id="badge" hidden>DEMO</span><span id="today"></span></small></div>
+</header>
+<main id="view"></main>
+<button class="fab" id="fab" data-a="newjob"><span style="font-size:18px;line-height:1">＋</span> ကားအသစ်ဝင်</button>
+<nav id="nav"></nav>
+</div>
+<div class="sheet" id="sheet" hidden><div class="panel" id="panel"></div></div>
+
+<script src="config.js"></script>
+<script>
+/* =====================================================================
+   မိဘရိပ် Auto Service — Admin
+   Supabase (config.js) နှင့် ချိတ်ပြီး အလုပ်လုပ်သည်။ config မရှိရင် Demo mode။
+   ===================================================================== */
+const CFG=window.GP_CONFIG||{};
+const PRODUCT=(CFG.SHOP_NAME1||'မိဘရိပ်')+' Admin';
+const QS=new URLSearchParams(location.search);
+const DEMO=!CFG.SUPABASE_URL||QS.has('demo');
+const SUPABASE_JS='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ks=n=>Math.round(n||0).toLocaleString('en-US')+' Ks';
+const lakh=n=>{const v=(n||0)/100000,a=Math.abs(v);return (+(a>=100?v.toFixed(0):a>=10?v.toFixed(1):v.toFixed(2))).toString()+' သိန်း'};
+const hm=d=>new Date(d).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+const dmy=d=>new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+const dm=d=>new Date(d).toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+const dayKey=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+const sameDay=(a,b)=>dayKey(a)===dayKey(b);
+const km=n=>n?(+n).toLocaleString('en-US')+' km':'—';
+const plateKey=p=>String(p||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+const daysTo=d=>Math.ceil((new Date(d+'T23:59:59')-Date.now())/864e5);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+const PAYM=['Cash','KBZPay','WavePay','AYA Pay'];
+const OPEN=['waiting','working','done'];
+const ST={waiting:'စောင့်ဆိုင်း',working:'ပြင်နေ',done:'ပြီးပြီ',paid:'ငွေရှင်းပြီး',cancelled:'ပယ်ဖျက်'};
+const ROLES={
+  owner:{n:'Owner',d:'အပြည့်အစုံ — အမြတ်စာရင်း၊ Backup၊ ဝန်ထမ်း၊ ဆိုင်အချက်အလက်'},
+  manager:{n:'Manager',d:'အမြတ်စာရင်း၊ Backup၊ ဝန်ထမ်းမှလွဲ၍ အားလုံး'},
+  staff:{n:'Staff',d:'Job၊ ငွေရှင်း၊ ပစ္စည်း၊ ဖောက်သည်၊ ငွေစာရင်းပိတ်'},
+  mechanic:{n:'မက္ကင်းနစ်',d:'Job ကြည့်၊ ပြင်ဆင်မှု/ပစ္စည်းထည့်၊ အခြေအနေပြောင်း — ငွေမမြင်ရ'}};
+const PERM={owner:'*',manager:['checkout','money','stockEdit','customers','reports','closing','promo','logs','settings'],staff:['checkout','money','stockEdit','customers','closing'],mechanic:[]};
+const EXCAT=['ဆိုင်ခ','လစာ','မီး/ရေ','ပစ္စည်းသယ်ခ','အခြား'];
+
+/* ---------- state ---------- */
+let sb=null,USER=null,SHOPS=[],CUR=null,SHOP=null,ROLE=null,ME=null,isPA=false,MODE='app',BUSY=false,CH=null;
+let S=emptyState();
+function emptyState(){return{shop:{},staff:[],services:[],categories:[],parts:[],customers:[],vehicles:[],jobs:[],promos:[],topups:[],expenses:[],lc:{},due:[],cstats:null,logs:null,closing:null,pa:null}}
+const DRAFT={};
+const can=p=>{const r=PERM[ROLE];return r==='*'||(r||[]).includes(p)};
+const me=()=>S.staff.find(s=>s.id===ME)||{name:USER?.email||'',role:ROLE};
+const staffName=id=>(S.staff.find(s=>s.id===id)||{}).name||'—';
+const cust=id=>S.customers.find(c=>c.id===id)||{name:'Walk-in',phone:'',balance:0};
+const veh=id=>S.vehicles.find(v=>v.id===id);
+const plateOf=j=>j.vehicle_id?(veh(j.vehicle_id)||{}).plate||'—':'WALK-IN';
+const modelOf=j=>j.vehicle_id?(veh(j.vehicle_id)||{}).model||'':'ပစ္စည်းသက်သက်';
+const jl=j=>'J-'+j.no;
+const job=id=>S.jobs.find(j=>j.id===id);
+const part=id=>S.parts.find(p=>p.id===id);
+const catName=id=>(S.categories.find(c=>c.id===id)||{}).name||'အထွေထွေ';
+const stockState=p=>p.stock<=0?'out':p.stock<=p.min?'low':'ok';
+const lowParts=()=>S.parts.filter(p=>p.active&&p.stock<=p.min);
+const paidJobs=()=>S.jobs.filter(j=>j.status==='paid');
+const oilIds=()=>new Set(S.services.filter(s=>s.oil).map(s=>s.id));
+function payTotals(list){const o={};list.forEach(j=>(j.pays||[]).forEach(p=>o[p.m]=(o[p.m]||0)+p.amt));return o}
+
+/* ---------- data layer ---------- */
+function errMsg(e){const m=(e&&(e.message||e.error_description))||String(e);
+  if(/row-level security|permission denied/i.test(m))return 'ဒီလုပ်ဆောင်ချက်အတွက် ခွင့်မရှိပါ';
+  if(/duplicate key/i.test(m))return 'ရှိပြီးသား ဖြစ်နေပါတယ်';
+  if(/Invalid login/i.test(m))return 'Email သို့မဟုတ် Password မှားနေပါတယ်';
+  if(/already registered/i.test(m))return 'ဒီ Email နဲ့ အကောင့် ရှိပြီးသားပါ — Login ဝင်ပါ';
+  if(/at least 6/i.test(m))return 'Password အနည်းဆုံး ၆ လုံး ထည့်ပါ';
+  if(/Email not confirmed/i.test(m))return 'Email ထဲက confirm link ကို အရင်နှိပ်ပါ';
+  if(/invalid format|validate email/i.test(m))return 'Email ပုံစံ မမှန်ပါ';
+  if(/Failed to fetch|NetworkError|Load failed/i.test(m))return 'အင်တာနက် ချိတ်ဆက်မှု မရှိပါ — ပြန်စမ်းပါ';
+  if(/stock_check/i.test(m))return 'Stock မလုံလောက်ပါ';
+  return m}
+async function q(p){const {data,error}=await p;if(error)throw error;return data}
+async function rpc(n,a){const {data,error}=await sb.rpc(n,a);if(error)throw error;return data}
+async function all(table,{cols='*',f=null,order='id'}={}){
+  let out=[],from=0;
+  for(;;){let x=sb.from(table).select(cols);x=f?f(x):x.eq('shop_id',SHOP);
+    const d=await q(x.order(order).range(from,from+999));out=out.concat(d);if(d.length<1000)break;from+=1000}
+  return out}
+function logAct(msg){if(!SHOP)return;sb.from('activity_logs').insert({shop_id:SHOP,by_staff:ME,message:msg}).then(()=>{},()=>{});S.logs=null}
+const JSEL='*,job_lines(*),job_payments(*)';
+function loadStart(){const n=new Date();const a=new Date(n.getFullYear(),0,1),b=new Date(n.getFullYear(),n.getMonth()-1,1);return(a<b?a:b)}
+
+const mapStaff=r=>({id:r.id,name:r.name,role:r.role,phone:r.phone||'',email:r.email||'',user_id:r.user_id,active:r.active!==false});
+const mapSvc=r=>({id:r.id,name:r.name,price:r.price,fav:!!r.fav,oil:!!r.is_oil_change,public:r.public!==false,active:r.active!==false,sort:r.sort||0,description:r.description||''});
+const mapCust=r=>({id:r.id,name:r.name,phone:r.phone||'',balance:r.balance||0,user_id:r.user_id||null});
+const mapVeh=r=>({id:r.id,plate:r.plate,model:r.model||'',custId:r.customer_id,km:r.last_km});
+const mapPromo=r=>({id:r.id,code:r.code,type:r.kind,val:r.value,start:r.starts_at,end:r.ends_at,uses:r.uses||0,active:r.active!==false});
+let COSTS={};
+const mapPart=r=>({id:r.id,name:r.name,category_id:r.category_id,cat:catName(r.category_id),price:r.price,stock:r.stock,min:r.min_stock,fav:!!r.fav,active:r.active!==false,cost:COSTS[r.id]});
+function mapJob(r){return{id:r.id,no:r.job_no,vehicle_id:r.vehicle_id,custId:r.customer_id,km:r.km,note:r.note||'',status:r.status,in:r.created_at,mech:r.mechanic_id||'',
+  paidAt:r.paid_at,sub:r.subtotal,discAmt:r.discount_amt||0,promo:r.promo_code||'',promoAmt:r.promo_amt||0,total:r.total,given:r.cash_given,change:r.change_amt,cashier:r.cashier_id,
+  lines:(r.job_lines||[]).slice().sort((a,b)=>a.id-b.id).map(l=>({id:l.id,type:l.kind,ref:l.service_id||l.part_id,name:l.name,price:l.price,qty:l.qty})),
+  pays:(r.job_payments||[]).map(p=>({m:p.method,amt:p.amount}))}}
+
+async function loadCore(){
+  const isCostRole=['owner','manager'].includes(ROLE);
+  const [shop,staff,services,cats,custs,vehs,promos,costs]=await Promise.all([
+    q(sb.from('shops').select('*').eq('id',SHOP).single()),all('shop_staff'),all('services'),all('categories'),all('customers'),all('vehicles'),all('promo_codes'),
+    isCostRole?all('part_costs',{order:'part_id'}):Promise.resolve([])]);
+  S.shop=shop;S.staff=staff.map(mapStaff);S.services=services.map(mapSvc).sort((a,b)=>a.sort-b.sort);S.categories=cats.map(c=>({id:c.id,name:c.name}));
+  S.customers=custs.map(mapCust);S.vehicles=vehs.map(mapVeh);S.promos=promos.map(mapPromo).sort((a,b)=>(b.start||'')<(a.start||'')?-1:1);
+  COSTS={};costs.forEach(c=>COSTS[c.part_id]=c.cost);
+  await reloadParts(true);
+}
+async function reloadParts(skipCosts){
+  if(!skipCosts&&['owner','manager'].includes(ROLE)){COSTS={};(await all('part_costs',{order:'part_id'})).forEach(c=>COSTS[c.part_id]=c.cost)}
+  S.parts=(await all('parts')).map(mapPart).filter(p=>p.active).sort((a,b)=>a.name.localeCompare(b.name));
+}
+async function loadJobs(){
+  const ls=loadStart().toISOString();
+  const [open,paid,tops,exps,lcs]=await Promise.all([
+    all('jobs',{cols:JSEL,f:x=>x.eq('shop_id',SHOP).in('status',OPEN)}),
+    all('jobs',{cols:JSEL,f:x=>x.eq('shop_id',SHOP).eq('status','paid').gte('paid_at',ls)}),
+    can('money')?all('topups',{f:x=>x.eq('shop_id',SHOP).gte('created_at',ls)}):[],
+    ROLE==='owner'?all('expenses',{f:x=>x.eq('shop_id',SHOP).gte('spent_on',dayKey(ls))}):[],
+    ROLE==='owner'?all('job_line_costs',{order:'line_id',f:x=>x.eq('shop_id',SHOP).gte('created_at',ls)}):[]]);
+  S.jobs=open.concat(paid).map(mapJob);
+  S.topups=tops.map(t=>({t:t.created_at,custId:t.customer_id,amt:t.amount,m:t.method}));
+  S.expenses=exps.map(e=>({id:e.id,date:e.spent_on,cat:e.category,amt:e.amount,note:e.note||''}));
+  S.lc={};lcs.forEach(c=>S.lc[c.line_id]=c.cost);
+}
+async function loadDue(){S.due=can('customers')?(await rpc('oil_due',{p_shop:SHOP,p_within_days:14})||[]):[]}
+async function reloadJob(id){
+  const r=await q(sb.from('jobs').select(JSEL).eq('id',id).maybeSingle());
+  S.jobs=S.jobs.filter(j=>j.id!==id);if(r&&r.status!=='cancelled')S.jobs.unshift(mapJob(r));
+  if(r&&r.status==='paid'&&ROLE==='owner'){const ids=(r.job_lines||[]).map(l=>l.id);if(ids.length)(await all('job_line_costs',{order:'line_id',f:x=>x.eq('shop_id',SHOP).in('line_id',ids)})).forEach(c=>S.lc[c.line_id]=c.cost)}
+  return job(id)}
+async function reloadCustomer(id){const r=await q(sb.from('customers').select('*').eq('id',id).maybeSingle());if(r){const i=S.customers.findIndex(c=>c.id===id);if(i>=0)S.customers[i]=mapCust(r);else S.customers.push(mapCust(r))}}
+let liveT=null;
+function onRemote(){clearTimeout(liveT);liveT=setTimeout(async()=>{try{
+  const t0=new Date();t0.setHours(0,0,0,0);
+  const [open,today]=await Promise.all([all('jobs',{cols:JSEL,f:x=>x.eq('shop_id',SHOP).in('status',OPEN)}),all('jobs',{cols:JSEL,f:x=>x.eq('shop_id',SHOP).eq('status','paid').gte('paid_at',t0.toISOString())})]);
+  const fresh=open.concat(today),ids=new Set(fresh.map(r=>r.id));
+  S.jobs=S.jobs.filter(j=>j.status==='paid'&&!ids.has(j.id)).concat(fresh.map(mapJob));
+  await reloadParts(true);
+  const before=(S.bookings||[]).filter(b=>b.status==='pending').length,u0=unread();
+  if(ROLE!=='mechanic')await loadBookings();await loadThreads();
+  if((S.bookings||[]).filter(b=>b.status==='pending').length>before)toast('Booking အသစ် ရောက်လာပါပြီ');else if(unread()>u0)toast('Message အသစ် ရောက်လာပါပြီ');
+  if($('#sheet').hidden)render();
+}catch(e){}},900)}
+function subscribe(){
+  if(DEMO||!sb.channel)return;
+  if(CH)sb.removeChannel(CH);
+  const f={filter:'shop_id=eq.'+SHOP,schema:'public'};
+  CH=sb.channel('gp-'+SHOP).on('postgres_changes',{event:'*',table:'jobs',...f},onRemote).on('postgres_changes',{event:'*',table:'job_lines',...f},onRemote).on('postgres_changes',{event:'*',table:'parts',...f},onRemote).on('postgres_changes',{event:'*',table:'bookings',...f},onRemote).on('postgres_changes',{event:'*',table:'chat_messages',...f},onRemote).subscribe();
+}
+
+/* ---------- boot & auth ---------- */
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=()=>rej(new Error('load '+src));document.head.append(s)})}
+async function boot(){
+  $('#today').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  try{
+    if(DEMO){if(!window.GPDemo)await loadScript('demo-backend.js');sb=window.GPDemo.createClient()}
+    else{await loadScript(SUPABASE_JS);sb=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY)}
+  }catch(e){gate(`<div class="gmsg bad">App ဖွင့်လို့ မရပါ — အင်တာနက် စစ်ပြီး Page ကို Refresh လုပ်ပါ။</div>`);return}
+  sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT'&&USER){USER=null;showLogin()}if(ev==='PASSWORD_RECOVERY')setTimeout(()=>{if(USER){accountSheet();toast('Password အသစ် ထည့်ပြီး ပြောင်းပါ')}},1200)});
+  const {data}=await sb.auth.getSession();
+  if(data&&data.session)await afterLogin(data.session.user);else showLogin();
+}
+function gate(inner){
+  $('#appshell').hidden=true;$('#gate').hidden=false;
+  $('#gate').innerHTML=`<div class="gate"><div style="width:100%;max-width:420px;display:grid;gap:12px">
+    <div class="gbrand"><span class="gname"><span class="a">${esc(CFG.SHOP_NAME1||'မိဘရိပ်')}</span><span class="b">${esc(CFG.SHOP_NAME2||'Auto Service')}</span></span></div><div class="gcard">${inner}</div>
+    <div class="hint" style="text-align:center"><a href="index.html" style="color:var(--muted)">ဖောက်သည် Website သို့</a>${DEMO?' · <span class="demo">DEMO</span>':''}</div></div></div>`;
+}
+let authTab=QS.has('signup')||location.hash==='#signup'?'signup':'login',signKind='staff';
+function showLogin(msg,kind){
+  MODE='app';SHOP=null;S=emptyState();
+  const demoBox=DEMO?`<div class="hint">Demo — အကောင့်တစ်ခု နှိပ်ပြီး ဝင်ကြည့်ပါ (Password မလို)</div>
+    <div class="acct">${window.GPDemo.accounts.map(a=>`<button data-a="demologin" data-v="${a.email}"><span><b>${esc(a.name)}</b><br><small>${esc(a.email)}</small></span><span class="tag">${esc(a.role)}</span></button>`).join('')}</div>
+    <button class="tlink" data-a="demoreset" style="justify-self:center">Demo data ပြန်စရန်</button><hr style="border:0;border-top:1px solid var(--line);width:100%">`:'';
+  gate(`${demoBox}<div class="gtabs"><button data-a="atab" data-k="login" aria-pressed="${authTab==='login'}">Login</button><button data-a="atab" data-k="signup" aria-pressed="${authTab==='signup'}">အကောင့်ဖွင့်</button></div>
+    ${msg?`<div class="gmsg ${kind||'bad'}">${msg}</div>`:''}
+    ${authTab==='login'?`<form id="loginform" class="list" style="gap:10px">
+      <label class="f">Email<input id="le" type="email" required autocomplete="username" value="${esc(store.get('gp-last-email')||'')}"></label>
+      <label class="f">Password<input id="lp" type="password" required autocomplete="current-password"></label>
+      <button class="btn primary block">Login ဝင်မယ်</button>
+      <button type="button" class="tlink" data-a="forgot" style="justify-self:center">Password မေ့နေပါသလား?</button></form>`:
+    `<div class="seg" role="group"><button data-a="skind" data-k="staff" aria-pressed="${signKind==='staff'}">ဝန်ထမ်း</button><button data-a="skind" data-k="shop" aria-pressed="${signKind==='shop'}">ဆိုင်ပိုင်ရှင် (ပထမဆုံးအကြိမ်)</button></div>
+    <form id="signupform" class="list" style="gap:10px">
+      ${signKind==='shop'?`<div class="two"><label class="f">ဆိုင်နာမည်<input id="sn1" required value="${esc(CFG.SHOP_NAME1||'မိဘရိပ်')}"></label><label class="f">အောက်စာကြောင်း<input id="sn2" placeholder="Auto Service" value="Auto Service"></label></div>
+      <div class="two"><label class="f">ပိုင်ရှင်အမည်<input id="son" required></label><label class="f">ဖုန်း<input id="sph" inputmode="tel" required placeholder="09 ..."></label></div>
+      <div class="hint">ဆိုင်ကို ပထမဆုံး Setup လုပ်ချိန် တစ်ကြိမ်သာ လုပ်ရပါမယ်။</div>`:
+      `<div class="hint">ဆိုင်ပိုင်ရှင်က “ဝန်ထမ်း” စာမျက်နှာမှာ ထည့်ထားတဲ့ Email နဲ့ အကောင့်ဖွင့်ပါ။ ဝင်တာနဲ့ ဆိုင်ကို အလိုအလျောက် ချိတ်ပေးပါမယ်။</div>`}
+      <label class="f">Email<input id="se" type="email" required autocomplete="username"></label>
+      <label class="f">Password (အနည်းဆုံး ၆ လုံး)<input id="sp" type="password" required minlength="6" autocomplete="new-password"></label>
+      <button class="btn primary block">${signKind==='shop'?'ဆိုင်အကောင့် ဖွင့်မယ်':'အကောင့်ဖွင့်မယ်'}</button></form>`}`);
+}
+async function afterLogin(user){
+  USER=user;busy(true);
+  try{
+    try{await rpc('claim_staff_invite')}catch(e){}
+    try{isPA=!!(await q(sb.from('platform_admins').select('user_id').eq('user_id',user.id).maybeSingle()))}catch(e){isPA=false}
+    SHOPS=await rpc('my_shops')||[];
+    const pend=user.user_metadata&&user.user_metadata.pending_shop;
+    if(!SHOPS.length&&pend&&!store.get('gp-created-'+user.id)){
+      await rpc('create_shop',{p_name1:pend.name1,p_name2:pend.name2,p_owner_name:pend.owner,p_phone:pend.phone});store.set('gp-created-'+user.id,'1');
+      SHOPS=await rpc('my_shops')||[];
+    }
+    if(!SHOPS.length){busy(false);if(isPA){MODE='pa';enterApp();return}return noShop()}
+    const saved=store.get('gp-shop-'+user.id);
+    CUR=SHOPS.find(s=>s.shop_id===saved)||SHOPS[0];
+    await openShop();
+  }catch(e){busy(false);showLogin(esc(errMsg(e)))}
+}
+async function openShop(){
+  SHOP=CUR.shop_id;ROLE=CUR.role;ME=CUR.staff_id;store.set('gp-shop-'+USER.id,SHOP);
+  if(!CUR.active){busy(false);return expired()}
+  busy(true);gate('<div class="loading">ဆိုင်ဒေတာ ဖွင့်နေသည်...</div>');
+  try{S=emptyState();await loadCore();await loadJobs();await loadDue();if(ROLE!=='mechanic')await loadBookings();await loadThreads();if(can('closing')){const c=await q(sb.from('cash_closings').select('close_date').eq('shop_id',SHOP).eq('close_date',dayKey(new Date())).maybeSingle());if(c)S.closingToday=c.close_date}}catch(e){busy(false);gate(`<div class="gmsg bad">${esc(errMsg(e))}</div><button class="btn block" data-a="reload">ပြန်စမ်းမယ်</button><button class="btn block" data-a="logout">Logout</button>`);return}
+  busy(false);MODE='app';tab='home';sub=null;subscribe();enterApp();
+}
+function enterApp(){$('#gate').hidden=true;$('#appshell').hidden=false;render()}
+async function noShop(){
+  let prof=null;try{prof=await rpc('my_profile')}catch(e){}
+  if(prof){gate(`<h2>ဖောက်သည် Account ဖြစ်နေပါတယ်</h2><div class="hint">${esc(USER.email)} က ဖောက်သည် Account ပါ။ Admin ကို ဝန်ထမ်းအကောင့်နဲ့ ဝင်ရန် Logout လုပ်ပြီး ပြန်ဝင်ပါ။</div><button class="btn primary block" data-a="logout">Logout</button><a class="btn block" href="index.html" style="text-align:center;text-decoration:none">Website သို့</a>`);return}
+  gate(`<h2>ဆိုင် မရှိသေးပါ</h2><div class="hint">${esc(USER.email)} နဲ့ ချိတ်ထားတဲ့ ဆိုင် မတွေ့ပါ။ ဝန်ထမ်းဆိုရင် ဆိုင်ပိုင်ရှင်ကို ဒီ Email ကို ထည့်ခိုင်းပြီး ပြန် Login ဝင်ပါ။ ဆိုင်ပိုင်ရှင်ဆိုရင် ဆိုင်အသစ် ဖွင့်ပါ။</div>
+  <form id="newshopform" class="list" style="gap:10px"><div class="two"><label class="f">ဆိုင်နာမည်<input id="ns1" required></label><label class="f">အောက်စာကြောင်း<input id="ns2" value="Auto Service"></label></div>
+  <div class="two"><label class="f">ပိုင်ရှင်အမည်<input id="nso" required></label><label class="f">ဖုန်း<input id="nsp" inputmode="tel" required></label></div><button class="btn primary block">ဆိုင်ဖွင့်မယ်</button></form>
+  <div class="btns"><button class="btn" data-a="reload">ပြန်စစ်မယ်</button><button class="btn" data-a="logout">Logout</button></div>`);
+}
+function payBox(){const c=CFG.CONTACT||{};return `<div class="paybox"><span class="hint">KBZPay ဖြင့် လွှဲရန်</span><span class="big">${esc(c.kbzpay||'—')}</span><span class="hint">${esc(c.kbzpay_name||'')}</span>
+  <div class="copyrow"><button class="btn sm" data-a="copy" data-v="${esc(c.kbzpay||'')}">နံပါတ်ကူး</button></div>
+  <div class="hint">လွှဲပြီး Screenshot ကို Viber ${esc(c.viber||c.phone||'')} သို့ ဆိုင်နာမည်နဲ့အတူ ပို့ပေးပါ။ ၁ နာရီအတွင်း သက်တမ်းတိုးပေးပါမယ်။</div></div>
+  <div class="sumrow"><span>တစ်လ</span><span>${ks(CFG.PRICE_MONTH||35000)}</span></div><div class="sumrow"><span>တစ်နှစ် (၂ လ အခမဲ့)</span><span>${ks(CFG.PRICE_YEAR||350000)}</span></div>`}
+function expired(){
+  const own=CUR.role==='owner';const susp=CUR.plan==='suspended';
+  gate(`<h2>${esc(CUR.name1)} ${esc(CUR.name2||'')}</h2><div class="gmsg bad">${susp?'ဒီဆိုင်ကို ယာယီ ပိတ်ထားပါတယ်။':`သက်တမ်း ${dmy(CUR.paid_until)} တွင် ကုန်သွားပါပြီ။`} ${own?'ငွေလွှဲပြီး သက်တမ်းတိုးရင် data အားလုံး ပြန်သုံးလို့ရပါမယ်။':'ဆိုင်ပိုင်ရှင်ကို ဆက်သွယ်ပါ။'}</div>
+  ${own?payBox():''}${SHOPS.length>1?`<button class="btn block" data-a="account">တခြားဆိုင် ပြောင်းရန်</button>`:''}${isPA?`<button class="btn block" data-a="paonly">Platform admin</button>`:''}
+  <div class="btns"><button class="btn" data-a="reload">ပြန်စစ်မယ်</button><button class="btn" data-a="logout">Logout</button></div>`);
+}
+function busy(on){BUSY=on;$('#busy').hidden=!on}
+async function run(fn){if(BUSY)return;busy(true);try{await fn()}catch(e){toast(errMsg(e))}finally{busy(false)}}
+
+/* ---------- downloads ---------- */
+let DLCAP=null;(async()=>{try{DLCAP=window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){DLCAP=null}})();
+async function saveFile(filename,data,mime){
+  if(DLCAP){try{await DLCAP.save({filename,data});toast('ဖိုင် သိမ်းပြီးပါပြီ');return}catch(e){if(e&&e.code==='declined')return}}
+  try{const b=data instanceof Blob?data:new Blob([data],{type:mime||'text/plain'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}
+  catch(e){toast('ဖိုင်ထုတ်လို့ မရပါ')}
+}
+const csv=rows=>'﻿'+rows.map(r=>r.map(v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(',')).join('\n');
+function loadXLSX(){return window.XLSX?Promise.resolve(window.XLSX):loadScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js').then(()=>window.XLSX)}
+
+/* ---------- money ---------- */
+const promoFor=code=>code?S.promos.find(x=>x.code===String(code).toUpperCase()):null;
+function promoValid(p){if(!p||!p.active)return false;const n=Date.now();return(!p.start||new Date(p.start)<=n)&&(!p.end||new Date(p.end)>=n)}
+const draft=j=>DRAFT[j.id]||(DRAFT[j.id]={disc:{type:'none',val:0},promo:'',pay:'Cash',splitCash:0,splitOther:'KBZPay'});
+function fin(j){
+  if(j.status==='paid')return j.total||0;
+  const d=draft(j);j.sub=j.lines.reduce((a,l)=>a+l.price*l.qty,0);
+  j.discAmt=d.disc.type==='pct'?Math.round(j.sub*Math.min(100,+d.disc.val||0)/100):d.disc.type==='ks'?Math.min(j.sub,+d.disc.val||0):0;
+  const p=promoFor(d.promo);j.promoAmt=p&&promoValid(p)?(p.type==='pct'?Math.round((j.sub-j.discAmt)*p.val/100):Math.min(j.sub-j.discAmt,p.val)):0;
+  j.total=Math.max(0,j.sub-j.discAmt-j.promoAmt);return j.total}
+const lineCost=l=>l.type==='part'?(S.lc[l.id]??0):0;
+const jobCost=j=>j.lines.reduce((a,l)=>a+lineCost(l)*l.qty,0);
+
+/* ---------- periods & charts ---------- */
+const PERIODS={today:'ယနေ့','7d':'၇ ရက်',month:'ဒီလ',lastmonth:'ယခင်လ',year:'ဒီနှစ်'};
+function range(k){const n=new Date(),s=new Date();s.setHours(0,0,0,0);
+  if(k==='today')return[s,n];if(k==='7d'){s.setDate(s.getDate()-6);return[s,n]}if(k==='month'){s.setDate(1);return[s,n]}
+  if(k==='lastmonth')return[new Date(s.getFullYear(),s.getMonth()-1,1),new Date(s.getFullYear(),s.getMonth(),1)];return[new Date(s.getFullYear(),0,1),n]}
+const inR=(d,[a,b])=>{if(!d)return false;const t=new Date(String(d).length===10?d+'T12:00:00':d);return t>=a&&t<=b};
+function buckets(k,[a,b]){
+  if(k==='today'){const o=[];for(let h=8;h<=18;h++)o.push({label:h+'',test:d=>sameDay(d,a)&&new Date(d).getHours()===h});return o}
+  if(k==='year'){const o=[];for(let m=0;m<=b.getMonth();m++)o.push({label:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][m],test:d=>{const x=new Date(d);return x.getFullYear()===a.getFullYear()&&x.getMonth()===m}});return o}
+  const o=[];const c=new Date(a);while(c<=b&&!(k==='lastmonth'&&c>=b)){const dd=new Date(c);o.push({label:String(dd.getDate()),test:d=>sameDay(d,dd)});c.setDate(c.getDate()+1)}return o}
+function niceMax(v){if(v<=0)return 100000;const e=Math.pow(10,Math.floor(Math.log10(v/4)));for(const m of[1,2,2.5,5,10])if(m*e*4>=v)return m*e*4;return 40*e}
+function barChart(pts){
+  const W=640,H=260,L=56,R=8,T=26,B=34,max=niceMax(Math.max(...pts.map(p=>p.val),0));
+  const cw=(W-L-R)/pts.length,bw=Math.max(3,Math.min(34,cw*.66));const y=v=>T+(H-T-B)*(1-v/max);
+  let g='';for(let i=0;i<=4;i++){const v=max*i/4,yy=y(v);g+=`<line x1="${L}" x2="${W-R}" y1="${yy}" y2="${yy}" stroke="var(--grid)" stroke-width="1"/><text x="${L-6}" y="${yy+6}" text-anchor="end">${+(v/100000).toFixed(1)}</text>`}
+  const every=Math.ceil(pts.length/12);let bars='';const best=pts.reduce((m,p,i)=>p.val>pts[m].val?i:m,0);
+  pts.forEach((p,i)=>{const x=L+cw*i+(cw-bw)/2,yy=y(p.val);bars+=`<rect x="${x}" y="${yy}" width="${bw}" height="${Math.max(0,H-B-yy)}" rx="2" fill="${i===best&&p.val>0?'var(--bar2)':'var(--bar)'}"><title>${esc(p.label)}: ${ks(p.val)}</title></rect>`;
+    if(i%every===0)bars+=`<text x="${L+cw*i+cw/2}" y="${H-6}" text-anchor="middle">${esc(p.label)}</text>`});
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="ဝင်ငွေ chart">${g}<text x="4" y="${T-8}" style="font-family:var(--f-body);font-size:16px">သိန်း</text>${bars}</svg></div>`}
+function hbars(items,fmt=ks){const mx=Math.max(1,...items.map(i=>i.v));return `<div class="list" style="gap:6px">${items.map(i=>`<div class="hbar"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(i.k)}</span><span class="tr"><span style="width:${i.v/mx*100}%"></span></span><span class="v">${fmt(i.v)}</span></div>`).join('')||'<div class="empty">ဒေတာ မရှိပါ</div>'}</div>`}
+const dueDays=x=>daysTo(x.due_date);
+const dueText=x=>{const d=dueDays(x);return d<0?`<span class="pill s-bad">${-d} ရက် ကျော်</span>`:`<span class="pill s-warn">${d} ရက် ကျန်</span>`};
+
+/* ---------- shell ---------- */
+let tab='home',sub=null,jobFilter='open',jobQ='',stockCat='all',stockQ='',custQ='',period='month',profitPeriod='month',logQ='',openId=null;
+const ICON={home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  jobs:'<path d="M5 17h14M6 17l1.5-6h9L18 17M7 17v2M17 17v2"/><circle cx="8" cy="14" r="1"/><circle cx="16" cy="14" r="1"/>',
+  stock:'<path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8"/>',
+  customers:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M16 4.5a3.5 3.5 0 0 1 0 7M18.5 14.8c1.6.8 2.6 2.5 3 5.2"/>',
+  bookings:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M8 14h3"/>',
+  more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>'};
+const TABS=[['home','ယနေ့',()=>MODE==='app'],['jobs','Job',()=>MODE==='app'],['bookings','Booking',()=>MODE==='app'&&ROLE!=='mechanic'],['stock','ပစ္စည်း',()=>MODE==='app'&&can('stockEdit')],['customers','ဖောက်သည်',()=>MODE==='app'&&can('customers')],['more','နောက်ထပ်',()=>true]];
+const MORE=[
+  ['reports','အရောင်းစာရင်း','နေ့/အပတ်/လ/နှစ် အလိုက် graph၊ CSV ထုတ်ရန်',()=>can('reports')],
+  ['profit','အမြတ်စာရင်း','ဝယ်ဈေး၊ ဆိုင်စရိတ် နုတ်ပြီး အမြတ်',()=>ROLE==='owner',1],
+  ['closing','ငွေစာရင်းပိတ်','နေ့စဉ် Cash Drawer စစ်ဆေးခြင်း',()=>can('closing')],
+  ['promo','Promo Code','လျှော့ဈေး Code ဖန်တီး/ရပ်',()=>can('promo')],
+  ['staff','ဝန်ထမ်း','Staff၊ မက္ကင်းနစ်၊ အဆင့်၊ Login ဖိတ်ခြင်း',()=>ROLE==='owner',1],
+  ['logs','Activity Log','ဘယ်သူ ဘာလုပ်ခဲ့လဲ မှတ်တမ်း',()=>can('logs')],
+  ['backup','Backup','Excel / JSON ထုတ်ရန်',()=>ROLE==='owner',1],
+  ['settings','Settings','ဆိုင်အချက်အလက်၊ ဖောက်သည် website၊ လက်ခဈေး',()=>can('settings')],
+  ['messages','Messages','ဖောက်သည်တွေနဲ့ Chat',()=>can('customers')],
+  ['website','Website','Banner၊ Post၊ Booking setting',()=>can('promo')]];
+const moreOK=m=>MODE==='pa'?m[0]==='platform':m[3]();
+
+function renderShell(){
+  const sh=S.shop||{};
+  $('#hdr').style.setProperty('--brand-bg',sh.brand_bg||'#1d4fa3');$('#hdr').style.setProperty('--brand-fg',sh.brand_fg||'#e3121b');
+  document.documentElement.style.setProperty('--brand-bg',sh.brand_bg||'#1d4fa3');
+  $('#shopname').innerHTML=MODE==='pa'?`<span class="l1" style="font-family:var(--f-num)">${esc(PRODUCT)}</span><span class="l2">Platform</span>`:`<span class="l1">${esc(sh.name1||'')}</span><span class="l2">${esc(sh.name2||'')}</span>`;
+  $('#who').textContent=MODE==='pa'?USER.email:me().name+' · '+(ROLES[ROLE]||{}).n;
+  $('#badge').hidden=!DEMO;
+  $('#nav').innerHTML=TABS.filter(t=>t[2]()).map(([k,l])=>`<button data-tab="${k}" aria-current="${tab===k?'page':'false'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">${ICON[k]}</svg>${l}</button>`).join('');
+  $('#fab').hidden=MODE!=='app'||!(tab==='home'||tab==='jobs')||ROLE==='mechanic';
+}
+function plate(p,sm){const s=String(p||'');const i=s.indexOf(' ');return i<0?`<span class="plate${sm?' sm':''}">${esc(s)}</span>`:`<span class="plate${sm?' sm':''}"><i>${esc(s.slice(0,i))}</i>${esc(s.slice(i+1))}</span>`}
+function ticket(j){
+  const money=can('money');
+  return `<button class="ticket s-${j.status}" data-a="open" data-id="${j.id}">
+    <span>${plate(plateOf(j))}</span><span class="amt">${money&&j.lines.length?ks(fin(j)):''}</span>
+    <span class="meta"><span>${esc(modelOf(j))}</span><span>${esc(cust(j.custId).name)}</span>${j.mech?`<span>🔧 ${esc(staffName(j.mech))}</span>`:''}<span class="num">${j.status==='paid'?dm(j.paidAt)+' '+hm(j.paidAt):'ဝင် '+hm(j.in)}</span><span class="pill">${ST[j.status]}</span></span>
+  </button>`}
+function chips(name,obj,cur){return `<div class="chips">${Object.entries(obj).map(([k,t])=>`<button class="chip" data-a="${name}" data-k="${k}" aria-pressed="${cur===k}">${t}</button>`).join('')}</div>`}
+function back(title,extra=''){return `<div class="panel-head" style="gap:8px">${MODE==='pa'?'':'<button class="btn sm" data-a="moreback">← နောက်ထပ်</button>'}<h2 style="font-size:17px">${title}</h2>${extra}</div>`}
+
+let RT=0;
+async function render(){
+  const tok=++RT;
+  if(MODE==='pa'){tab='more';sub='platform'}
+  if(!TABS.find(t=>t[0]===tab)[2]())tab=MODE==='pa'?'more':'home';
+  if(tab==='more'&&sub&&!MORE.some(m=>m[0]===sub&&moreOK(m)))sub=null;
+  renderShell();
+  const v=$('#view');let out=(tab==='more'&&sub?VIEWS[sub]:VIEWS[tab])();
+  if(out&&out.then){if(!v.firstElementChild||v.dataset.view!==tab+sub)v.innerHTML='<div class="loading">ဖွင့်နေသည်...</div>';
+    try{out=await out}catch(e){out=`${tab==='more'&&sub?back(''):''}<div class="empty">${esc(errMsg(e))}</div>`}}
+  if(tok!==RT)return;
+  v.dataset.view=tab+sub;v.innerHTML=out;afterRender();
+}
+
+/* ---------- views ---------- */
+const VIEWS={
+home(){
+  const now=new Date(),money=can('money');
+  const paidToday=paidJobs().filter(j=>sameDay(j.paidAt,now)),rev=paidToday.reduce((a,j)=>a+(j.total||0),0);
+  const open=S.jobs.filter(j=>OPEN.includes(j.status));
+  const mine=ROLE==='mechanic'?open.filter(j=>j.mech===ME):null;
+  const low=lowParts(),due=S.due||[];
+  const closed=S.closingToday===dayKey(now);
+  const todayB=(S.bookings||[]).filter(b=>b.booking_date===dayKey(now)&&['pending','confirmed'].includes(b.status)),pendB=(S.bookings||[]).filter(b=>b.status==='pending'&&b.booking_date>=dayKey(now));
+  const left=CUR?daysTo(CUR.paid_until):99;
+  return `
+  ${unread()?`<button class="banner" data-a="go" data-k="messages"><span style="flex:1"><b>Message အသစ် ${unread()} စောင်</b>ဖောက်သည်တွေ အကြောင်းပြန်ချက် စောင့်နေပါတယ်</span><span>→</span></button>`:''}
+  ${pendB.length?`<button class="banner" data-a="gobook" data-k="pending"><span style="flex:1"><b>Booking ${pendB.length} ခု အတည်ပြုရန် ကျန်</b>ဖောက်သည်ကို ဖုန်းဆက်ပြီး အတည်ပြုပါ</span><span>→</span></button>`:''}
+  <div class="stats">
+    ${money?`<div class="stat money"><span>ယနေ့ဝင်ငွေ · ${paidToday.length} စီး</span><b>${ks(rev)}</b></div>`:''}
+    <div class="stat"><span>ဆိုင်ထဲရှိကား</span><b>${open.length}</b></div>
+    ${mine?`<div class="stat"><span>ကျွန်ုပ်၏ Job</span><b>${mine.length}</b></div>`:''}
+    ${ROLE!=='mechanic'?`<div class="stat"><span>ယနေ့ Booking</span><b>${todayB.length}</b></div>`:''}
+    ${can('stockEdit')?`<div class="stat ${low.length?'alert':''}"><span>Stock နည်း/ကုန်</span><b>${low.length}</b></div>`:''}
+    ${due.length?`<div class="stat ${due.some(x=>dueDays(x)<0)?'alert':''}"><span>ဝိုင်လဲရန် ရောက်/နီး</span><b>${due.length}</b></div>`:''}
+  </div>
+  ${can('closing')&&now.getHours()>=17&&!closed?`<button class="row" data-a="go" data-k="closing" style="border-color:var(--accent)"><span class="grow"><b>ယနေ့ ငွေစာရင်း ပိတ်ရန်</b><div class="sub">Cash Drawer ထဲက ငွေကို ရေတွက်ပြီး ပိတ်ပါ</div></span><span>→</span></button>`:''}
+  ${['done','working','waiting'].map(k=>{const list=(mine||open).filter(j=>j.status===k);return`
+  <section class="sec"><h2><span class="pill s-${k}">${ST[k]}</span><span class="count">${list.length}</span>${k==='done'&&can('checkout')?'<span class="hint">ငွေရှင်းရန် အသင့်</span>':''}</h2>
+    <div class="list">${list.map(ticket).join('')||'<div class="empty">မရှိပါ</div>'}</div></section>`}).join('')}
+  ${todayB.length?`<section class="sec"><h2>ယနေ့ Booking <span class="count">${todayB.length}</span></h2><div class="list">${todayB.map(b=>bookingCard(b).replace('class="card"','class="card '+BCLS[b.status]+'"')).join('')}</div></section>`:''}
+  ${due.length?`<section class="sec"><h2>ဝိုင်လဲရန် သတိပေးချက် <span class="hint">နောက်ဆုံးလဲပြီး ${S.shop.oil_months} လ ပြည့်</span></h2><div class="list">${due.slice(0,8).map(x=>`
+    <button class="row" data-a="cust" data-id="${x.customer_id||''}"><span class="grow">${plate(x.plate,1)} <span class="sub">${esc(x.model||'')}</span><div class="sub">${esc(x.customer_name||'')} · <span class="num" style="font-size:14px">${esc(x.phone||'')}</span></div></span><span class="right">${dueText(x)}<div class="sub num" style="font-size:13px">${km(x.due_km)} တွင်</div></span></button>`).join('')}</div></section>`:''}
+  ${low.length&&can('stockEdit')?`<section class="sec"><h2>ပစ္စည်းမှာရန်</h2><div class="list">${low.map(p=>`
+    <button class="row" data-a="editpart" data-id="${p.id}"><span class="dot ${stockState(p)}"></span><span class="grow">${esc(p.name)}<div class="sub">အနည်းဆုံး ${p.min} ခု ထားရန်</div></span><b class="num" style="color:var(--bad);font-size:20px">${p.stock} ခု</b></button>`).join('')}</div></section>`:''}`;
+},
+jobs(){
+  const fs={open:'ဆိုင်ထဲရှိ',waiting:ST.waiting,working:ST.working,done:ST.done,paid:ST.paid};
+  if(ROLE==='mechanic')fs.mine='ကျွန်ုပ်၏';
+  const qq=jobQ.toLowerCase().replace(/\s/g,'');
+  const list=S.jobs.filter(j=>jobFilter==='open'?OPEN.includes(j.status):jobFilter==='mine'?j.mech===ME&&OPEN.includes(j.status):j.status===jobFilter)
+    .filter(j=>!qq||(plateOf(j)+cust(j.custId).name+modelOf(j)+jl(j)).toLowerCase().replace(/\s/g,'').includes(qq))
+    .sort((a,b)=>new Date(b.paidAt||b.in)-new Date(a.paidAt||a.in)).slice(0,100);
+  return `<input class="search" id="jobq" type="search" placeholder="နံပါတ်ပြား / ဖောက်သည် / Job နံပါတ် ရှာရန်" value="${esc(jobQ)}" autocomplete="off">
+  ${chips('jf',fs,jobFilter)}<div class="list">${list.map(ticket).join('')||'<div class="empty">Job မရှိပါ။ “ကားအသစ်ဝင်” နှိပ်ပြီး ထည့်ပါ။</div>'}</div>
+  ${jobFilter==='paid'?'<div class="hint">ဒီနှစ်နဲ့ ယခင်လ မှတ်တမ်းကို ပြထားပါတယ်။ အဟောင်းတွေကို ဖောက်သည်စာမျက်နှာမှာ ကြည့်ပါ။</div>':''}`;
+},
+stock(){
+  const cats={all:'အားလုံး',low:'Stock နည်း/ကုန်'};S.categories.forEach(c=>cats[c.name]=c.name);
+  const qq=stockQ.toLowerCase();
+  const list=S.parts.filter(p=>stockCat==='all'||(stockCat==='low'?p.stock<=p.min:p.cat===stockCat)).filter(p=>!qq||p.name.toLowerCase().includes(qq));
+  const qty=S.parts.reduce((a,p)=>a+p.stock,0),vp=S.parts.reduce((a,p)=>a+p.stock*p.price,0),vc=S.parts.reduce((a,p)=>a+p.stock*(p.cost||0),0);
+  return `
+  <div class="stats"><div class="stat"><span>ပစ္စည်းအမျိုးအစား</span><b>${S.parts.length}</b></div><div class="stat"><span>စုစုပေါင်း Stock</span><b>${qty}</b></div>
+    <div class="stat"><span>Stock တန်ဖိုး (ရောင်းဈေး)</span><b>${ks(vp)}</b></div>${ROLE==='owner'?`<div class="stat"><span>Stock တန်ဖိုး (ဝယ်ဈေး) <span class="lock">OWNER</span></span><b>${ks(vc)}</b></div>`:''}</div>
+  <div class="btns"><button class="btn primary" data-a="newpart">＋ ပစ္စည်းအသစ်</button><button class="btn" data-a="import">Excel ဖြင့် အများကြီးထည့်</button><button class="btn" data-a="cats">Category စီမံ</button><button class="btn" data-a="moves">Stock မှတ်တမ်း</button></div>
+  <input class="search" id="stockq" type="search" placeholder="ပစ္စည်းအမည် ရှာရန်" value="${esc(stockQ)}" autocomplete="off">
+  ${chips('sc',cats,stockCat)}
+  <div class="hint" style="display:flex;gap:14px;flex-wrap:wrap"><span><span class="dot" style="display:inline-block"></span> ရှိသည်</span><span><span class="dot low" style="display:inline-block"></span> အနည်းဆုံးအောက်</span><span><span class="dot out" style="display:inline-block"></span> ကုန်သွားပြီ</span><span>＋ = Stock ဝင်၊ − = ချိန်ညှိ</span></div>
+  <div class="list">${list.map(p=>{const st=stockState(p);const pct=Math.min(100,p.stock/Math.max(1,p.min*3)*100);return`
+    <div class="row"><span class="dot ${st}"></span><button class="grow" data-a="editpart" data-id="${p.id}" style="border:0;background:none;text-align:left;padding:0">${esc(p.name)}${p.fav?' <span class="tag">အမြဲသုံး</span>':''}<div class="sub"><span class="num" style="font-size:14px">${ks(p.price)}</span> · ${esc(p.cat)}</div>
+      <div class="bar ${st==='ok'?'':st}"><span style="width:${pct}%"></span></div></button>
+      <div class="stepper"><button data-a="stk" data-id="${p.id}" data-d="-1" aria-label="လျှော့">−</button><b>${p.stock}</b><button data-a="stk" data-id="${p.id}" data-d="1" aria-label="တိုး">＋</button></div></div>`}).join('')||'<div class="empty">ပစ္စည်း မတွေ့ပါ — “ပစ္စည်းအသစ်” နှိပ်ပြီး ထည့်ပါ</div>'}</div>`;
+},
+customers(){
+  if(!S.cstats)return rpc('customer_stats',{p_shop:SHOP}).then(r=>{S.cstats={};(r||[]).forEach(x=>S.cstats[x.customer_id]=x);return VIEWS.customers()});
+  const qq=custQ.toLowerCase().replace(/\s/g,'');
+  const rows=S.customers.map(c=>{const st=S.cstats[c.id]||{};return{c,n:+st.visits||0,spent:+st.spent||0,last:st.last_visit,veh:S.vehicles.filter(v=>v.custId===c.id)}})
+    .filter(r=>!qq||(r.c.name+r.c.phone+r.veh.map(v=>v.plate).join('')).toLowerCase().replace(/\s/g,'').includes(qq)).sort((a,b)=>b.spent-a.spent);
+  const tot=rows.reduce((a,r)=>a+r.spent,0);const dues=new Set((S.due||[]).map(x=>x.customer_id));
+  return `<div class="stats"><div class="stat"><span>ဖောက်သည်</span><b>${S.customers.length}</b></div><div class="stat"><span>ကား</span><b>${S.vehicles.length}</b></div>
+    <div class="stat"><span>ပျမ်းမျှ သုံးငွေ (တစ်ဦး)</span><b>${ks(tot/Math.max(1,S.customers.length))}</b></div><div class="stat"><span>ကြိုတင်ငွေ လက်ကျန်</span><b>${ks(S.customers.reduce((a,c)=>a+(c.balance||0),0))}</b></div></div>
+  <div class="btns"><button class="btn primary" data-a="newcust">＋ ဖောက်သည်အသစ်</button></div>
+  <input class="search" id="custq" type="search" placeholder="အမည် / ဖုန်း / နံပါတ်ပြား ရှာရန်" value="${esc(custQ)}" autocomplete="off">
+  <div class="list">${rows.slice(0,200).map(r=>`<button class="row" data-a="cust" data-id="${r.c.id}"><span class="grow"><b>${esc(r.c.name)}</b>${r.c.user_id?' <span class="tag">Online</span>':''}${dues.has(r.c.id)?' <span class="pill s-warn">ဝိုင်လဲရန်</span>':''}${r.c.balance?` <span class="pill s-ok">ကြိုတင်ငွေ ${ks(r.c.balance)}</span>`:''}
+    <div class="sub"><span class="num" style="font-size:14px">${esc(r.c.phone)}</span> · ${r.veh.map(v=>esc(v.plate)).join(', ')||'ကားမရှိ'}</div></span>
+    <span class="right"><span class="num" style="font-size:16px">${ks(r.spent)}</span><div class="sub">${r.n} ကြိမ်${r.last?' · '+dm(r.last):''}</div></span></button>`).join('')||'<div class="empty">ရှာမတွေ့ပါ</div>'}</div>`;
+},
+more(){
+  const items=MORE.filter(moreOK);
+  return `<section class="sec"><h2>နောက်ထပ် စီမံရန်</h2><div class="tiles">${items.map(m=>`<button class="tile" data-a="go" data-k="${m[0]}"><b>${m[1]}${m[4]?'<span class="lock">OWNER</span>':''}</b><span>${m[2]}</span></button>`).join('')||'<div class="empty">ဒီအဆင့်အတွက် စီမံစရာ မရှိပါ</div>'}</div></section>
+  <section class="sec"><h2>အကောင့်</h2><div class="list"><button class="row" data-a="account"><span class="grow"><b>${esc(MODE==='pa'?USER.email:me().name)}</b><div class="sub">${esc(USER.email)}${MODE==='app'?' · '+(ROLES[ROLE]||{}).n:''}</div></span><span>→</span></button></div></section>`;
+},
+reports(){
+  const R=range(period),list=paidJobs().filter(j=>inR(j.paidAt,R));
+  const rev=list.reduce((a,j)=>a+(j.total||0),0),qty=list.reduce((a,j)=>a+j.lines.filter(l=>l.type==='part').reduce((x,l)=>x+l.qty,0),0);
+  const pts=buckets(period,R).map(b=>({label:b.label,val:list.filter(j=>b.test(j.paidAt)).reduce((a,j)=>a+(j.total||0),0)}));
+  const pay=payTotals(list);const tops=t=>{const o={};list.forEach(j=>j.lines.filter(l=>l.type===t).forEach(l=>o[l.name]=(o[l.name]||0)+l.price*l.qty));return Object.entries(o).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v).slice(0,6)};
+  const mech={};list.forEach(j=>{if(!j.mech)return;const k=staffName(j.mech);mech[k]=mech[k]||{n:0,v:0};mech[k].n++;mech[k].v+=j.total||0});
+  const topup=S.topups.filter(t=>inR(t.t,R)).reduce((a,t)=>a+t.amt,0);
+  return `${back('အရောင်းစာရင်း',`<button class="btn sm" style="margin-left:auto" data-a="exportsales">CSV ထုတ်</button>`)}
+  ${chips('per',PERIODS,period)}
+  <div class="stats"><div class="stat money"><span>ဝင်ငွေ · ${PERIODS[period]}</span><b>${ks(rev)}</b><em>${lakh(rev)}</em></div><div class="stat"><span>ကား (Job)</span><b>${list.length}</b></div>
+    <div class="stat"><span>ပျမ်းမျှ / Job</span><b>${ks(rev/Math.max(1,list.length))}</b></div><div class="stat"><span>ရောင်းရ ပစ္စည်း</span><b>${qty} ခု</b></div>${topup?`<div class="stat"><span>ကြိုတင်ငွေ ဖြည့်ခံရ</span><b>${ks(topup)}</b></div>`:''}</div>
+  <section class="sec"><h2>ဝင်ငွေ <span class="hint">${period==='today'?'နာရီအလိုက်':period==='year'?'လအလိုက်':'ရက်အလိုက်'} · အဝါ = အများဆုံး</span></h2>${barChart(pts)}</section>
+  <section class="sec"><h2>ငွေပေးချေမှု နည်းလမ်း</h2>${hbars(Object.entries(pay).map(([k,v])=>({k:k==='Prepaid'?'ကြိုတင်ငွေ':k,v})).sort((a,b)=>b.v-a.v))}</section>
+  <div class="two" style="align-items:start"><section class="sec"><h2>ဝန်ဆောင်မှု (လက်ခ)</h2>${hbars(tops('svc'))}</section><section class="sec"><h2>အပိုပစ္စည်း</h2>${hbars(tops('part'))}</section></div>
+  <section class="sec"><h2>မက္ကင်းနစ် အလိုက်</h2><div class="tablewrap"><table><tr><th>အမည်</th><th class="n">Job</th><th class="n">ဝင်ငွေ</th></tr>${Object.entries(mech).sort((a,b)=>b[1].v-a[1].v).map(([k,o])=>`<tr><td>${esc(k)}</td><td class="n">${o.n}</td><td class="n">${ks(o.v)}</td></tr>`).join('')||'<tr><td colspan="3" class="muted">ဒေတာ မရှိပါ</td></tr>'}</table></div></section>`;
+},
+profit(){
+  const R=range(profitPeriod),list=paidJobs().filter(j=>inR(j.paidAt,R));
+  const rev=list.reduce((a,j)=>a+(j.total||0),0),cost=list.reduce((a,j)=>a+jobCost(j),0);
+  const ex=S.expenses.filter(e=>inR(e.date,R)).sort((a,b)=>a.date<b.date?1:-1),exT=ex.reduce((a,e)=>a+e.amt,0);
+  const disc=list.reduce((a,j)=>a+(j.discAmt||0)+(j.promoAmt||0),0);
+  const items={};list.forEach(j=>j.lines.forEach(l=>{const k=l.name;items[k]=items[k]||{t:l.type,q:0,r:0,c:0};items[k].q+=l.qty;items[k].r+=l.price*l.qty;items[k].c+=lineCost(l)*l.qty}));
+  const rows=Object.entries(items).sort((a,b)=>(b[1].r-b[1].c)-(a[1].r-a[1].c));window.__profitRows=rows;
+  const gross=rev-cost,net=gross-exT;const exBy={};ex.forEach(e=>exBy[e.cat]=(exBy[e.cat]||0)+e.amt);
+  return `${back('အမြတ်စာရင်း <span class="lock">OWNER ONLY</span>',`<button class="btn sm" style="margin-left:auto" data-a="exportprofit">CSV ထုတ်</button>`)}
+  ${chips('pper',PERIODS,profitPeriod)}
+  <div class="stats"><div class="stat"><span>ဝင်ငွေ</span><b>${ks(rev)}</b><em>လျှော့ဈေး ${ks(disc)} နုတ်ပြီး</em></div><div class="stat"><span>ပစ္စည်း ဝယ်ဈေး</span><b>${ks(cost)}</b></div>
+    <div class="stat"><span>အကြမ်းအမြတ်</span><b>${ks(gross)}</b><em>${rev?Math.round(gross/rev*100):0}%</em></div><div class="stat"><span>ဆိုင်စရိတ်</span><b>${ks(exT)}</b></div>
+    <div class="stat ${net<0?'alert':'good'}"><span>အသားတင်အမြတ်</span><b>${ks(net)}</b><em>${lakh(net)}</em></div></div>
+  <div class="hint">ဝယ်ဈေးကို ပစ္စည်းစာမျက်နှာမှာ ထည့်ထားမှ အမြတ် မှန်ပါမယ်။ ဝယ်ဈေးမထည့်ရသေးတဲ့ ပစ္စည်းကို 0 နဲ့ တွက်ပါတယ်။</div>
+  <section class="sec"><h2>ပစ္စည်း/ဝန်ဆောင်မှု အလိုက် အမြတ်</h2><div class="tablewrap"><table><tr><th>အမည်</th><th class="n">ခု</th><th class="n">ရောင်းရငွေ</th><th class="n">ဝယ်ဈေး</th><th class="n">အမြတ်</th><th class="n">%</th></tr>
+    ${rows.map(([k,o])=>`<tr><td>${esc(k)} ${o.t==='svc'?'<span class="tag">လက်ခ</span>':''}</td><td class="n">${o.q}</td><td class="n">${ks(o.r)}</td><td class="n">${o.c?ks(o.c):'—'}</td><td class="n">${ks(o.r-o.c)}</td><td class="n">${o.r?Math.round((o.r-o.c)/o.r*100):0}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">ဒေတာ မရှိပါ</td></tr>'}</table></div></section>
+  <section class="sec"><h2>ဆိုင်စရိတ် <span class="count">${ex.length}</span></h2>
+    ${hbars(Object.entries(exBy).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v))}
+    <form class="card" id="exform"><div class="three"><label class="f">အမျိုးအစား<select id="exc">${EXCAT.map(c=>`<option>${c}</option>`).join('')}</select></label>
+      <label class="f">ပမာဏ (Ks)<input id="exa" type="number" min="1" required placeholder="50000"></label><label class="f">ရက်စွဲ<input id="exd" type="date" value="${dayKey(new Date())}"></label></div>
+      <label class="f">မှတ်ချက်<input id="exn" placeholder="ဥပမာ ဂျင်နရေတာဆီ"></label><button class="btn dark">စရိတ် ထည့်မယ်</button></form>
+    <div class="list">${ex.map(e=>`<div class="row"><span class="grow">${esc(e.cat)}<div class="sub">${dmy(e.date)}${e.note?' · '+esc(e.note):''}</div></span><span class="num" style="font-size:16px">${ks(e.amt)}</span><button class="link" data-a="delex" data-id="${e.id}" aria-label="ဖျက်">✕</button></div>`).join('')}</div></section>`;
+},
+async closing(){
+  const now=new Date(),k=dayKey(now);
+  if(!S.closing){const [tot,list]=await Promise.all([rpc('daily_totals',{p_shop:SHOP,p_day:k}),q(sb.from('cash_closings').select('*').eq('shop_id',SHOP).order('close_date',{ascending:false}).limit(14))]);S.closing={tot:tot||[],list:list||[]}}
+  const pay={};S.closing.tot.forEach(r=>pay[r.method]=+r.amount);
+  const cash=Object.entries(pay).filter(([m])=>m.startsWith('Cash')).reduce((a,[,v])=>a+v,0);
+  const jobsTotal=Object.entries(pay).filter(([m])=>!m.includes('(')).reduce((a,[,v])=>a+v,0);
+  const today=S.closing.list.find(c=>c.close_date===k);if(today)S.closingToday=k;
+  const nToday=paidJobs().filter(j=>sameDay(j.paidAt,now)).length;
+  return `${back('ငွေစာရင်းပိတ် (Daily Closing)')}
+  <div class="card"><h3>ယနေ့ ${dmy(now)} · ${nToday} စီး</h3>
+    ${Object.entries(pay).sort((a,b)=>b[1]-a[1]).map(([m,v])=>`<div class="sumrow"><span>${esc(m==='Prepaid'?'ကြိုတင်ငွေ (လက်ကျန်မှ နုတ်)':m)}</span><span>${ks(v)}</span></div>`).join('')||'<div class="muted">ယနေ့ ငွေရှင်းထားတာ မရှိသေးပါ</div>'}
+    <div class="sumrow" style="font-weight:700;border-top:1px dashed var(--line);padding-top:6px"><span>Job ဝင်ငွေ စုစုပေါင်း</span><span>${ks(jobsTotal)}</span></div></div>
+  <form class="card" id="closeform"><h3>Cash Drawer စစ်ဆေး</h3>
+    <div class="sumrow"><span>ရှိသင့်သော ငွေသား</span><span>${ks(cash)}</span></div>
+    <label class="f">အမှန်တကယ် ရေတွက်ရသော ငွေသား (Ks)<input id="counted" type="number" min="0" required value="${today?today.counted:''}" placeholder="${cash}"></label>
+    <div class="change"><span>ကွာခြားချက်</span><b id="cdiff" data-exp="${cash}">—</b></div>
+    <button class="btn primary block">${today?'ပြန်ပြင်ပြီး ပိတ်မယ်':'ယနေ့ စာရင်းပိတ်မယ်'}</button>
+    ${today?`<div class="hint">${hm(today.created_at)} တွင် ${esc(staffName(today.by_staff))} ပိတ်ထားပြီး</div>`:''}</form>
+  <section class="sec"><h2>ယခင် စာရင်းပိတ်မှုများ</h2><div class="tablewrap"><table><tr><th>ရက်</th><th class="n">ရှိသင့်</th><th class="n">ရေတွက်ရ</th><th class="n">ကွာ</th><th>ပိတ်သူ</th></tr>
+    ${S.closing.list.map(c=>`<tr><td>${dm(c.close_date+'T12:00:00')}</td><td class="n">${ks(c.expected)}</td><td class="n">${ks(c.counted)}</td><td class="n" style="color:${c.diff<0?'var(--bad)':c.diff>0?'var(--warn)':'var(--ok)'}">${c.diff>0?'+':''}${ks(c.diff)}</td><td>${esc(staffName(c.by_staff))}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">မရှိသေးပါ</td></tr>'}</table></div></section>`;
+},
+promo(){
+  const st=p=>!p.active?['ရပ်ထား','s-paid']:p.end&&new Date(p.end)<Date.now()?['သက်တမ်းကုန်','s-bad']:p.start&&new Date(p.start)>Date.now()?['မစသေး','s-waiting']:['သုံးလို့ရ','s-ok'];
+  return `${back('Promo Code')}
+  <form class="card" id="promoform"><h3>Code အသစ် ဖန်တီးရန်</h3>
+    <div class="three"><label class="f">Code<input id="pc" required placeholder="RAINY10" style="text-transform:uppercase"></label>
+    <label class="f">အမျိုးအစား<select id="pt"><option value="pct">% ဖြင့် လျှော့</option><option value="ks">ကျပ်ငွေ ဖြင့် လျှော့</option></select></label>
+    <label class="f">ပမာဏ<input id="pv" type="number" min="1" required placeholder="10"></label></div>
+    <label class="f">သုံးလို့ရမည့် ကာလ<select id="pd"><option value="7">ယခုမှ ၁ ပတ်</option><option value="30" selected>ယခုမှ ၁ လ</option><option value="90">ယခုမှ ၃ လ</option><option value="0">အဆုံးမသတ်</option></select></label>
+    <button class="btn dark">Code သိမ်းမယ်</button></form>
+  <div class="list">${S.promos.map(p=>{const [t,c]=st(p);return`<div class="row"><span class="grow"><b class="num" style="font-size:18px;letter-spacing:.06em">${esc(p.code)}</b> <span class="pill ${c}">${t}</span>
+    <div class="sub">${p.type==='pct'?p.val+'%':ks(p.val)} လျှော့ · ${p.end?dm(p.start)+' – '+dm(p.end):'အဆုံးမသတ်'} · ${p.uses} ကြိမ် သုံးပြီး</div></span>
+    <button class="btn sm" data-a="togglepromo" data-id="${p.id}">${p.active?'ရပ်မယ်':'ပြန်ဖွင့်'}</button></div>`}).join('')||'<div class="empty">Promo Code မရှိသေးပါ</div>'}</div>`;
+},
+staff(){
+  const act=S.staff.filter(s=>s.active),off=S.staff.filter(s=>!s.active);
+  const row=s=>{const n=S.jobs.filter(j=>j.mech===s.id&&j.status==='paid'&&inR(j.paidAt,range('month'))).length;return`<div class="row" style="${s.active?'':'opacity:.6'}"><span class="grow"><b>${esc(s.name)}</b> <span class="tag">${ROLES[s.role].n}</span>${s.id===ME?' <span class="pill s-ok">သင်</span>':''}
+    <div class="sub"><span class="num" style="font-size:14px">${esc(s.phone)}</span>${s.email?' · '+esc(s.email):''}${s.email?(s.user_id?' · <span style="color:var(--ok)">Login ချိတ်ပြီး</span>':' · <span style="color:var(--warn)">Sign up စောင့်နေ</span>'):(s.role!=='mechanic'?' · Login မရှိ':'')}${s.role==='mechanic'?' · ဒီလ Job '+n+' ခု':''}</div></span>
+    ${s.role==='owner'?'':s.active?`<select class="inp" style="width:auto" data-role="${s.id}" aria-label="အဆင့်">${Object.entries(ROLES).filter(([k])=>k!=='owner').map(([k,r])=>`<option value="${k}" ${s.role===k?'selected':''}>${r.n}</option>`).join('')}</select><button class="link" data-a="delstaff" data-id="${s.id}">ဖယ်</button>`:`<button class="btn sm" data-a="restaff" data-id="${s.id}">ပြန်ထည့်</button>`}</div>`};
+  return `${back('ဝန်ထမ်း')}
+  <div class="tablewrap"><table><tr><th>အဆင့်</th><th>လုပ်ပိုင်ခွင့်</th></tr>${Object.values(ROLES).map(r=>`<tr><td><b>${r.n}</b></td><td style="white-space:normal">${r.d}</td></tr>`).join('')}</table></div>
+  <div class="list">${act.map(row).join('')}</div>
+  <form class="card" id="staffform"><h3>ဝန်ထမ်းအသစ် ထည့်ရန်</h3><div class="two"><label class="f">အမည်<input id="sn" required placeholder="ဆရာမောင်"></label><label class="f">ဖုန်း<input id="sp2" inputmode="tel" placeholder="09 ..."></label></div>
+    <div class="two"><label class="f">အဆင့်<select id="sr">${Object.entries(ROLES).filter(([k])=>k!=='owner').map(([k,r])=>`<option value="${k}" ${k==='mechanic'?'selected':''}>${r.n}</option>`).join('')}</select></label><label class="f">Email (Login ပေးမယ်ဆိုရင်)<input id="sem" type="email" placeholder="ကိုယ်ပိုင်ဖုန်းနဲ့ ဝင်သုံးမယ်ဆိုရင်"></label></div>
+    <button class="btn dark">ထည့်မယ်</button><div class="hint">Email ထည့်ထားရင် ဝန်ထမ်းက ${esc(PRODUCT)} မှာ “အကောင့်ဖွင့် → ဝန်ထမ်းအဖြစ် ဝင်မယ်” ကို အဲ့ Email နဲ့ လုပ်ရုံပါပဲ။ Email မထည့်ရင် Job မှာ နာမည်ရွေးလို့သာ ရပါမယ်။</div></form>
+  ${off.length?`<section class="sec"><h2>ဖယ်ထားသူများ <span class="count">${off.length}</span></h2><div class="list">${off.map(row).join('')}</div></section>`:''}`;
+},
+logs(){
+  if(!S.logs)return q(sb.from('activity_logs').select('*').eq('shop_id',SHOP).order('created_at',{ascending:false}).limit(300)).then(r=>{S.logs=r||[];return VIEWS.logs()});
+  const qq=logQ.toLowerCase();const list=S.logs.filter(l=>!qq||(l.message+staffName(l.by_staff)).toLowerCase().includes(qq)).slice(0,200);
+  return `${back('Activity Log',`<button class="btn sm" style="margin-left:auto" data-a="exportlogs">CSV ထုတ်</button>`)}
+  <input class="search" id="logq" type="search" placeholder="ရှာရန် (ဥပမာ ဖျက်၊ ငွေရှင်း၊ အမည်)" value="${esc(logQ)}" autocomplete="off">
+  <div class="list">${list.map(l=>`<div class="row"><span class="grow">${esc(l.message)}<div class="sub">${esc(staffName(l.by_staff))}</div></span><span class="sub num" style="font-size:14px;white-space:nowrap">${dm(l.created_at)} ${hm(l.created_at)}</span></div>`).join('')||'<div class="empty">မှတ်တမ်း မရှိပါ</div>'}</div>`;
+},
+backup(){
+  return `${back('Backup')}
+  <div class="card"><h3>Backup ထုတ်ရန်</h3><div class="hint">Data တွေကို Supabase မှာ သိမ်းထားပြီးသားပါ။ ဒါပေမဲ့ လတိုင်း တစ်ကြိမ် Excel ထုတ်ပြီး Google Drive မှာ သိမ်းထားရင် ပိုစိတ်ချရပါတယ်။ (ဒီနှစ်နဲ့ ယခင်လ Job များ ပါဝင်ပါမယ်)</div>
+    <div class="btns"><button class="btn primary" data-a="bkxlsx">Excel (.xlsx) — ဖတ်ရလွယ်</button><button class="btn" data-a="bkjson">JSON (.json)</button></div></div>`;
+},
+settings(){
+  const s=S.shop,own=ROLE==='owner';
+  return `${back('Settings')}
+  <form class="card" id="setform"><h3>ဆိုင်အချက်အလက် (Header၊ ပြေစာ၊ ဖောက်သည် website မှာ ပြမည်)</h3>
+    ${own?'':'<div class="hint">ဆိုင်ပိုင်ရှင်သာ ပြင်လို့ရပါတယ်</div>'}
+    <fieldset ${own?'':'disabled'} style="border:0;padding:0;margin:0;display:grid;gap:10px;min-width:0">
+    <div class="two"><label class="f">ဆိုင်နာမည် (အပေါ်ကြောင်း)<input id="s1" value="${esc(s.name1)}" required></label><label class="f">ဆိုင်နာမည် (အောက်ကြောင်း)<input id="s2" value="${esc(s.name2)}"></label></div>
+    <div class="two"><label class="f">လိပ်စာ<input id="s3" value="${esc(s.address)}"></label><label class="f">ဖုန်း<input id="s4" value="${esc(s.phone)}"></label></div>
+    <label class="f">ပြေစာ အောက်ခြေစာ<input id="s5" value="${esc(s.receipt_footer)}"></label>
+    <div class="two"><label class="f">ဝိုင်လဲ သတိပေး (km)<input id="s6" type="number" min="500" value="${s.oil_km}"></label><label class="f">ဝိုင်လဲ သတိပေး (လ)<input id="s7" type="number" min="1" max="24" value="${s.oil_months}"></label></div>
+    <div class="two"><label class="f">Header နောက်ခံအရောင်<input id="s8" type="color" class="swatch" value="${esc(s.brand_bg||'#1d4fa3')}"></label><label class="f">ဆိုင်နာမည် စာလုံးအရောင်<input id="s9" type="color" class="swatch" value="${esc(s.brand_fg||'#e3121b')}"></label></div>
+    <h3 style="margin-top:6px">ဖောက်သည် website</h3>
+    <label class="check"><input type="checkbox" id="spub" ${s.is_public?'checked':''}> ဖောက်သည် website ဖွင့်ထားမည်</label>
+    <div class="two"><label class="f">Viber<input id="sviber" value="${esc(s.viber||'')}" placeholder="09 ..."></label><label class="f">Facebook page link<input id="sfb" value="${esc(s.facebook||'')}" placeholder="https://facebook.com/..."></label></div>
+    <label class="f">ဆိုင်အကြောင်း<textarea id="sabout" rows="3">${esc(s.about)}</textarea></label>
+    <div class="two"><label class="f">ဖွင့်ချိန်<input id="shours" value="${esc(s.hours)}"></label><label class="f">Google Maps link<input id="smap" value="${esc(s.map_url)}" placeholder="https://maps.app.goo.gl/..."></label></div>
+    <button class="btn dark">သိမ်းမယ်</button></fieldset></form>
+  <section class="sec"><h2>လက်ခ (ဝန်ဆောင်မှု) ဈေးနှုန်း <span class="hint">ပြင်ပြီး ကွက်ပြင်ကို နှိပ်ရင် သိမ်းမည် · ⚡ အမြဲသုံး · 🛢 ဝိုင်လဲ · 🌐 website မှာပြ</span></h2>
+    <div class="list">${S.services.filter(v=>v.active).map(v=>`<div class="row" style="flex-wrap:wrap"><input class="inp" style="flex:2 1 160px" value="${esc(v.name)}" data-svc="${v.id}" data-f="name" aria-label="အမည်"><input class="inp num" style="flex:1 1 90px;font-size:16px" type="number" min="0" value="${v.price}" data-svc="${v.id}" data-f="price" aria-label="ဈေး">
+      <label class="check" title="အမြဲသုံး"><input type="checkbox" data-svc="${v.id}" data-f="fav" ${v.fav?'checked':''}>⚡</label><label class="check" title="ဝိုင်လဲ"><input type="checkbox" data-svc="${v.id}" data-f="oil" ${v.oil?'checked':''}>🛢</label><label class="check" title="website"><input type="checkbox" data-svc="${v.id}" data-f="public" ${v.public?'checked':''}>🌐</label><button class="link" data-a="delsvc" data-id="${v.id}" aria-label="ဖယ်">✕</button></div>`).join('')}</div>
+    <form class="row" id="svcform"><input class="inp" id="nsn" style="flex:2" required placeholder="ဝန်ဆောင်မှုအသစ်"><input class="inp" id="nsp" style="flex:1" type="number" min="0" required placeholder="ဈေး"><button class="btn dark sm">ထည့်</button></form></section>`;
+},
+subscription(){
+  const left=daysTo(CUR.paid_until);
+  return `${back('Subscription')}
+  <div class="card"><div class="sumrow"><span>Plan</span><span style="font-family:inherit;font-size:14px"><span class="pill ${CUR.plan==='trial'?'s-waiting':'s-ok'}">${{trial:'အခမဲ့ စမ်းသုံး',monthly:'လစဉ်',yearly:'နှစ်စဉ်',suspended:'ပိတ်ထား'}[CUR.plan]}</span></span></div>
+    <div class="sumrow"><span>သက်တမ်း</span><span>${dmy(CUR.paid_until)}</span></div><div class="total"><span>ကျန်ရက်</span><b style="color:${left<=5?'var(--bad)':'inherit'}">${left} ရက်</b></div></div>
+  <div class="card"><h3>သက်တမ်းတိုးရန်</h3>${payBox()}</div>`;
+},
+async platform(){
+  if(!S.pa)S.pa=await rpc('platform_shops')||[];
+  const today=dayKey(new Date());const act=S.pa.filter(s=>s.plan!=='suspended'&&s.paid_until>=today);
+  const paying=act.filter(s=>s.plan!=='trial');const mrr=paying.reduce((a,s)=>a+(s.plan==='yearly'?Math.round((CFG.PRICE_YEAR||350000)/12):(s.monthly_fee||0)),0);
+  const pill=s=>s.plan==='suspended'?'<span class="pill s-paid">ပိတ်ထား</span>':s.paid_until<today?'<span class="pill s-bad">သက်တမ်းကုန်</span>':s.plan==='trial'?'<span class="pill s-waiting">Trial</span>':'<span class="pill s-ok">'+(s.plan==='yearly'?'နှစ်စဉ်':'လစဉ်')+'</span>';
+  return `${back(esc(PRODUCT)+' — ဆိုင်များ',`<button class="btn sm" style="margin-left:auto" data-a="parefresh">Refresh</button>`)}
+  <div class="stats"><div class="stat"><span>ဆိုင်အားလုံး</span><b>${S.pa.length}</b></div><div class="stat good"><span>သုံးနေဆဲ</span><b>${act.length}</b></div><div class="stat"><span>ငွေပေးနေသော ဆိုင်</span><b>${paying.length}</b></div><div class="stat money"><span>လစဉ်ဝင်ငွေ (ခန့်မှန်း)</span><b>${ks(mrr)}</b></div></div>
+  <div class="list">${S.pa.map(s=>{const d=daysTo(s.paid_until);return`<div class="card" style="gap:6px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><b>${esc(s.name1)} ${esc(s.name2||'')}</b>${pill(s)}<span class="hint" style="margin-left:auto">${s.plan==='suspended'?'':d>=0?d+' ရက် ကျန်':(-d)+' ရက် ကျော်'}</span></div>
+    <div class="sub muted" style="font-size:13px">${esc(s.owner_name||'')} · <span class="num" style="font-size:14px">${esc(s.owner_phone||'')}</span> · ${esc(s.owner_email||'')}</div>
+    <div class="sub muted" style="font-size:12px">သက်တမ်း ${dmy(s.paid_until)} · ဝန်ထမ်း ${s.staff_count} · ၃၀ ရက်အတွင်း Job ${s.jobs_30d} · /${esc(s.slug)}</div>
+    <div class="btns"><button class="btn sm primary" data-a="paext" data-id="${s.id}" data-m="1">+ ၁ လ</button><button class="btn sm" data-a="paext" data-id="${s.id}" data-m="12">+ ၁ နှစ်</button><button class="btn sm ${s.plan==='suspended'?'':'danger'}" data-a="pasusp" data-id="${s.id}" data-v="${s.plan==='suspended'?'0':'1'}">${s.plan==='suspended'?'ပြန်ဖွင့်':'ပိတ်မယ်'}</button></div></div>`}).join('')||'<div class="empty">ဆိုင် မရှိသေးပါ</div>'}</div>`;
+}};
+/* ---------- မိဘရိပ်: Booking / Chat / Website ---------- */
+const BST={pending:'စောင့်ဆဲ',confirmed:'အတည်ပြုပြီး',done:'ကားရောက်ပြီး',cancelled:'ပယ်ဖျက်',noshow:'မလာ'};
+const BCLS={pending:'s-waiting',confirmed:'s-ok',done:'s-paid',cancelled:'s-bad',noshow:'s-bad'};
+const WD=['တနင်္ဂနွေ','တနင်္လာ','အင်္ဂါ','ဗုဒ္ဓဟူး','ကြာသပတေး','သောကြာ','စနေ'];
+let bookFilter='upcoming',PEND_BK=null,THREAD_T=null,THREAD_ID=null;
+async function loadBookings(){const from=dayKey(new Date(Date.now()-30*864e5));S.bookings=(await all('bookings',{f:x=>x.eq('shop_id',SHOP).gte('booking_date',from)})).sort((a,b)=>(a.booking_date+a.time_slot)<(b.booking_date+b.time_slot)?-1:1)}
+async function loadThreads(){S.threads=can('customers')?(await rpc('chat_threads',{p_shop:SHOP})||[]):[]}
+const unread=()=>(S.threads||[]).reduce((a,t)=>a+(+t.unread||0),0);
+const bday=d=>{const x=new Date(d+'T12:00:00'),t=dayKey(new Date()),tm=dayKey(new Date(Date.now()+864e5));return d===t?'ယနေ့':d===tm?'မနက်ဖြန်':WD[x.getDay()]+' '+dm(x)};
+function bookingCard(b){
+  const act=b.status==='pending'?`<button class="btn sm primary" data-a="bk" data-id="${b.id}" data-k="confirmed">အတည်ပြု</button><button class="btn sm danger" data-a="bk" data-id="${b.id}" data-k="cancelled">ပယ်</button>`
+    :b.status==='confirmed'?`<button class="btn sm primary" data-a="bkjob" data-id="${b.id}">ကားရောက်ပြီ → Job ဖွင့်</button><button class="btn sm" data-a="bk" data-id="${b.id}" data-k="noshow">မလာ</button><button class="btn sm danger" data-a="bk" data-id="${b.id}" data-k="cancelled">ပယ်</button>`
+    :b.job_id&&job(b.job_id)?`<button class="btn sm" data-a="open" data-id="${b.job_id}">Job ကြည့်ရန်</button>`:'';
+  return `<div class="card ${BCLS[b.status]}" style="gap:6px;border-left:5px solid var(--st,var(--line))"><div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">
+    <b class="num" style="font-size:22px">${esc(b.time_slot)}</b><b>${bday(b.booking_date)}</b><span class="pill ${BCLS[b.status]}">${BST[b.status]}</span><span class="hint" style="margin-left:auto">#${b.booking_no||''}</span></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">${b.plate?plate(b.plate,1):''}<span>${esc(b.model||'')}</span></div>
+    <div><b>${esc(b.name)}</b> · <span class="num" style="font-size:15px">${esc(b.phone)}</span> <button class="tlink" data-a="copy" data-v="${esc(b.phone)}">ကူး</button>${b.customer_id?' <span class="tag">Online</span>':''}</div>
+    ${b.services?`<div class="sub">🔧 ${esc(b.services)}</div>`:''}${b.note?`<div class="sub">“${esc(b.note)}”</div>`:''}
+    ${act?`<div class="btns">${act}</div>`:''}</div>`}
+async function shrink(file,max=1280){
+  if(!/^image\//.test(file.type))throw new Error('ပုံဖိုင် ရွေးပါ');
+  const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=()=>rej(new Error('ပုံ ဖွင့်လို့ မရပါ'));i.src=URL.createObjectURL(file)});
+  const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(r,'image/jpeg',.82))}
+async function uploadImage(file){const blob=await shrink(file);const path=SHOP+'/'+Date.now()+'-'+Math.random().toString(36).slice(2,7)+'.jpg';
+  const {error}=await sb.storage.from('media').upload(path,blob,{contentType:'image/jpeg'});if(error)throw error;return sb.storage.from('media').getPublicUrl(path).data.publicUrl}
+
+Object.assign(VIEWS,{
+bookings(){
+  const t=dayKey(new Date()),tm=dayKey(new Date(Date.now()+864e5));const B=S.bookings||[];const live=b=>['pending','confirmed'].includes(b.status);
+  const fs={upcoming:'လာမည့်',today:'ယနေ့',tomorrow:'မနက်ဖြန်',pending:'စောင့်ဆဲ',past:'ပြီး/ပယ်'};
+  const list=B.filter(b=>bookFilter==='today'?b.booking_date===t:bookFilter==='tomorrow'?b.booking_date===tm:bookFilter==='pending'?b.status==='pending':bookFilter==='past'?(!live(b)||b.booking_date<t):live(b)&&b.booking_date>=t);
+  if(bookFilter==='past')list.reverse();
+  const nP=B.filter(b=>b.status==='pending'&&b.booking_date>=t).length,nT=B.filter(b=>b.booking_date===t&&live(b)).length;
+  return `<div class="stats"><div class="stat ${nP?'alert':''}"><span>အတည်ပြုရန် စောင့်ဆဲ</span><b>${nP}</b></div><div class="stat"><span>ယနေ့ Booking</span><b>${nT}</b></div></div>
+  <div class="btns"><button class="btn primary" data-a="bknew">＋ ဖုန်းဖြင့် Booking ထည့်</button><button class="btn" data-a="bkrefresh">Refresh</button></div>
+  ${chips('bf',fs,bookFilter)}
+  <div class="list">${list.map(b=>{const tok=BCLS[b.status];return bookingCard(b).replace('class="card"','class="card '+tok+'"')}).join('')||'<div class="empty">Booking မရှိပါ</div>'}</div>`},
+async messages(){
+  if(!S.threads)await loadThreads();
+  return `${back('ဖောက်သည် Messages',`<button class="btn sm" style="margin-left:auto" data-a="msgrefresh">Refresh</button>`)}
+  <div class="hint">Website မှာ Account ဖွင့်ထားတဲ့ ဖောက်သည်တွေ ပို့တဲ့ စာများ</div>
+  <div class="list">${(S.threads||[]).map(t=>`<button class="row" data-a="thread" data-id="${t.customer_id}"><span class="grow"><b>${esc(t.name||'')}</b> ${+t.unread?`<span class="pill s-bad">${t.unread} အသစ်</span>`:''}
+    <div class="sub" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.last_sender==='shop'?'ဆိုင်: ':''}${esc(t.last_body||'📷 ပုံ')}</div></span><span class="sub num" style="font-size:13px;white-space:nowrap">${sameDay(t.last_at,new Date())?hm(t.last_at):dm(t.last_at)}</span></button>`).join('')||'<div class="empty">Message မရှိသေးပါ</div>'}</div>`},
+async website(){
+  const [bn,ps]=await Promise.all([q(sb.from('banners').select('*').eq('shop_id',SHOP).order('sort')),q(sb.from('posts').select('*').eq('shop_id',SHOP).order('created_at',{ascending:false}).limit(50))]);
+  const s=S.shop,own=ROLE==='owner',closed=String(s.closed_days||'').split(',').map(x=>x.trim());const url=siteUrl();
+  const thumb=u=>u?`<img src="${esc(u)}" alt="" style="width:64px;height:44px;object-fit:cover;border-radius:6px;flex:none">`:`<span style="width:64px;height:44px;border-radius:6px;flex:none;background:${esc(s.brand_bg||'#1d4fa3')}"></span>`;
+  return `${back('Website')}
+  <div class="card"><h3>ဖောက်သည် Website</h3><div class="copyrow"><code>${esc(url)}</code><button class="btn sm" data-a="copy" data-v="${esc(url)}">ကူး</button><a class="btn sm" href="${esc(url)}" target="_blank" rel="noopener">ဖွင့်ကြည့်</a></div></div>
+  <section class="sec"><h2>Banner <span class="count">${bn.length}</span> <span class="hint">Website ထိပ်ဆုံးမှာ လှည့်ပြမည်</span></h2>
+    <div class="list">${bn.map(b=>`<div class="row" style="${b.active?'':'opacity:.55'}">${thumb(b.image_url)}<span class="grow"><b>${esc(b.title||'(ခေါင်းစဉ်မရှိ)')}</b><div class="sub">${esc(b.subtitle||'')}</div></span>
+      <button class="btn sm" data-a="bntoggle" data-id="${b.id}" data-v="${b.active?0:1}">${b.active?'ဖျောက်':'ပြ'}</button><button class="link" data-a="bndel" data-id="${b.id}">ဖျက်</button></div>`).join('')||'<div class="empty">Banner မရှိသေးပါ</div>'}</div>
+    <form class="card" id="bnform"><h3>Banner အသစ်</h3><div class="two"><label class="f">ခေါင်းစဉ်<input id="bnt" required placeholder="ဝိုင်လဲရင် ကားဆေး အခမဲ့"></label><label class="f">စာတို<input id="bns" placeholder="နိုဝင်ဘာ တစ်လလုံး"></label></div>
+      <div class="two"><label class="f">နှိပ်ရင် သွားမည့်နေရာ<select id="bnl"><option value="#booking">Booking</option><option value="#services">ဈေးနှုန်း</option><option value="#posts">သတင်း</option><option value="">မသွား</option></select></label><label class="f">ပုံ (မထည့်လည်းရ)<input id="bni" type="file" accept="image/*" class="inp"></label></div>
+      <button class="btn dark">Banner တင်မယ်</button></form></section>
+  <section class="sec"><h2>Post / သတင်း <span class="count">${ps.length}</span></h2>
+    <div class="list">${ps.map(p=>`<div class="row" style="${p.published?'':'opacity:.55'};align-items:flex-start">${thumb(p.image_url)}<span class="grow"><b>${esc(p.title)}</b><div class="sub">${dmy(p.created_at)} · ${esc(String(p.body||'').slice(0,80))}</div></span>
+      <button class="btn sm" data-a="pstoggle" data-id="${p.id}" data-v="${p.published?0:1}">${p.published?'ဖျောက်':'ပြ'}</button><button class="link" data-a="psdel" data-id="${p.id}">ဖျက်</button></div>`).join('')||'<div class="empty">Post မရှိသေးပါ</div>'}</div>
+    <form class="card" id="psform"><h3>Post အသစ်</h3><label class="f">ခေါင်းစဉ်<input id="pst" required></label><label class="f">စာသား<textarea id="psb" rows="4" class="inp"></textarea></label>
+      <label class="f">ပုံ (မထည့်လည်းရ)<input id="psi" type="file" accept="image/*" class="inp"></label><button class="btn dark">Post တင်မယ်</button></form></section>
+  <form class="card" id="bksetform"><h3>Booking Setting</h3>${own?'':'<div class="hint">ဆိုင်ပိုင်ရှင်သာ ပြင်လို့ရပါတယ်</div>'}
+    <fieldset ${own?'':'disabled'} style="border:0;padding:0;margin:0;display:grid;gap:10px;min-width:0">
+    <label class="f">လက်ခံမည့် အချိန်များ (ကော်မာခံ)<input id="bkslots" value="${esc(s.booking_slots||'')}" placeholder="09:00,10:00,11:00"></label>
+    <div class="two"><label class="f">အချိန်တစ်ခုမှာ ကားအရေအတွက်<input id="bkcap" type="number" min="1" max="20" value="${s.slot_capacity||2}"></label><label class="f">ကြိုတင်ယူနိုင်သည့် ရက်<input id="bkdays" type="number" min="1" max="60" value="${s.booking_days||14}"></label></div>
+    <div class="f" style="font-size:13px;color:var(--muted)">ပိတ်ရက်<div class="seg">${WD.map((w,i)=>`<label class="check" style="border:1px solid var(--line);border-radius:6px;padding:4px 8px"><input type="checkbox" name="cd" value="${i}" ${closed.includes(String(i))?'checked':''}>${w}</label>`).join('')}</div></div>
+    <button class="btn dark">သိမ်းမယ်</button></fieldset></form>`}
+});
+function siteUrl(){try{return new URL('index.html',location.href).href}catch(e){return 'index.html'}}
+async function threadSheet(cid){
+  THREAD_ID=cid;const c=cust(cid);
+  const draw=async(first)=>{
+    let msgs=[];try{msgs=await q(sb.from('chat_messages').select('*').eq('customer_id',cid).order('created_at',{ascending:true}).limit(300))}catch(e){toast(errMsg(e));return}
+    if(THREAD_ID!==cid||(!first&&$('#sheet').hidden))return;
+    const box=$('#chatbox');const keep=$('#chattxt')?$('#chattxt').value:'';
+    const html=msgs.map(m=>`<div style="display:flex;justify-content:${m.sender==='shop'?'flex-end':'flex-start'}"><div style="max-width:80%;padding:7px 11px;border-radius:12px;font-size:14px;line-height:1.55;${m.sender==='shop'?'background:var(--hdr-bg,#1d4fa3);color:#fff;border-bottom-right-radius:3px':'background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:3px'}">
+      ${m.image_url?`<a href="${esc(m.image_url)}" target="_blank" rel="noopener"><img src="${esc(m.image_url)}" alt="ပုံ" style="max-width:220px;border-radius:8px;display:block;margin-bottom:${m.body?'4px':'0'}"></a>`:''}${esc(m.body||'')}
+      <div style="font-size:10px;opacity:.7;text-align:right">${dm(m.created_at)} ${hm(m.created_at)}${m.sender==='shop'&&m.staff_id?' · '+esc(staffName(m.staff_id)):''}</div></div></div>`).join('')||'<div class="empty">စာ မရှိသေးပါ</div>';
+    if(first||!box){sheet(`${head(`<h2>${esc(c.name)}</h2>`,`<span class="num muted" style="font-size:15px">${esc(c.phone)}</span>`)}
+      <div id="chatbox" style="display:grid;gap:8px;max-height:52vh;overflow-y:auto;padding:4px 2px">${html}</div>
+      <form id="chatform" data-id="${cid}" style="display:flex;gap:8px;align-items:center"><label class="btn sm" style="cursor:pointer" title="ပုံပို့">📷<input id="chatimg" type="file" accept="image/*" hidden></label><input id="chattxt" class="inp" placeholder="စာရေးရန်..." autocomplete="off"><button class="btn primary sm">ပို့</button></form>`);
+      $('#chatimg').addEventListener('change',e=>{const f=e.target.files[0];if(f)run(async()=>{const u=await uploadImage(f);await q(sb.from('chat_messages').insert({shop_id:SHOP,customer_id:cid,sender:'shop',staff_id:ME,image_url:u}));draw()})})}
+    else{box.innerHTML=html}
+    const b2=$('#chatbox');if(b2)b2.scrollTop=b2.scrollHeight;if(!first&&$('#chattxt'))$('#chattxt').value=keep;
+    if(msgs.some(m=>m.sender==='customer'&&!m.read_at)){await sb.from('chat_messages').update({read_at:new Date().toISOString()}).eq('customer_id',cid).eq('sender','customer').is('read_at',null);
+      const t=(S.threads||[]).find(x=>x.customer_id===cid);if(t)t.unread=0}
+  };
+  await draw(true);clearInterval(THREAD_T);THREAD_T=setInterval(()=>{if($('#sheet').hidden||THREAD_ID!==cid){clearInterval(THREAD_T);return}draw()},DEMO?5000:12000);
+}
+
+function publicUrl(){try{return new URL('shop.html?s='+encodeURIComponent(S.shop.slug||''),location.href).href}catch(e){return 'shop.html?s='+(S.shop.slug||'')}}
+
+/* ---------- live inputs ---------- */
+function afterRender(){
+  const bindQ=(id,set)=>{const el=$(id);if(!el)return;el.addEventListener('input',()=>{set(el.value);const pos=el.selectionStart;render().then(()=>{const n=$(id);if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(e){}}})})};
+  bindQ('#jobq',v=>jobQ=v);bindQ('#stockq',v=>stockQ=v);bindQ('#custq',v=>custQ=v);bindQ('#logq',v=>logQ=v);
+  const c=$('#counted');if(c){const f=()=>{const e=+$('#cdiff').dataset.exp,d=(+c.value||0)-e;$('#cdiff').textContent=c.value===''?'—':(d>0?'+':'')+ks(d);$('#cdiff').style.color=c.value===''?'':d<0?'var(--bad)':d>0?'var(--warn)':'var(--ok)'};c.addEventListener('input',f);f()}
+  document.querySelectorAll('[data-role]').forEach(s=>s.addEventListener('change',()=>run(async()=>{const st=S.staff.find(x=>x.id===s.dataset.role);await q(sb.from('shop_staff').update({role:s.value}).eq('id',st.id));st.role=s.value;logAct(st.name+' ကို '+ROLES[s.value].n+' အဆင့် ပြောင်းသည်');toast('ပြောင်းပြီး');render()})));
+  document.querySelectorAll('[data-svc]').forEach(el=>el.addEventListener('change',()=>run(async()=>{const v=S.services.find(x=>x.id===el.dataset.svc);const f=el.dataset.f;
+    const val=f==='price'?Math.max(0,+el.value||0):['fav','oil','public'].includes(f)?el.checked:el.value.trim();
+    const col={oil:'is_oil_change'}[f]||f;await q(sb.from('services').update({[col]:val}).eq('id',v.id));v[f]=val;logAct('လက်ခ “'+v.name+'” ပြင်သည်');toast('သိမ်းပြီး')})));
+}
+
+/* ---------- sheets ---------- */
+function sheet(html){$('#panel').innerHTML=html;$('#sheet').hidden=false;document.body.style.overflow='hidden'}
+function close(){$('#sheet').hidden=true;openId=null;THREAD_ID=null;clearInterval(THREAD_T);document.body.style.overflow='';if(!$('#appshell').hidden&&USER)render()}
+function toast(t){document.querySelectorAll('.toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=t;document.body.append(d);setTimeout(()=>d.remove(),2600)}
+const head=(t,x='')=>`<div class="panel-head">${t}${x}<button class="x" data-a="close" aria-label="ပိတ်">×</button></div>`;
+
+function accountSheet(){
+  sheet(`${head('<h2>အကောင့်</h2>')}
+  <div class="card"><dl class="kv"><dt>Email</dt><dd>${esc(USER.email)}</dd>${MODE==='app'&&SHOP?`<dt>အမည်</dt><dd>${esc(me().name)}</dd><dt>အဆင့်</dt><dd>${(ROLES[ROLE]||{}).n}</dd><dt>ဆိုင်</dt><dd>${esc(CUR.name1)} ${esc(CUR.name2||'')}</dd>`:''}</dl></div>
+  ${SHOPS.length>1||(isPA&&SHOPS.length)?`<div class="card"><h3>ဆိုင် ပြောင်းရန်</h3><div class="list">${SHOPS.map(s=>`<button class="row" data-a="switchshop" data-id="${s.shop_id}"><span class="grow"><b>${esc(s.name1)} ${esc(s.name2||'')}</b><div class="sub">${(ROLES[s.role]||{}).n}${s.active?'':' · သက်တမ်းကုန်'}</div></span>${s.shop_id===SHOP&&MODE==='app'?'<span class="pill s-ok">လက်ရှိ</span>':''}</button>`).join('')}
+    ${isPA?`<button class="row" data-a="paonly"><span class="grow"><b>Platform admin</b><div class="sub">ဆိုင်အားလုံး၏ လစဉ်ကြေး</div></span></button>`:''}</div></div>`:''}
+  ${DEMO?'':`<form class="card" id="pwform"><h3>Password ပြောင်းရန်</h3><label class="f">Password အသစ်<input id="npw" type="password" minlength="6" required autocomplete="new-password"></label><button class="btn dark">ပြောင်းမယ်</button></form>`}
+  <button class="btn danger block" data-a="logout">Logout</button>`);
+}
+
+function newJobForm(bk){PEND_BK=bk?bk.id:null;
+  sheet(`${head('<h2>ကားအသစ်ဝင် (Job Card)</h2>')}
+  <form class="card" id="jobform">
+    <div class="two"><label class="f">နံပါတ်ပြား<input id="jp" required placeholder="YGN 5D-1234" list="platelist" autocomplete="off"></label>
+    <label class="f">ကားအမျိုးအစား<input id="jm" required placeholder="Toyota Belta"></label></div>
+    <datalist id="platelist">${S.vehicles.map(v=>`<option value="${esc(v.plate)}">`).join('')}</datalist>
+    <div class="hint" id="jfound"></div>
+    <div class="two"><label class="f">ဖောက်သည်အမည်<input id="jc" required placeholder="ကိုဇော်"></label>
+    <label class="f">ဖုန်း<input id="jt" inputmode="tel" placeholder="09 ..."></label></div>
+    <div class="two"><label class="f">ကီလိုမီတာ<input id="jk" type="number" min="0" placeholder="120000"></label>
+    <label class="f">မက္ကင်းနစ်<select id="jmech"><option value="">— နောက်မှ သတ်မှတ် —</option>${S.staff.filter(s=>s.role==='mechanic'&&s.active).map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join('')}</select></label></div>
+    <label class="f">ပြဿနာ / မှတ်ချက်<input id="jn" placeholder="ဘရိတ်အသံမြည်"></label>
+    <button class="btn primary block">Job ဖွင့်မယ်</button>
+    <button type="button" class="tlink" data-a="walkin" style="justify-self:center">ကားမပါ — ပစ္စည်းသက်သက် ရောင်းမယ်</button></form>`);
+  const jp=$('#jp');jp.focus();
+  jp.addEventListener('input',()=>{const v=S.vehicles.find(x=>plateKey(x.plate)===plateKey(jp.value));
+    if(v){const c=cust(v.custId);$('#jm').value=v.model||$('#jm').value;$('#jc').value=c.name;$('#jt').value=c.phone;$('#jk').placeholder=v.km?'ယခင် '+v.km:'';$('#jfound').textContent='ယခင်ဖောက်သည် — အချက်အလက် ဖြည့်ပေးထားပါတယ်'}else $('#jfound').textContent=''});
+  if(bk){jp.value=bk.plate||'';$('#jm').value=bk.model||'';$('#jc').value=bk.name;$('#jt').value=bk.phone;$('#jn').value=[bk.services,bk.note].filter(Boolean).join(' · ');jp.dispatchEvent(new Event('input'));$('#jc').value=bk.name;$('#jt').value=bk.phone;
+    $('#jfound').textContent='Booking #'+(bk.booking_no||'')+' မှ ဖြည့်ထားပါတယ်'}
+}
+
+function openJob(id){
+  openId=id;const j=job(id);if(!j){close();return}
+  const paid=j.status==='paid',money=can('money');fin(j);
+  const c=cust(j.custId);
+  const mechs=S.staff.filter(s=>s.role==='mechanic'&&(s.active||s.id===j.mech));
+  sheet(`${head(plate(plateOf(j)),`<span class="num" style="color:var(--muted);font-size:16px">${jl(j)}</span>`)}
+  <div class="card"><dl class="kv">
+    <dt>ကား</dt><dd>${esc(modelOf(j))}</dd>${j.custId?`<dt>ဖောက်သည်</dt><dd>${can('customers')?`<button class="tlink" data-a="cust" data-id="${j.custId}">${esc(c.name)}</button>`:esc(c.name)} <span class="num muted">${esc(c.phone)}</span></dd>`:''}
+    ${j.km?`<dt>ကီလို</dt><dd class="num" style="font-size:15px">${km(j.km)}</dd>`:''}${j.note?`<dt>မှတ်ချက်</dt><dd>${esc(j.note)}</dd>`:''}<dt>ဝင်ချိန်</dt><dd>${dm(j.in)} ${hm(j.in)}</dd></dl>
+    ${paid?`<span class="pill s-paid">${ST.paid} · ${dmy(j.paidAt)} ${hm(j.paidAt)}${j.mech?' · 🔧 '+esc(staffName(j.mech)):''}</span>`:`
+    <label class="f">မက္ကင်းနစ်<select id="mech" class="inp"><option value="">— မသတ်မှတ်ရသေး —</option>${mechs.map(s=>`<option value="${s.id}" ${j.mech===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}</select></label>
+    <div class="flow">${OPEN.map(k=>`<button class="s-${k}" data-a="status" data-k="${k}" aria-pressed="${j.status===k}">${ST[k]}</button>`).join('')}</div>`}
+  </div>
+  <div class="card"><h2>ပြင်ဆင်မှု / ပစ္စည်း</h2>
+    <div>${j.lines.map((l,i)=>`<div class="line"><span class="tag">${l.type==='svc'?'လက်ခ':'ပစ္စည်း'}</span><span class="grow">${esc(l.name)}</span>
+      ${!paid&&l.type==='part'?`<div class="stepper"><button data-a="qty" data-i="${i}" data-d="-1" aria-label="လျှော့">−</button><b>${l.qty}</b><button data-a="qty" data-i="${i}" data-d="1" aria-label="တိုး">＋</button></div>`:l.qty>1?`<span class="num">×${l.qty}</span>`:''}
+      ${money?`<span class="num" style="font-size:15px;min-width:74px;text-align:right">${ks(l.price*l.qty)}</span>`:''}${paid?'':`<button class="link" data-a="rm" data-i="${i}" aria-label="ဖယ်">✕</button>`}</div>`).join('')||'<div class="empty">မထည့်ရသေးပါ — အောက်က ရွေးပါ</div>'}</div>
+    ${paid?'':`<input class="search" id="addq" type="search" placeholder="လက်ခ / ပစ္စည်း ရှာရန်" autocomplete="off"><div class="addgrid" id="addlist"></div>`}
+  </div>
+  ${money?checkoutCard(j):''}
+  ${!paid&&can('checkout')?`<button class="btn danger sm" data-a="canceljob" style="justify-self:start">Job ပယ်ဖျက်မယ်</button>`:''}`);
+  if(!paid){renderAdd();$('#addq').addEventListener('input',renderAdd);
+    $('#mech').addEventListener('change',e=>run(async()=>{await q(sb.from('jobs').update({mechanic_id:e.target.value||null}).eq('id',j.id));j.mech=e.target.value;logAct(jl(j)+' မက္ကင်းနစ် '+staffName(j.mech)+' သတ်မှတ်သည်');toast('မက္ကင်းနစ် သတ်မှတ်ပြီး')}))}
+  bindCheckout(j);
+}
+function renderAdd(){
+  const j=job(openId),qq=($('#addq')?.value||'').toLowerCase(),money=can('money');if(!j)return;
+  const used=ref=>j.lines.filter(l=>l.type==='part'&&l.ref===ref).reduce((a,l)=>a+l.qty,0);
+  const sv=S.services.filter(s=>s.active&&(!qq||s.name.toLowerCase().includes(qq))),pt=S.parts.filter(p=>!qq||p.name.toLowerCase().includes(qq)||p.cat.toLowerCase().includes(qq));
+  const ord=a=>a.slice().sort((x,y)=>(y.fav?1:0)-(x.fav?1:0));
+  $('#addlist').innerHTML=ord(sv).map(s=>`<button class="add${s.fav?' fav':''}" data-a="addsvc" data-id="${s.id}">${esc(s.name)}<small>${money?ks(s.price):'လက်ခ'}</small></button>`).join('')+
+    ord(pt).map(p=>{const left=p.stock-used(p.id);return`<button class="add${p.fav?' fav':''}" data-a="addpart" data-id="${p.id}" ${left<=0?'disabled':''}>${esc(p.name)}<small>${money?ks(p.price)+' · ':''}${left} ခု</small></button>`}).join('')||'<div class="muted">မတွေ့ပါ</div>';
+}
+function checkoutCard(j){
+  if(j.status==='paid'){return `<div class="card">
+    ${j.discAmt?`<div class="sumrow"><span>လျှော့ဈေး</span><span>− ${ks(j.discAmt)}</span></div>`:''}${j.promoAmt?`<div class="sumrow"><span>Promo ${esc(j.promo)}</span><span>− ${ks(j.promoAmt)}</span></div>`:''}
+    <div class="total"><span>စုစုပေါင်း</span><b>${ks(j.total)}</b></div>${(j.pays||[]).map(p=>`<div class="sumrow"><span>${p.m==='Prepaid'?'ကြိုတင်ငွေ':esc(p.m)}</span><span>${ks(p.amt)}</span></div>`).join('')}
+    <button class="btn dark block" data-a="receipt">ပြေစာကြည့်ရန်</button></div>`}
+  if(!can('checkout'))return '';
+  const c=cust(j.custId),d=draft(j);
+  const methods=[...PAYM,'Split'];if(j.custId)methods.push('Prepaid');
+  return `<div class="card" id="co"><h2>ငွေရှင်း</h2>
+    <div class="seg" role="group" aria-label="ဈေးလျှော့">${[['none','မလျှော့'],['pct','% ဖြင့်'],['ks','ကျပ်ဖြင့်']].map(([k,t])=>`<button data-a="dtype" data-k="${k}" aria-pressed="${d.disc.type===k}">${t}</button>`).join('')}</div>
+    ${d.disc.type!=='none'?`<label class="f">${d.disc.type==='pct'?'လျှော့မည့် %':'လျှော့မည့် ကျပ်'}<input id="dval" type="number" min="0" value="${d.disc.val||''}" class="inp"></label>`:''}
+    <div class="two"><label class="f">Promo Code<input id="pcode" class="inp" value="${esc(d.promo)}" placeholder="CODE" style="text-transform:uppercase" autocomplete="off"></label><div id="pmsg" class="hint" style="align-self:end;padding-bottom:10px"></div></div>
+    <div class="sumrow"><span>ကျသင့်ငွေ</span><span>${ks(j.sub)}</span></div>
+    <div class="sumrow" id="r-disc"><span>လျှော့ဈေး</span><span id="t-disc"></span></div>
+    <div class="sumrow" id="r-promo"><span>Promo</span><span id="t-promo"></span></div>
+    <div class="total"><span>စုစုပေါင်း</span><b id="t-total"></b></div>
+    <div class="seg" role="group" aria-label="ငွေပေးချေမှု">${methods.map(m=>`<button data-a="pay" data-k="${m}" aria-pressed="${d.pay===m}">${m==='Split'?'ခွဲပေး':m==='Prepaid'?'ကြိုတင်ငွေ':m}</button>`).join('')}</div>
+    ${d.pay==='Split'?`<div class="two"><label class="f">ငွေသားဖြင့် ပေးမည် (Ks)<input id="splitcash" class="inp" type="number" min="0" value="${d.splitCash||''}"></label>
+      <label class="f">ကျန်ငွေကို<select id="splitother" class="inp">${PAYM.filter(m=>m!=='Cash').map(m=>`<option ${d.splitOther===m?'selected':''}>${m}</option>`).join('')}</select></label></div>`:''}
+    ${d.pay==='Prepaid'?`<div class="change"><span>${esc(c.name)} ၏ ကြိုတင်ငွေ လက်ကျန်</span><b>${ks(c.balance)}</b></div>`:''}
+    ${d.pay==='Cash'||d.pay==='Split'?`<label class="f">ဖောက်သည်ပေးငွေ (ငွေသား)<input id="given" class="inp" type="number" min="0" placeholder="ဥပမာ 100000"></label>
+      <div class="seg" id="quickcash"></div><div class="change"><span>ပြန်အမ်းရန်</span><b id="chg">—</b></div>`:''}
+    <button class="btn primary block" data-a="checkout" id="cobtn" ${j.lines.length?'':'disabled'}>ငွေရှင်းမယ်</button>
+    <div class="hint" id="coerr" style="color:var(--bad)"></div></div>`;
+}
+function cashDue(j){const d=draft(j);fin(j);return d.pay==='Split'?Math.min(j.total,+d.splitCash||0):d.pay==='Cash'?j.total:0}
+function updTotals(j){
+  fin(j);const d=draft(j);$('#t-disc').textContent='− '+ks(j.discAmt);$('#r-disc').hidden=!j.discAmt;$('#t-promo').textContent='− '+ks(j.promoAmt);$('#r-promo').hidden=!j.promoAmt;$('#t-total').textContent=ks(j.total);
+  const p=promoFor(d.promo);$('#pmsg').innerHTML=!d.promo?'':!p?'<span style="color:var(--bad)">Code မရှိပါ</span>':!promoValid(p)?'<span style="color:var(--bad)">သုံးလို့မရတော့ပါ</span>':`<span style="color:var(--ok)">${p.type==='pct'?p.val+'%':ks(p.val)} လျှော့ပေးမည်</span>`;
+  const g=$('#given');if(g){const due=cashDue(j);const qc=[due,Math.ceil(due/10000)*10000,Math.ceil(due/50000)*50000,Math.ceil(due/100000)*100000].filter((v,i,a)=>v>0&&a.indexOf(v)===i).slice(0,4);
+    $('#quickcash').innerHTML=qc.map(v=>`<button data-a="qcash" data-v="${v}">${v===due?'အတိအကျ':ks(v)}</button>`).join('');
+    const ch=(+g.value||0)-due;$('#chg').textContent=g.value===''?'—':ch<0?'မလုံလောက် ('+ks(-ch)+')':ks(ch);$('#chg').style.color=g.value!==''&&ch<0?'var(--bad)':''}
+  $('#cobtn').textContent=ks(j.total)+' ငွေရှင်းမယ်';
+}
+function bindCheckout(j){
+  if(!$('#co'))return;updTotals(j);const d=draft(j);
+  const on=(id,ev,f)=>{const e=$(id);if(e)e.addEventListener(ev,f)};
+  on('#dval','input',e=>{d.disc.val=Math.max(0,+e.target.value||0);updTotals(j)});
+  on('#pcode','input',e=>{d.promo=e.target.value.trim().toUpperCase();updTotals(j)});
+  on('#splitcash','input',e=>{d.splitCash=Math.max(0,+e.target.value||0);updTotals(j)});
+  on('#splitother','change',e=>{d.splitOther=e.target.value});
+  on('#given','input',()=>updTotals(j));
+}
+async function doCheckout(j){
+  fin(j);const d=draft(j);const err=m=>{$('#coerr').textContent=m};const c=cust(j.custId);
+  if(d.promo){const p=promoFor(d.promo);if(!p||!promoValid(p))return err('Promo Code မှားနေပါတယ် — ဖျက်ပြီး ပြန်စမ်းပါ')}
+  let pays;
+  if(d.pay==='Split'){const cash=+d.splitCash||0;if(cash<=0||cash>=j.total)return err('ငွေသားပမာဏကို 0 နဲ့ စုစုပေါင်းကြားမှာ ထည့်ပါ');pays=[{method:'Cash',amount:cash},{method:d.splitOther||'KBZPay',amount:j.total-cash}]}
+  else if(d.pay==='Prepaid'){if((c.balance||0)<j.total)return err('ကြိုတင်ငွေ မလုံလောက်ပါ — ဖောက်သည်စာမျက်နှာမှာ ငွေဖြည့်ပါ သို့မဟုတ် ခွဲပေးပါ');pays=[{method:'Prepaid',amount:j.total}]}
+  else pays=[{method:d.pay,amount:j.total}];
+  let given=null;const g=$('#given');if(g&&g.value!==''){given=+g.value;if(given<cashDue(j))return err('ဖောက်သည်ပေးငွေ မလုံလောက်ပါ')}
+  await run(async()=>{
+    try{await rpc('checkout_job',{p_job:j.id,p_disc_type:d.disc.type,p_disc_val:+d.disc.val||0,p_promo:d.promo||null,p_payments:pays,p_cash_given:given})}catch(e){err(errMsg(e));return}
+    delete DRAFT[j.id];
+    await reloadJob(j.id);
+    const tasks=[reloadParts(true)];if(j.custId)tasks.push(reloadCustomer(j.custId));if(d.promo)tasks.push(all('promo_codes').then(r=>S.promos=r.map(mapPromo)));
+    await Promise.all(tasks);S.cstats=null;S.closing=null;loadDue().catch(()=>{});
+    toast('ငွေရှင်းပြီးပါပြီ');receipt(j.id);
+  });
+}
+function receipt(id){
+  const j=job(id),c=cust(j.custId),s=S.shop;openId=id;
+  const oil=j.lines.some(l=>oilIds().has(l.ref));const nd=new Date(j.paidAt);nd.setMonth(nd.getMonth()+(+s.oil_months||3));
+  sheet(`${head('<h2>ပြေစာ</h2>')}
+  <div class="receipt" id="rcpt">
+    <div class="rname"><span class="l1">${esc(s.name1)}</span><span class="l2">${esc(s.name2)}</span></div><div class="c">${esc(s.address||'')}${s.phone?' · '+esc(s.phone):''}</div><hr>
+    <div class="r"><span>${jl(j)}</span><span>${dmy(j.paidAt)} ${hm(j.paidAt)}</span></div>
+    ${j.vehicle_id?`<div class="r"><span>${esc(plateOf(j))} · ${esc(modelOf(j))}</span><span>${j.km?km(j.km):''}</span></div>`:''}
+    ${j.custId?`<div class="r"><span>${esc(c.name)}</span><span>${esc(c.phone)}</span></div>`:''}
+    ${j.mech?`<div class="r"><span>ပြင်ဆင်သူ</span><span style="font-family:inherit;font-size:13px">${esc(staffName(j.mech))}</span></div>`:''}<hr>
+    ${j.lines.map(l=>`<div class="r"><span>${esc(l.name)}${l.qty>1?' ×'+l.qty:''}</span><span>${ks(l.price*l.qty)}</span></div>`).join('')}
+    ${j.discAmt?`<div class="r"><span>လျှော့ဈေး</span><span>− ${ks(j.discAmt)}</span></div>`:''}${j.promoAmt?`<div class="r"><span>Promo ${esc(j.promo)}</span><span>− ${ks(j.promoAmt)}</span></div>`:''}<hr>
+    <div class="r big"><span>စုစုပေါင်း</span><span>${ks(j.total)}</span></div>
+    ${(j.pays||[]).map(p=>`<div class="r"><span>${p.m==='Prepaid'?'ကြိုတင်ငွေ':esc(p.m)}</span><span>${ks(p.amt)}</span></div>`).join('')}
+    ${j.given!=null?`<div class="r"><span>ပေးငွေ</span><span>${ks(j.given)}</span></div><div class="r"><span>ပြန်အမ်း</span><span>${ks(j.change)}</span></div>`:''}
+    ${(j.pays||[]).some(p=>p.m==='Prepaid')?`<div class="r"><span>ကြိုတင်ငွေ လက်ကျန်</span><span>${ks(c.balance)}</span></div>`:''}<hr>
+    ${oil?`<div class="c"><b>နောက်တစ်ကြိမ် ဝိုင်လဲရန်</b> — ${j.km?km(+j.km+(+s.oil_km||5000))+' သို့မဟုတ် ':''}${dmy(nd)}</div>`:''}
+    <div class="c">${esc(s.receipt_footer||'')}</div>
+  </div>
+  <div class="btns">${DEMO?'':'<button class="btn" data-a="print">Print</button>'}<button class="btn" data-a="open" data-id="${j.id}">Job သို့ ပြန်သွား</button></div>`);
+}
+
+async function custSheet(id){
+  const c=S.customers.find(x=>x.id===id);if(!c)return;
+  sheet(`${head(`<h2>${esc(c.name)}</h2>`)}<div class="loading">ဖွင့်နေသည်...</div>`);
+  let hist=[],tops=[];
+  try{[hist,tops]=await Promise.all([q(sb.from('jobs').select(JSEL).eq('customer_id',id).eq('status','paid').order('paid_at',{ascending:false}).limit(60)),
+    can('money')?q(sb.from('topups').select('*').eq('customer_id',id).order('created_at',{ascending:false}).limit(5)):[]])}catch(e){toast(errMsg(e))}
+  if($('#sheet').hidden)return;
+  hist=(hist||[]).map(mapJob);const oil=oilIds();
+  const veh=S.vehicles.filter(v=>v.custId===id).map(v=>{const h=hist.filter(j=>j.vehicle_id===v.id);const lo=h.find(j=>j.lines.some(l=>oil.has(l.ref)));
+    const due=lo?new Date(lo.paidAt):null;if(due)due.setMonth(due.getMonth()+(+S.shop.oil_months||3));return{v,h,lo,due,days:due?Math.ceil((due-Date.now())/864e5):null}});
+  sheet(`${head(`<h2>${esc(c.name)}</h2>`)}
+  <form class="card" id="custform" data-id="${id}"><div class="two"><label class="f">အမည်<input id="cn" value="${esc(c.name)}" required></label><label class="f">ဖုန်း<input id="cp" value="${esc(c.phone)}" inputmode="tel"></label></div>
+    <div class="btns"><button class="btn sm dark">သိမ်းမယ်</button><button type="button" class="btn sm" data-a="copy" data-v="${esc(c.phone)}">ဖုန်းနံပါတ် ကူး</button>${c.user_id?`<button type="button" class="btn sm" data-a="thread" data-id="${c.id}">Chat</button>`:''}</div></form>
+  <div class="card"><h3>ကားများ</h3>${veh.map(x=>`<div class="line"><span class="grow">${plate(x.v.plate,1)} ${esc(x.v.model)}<div class="sub muted">${km(x.v.km)} · ${x.h.length} ကြိမ်လာ${x.lo?' · ဝိုင်လဲ '+dm(x.lo.paidAt):''}</div></span>${x.due?(x.days<=14?(x.days<0?`<span class="pill s-bad">${-x.days} ရက် ကျော်</span>`:`<span class="pill s-warn">${x.days} ရက် ကျန်</span>`):`<span class="pill s-ok">${dm(x.due)} တွင် ဝိုင်လဲ</span>`):''}</div>`).join('')||'<div class="muted">ကား မရှိသေးပါ</div>'}</div>
+  ${can('checkout')?`<div class="card"><h3>ကြိုတင်ငွေ (Service Package)</h3><div class="change"><span>လက်ကျန်</span><b>${ks(c.balance)}</b></div>
+    <form id="topform" data-id="${id}" class="two"><label class="f">ဖြည့်မည့်ငွေ (Ks)<input id="ta" type="number" min="1000" step="1000" required placeholder="50000"></label>
+      <label class="f">ပေးချေမှု<select id="tm">${PAYM.map(m=>`<option>${m}</option>`).join('')}</select></label><button class="btn dark" style="grid-column:1/-1">ငွေဖြည့်မယ်</button></form>
+    ${(tops||[]).map(t=>`<div class="sumrow"><span>${dmy(t.created_at)} · ${esc(t.method)}</span><span>+ ${ks(t.amount)}</span></div>`).join('')}</div>`:''}
+  <section class="sec"><h2>ပြင်ဆင်မှု မှတ်တမ်း <span class="count">${hist.length}</span>${can('money')?` <span class="hint">စုစုပေါင်း ${ks(hist.reduce((a,j)=>a+(j.total||0),0))}</span>`:''}</h2>
+    <div class="list">${hist.map(j=>`<div class="row" style="align-items:flex-start"><span class="grow">${plate(plateOf(j),1)} <span class="sub">${jl(j)} · ${dmy(j.paidAt)}${j.km?' · '+km(j.km):''}</span><div class="sub">${j.lines.map(l=>esc(l.name)+(l.qty>1?' ×'+l.qty:'')).join('၊ ')}</div></span>${can('money')?`<span class="num" style="font-size:16px">${ks(j.total)}</span>`:''}</div>`).join('')||'<div class="empty">မရှိသေးပါ</div>'}</div></section>`);
+}
+function newCust(){sheet(`${head('<h2>ဖောက်သည်အသစ်</h2>')}<form class="card" id="ncform"><div class="two"><label class="f">အမည်<input id="ncn" required></label><label class="f">ဖုန်း<input id="ncp" inputmode="tel" placeholder="09 ..."></label></div>
+  <div class="two"><label class="f">နံပါတ်ပြား (ရှိရင်)<input id="ncv" placeholder="YGN 5D-1234"></label><label class="f">ကားအမျိုးအစား<input id="ncm" placeholder="Toyota Belta"></label></div><button class="btn dark">ထည့်မယ်</button></form>`);$('#ncn').focus()}
+
+async function partSheet(id){
+  const p=id?part(id):{name:'',category_id:(S.categories[0]||{}).id,cost:'',price:'',stock:0,min:3,fav:false};const costRole=['owner','manager'].includes(ROLE);
+  sheet(`${head(`<h2>${id?'ပစ္စည်း ပြင်ရန်':'ပစ္စည်းအသစ်'}</h2>`)}
+  <form class="card" id="partform" data-id="${id||''}">
+    <label class="f">ပစ္စည်းအမည်<input id="pn" required value="${esc(p.name)}" placeholder="ဥပမာ Wiper Blade"></label>
+    <div class="two"><label class="f">Category<select id="pcat"><option value="">အထွေထွေ</option>${S.categories.map(c=>`<option value="${c.id}" ${p.category_id===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label><label class="f">အနည်းဆုံး ထားရမည့် Stock<input id="pmin" type="number" min="0" value="${p.min}"></label></div>
+    <div class="three">${costRole?`<label class="f">ဝယ်ဈေး (Ks)<input id="pcost" type="number" min="0" value="${p.cost??''}"></label>`:''}<label class="f">ရောင်းဈေး (Ks)<input id="pp" type="number" min="0" required value="${p.price}"></label><label class="f">လက်ကျန်<input id="ps" type="number" min="0" required value="${p.stock}"></label></div>
+    <label class="check"><input type="checkbox" id="pfav" ${p.fav?'checked':''}> အမြဲရောင်းရသော ပစ္စည်း (Job မှာ ထိပ်ဆုံးပြမည်)</label>
+    <button class="btn dark">${id?'သိမ်းမယ်':'ထည့်မယ်'}</button>${id?`<button type="button" class="btn danger sm" data-a="delpart" data-id="${id}" style="justify-self:start">ပစ္စည်းဖယ်ရှား</button>`:''}</form>
+  <div id="pmoves"></div>`);
+  if(id){try{const mv=await q(sb.from('stock_moves').select('*').eq('part_id',id).order('created_at',{ascending:false}).limit(8));const el=$('#pmoves');
+    if(el&&mv.length)el.innerHTML=`<div class="card"><h3>Stock အဝင်/အထွက်</h3>${mv.map(m=>`<div class="sumrow"><span>${dm(m.created_at)} ${hm(m.created_at)} · ${esc(m.note||'')} · ${esc(staffName(m.by_staff))}</span><span style="color:${m.qty<0?'var(--bad)':'var(--ok)'}">${m.qty>0?'+':''}${m.qty}</span></div>`).join('')}</div>`}catch(e){}}
+}
+function catsSheet(){sheet(`${head('<h2>Category စီမံ</h2>')}<div class="list">${S.categories.map(c=>`<div class="row"><span class="grow">${esc(c.name)}<div class="sub">${S.parts.filter(p=>p.category_id===c.id).length} မျိုး</div></span>${S.parts.some(p=>p.category_id===c.id)?'':`<button class="link" data-a="delcat" data-id="${c.id}">ဖျက်</button>`}</div>`).join('')}</div>
+  <form class="row" id="catform"><input class="inp" id="catn" required placeholder="Category အသစ် (ဥပမာ ဆီ/ချောဆီ)"><button class="btn dark sm">ထည့်</button></form>`)}
+async function movesSheet(){sheet(`${head('<h2>Stock မှတ်တမ်း</h2>')}<div class="loading">ဖွင့်နေသည်...</div>`);
+  const mv=await q(sb.from('stock_moves').select('*').eq('shop_id',SHOP).order('created_at',{ascending:false}).limit(150)).catch(e=>{toast(errMsg(e));return[]});if($('#sheet').hidden)return;
+  sheet(`${head('<h2>Stock မှတ်တမ်း</h2>')}<div class="tablewrap"><table><tr><th>အချိန်</th><th>ပစ္စည်း</th><th class="n">±</th><th>မှတ်ချက်</th><th>လုပ်သူ</th></tr>${mv.map(m=>`<tr><td>${dm(m.created_at)} ${hm(m.created_at)}</td><td>${esc((part(m.part_id)||{}).name||'—')}</td><td class="n" style="color:${m.qty<0?'var(--bad)':'var(--ok)'}">${m.qty>0?'+':''}${m.qty}</td><td>${esc(m.note||'')}</td><td>${esc(staffName(m.by_staff))}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">မှတ်တမ်း မရှိသေးပါ</td></tr>'}</table></div>`)}
+function importSheet(){sheet(`${head('<h2>Excel ဖြင့် ပစ္စည်းအများကြီး ထည့်ရန်</h2>')}
+  <div class="card"><div class="hint">Column: <b>name, category, cost, price, stock, min</b> — အမည်တူ ရှိပြီးသားဆိုရင် ဈေးနှုန်း ပြင်ပြီး stock ပေါင်းထည့်ပါမယ်။ မရှိသေးတဲ့ Category ကို အလိုအလျောက် ဖန်တီးပါမယ်။</div>
+  <div class="btns"><button class="btn" data-a="template">Template ဒေါင်းရန် (.csv)</button></div>
+  <label class="f">Excel / CSV ဖိုင် ရွေးရန်<input type="file" id="xfile" class="inp" accept=".xlsx,.xls,.csv"></label><div id="xres" class="hint"></div></div>`);
+  $('#xfile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f||BUSY)return;const out=$('#xres');out.textContent='ဖတ်နေသည်...';busy(true);
+    try{const X=await loadXLSX();const wb=X.read(await f.arrayBuffer());const rows=X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''});
+      let add=0,upd=0,i=0;const costRole=['owner','manager'].includes(ROLE);
+      for(const r of rows){i++;const g=k=>r[k]??r[k.charAt(0).toUpperCase()+k.slice(1)]??'';const name=String(g('name')).trim();if(!name)continue;out.textContent=`${i} / ${rows.length} ...`;
+        const cn=String(g('category')).trim();let cat=cn?S.categories.find(c=>c.name===cn):null;
+        if(cn&&!cat){const row=await q(sb.from('categories').insert({shop_id:SHOP,name:cn}).select().single());cat={id:row.id,name:row.name};S.categories.push(cat)}
+        let p=S.parts.find(x=>x.name.toLowerCase()===name.toLowerCase());const st=+g('stock')||0;
+        if(p){const upd2={};if(cat)upd2.category_id=cat.id;if(+g('price'))upd2.price=+g('price');if(g('min')!=='')upd2.min_stock=+g('min');if(Object.keys(upd2).length)await q(sb.from('parts').update(upd2).eq('id',p.id));upd++}
+        else{const row=await q(sb.from('parts').insert({shop_id:SHOP,name,category_id:cat?cat.id:null,price:+g('price')||0,min_stock:g('min')===''?3:+g('min')}).select().single());p={id:row.id};add++}
+        if(costRole&&+g('cost'))await q(sb.from('part_costs').upsert({part_id:p.id,shop_id:SHOP,cost:+g('cost')},{onConflict:'part_id'}));
+        if(st)await rpc('adjust_stock',{p_part:p.id,p_delta:st,p_note:'Excel import'})}
+      await reloadParts();logAct('Excel မှ ပစ္စည်း '+add+' မျိုးအသစ်၊ '+upd+' မျိုး ပြင်သည်');out.innerHTML=`<b style="color:var(--ok)">အသစ် ${add} မျိုး၊ ပြင်ဆင် ${upd} မျိုး ထည့်ပြီးပါပြီ</b>`;
+    }catch(err){out.textContent='ဖိုင် ဖတ်/သိမ်းလို့ မရပါ — '+errMsg(err)}finally{busy(false)}});
+}
+
+/* ---------- exports ---------- */
+function exportSales(){const R=range(period);const rows=[['Job','ငွေရှင်းချိန်','နံပါတ်ပြား','ကား','ဖောက်သည်','ဖုန်း','မက္ကင်းနစ်','ပစ္စည်း/လက်ခ','ကျသင့်ငွေ','လျှော့ဈေး','Promo','စုစုပေါင်း','ပေးချေမှု']];
+  paidJobs().filter(j=>inR(j.paidAt,R)).sort((a,b)=>a.paidAt<b.paidAt?-1:1).forEach(j=>{const c=cust(j.custId);rows.push([jl(j),dmy(j.paidAt)+' '+hm(j.paidAt),plateOf(j),modelOf(j),c.name,c.phone,staffName(j.mech),j.lines.map(l=>l.name+(l.qty>1?' x'+l.qty:'')).join('; '),j.sub,j.discAmt||0,j.promoAmt||0,j.total,(j.pays||[]).map(p=>p.m+' '+p.amt).join(' + ')])});
+  saveFile('sales-'+period+'-'+dayKey(new Date())+'.csv',csv(rows),'text/csv')}
+function exportProfit(){const rows=[['အမည်','အမျိုးအစား','ခု','ရောင်းရငွေ','ဝယ်ဈေး','အမြတ်']];(window.__profitRows||[]).forEach(([k,o])=>rows.push([k,o.t==='svc'?'လက်ခ':'ပစ္စည်း',o.q,o.r,o.c,o.r-o.c]));saveFile('profit-'+profitPeriod+'.csv',csv(rows),'text/csv')}
+function exportLogs(){saveFile('activity-log-'+dayKey(new Date())+'.csv',csv([['အချိန်','လုပ်သူ','လုပ်ဆောင်ချက်'],...(S.logs||[]).map(l=>[dmy(l.created_at)+' '+hm(l.created_at),staffName(l.by_staff),l.message])]),'text/csv')}
+async function backupXlsx(){try{const X=await loadXLSX();const wb=X.utils.book_new();const add=(n,rows)=>X.utils.book_append_sheet(wb,X.utils.json_to_sheet(rows.length?rows:[{}]),n);
+  add('Jobs',S.jobs.map(j=>({Job:jl(j),Status:ST[j.status],In:j.in,Paid:j.paidAt||'',Plate:plateOf(j),Model:modelOf(j),Customer:cust(j.custId).name,Phone:cust(j.custId).phone,Mechanic:staffName(j.mech),Items:j.lines.map(l=>l.name+' x'+l.qty).join('; '),Total:j.status==='paid'?j.total:fin(j),Payment:(j.pays||[]).map(p=>p.m+' '+p.amt).join(' + ')})));
+  add('Parts',S.parts.map(p=>({name:p.name,category:p.cat,cost:p.cost??'',price:p.price,stock:p.stock,min:p.min})));
+  add('Customers',S.customers.map(c=>({Name:c.name,Phone:c.phone,Prepaid:c.balance,Vehicles:S.vehicles.filter(v=>v.custId===c.id).map(v=>v.plate+' '+v.model).join('; ')})));
+  add('Services',S.services.map(s=>({Name:s.name,Price:s.price,Active:s.active})));
+  add('Expenses',S.expenses.map(e=>({Date:e.date,Type:e.cat,Amount:e.amt,Note:e.note})));
+  const buf=X.write(wb,{type:'array',bookType:'xlsx'});logAct('Excel Backup ထုတ်သည်');saveFile((S.shop.slug||'garage')+'-backup-'+dayKey(new Date())+'.xlsx',new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}))}catch(e){toast('Excel ဖန်တီးလို့ မရပါ — JSON ကို သုံးပါ')}}
+function backupJson(){const o={exported_at:new Date().toISOString(),shop:S.shop,staff:S.staff,services:S.services,categories:S.categories,parts:S.parts,customers:S.customers,vehicles:S.vehicles,jobs:S.jobs,promos:S.promos,expenses:S.expenses};
+  logAct('JSON Backup ထုတ်သည်');saveFile((S.shop.slug||'garage')+'-backup-'+dayKey(new Date())+'.json',JSON.stringify(o,null,1),'application/json')}
+
+/* ---------- events ---------- */
+const dbl=(t,label)=>{if(t.dataset.sure!=='1'){t.dataset.sure='1';t.dataset.old=t.textContent;t.textContent=label||'သေချာပါသလား? ထပ်နှိပ်ပါ';setTimeout(()=>{if(t.isConnected){t.dataset.sure='';t.textContent=t.dataset.old}},4000);return false}return true};
+document.addEventListener('click',e=>{
+  if(e.target.id==='sheet'){close();return}
+  const t=e.target.closest('[data-a],[data-tab]');if(!t)return;
+  if(t.dataset.tab){tab=t.dataset.tab;sub=null;if(tab==='customers')S.cstats=null;render();scrollTo(0,0);return}
+  const a=t.dataset.a,j=openId&&job(openId),id=t.dataset.id;
+  const A={
+    /* auth */
+    atab:()=>{authTab=t.dataset.k;showLogin()},skind:()=>{signKind=t.dataset.k;showLogin()},
+    demologin:()=>run(async()=>{const {data,error}=await sb.auth.signInWithPassword({email:t.dataset.v,password:'demo'});if(error)throw error;await afterLogin(data.user)}),
+    demoreset:()=>{if(!dbl(t))return;window.GPDemo.reset();location.reload()},
+    forgot:()=>run(async()=>{const em=($('#le')||{}).value;if(!em){showLogin('Email ကို အရင်ထည့်ပါ');return}const {error}=await sb.auth.resetPasswordForEmail(em,{redirectTo:location.href.split('#')[0]});if(error)throw error;showLogin(esc(em)+' ကို Password ပြန်သတ်မှတ်ရန် link ပို့ပြီးပါပြီ','ok')}),
+    logout:()=>run(async()=>{if(CH)sb.removeChannel(CH);CH=null;USER=null;await sb.auth.signOut();close();showLogin()}),
+    reload:()=>location.reload(),
+    paonly:()=>{MODE='pa';SHOP=null;close();enterApp()},
+    switchshop:()=>{CUR=SHOPS.find(s=>s.shop_id===id);close();openShop()},
+    account:accountSheet,
+    /* nav */
+    newjob:newJobForm,close,open:()=>openJob(id),cust:()=>{if(id)custSheet(id)},newcust:newCust,
+    go:()=>{tab='more';sub=t.dataset.k;if(sub==='closing')S.closing=null;if(sub==='logs')S.logs=null;if(sub==='platform')S.pa=null;close();scrollTo(0,0)},
+    moreback:()=>{sub=null;render();scrollTo(0,0)},
+    jf:()=>{jobFilter=t.dataset.k;render()},sc:()=>{stockCat=t.dataset.k;render()},per:()=>{period=t.dataset.k;render()},pper:()=>{profitPeriod=t.dataset.k;render()},
+    /* jobs */
+    walkin:()=>run(async()=>{const r=await q(sb.from('jobs').insert({shop_id:SHOP,vehicle_id:null,customer_id:null,note:'ကောင်တာရောင်း',status:'done'}).select(JSEL).single());S.jobs.unshift(mapJob(r));logAct(jl(mapJob(r))+' ကောင်တာရောင်း ဖွင့်သည်');openJob(r.id)}),
+    status:()=>run(async()=>{await q(sb.from('jobs').update({status:t.dataset.k}).eq('id',j.id));j.status=t.dataset.k;logAct(jl(j)+' → '+ST[j.status]);openJob(j.id)}),
+    canceljob:()=>{if(!dbl(t,'သေချာပါသလား? ထပ်နှိပ်ပါ'))return;run(async()=>{await q(sb.from('jobs').update({status:'cancelled'}).eq('id',j.id));S.jobs=S.jobs.filter(x=>x.id!==j.id);logAct(jl(j)+' ပယ်ဖျက်သည်');toast('Job ပယ်ဖျက်ပြီး');close()})},
+    rm:()=>run(async()=>{const l=j.lines[+t.dataset.i];await q(sb.from('job_lines').delete().eq('id',l.id));j.lines=j.lines.filter(x=>x!==l);logAct(jl(j)+' မှ “'+l.name+'” ဖယ်သည်');openJob(j.id)}),
+    qty:()=>run(async()=>{const l=j.lines[+t.dataset.i],d=+t.dataset.d;const p=part(l.ref);const used=j.lines.filter(x=>x.type==='part'&&x.ref===l.ref).reduce((a,x)=>a+x.qty,0);
+      if(d>0&&p&&used>=p.stock){toast('Stock မလုံလောက်ပါ');return}const nq=Math.max(1,l.qty+d);if(nq===l.qty)return;await q(sb.from('job_lines').update({qty:nq}).eq('id',l.id));l.qty=nq;openJob(j.id)}),
+    addsvc:()=>run(async()=>{const s=S.services.find(x=>x.id===id);const r=await q(sb.from('job_lines').insert({shop_id:SHOP,job_id:j.id,kind:'svc',service_id:s.id,name:s.name,price:s.price,qty:1}).select().single());
+      j.lines.push({id:r.id,type:'svc',ref:s.id,name:s.name,price:s.price,qty:1});openJob(j.id)}),
+    addpart:()=>run(async()=>{const p=part(id);const ex=j.lines.find(l=>l.type==='part'&&l.ref===p.id);
+      if(ex){await q(sb.from('job_lines').update({qty:ex.qty+1}).eq('id',ex.id));ex.qty++}
+      else{const r=await q(sb.from('job_lines').insert({shop_id:SHOP,job_id:j.id,kind:'part',part_id:p.id,name:p.name,price:p.price,qty:1}).select().single());j.lines.push({id:r.id,type:'part',ref:p.id,name:p.name,price:p.price,qty:1})}openJob(j.id)}),
+    dtype:()=>{const d=draft(j);d.disc={type:t.dataset.k,val:t.dataset.k===d.disc.type?d.disc.val:0};openJob(j.id)},
+    pay:()=>{draft(j).pay=t.dataset.k;openJob(j.id)},
+    qcash:()=>{$('#given').value=t.dataset.v;updTotals(j)},
+    checkout:()=>doCheckout(j),receipt:()=>receipt(j.id),print:()=>window.print(),
+    copy:async()=>{try{await navigator.clipboard.writeText(t.dataset.v);toast('ကူးပြီး')}catch(err){toast(t.dataset.v)}},
+    /* stock */
+    stk:()=>run(async()=>{const p=part(id),d=+t.dataset.d;if(d<0&&p.stock<=0)return;p.stock=await rpc('adjust_stock',{p_part:p.id,p_delta:d,p_note:null});render()}),
+    editpart:()=>partSheet(id),newpart:()=>partSheet(null),cats:catsSheet,moves:movesSheet,import:importSheet,
+    template:()=>saveFile('parts-template.csv',csv([['name','category','cost','price','stock','min'],['Wiper Blade 22"','အထွေထွေ',6000,10000,10,3],['Engine Oil 0W-20 (4L)','အင်ဂျင်ဝိုင်',58000,76000,6,2]]),'text/csv'),
+    delpart:()=>{if(!dbl(t))return;run(async()=>{const p=part(id);await q(sb.from('parts').update({active:false}).eq('id',id));S.parts=S.parts.filter(x=>x.id!==id);logAct('ပစ္စည်း “'+p.name+'” ဖယ်ရှားသည်');close()})},
+    delcat:()=>run(async()=>{const c=S.categories.find(x=>x.id===id);await q(sb.from('categories').delete().eq('id',id));S.categories=S.categories.filter(x=>x.id!==id);logAct('Category “'+c.name+'” ဖျက်သည်');catsSheet()}),
+    /* more */
+    togglepromo:()=>run(async()=>{const p=S.promos.find(x=>x.id===id);await q(sb.from('promo_codes').update({active:!p.active}).eq('id',id));p.active=!p.active;logAct('Promo '+p.code+(p.active?' ပြန်ဖွင့်':' ရပ်')+'သည်');render()}),
+    delstaff:()=>{if(!dbl(t,'သေချာ?'))return;run(async()=>{const s=S.staff.find(x=>x.id===id);await q(sb.from('shop_staff').update({active:false}).eq('id',id));s.active=false;logAct('ဝန်ထမ်း '+s.name+' ဖယ်သည်');render()})},
+    restaff:()=>run(async()=>{const s=S.staff.find(x=>x.id===id);await q(sb.from('shop_staff').update({active:true}).eq('id',id));s.active=true;logAct('ဝန်ထမ်း '+s.name+' ပြန်ထည့်သည်');render()}),
+    delex:()=>run(async()=>{await q(sb.from('expenses').delete().eq('id',id));S.expenses=S.expenses.filter(x=>x.id!==id);logAct('စရိတ်တစ်ခု ဖျက်သည်');render()}),
+    delsvc:()=>{if(!dbl(t,'?'))return;run(async()=>{const s=S.services.find(x=>x.id===id);await q(sb.from('services').update({active:false}).eq('id',id));s.active=false;logAct('လက်ခ “'+s.name+'” ဖယ်သည်');render()})},
+    exportsales:exportSales,exportprofit:exportProfit,exportlogs:exportLogs,bkxlsx:backupXlsx,bkjson:backupJson,
+    parefresh:()=>{S.pa=null;render()},
+    bf:()=>{bookFilter=t.dataset.k;render()},gobook:()=>{tab='bookings';sub=null;bookFilter=t.dataset.k||'upcoming';render();scrollTo(0,0)},
+    bkrefresh:()=>run(async()=>{await loadBookings();render()}),msgrefresh:()=>run(async()=>{await loadThreads();render()}),
+    bk:()=>{const k=t.dataset.k;if(k==='cancelled'&&!dbl(t,'ပယ်မှာ သေချာ?'))return;run(async()=>{const b=S.bookings.find(x=>x.id===id);await q(sb.from('bookings').update({status:k}).eq('id',id));b.status=k;logAct('Booking #'+b.booking_no+' → '+BST[k]);toast(BST[k]);render()})},
+    bkjob:()=>{const b=S.bookings.find(x=>x.id===id);newJobForm(b)},
+    bknew:()=>{const h=S.shop;const slots=String(h.booking_slots||'').split(',').map(x=>x.trim()).filter(Boolean);sheet(`${head('<h2>Booking ထည့်ရန်</h2>')}<form class="card" id="bkform">
+      <div class="two"><label class="f">အမည်<input id="bkn" required></label><label class="f">ဖုန်း<input id="bkp" required inputmode="tel"></label></div>
+      <div class="two"><label class="f">နံပါတ်ပြား<input id="bkpl" list="platelist2"></label><label class="f">ကား<input id="bkm"></label></div><datalist id="platelist2">${S.vehicles.map(v=>`<option value="${esc(v.plate)}">`).join('')}</datalist>
+      <div class="two"><label class="f">ရက်<input id="bkd" type="date" required value="${dayKey(new Date(Date.now()+864e5))}"></label><label class="f">အချိန်<select id="bkt">${slots.map(x=>`<option>${esc(x)}</option>`).join('')}</select></label></div>
+      <label class="f">ဝန်ဆောင်မှု<input id="bks" list="svclist2" placeholder="အင်ဂျင်ဝိုင်လဲ (လက်ခ)"></label><datalist id="svclist2">${S.services.filter(x=>x.active).map(x=>`<option value="${esc(x.name)}">`).join('')}</datalist>
+      <label class="f">မှတ်ချက်<input id="bkno"></label><button class="btn primary block">Booking ထည့်မယ်</button></form>`)},
+    thread:()=>threadSheet(id),
+    bntoggle:()=>run(async()=>{await q(sb.from('banners').update({active:t.dataset.v==='1'}).eq('id',id));render()}),
+    bndel:()=>{if(!dbl(t,'?'))return;run(async()=>{await q(sb.from('banners').delete().eq('id',id));logAct('Banner ဖျက်သည်');render()})},
+    pstoggle:()=>run(async()=>{await q(sb.from('posts').update({published:t.dataset.v==='1'}).eq('id',id));render()}),
+    psdel:()=>{if(!dbl(t,'?'))return;run(async()=>{await q(sb.from('posts').delete().eq('id',id));logAct('Post ဖျက်သည်');render()})},
+    paext:()=>run(async()=>{const d=await rpc('platform_extend',{p_shop:id,p_months:+t.dataset.m});toast('သက်တမ်း '+dmy(d+'T12:00:00')+' အထိ တိုးပြီး');S.pa=null;await refreshMyShops();render()}),
+    pasusp:()=>{if(t.dataset.v==='1'&&!dbl(t,'ပိတ်မှာ သေချာ?'))return;run(async()=>{await rpc('platform_set_suspended',{p_shop:id,p_suspended:t.dataset.v==='1'});S.pa=null;await refreshMyShops();render()})}};
+  if(A[a])A[a]();
+});
+async function refreshMyShops(){try{SHOPS=await rpc('my_shops')||[];if(SHOP){const c=SHOPS.find(s=>s.shop_id===SHOP);if(c)CUR=c}}catch(e){}}
+document.addEventListener('submit',e=>{
+  e.preventDefault();const f=e.target,v=id=>($(id)?.value||'').trim();
+  const H={
+    loginform:()=>run(async()=>{store.set('gp-last-email',v('#le'));const {data,error}=await sb.auth.signInWithPassword({email:v('#le'),password:$('#lp').value});if(error){showLogin(esc(errMsg(error)));return}await afterLogin(data.user)}),
+    signupform:()=>run(async()=>{
+      const opts=signKind==='shop'?{data:{pending_shop:{name1:v('#sn1'),name2:v('#sn2'),owner:v('#son'),phone:v('#sph')}}}:{};
+      opts.emailRedirectTo=location.href.split('#')[0].split('?')[0];
+      const {data,error}=await sb.auth.signUp({email:v('#se'),password:$('#sp').value,options:opts});
+      if(error){showLogin(esc(errMsg(error)));return}
+      store.set('gp-last-email',v('#se'));
+      if(data.session){await afterLogin(data.user||data.session.user)}else{authTab='login';showLogin(esc(v('#se'))+' ထဲကို confirm link ပို့ထားပါတယ်။ နှိပ်ပြီးရင် ဒီမှာ Login ဝင်ပါ။','ok')}}),
+    newshopform:()=>run(async()=>{await rpc('create_shop',{p_name1:v('#ns1'),p_name2:v('#ns2'),p_owner_name:v('#nso'),p_phone:v('#nsp')});await afterLogin(USER)}),
+    pwform:()=>run(async()=>{const {error}=await sb.auth.updateUser({password:$('#npw').value});if(error)throw error;toast('Password ပြောင်းပြီးပါပြီ');close()}),
+    jobform:()=>run(async()=>{
+      const plateV=v('#jp').toUpperCase().replace(/\s+/g,' ');let vh=S.vehicles.find(x=>plateKey(x.plate)===plateKey(plateV));
+      const phone=v('#jt'),name=v('#jc');
+      let c=vh?S.customers.find(x=>x.id===vh.custId):null;if(!c&&phone)c=S.customers.find(x=>x.phone.replace(/\D/g,'')===phone.replace(/\D/g,''));
+      if(!c){const r=await q(sb.from('customers').insert({shop_id:SHOP,name,phone}).select().single());c=mapCust(r);S.customers.push(c)}
+      else if((name&&name!==c.name)||(phone&&phone!==c.phone)){if(can('customers')){await q(sb.from('customers').update({name:name||c.name,phone:phone||c.phone}).eq('id',c.id));c.name=name||c.name;c.phone=phone||c.phone}}
+      if(!vh){const r=await q(sb.from('vehicles').insert({shop_id:SHOP,customer_id:c.id,plate:plateV,model:v('#jm'),last_km:+v('#jk')||null}).select().single());vh=mapVeh(r);S.vehicles.push(vh)}
+      else if(vh.model!==v('#jm')||vh.custId!==c.id){await q(sb.from('vehicles').update({model:v('#jm'),customer_id:c.id}).eq('id',vh.id));vh.model=v('#jm');vh.custId=c.id}
+      const r=await q(sb.from('jobs').insert({shop_id:SHOP,vehicle_id:vh.id,customer_id:c.id,km:+v('#jk')||null,note:v('#jn'),mechanic_id:v('#jmech')||null}).select(JSEL).single());
+      const nj=mapJob(r);S.jobs.unshift(nj);
+      if(PEND_BK){const bk=(S.bookings||[]).find(b=>b.id===PEND_BK);PEND_BK=null;
+        if(bk){await q(sb.from('bookings').update({status:'done',job_id:nj.id}).eq('id',bk.id));bk.status='done';bk.job_id=nj.id;
+          for(const nm of String(bk.services||'').split(/,\s*/)){const sv=S.services.find(x=>x.active&&x.name===nm.trim());if(sv){const l=await q(sb.from('job_lines').insert({shop_id:SHOP,job_id:nj.id,kind:'svc',service_id:sv.id,name:sv.name,price:sv.price,qty:1}).select().single());nj.lines.push({id:l.id,type:'svc',ref:sv.id,name:sv.name,price:sv.price,qty:1})}}}}logAct(jl(nj)+' ဖွင့်သည် ('+vh.plate+')');toast('Job ဖွင့်ပြီးပါပြီ');openJob(nj.id)}),
+    partform:()=>run(async()=>{const id=f.dataset.id;const d={name:v('#pn'),category_id:v('#pcat')||null,price:+v('#pp')||0,min_stock:+v('#pmin')||0,fav:$('#pfav').checked};const stock=+v('#ps')||0;
+      let pid=id;
+      if(id){await q(sb.from('parts').update(d).eq('id',id))}else{const r=await q(sb.from('parts').insert({shop_id:SHOP,...d}).select().single());pid=r.id}
+      if($('#pcost')&&v('#pcost')!=='')await q(sb.from('part_costs').upsert({part_id:pid,shop_id:SHOP,cost:+v('#pcost')},{onConflict:'part_id'}));
+      const old=id?part(id).stock:0;if(stock!==old)await rpc('adjust_stock',{p_part:pid,p_delta:stock-old,p_note:id?'ပြင်ဆင်':'ပစ္စည်းအသစ်'});
+      await reloadParts();logAct((id?'ပစ္စည်း ပြင်သည်: ':'ပစ္စည်းအသစ် ထည့်သည်: ')+d.name);toast('သိမ်းပြီးပါပြီ');close()}),
+    catform:()=>run(async()=>{const n=v('#catn');if(!n||S.categories.some(c=>c.name===n))return catsSheet();const r=await q(sb.from('categories').insert({shop_id:SHOP,name:n}).select().single());S.categories.push({id:r.id,name:r.name});logAct('Category “'+n+'” ထည့်သည်');catsSheet()}),
+    custform:()=>run(async()=>{const c=S.customers.find(x=>x.id===f.dataset.id);await q(sb.from('customers').update({name:v('#cn'),phone:v('#cp')}).eq('id',c.id));c.name=v('#cn');c.phone=v('#cp');logAct('ဖောက်သည် '+c.name+' ပြင်သည်');toast('သိမ်းပြီး')}),
+    topform:()=>run(async()=>{const c=S.customers.find(x=>x.id===f.dataset.id);const amt=+v('#ta');c.balance=await rpc('topup_customer',{p_customer:c.id,p_amount:amt,p_method:v('#tm')});S.topups.unshift({t:new Date().toISOString(),custId:c.id,amt,m:v('#tm')});S.closing=null;toast('ငွေဖြည့်ပြီးပါပြီ');custSheet(c.id)}),
+    ncform:()=>run(async()=>{const r=await q(sb.from('customers').insert({shop_id:SHOP,name:v('#ncn'),phone:v('#ncp')}).select().single());const c=mapCust(r);S.customers.push(c);
+      if(v('#ncv')){const vr=await q(sb.from('vehicles').insert({shop_id:SHOP,customer_id:c.id,plate:v('#ncv').toUpperCase(),model:v('#ncm')}).select().single());S.vehicles.push(mapVeh(vr))}
+      logAct('ဖောက်သည်အသစ် '+c.name+' ထည့်သည်');S.cstats=null;custSheet(c.id)}),
+    exform:()=>run(async()=>{const r=await q(sb.from('expenses').insert({shop_id:SHOP,spent_on:v('#exd')||dayKey(new Date()),category:v('#exc'),amount:+v('#exa'),note:v('#exn'),by_staff:ME}).select().single());
+      S.expenses.push({id:r.id,date:r.spent_on,cat:r.category,amt:r.amount,note:r.note||''});logAct('စရိတ် '+r.category+' '+ks(r.amount)+' ထည့်သည်');toast('စရိတ် ထည့်ပြီး');render()}),
+    closeform:()=>run(async()=>{const exp=+$('#cdiff').dataset.exp,cnt=+v('#counted');await q(sb.from('cash_closings').upsert({shop_id:SHOP,close_date:dayKey(new Date()),expected:exp,counted:cnt,by_staff:ME},{onConflict:'shop_id,close_date'}));
+      logAct('ငွေစာရင်းပိတ်သည် (ကွာ '+ks(cnt-exp)+')');S.closing=null;S.closingToday=dayKey(new Date());toast('ယနေ့ စာရင်းပိတ်ပြီးပါပြီ');render()}),
+    promoform:()=>run(async()=>{const code=v('#pc').toUpperCase().replace(/\s/g,'');const days=+v('#pd');
+      const r=await q(sb.from('promo_codes').insert({shop_id:SHOP,code,kind:v('#pt'),value:+v('#pv'),starts_at:new Date().toISOString(),ends_at:days?new Date(Date.now()+days*864e5).toISOString():null}).select().single());
+      S.promos.unshift(mapPromo(r));logAct('Promo '+code+' ဖန်တီးသည်');toast('Code သိမ်းပြီး');render()}),
+    staffform:()=>run(async()=>{const r=await q(sb.from('shop_staff').insert({shop_id:SHOP,name:v('#sn'),phone:v('#sp2'),email:v('#sem').toLowerCase()||null,role:v('#sr')}).select().single());
+      S.staff.push(mapStaff(r));logAct('ဝန်ထမ်း '+r.name+' ('+ROLES[r.role].n+') ထည့်သည်');toast('ထည့်ပြီး');render()}),
+    setform:()=>run(async()=>{
+      const d={name1:v('#s1'),name2:v('#s2'),address:v('#s3'),phone:v('#s4'),receipt_footer:v('#s5'),oil_km:+v('#s6')||5000,oil_months:+v('#s7')||3,brand_bg:v('#s8'),brand_fg:v('#s9'),is_public:$('#spub').checked,viber:v('#sviber'),facebook:v('#sfb'),about:v('#sabout'),hours:v('#shours'),map_url:v('#smap')};
+      const r=await q(sb.from('shops').update(d).eq('id',SHOP).select().single());S.shop=r;CUR.name1=r.name1;CUR.name2=r.name2;logAct('ဆိုင်အချက်အလက် ပြင်သည်');toast('သိမ်းပြီးပါပြီ');render()}),
+    bkform:()=>run(async()=>{const r=await rpc('create_booking',{p_name:v('#bkn'),p_phone:v('#bkp'),p_plate:v('#bkpl'),p_model:v('#bkm'),p_services:v('#bks'),p_date:v('#bkd'),p_slot:v('#bkt'),p_note:v('#bkno')});
+      await q(sb.from('bookings').update({status:'confirmed'}).eq('id',r.id));logAct('Booking #'+r.no+' ထည့်သည် (ဖုန်း)');await loadBookings();toast('Booking ထည့်ပြီး');close()}),
+    chatform:()=>run(async()=>{const body=v('#chattxt');if(!body)return;await q(sb.from('chat_messages').insert({shop_id:SHOP,customer_id:f.dataset.id,sender:'shop',staff_id:ME,body}));$('#chattxt').value='';threadSheet(f.dataset.id)}),
+    bnform:()=>run(async()=>{const fl=$('#bni').files[0];const image_url=fl?await uploadImage(fl):null;await q(sb.from('banners').insert({shop_id:SHOP,title:v('#bnt'),subtitle:v('#bns'),link:v('#bnl'),image_url,sort:Date.now()%100000}));logAct('Banner တင်သည်: '+v('#bnt'));toast('Banner တင်ပြီး');render()}),
+    psform:()=>run(async()=>{const fl=$('#psi').files[0];const image_url=fl?await uploadImage(fl):null;await q(sb.from('posts').insert({shop_id:SHOP,title:v('#pst'),body:$('#psb').value.trim(),image_url}));logAct('Post တင်သည်: '+v('#pst'));toast('Post တင်ပြီး');render()}),
+    bksetform:()=>run(async()=>{const slots=v('#bkslots').split(',').map(x=>x.trim()).filter(x=>/^\d{1,2}:\d{2}$/.test(x)).map(x=>x.padStart(5,'0'));if(!slots.length){toast('အချိန်ကို 09:00 ပုံစံနဲ့ ထည့်ပါ');return}
+      const closed=[...document.querySelectorAll('input[name="cd"]:checked')].map(x=>x.value).join(',');
+      const r=await q(sb.from('shops').update({booking_slots:slots.join(','),slot_capacity:Math.max(1,+v('#bkcap')||1),booking_days:Math.max(1,+v('#bkdays')||14),closed_days:closed}).eq('id',SHOP).select().single());S.shop=r;logAct('Booking setting ပြင်သည်');toast('သိမ်းပြီးပါပြီ');render()}),
+    svcform:()=>run(async()=>{const r=await q(sb.from('services').insert({shop_id:SHOP,name:v('#nsn'),price:+v('#nsp'),sort:S.services.length+1}).select().single());S.services.push(mapSvc(r));logAct('လက်ခ “'+r.name+'” ထည့်သည်');render()})};
+  if(H[f.id])H[f.id]();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#sheet').hidden)close()});
+boot();
+</script>
+</body>
+</html>
