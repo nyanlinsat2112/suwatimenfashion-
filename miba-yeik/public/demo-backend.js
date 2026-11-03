@@ -24,7 +24,7 @@
       { id: 'u-mech', email: 'mechanic@demo.mm' }, { id: 'u-cust', email: 'customer@demo.mm' }];
     T.users = users.map(u => ({ ...u, user_metadata: {} }));
     const shop = { id: 'shop-miba', slug: 'miba-yeik', name1: 'မိဘရိပ်', name2: 'Auto Service', address: 'အမှတ် ၁၂၊ ပြည်ထောင်စုလမ်း၊ မင်္ဂလာဒုံ၊ ရန်ကုန်', phone: '09 123 456 789',
-      about: 'အင်ဂျင်ဝိုင်လဲခြင်းမှ ဘရိတ်၊ AC၊ ဘီးချိန်အထိ — ကျွမ်းကျင်ဆရာ ၃ ဦးနဲ့ ယုံကြည်စိတ်ချစွာ ပြင်ပေးပါတယ်။ ပြင်ပြီးတိုင်း ပြေစာနဲ့ နောက်တစ်ကြိမ် ဝိုင်လဲရမယ့်ရက်ကို မှတ်ပေးထားပါတယ်။',
+      about: 'ဂျပန်ကား အောက်ပိုင်း သီးသန့် — ရှော့ဘာ၊ ဘော်လ်ဂျွိုင့်၊ ရာဘာဘုရှ်၊ တိုင်ရော့၊ ဘရိတ်၊ ဘီးချိန်။ ကားကို Lift တင်ပြီး စစ်ဆေး၊ ပြဿနာကို ပြပြီး သဘောတူမှ ပြင်ပေးပါတယ်။',
       hours: 'တနင်္လာ – စနေ  ၈:၀၀ – ၆:၀၀ · တနင်္ဂနွေ ပိတ်', map_url: 'https://maps.google.com/?q=Mingaladon+Yangon', brand_bg: '#1d4fa3', brand_fg: '#e3121b',
       receipt_footer: 'ကျေးဇူးတင်ပါသည်။ နောက်လည်း လာခဲ့ပါဦး။', oil_km: 5000, oil_months: 3, is_public: true, plan: 'yearly',
       paid_until: '2099-12-31', monthly_fee: 0, booking_slots: '09:00,10:00,11:00,13:00,14:00,15:00,16:00', slot_capacity: 2, booking_days: 14, closed_days: '0', viber: '09 123 456 789', facebook: 'https://facebook.com/', created_at: new Date(+today - 120 * 864e5).toISOString() };
@@ -39,20 +39,20 @@
       { id: 'st6', user_id: null, email: '', name: 'ကိုရဲ', role: 'mechanic', phone: '09 977 120 345' }];
     staff.forEach(s => T.shop_staff.push({ shop_id: S, active: true, created_at: shop.created_at, ...s }));
     const services = [
-      ['sv1', 'အင်ဂျင်ဝိုင်လဲ (လက်ခ)', 15000, true, true, 'ဝိုင်ဟောင်းစစ်ထုတ်ပြီး Filter စစ်ပေး'], ['sv2', 'ဘရိတ်စစ်/ပြင်', 25000, false, true, 'Brake pad၊ disc နှင့် ဘရိတ်ဆီ စစ်ဆေး'],
-      ['sv3', 'ဘီးချိန် (Alignment)', 20000, false, false, 'ကွန်ပျူတာ ဘီးချိန်စက်ဖြင့်'], ['sv4', 'AC ဂတ်စ်ဖြည့်', 35000, false, false, 'ယိုစိမ့်မှုစစ်ပြီး ဂတ်စ်ဖြည့်'],
-      ['sv5', 'အင်ဂျင်စစ်ဆေး (Scan)', 10000, false, true, 'OBD Scanner ဖြင့် Error code ဖတ်'], ['sv6', 'ကားဆေး', 8000, false, false, 'အပြင်/အတွင်း'],
-      ['sv7', 'ဘီးလဲ/ဖာ', 5000, false, false, ''], ['sv8', 'ဘက်ထရီ လဲ (လက်ခ)', 5000, false, false, '']];
+      ['sv1', 'အောက်ပိုင်း စစ်ဆေး (Lift)', 10000, false, true, 'ကားကို Lift တင်ပြီး ရှော့ဘာ၊ ဂျွိုင့်၊ ဘုရှ်၊ ဘရိတ် အကုန်စစ်'], ['sv2', 'ရှော့ဘာ လဲ (တစ်ဖက်၊ လက်ခ)', 25000, false, true, 'ရှေ့/နောက် ရှော့ဘာ၊ စထရပ် Mount'],
+      ['sv3', 'ဘီးချိန် (Alignment)', 20000, false, true, 'ကွန်ပျူတာ ဘီးချိန်စက်ဖြင့်'], ['sv4', 'ဘော်လ်ဂျွိုင့် လဲ (လက်ခ)', 20000, false, false, 'အောက်ဘော်လ်ဂျွိုင့်/အပေါ်ဘော်လ်ဂျွိုင့်'],
+      ['sv5', 'ရာဘာဘုရှ် / အောက်လက် လဲ', 30000, false, false, 'Control arm ဘုရှ်၊ စတက်ဘလိုက်ဇာ ဘုရှ်'], ['sv6', 'တိုင်ရော့ / ရက်ခ်အန်း လဲ', 25000, false, false, 'စတီယာရင် ချောင်ရင်/လှုပ်ရင်'],
+      ['sv7', 'ဘရိတ်စစ်/ပြင်', 25000, false, false, 'ဘရိတ်ပြား၊ ဒစ်၊ ဘရိတ်ဆီ'], ['sv8', 'ဒရိုက်ရှပ် / CV ဂျွိုင့်', 35000, false, false, 'ကွေ့ရင် တောက်တောက်မြည်ရင်']];
     services.forEach(([id, name, price, oil, fav, description], i) => T.services.push({ id, shop_id: S, name, price, is_oil_change: oil, fav, public: true, active: true, sort: i + 1, description }));
-    const cats = ['အင်ဂျင်ဝိုင်', 'Filter', 'ဘရိတ်', 'လျှပ်စစ်', 'အအေးခံ', 'ဘီး/တာယာ'].map((n, i) => ({ id: 'cat' + (i + 1), shop_id: S, name: n }));
+    const cats = ['ရှော့ဘာ', 'ဂျွိုင့်/လင့်', 'ဘုရှ်', 'စတီယာရင်', 'ဘရိတ်', 'ဘီး/တာယာ'].map((n, i) => ({ id: 'cat' + (i + 1), shop_id: S, name: n }));
     T.categories.push(...cats);
     const cid = n => cats.find(c => c.name === n).id;
     const parts = [
-      ['p1', 'Engine Oil 5W-30 (4L)', 'အင်ဂျင်ဝိုင်', 52000, 68000, 14, 4, true], ['p2', 'Oil Filter (Toyota)', 'Filter', 6000, 9500, 3, 5, true],
-      ['p3', 'Brake Pad အရှေ့', 'ဘရိတ်', 32000, 45000, 6, 2, false], ['p4', 'Air Filter', 'Filter', 11000, 18000, 2, 3, false],
-      ['p5', 'Spark Plug', 'လျှပ်စစ်', 4500, 7500, 20, 8, false], ['p6', 'Coolant (1L)', 'အအေးခံ', 7500, 12000, 8, 3, false],
-      ['p7', 'Battery 12V 45Ah', 'လျှပ်စစ်', 118000, 150000, 0, 1, false], ['p8', 'Engine Oil 10W-40 (4L)', 'အင်ဂျင်ဝိုင်', 41000, 55000, 9, 4, false],
-      ['p9', 'Tyre Tube', 'ဘီး/တာယာ', 9000, 14000, 5, 2, false], ['p10', 'Brake Fluid DOT4', 'ဘရိတ်', 6500, 10000, 7, 2, false]];
+      ['p1', 'Shock Absorber အရှေ့ (Probox/Succeed)', 'ရှော့ဘာ', 52000, 68000, 6, 2, true], ['p2', 'Stabilizer Link', 'ဂျွိုင့်/လင့်', 12000, 18000, 10, 4, true],
+      ['p3', 'Brake Pad အရှေ့', 'ဘရိတ်', 32000, 45000, 6, 2, false], ['p4', 'Lower Arm Bushing', 'ဘုရှ်', 9000, 15000, 12, 4, false],
+      ['p5', 'Wheel Weight (ဘီးမျှခဲ)', 'ဘီး/တာယာ', 500, 1000, 80, 20, false], ['p6', 'Tie Rod End', 'စတီယာရင်', 14000, 22000, 8, 3, false],
+      ['p7', 'Lower Ball Joint', 'ဂျွိုင့်/လင့်', 18000, 28000, 0, 2, false], ['p8', 'Shock Absorber အနောက်', 'ရှော့ဘာ', 41000, 55000, 4, 2, false],
+      ['p9', 'CV Boot Kit', 'စတီယာရင်', 9000, 14000, 5, 2, false], ['p10', 'Brake Fluid DOT4', 'ဘရိတ်', 6500, 10000, 7, 2, false]];
     parts.forEach(([id, name, cat, cost, price, stock, min, fav]) => { T.parts.push({ id, shop_id: S, category_id: cid(cat), name, price, stock, min_stock: min, fav, active: true, created_at: shop.created_at }); T.part_costs.push({ part_id: id, shop_id: S, cost }) });
     const pmap = Object.fromEntries(parts.map(p => [p[0], { name: p[1], cost: p[3], price: p[4] }]));
     const smap = Object.fromEntries(services.map(s => [s[0], { name: s[1], price: s[2] }]));
@@ -99,8 +99,8 @@
       }
     }
     const v = id => T.vehicles.find(x => x.id === id);
-    addJob(v('v2'), new Date(+today - .5 * 3600e3), 'waiting', [['svc', 'sv5']], null, { note: 'ACအေးမှုနည်း' });
-    addJob(v('v1'), new Date(+today - 1.4 * 3600e3), 'working', [['svc', 'sv1'], ['part', 'p1'], ['part', 'p2']], 'st4', { note: 'ဝိုင်လဲရန်' });
+    addJob(v('v2'), new Date(+today - .5 * 3600e3), 'waiting', [['svc', 'sv5']], null, { note: 'ကျောက်ခဲလမ်းမှာ ဂေါက်ဂေါက်မြည်' });
+    addJob(v('v1'), new Date(+today - 1.4 * 3600e3), 'working', [['svc', 'sv1'], ['part', 'p1'], ['part', 'p2']], 'st4', { note: 'ရှော့ဘာ ယိုနေ' });
     addJob(v('v3'), new Date(+today - 2.6 * 3600e3), 'done', [['svc', 'sv2'], ['part', 'p3']], 'st5', { note: 'ဘရိတ်အသံမြည်' });
     // ကြိုတင်ငွေ
     [['c1', 100000, 'KBZPay', 30], ['c6', 50000, 'Cash', 12], ['c11', 80000, 'WavePay', 3]].forEach(([c, amt, m, ago]) => {
@@ -129,9 +129,9 @@
     // Booking
     const nextOpen = n => { const d = new Date(today); let k = 0; while (true) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0 && ++k >= n) return dayKey(d) } };
     let bno = 100; const bk = (o) => T.bookings.push({ id: uuid(), shop_id: S, booking_no: ++bno, customer_id: null, plate: null, model: null, note: '', status: 'pending', job_id: null, shop_note: '', created_at: new Date(+today - 3600e3 * (5 + bno % 7)).toISOString(), ...o });
-    if (today.getDay() !== 0) bk({ name: 'ကိုမင်းခန့်', phone: '09 422 118 335', plate: 'YGN 6K-2031', model: 'Toyota Belta', services: 'အင်ဂျင်ဝိုင်လဲ (လက်ခ)', booking_date: dayKey(today), time_slot: '16:00', status: 'confirmed' });
+    if (today.getDay() !== 0) bk({ name: 'ကိုမင်းခန့်', phone: '09 422 118 335', plate: 'YGN 6K-2031', model: 'Toyota Belta', services: 'ရှော့ဘာ လဲ (တစ်ဖက်၊ လက်ခ)', booking_date: dayKey(today), time_slot: '16:00', status: 'confirmed' });
     bk({ name: 'ဒေါ်သန္တာ', phone: T.customers[0].phone, customer_id: 'c1', plate: 'YGN 4C-7788', model: 'Toyota Probox', services: 'ဘရိတ်စစ်/ပြင်', booking_date: nextOpen(1), time_slot: '10:00', note: 'ဘရိတ်နင်းရင် အသံမြည်' });
-    bk({ name: 'မစုစု', phone: '09 785 220 104', plate: 'YGN 3M-7710', model: 'Honda Fit', services: 'AC ဂတ်စ်ဖြည့်, ကားဆေး', booking_date: nextOpen(1), time_slot: '13:00' });
+    bk({ name: 'မစုစု', phone: '09 785 220 104', plate: 'YGN 3M-7710', model: 'Honda Fit', services: 'အောက်ပိုင်း စစ်ဆေး (Lift), ဘီးချိန် (Alignment)', booking_date: nextOpen(1), time_slot: '13:00' });
     bk({ name: 'ဦးဘိုဘို', phone: '09 450 330 912', plate: 'MDY 1C-5521', model: 'Toyota Hilux', services: 'ဘီးချိန် (Alignment)', booking_date: nextOpen(2), time_slot: '09:00', status: 'confirmed' });
     // Chat
     const msg = (c, sender, body, minsAgo, read) => T.chat_messages.push({ id: nextId('chat_messages'), shop_id: S, customer_id: c, sender, staff_id: sender === 'shop' ? 'st3' : null, body, image_url: null, read_at: read ? now() : null, created_at: new Date(+today - minsAgo * 60e3).toISOString() });

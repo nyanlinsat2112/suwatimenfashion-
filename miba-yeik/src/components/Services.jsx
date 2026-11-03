@@ -1,13 +1,15 @@
-import { Droplet, Disc3, Snowflake, Gauge, Cog, BatteryCharging, ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, ScanSearch, Waves, CircleDot, Link2, Navigation, Disc3, Cog, Crosshair } from 'lucide-react'
 import { APP } from '../site'
 
 const SERVICES = [
-  { icon: Droplet, name: 'အင်ဂျင်ဝိုင်လဲ', en: 'Oil change', desc: 'ဝိုင်၊ ဝိုင်စစ် လဲပြီး နောက်တစ်ကြိမ် လဲရမယ့်ရက်ကို Account မှာ မှတ်ပေးပါတယ်။' },
-  { icon: Disc3, name: 'ဘရိတ်', en: 'Brakes', desc: 'ဘရိတ်ပြား၊ ဒစ်၊ ဘရိတ်ဆီ စစ်ဆေး လဲလှယ်ခြင်း။' },
-  { icon: Snowflake, name: 'AC', en: 'Air-con', desc: 'AC ဂတ်စ်ဖြည့်၊ ယိုစိမ့်စစ်၊ စစ်ကြောပြင်ဆင်ခြင်း။' },
-  { icon: Gauge, name: 'ဘီးချိန်', en: 'Alignment', desc: 'ဘီးချိန်၊ ဘီးမျှ — လမ်းကြောင်းဖြောင့်ဖြောင့် မောင်းနိုင်အောင်။' },
-  { icon: Cog, name: 'အင်ဂျင်စစ်ဆေး', en: 'Engine check', desc: 'အသံ၊ တုန်ခါမှု၊ စက်ပိုင်းဆိုင်ရာ ပြဿနာများ ရှာဖွေပြင်ဆင်ခြင်း။' },
-  { icon: BatteryCharging, name: 'ဘက်ထရီ & လျှပ်စစ်', en: 'Battery & electrical', desc: 'ဘက်ထရီ စစ်ဆေး/လဲလှယ်၊ မီး၊ ဝိုင်ယာ ပြဿနာများ။' },
+  { icon: ScanSearch, name: 'အောက်ပိုင်း စစ်ဆေး', en: 'Lift inspection', desc: 'ကားကို Lift တင်ပြီး ရှော့ဘာ၊ ဂျွိုင့်၊ ဘုရှ်၊ ဘရိတ်၊ ဆီယို အကုန် တစ်ခါတည်း စစ်ပေးပါတယ်။' },
+  { icon: Waves, name: 'ရှော့ဘာ / စထရပ်', en: 'Shocks & struts', desc: 'ကားခုန်တာ၊ ဘရိတ်အုပ်ရင် ခေါင်းငုံ့တာ၊ ရှော့ဘာ ဆီယိုတာ — ရှေ့/နောက် လဲလှယ်ခြင်း။' },
+  { icon: CircleDot, name: 'ဘော်လ်ဂျွိုင့် / တိုင်ရော့', en: 'Ball joints & tie rods', desc: 'ကျောက်ခဲလမ်းမှာ ဂေါက်ဂေါက်မြည်တာ၊ စတီယာရင် ချောင်တာ။' },
+  { icon: Link2, name: 'ရာဘာဘုရှ် / အောက်လက်', en: 'Bushings & control arms', desc: 'အောက်လက်ဘုရှ်၊ စတက်ဘလိုက်ဇာ ဘုရှ်/လင့် — တုန်ခါမှု၊ အသံ လျော့စေ။' },
+  { icon: Navigation, name: 'စတီယာရင် ရက်ခ်', en: 'Steering rack', desc: 'ရက်ခ်အန်း၊ ပါဝါစတီယာရင် ဆီယို၊ စတီယာရင် လေးတာ/ချောင်တာ။' },
+  { icon: Cog, name: 'ဒရိုက်ရှပ် / CV ဂျွိုင့်', en: 'Drive shafts & CV', desc: 'လှည့်ကွေ့ရင် တောက်တောက်မြည်တာ၊ CV ရာဘာအိတ် ပေါက်တာ။' },
+  { icon: Disc3, name: 'ဘရိတ်', en: 'Brakes', desc: 'ဘရိတ်ပြား၊ ဒစ်၊ ကယ်လီပါ၊ ဘရိတ်ဆီ — စီစီမြည်တာ၊ ဘရိတ်တုန်တာ။' },
+  { icon: Crosshair, name: 'ဘီးချိန် / ဘီးမျှ', en: 'Alignment & balancing', desc: 'ကားတစ်ဖက်ဆွဲတာ၊ တာယာ တစ်ဖက်စားတာ၊ အမြန်မောင်းရင် စတီယာရင် တုန်တာ။' },
 ]
 
 export default function Services() {
@@ -15,11 +17,14 @@ export default function Services() {
     <section id="services" className="scroll-mt-6 px-2 py-16 md:px-6 md:py-24">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-widest text-wander-orange">Our services</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-wander-orange">What we fix</p>
           <h2 className="mt-3 text-3xl md:text-4xl lg:text-5xl font-medium leading-[1.05] tracking-tight text-wander-dark">
-            Everything your car needs,
-            <br className="hidden sm:block" /> under one roof.
+            Everything below the doors,
+            <br className="hidden sm:block" /> nothing else.
           </h2>
+          <p className="mt-4 max-w-xl leading-relaxed text-wander-text/80">
+            အင်ဂျင်၊ AC မလုပ်ပါ — အောက်ပိုင်း တစ်ခုတည်းကိုပဲ နေ့တိုင်း လုပ်နေလို့ ပြဿနာကို မြန်မြန် ရှာနိုင်ပါတယ်။
+          </p>
         </div>
         <a
           href={`${APP}#services`}
@@ -29,7 +34,7 @@ export default function Services() {
         </a>
       </div>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {SERVICES.map(({ icon: Icon, name, en, desc }) => (
           <a
             key={en}

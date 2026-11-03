@@ -16,7 +16,7 @@ export default function Brands() {
               alt={i < BRANDS.length ? b[0].toUpperCase() + b.slice(1) : ''}
               aria-hidden={i >= BRANDS.length}
               loading="lazy"
-              className="h-12 md:h-14 w-auto object-contain opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition"
+              className="h-12 w-24 md:h-14 md:w-28 object-contain opacity-70 grayscale hover:opacity-100 hover:grayscale-0 transition"
             />
           ))}
         </div>

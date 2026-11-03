@@ -2,7 +2,7 @@ import { ListChecks, CalendarDays, PhoneCall, ArrowUpRight } from 'lucide-react'
 import { APP } from '../site'
 
 const STEPS = [
-  { icon: ListChecks, title: 'ဝန်ဆောင်မှု ရွေးပါ', desc: 'ဝိုင်လဲ၊ ဘရိတ်၊ AC… လိုချင်တာ ရွေးပါ။ ဈေးနှုန်းကို ကြိုသိရပါမယ်။' },
+  { icon: ListChecks, title: 'ဝန်ဆောင်မှု ရွေးပါ', desc: 'ရှော့ဘာ၊ ဘီးချိန်၊ အောက်ပိုင်းစစ်… မသေချာရင် “အောက်ပိုင်း စစ်ဆေး” ကို ရွေးပါ။' },
   { icon: CalendarDays, title: 'ရက်နဲ့ အချိန် ရွေးပါ', desc: 'လွတ်နေတဲ့ အချိန်ကိုပဲ ပြပေးပါတယ်။ Account မရှိလည်း Booking တင်လို့ရပါတယ်။' },
   { icon: PhoneCall, title: 'ဆိုင်က အတည်ပြုပေးမယ်', desc: 'ဆိုင်က ဖုန်းဆက်ပြီး အတည်ပြုပေးပါမယ်။ ရောက်တာနဲ့ ချက်ချင်း စလုပ်ပေးပါတယ်။' },
 ]

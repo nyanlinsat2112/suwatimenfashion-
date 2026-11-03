@@ -20,7 +20,7 @@ export default function Footer() {
             <span className="font-bold text-xl uppercase tracking-widest">Miba Yeik</span>
           </a>
           <p className="mt-3 text-sm leading-relaxed text-wander-text/70">
-            မိဘရိပ် Auto Service — ဆိုင်လိပ်စာ၊ ဖုန်း၊ ဖွင့်ချိန်ကို ဖောက်သည် Website မှာ ကြည့်နိုင်ပါတယ်။
+            မိဘရိပ် Auto Service — ဂျပန်ကား အောက်ပိုင်း သီးသန့်။ ဆိုင်လိပ်စာ၊ ဖုန်း၊ ဖွင့်ချိန်ကို ဖောက်သည် Website မှာ ကြည့်နိုင်ပါတယ်။
           </p>
         </div>
         <ul className="grid grid-cols-2 gap-x-10 gap-y-3 text-sm">

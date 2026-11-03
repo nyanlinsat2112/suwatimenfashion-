@@ -1,10 +1,10 @@
-import { ClipboardList, BellRing, MessageCircle, ArrowUpRight } from 'lucide-react'
+import { ClipboardList, CalendarCheck, MessageCircle, ArrowUpRight } from 'lucide-react'
 import { APP } from '../site'
 
 const PERKS = [
-  { icon: ClipboardList, title: 'ပြင်ဆင်မှု မှတ်တမ်း', desc: 'ကားတစ်စီးချင်းစီရဲ့ ပြင်ခဲ့သမျှ မှတ်တမ်း အကုန်ကြည့်နိုင်ပါတယ်။' },
-  { icon: BellRing, title: 'ဝိုင်လဲရက် သတိပေး', desc: 'နောက်တစ်ကြိမ် ဝိုင်လဲရမယ့်ရက်ကို မမေ့အောင် ပြပေးထားပါတယ်။' },
-  { icon: MessageCircle, title: 'ဆိုင်နဲ့ Chat', desc: 'ဈေးနှုန်း၊ ပစ္စည်းရှိ/မရှိ — ပုံနဲ့တကွ တိုက်ရိုက် မေးနိုင်ပါတယ်။' },
+  { icon: ClipboardList, title: 'ပြင်ဆင်မှု မှတ်တမ်း', desc: 'ဘယ်နေ့ ဘာလဲခဲ့လဲ၊ ဘယ်လောက်ကျလဲ — ကားတစ်စီးချင်း မှတ်တမ်း အကုန်ကြည့်နိုင်ပါတယ်။' },
+  { icon: CalendarCheck, title: 'Booking အခြေအနေ', desc: 'တင်ထားတဲ့ Booking အတည်ပြုပြီးလား၊ ဆိုင်က ဘာမှတ်ချက်ပေးလဲ ကြည့်နိုင်ပါတယ်။' },
+  { icon: MessageCircle, title: 'ဆိုင်နဲ့ Chat', desc: 'အသံဖိုင်၊ ပုံနဲ့ ပို့ပြီး ကားမှာ ဖြစ်နေတာကို တိုက်ရိုက် မေးနိုင်ပါတယ်။' },
 ]
 
 export default function AccountPerks() {
