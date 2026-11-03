@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Navbar from './Navbar'
 import BookNowCutout from './BookNowCutout'
 import { HERO_VIDEO } from '../site'
 
 export default function Hero() {
   const videoRef = useRef(null)
+  const [videoOk, setVideoOk] = useState(true)
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = 0.25
@@ -14,6 +15,7 @@ export default function Hero() {
     <section className="relative w-full h-[calc(100vh-2rem)] md:h-[calc(100vh-3rem)] rounded-[32px] md:rounded-[40px] overflow-hidden shadow-sm ring-1 ring-black/5 bg-wander-blue">
       <Navbar />
 
+      {videoOk && (
       <video
         ref={videoRef}
         src={HERO_VIDEO}
@@ -22,8 +24,10 @@ export default function Hero() {
         muted
         playsInline
         onLoadedMetadata={(e) => (e.currentTarget.playbackRate = 0.25)}
+        onError={() => setVideoOk(false)}
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full md:w-auto pointer-events-none [mask-image:radial-gradient(55%_100%_at_bottom,black_5%,transparent_90%)] [-webkit-mask-image:radial-gradient(55%_100%_at_bottom,black_5%,transparent_90%)]"
       />
+      )}
 
       <div className="relative z-10 flex h-full flex-col items-center justify-center text-center px-6">
         <div className="max-w-3xl -mt-22 flex flex-col items-center">

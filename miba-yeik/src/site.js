@@ -3,8 +3,10 @@
 // admin.html = shop admin
 export const APP = 'app.html'
 
-export const HERO_VIDEO =
-  'https://strvid.nyc3.cdn.digitaloceanspaces.com/motionsite/travel_hike_bg_video_1.mp4'
+// Hero background video — put your garage video at public/videos/garage.mp4
+// (landscape, 1920x1080 or 1280x720, under ~10MB, no sound needed).
+// A full https:// URL to an .mp4 also works here.
+export const HERO_VIDEO = 'videos/garage.mp4'
 
 // Number shown on the bell badge (current promotions on the customer site)
 export const PROMO_COUNT = 2
