@@ -27,6 +27,11 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(fetch(req).catch(() => caches.match(OFFLINE_URL)));
     return;
   }
+  // /vendor/ Library (Version နာမည်ပါ — မပြောင်း) — တစ်ခါယူပြီး ဖုန်းထဲသိမ်း · Internet နှေးလည်း မြန်
+  if (url.pathname.startsWith('/vendor/')) {
+    e.respondWith(caches.open(CACHE).then((c) => c.match(req).then((hit) => hit || fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }))));
+    return;
+  }
   if (/\/(app|admin)-icon-[\w-]+\.png$|apple-touch-icon\.png$/.test(url.pathname)) {
     e.respondWith(caches.match(req).then((hit) => hit || fetch(req)));
   }
