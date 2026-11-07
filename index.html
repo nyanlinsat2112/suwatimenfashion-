@@ -5412,7 +5412,7 @@ let __pwQrP = null;
 function pwQrLib(){
   if(window.qrcode) return Promise.resolve(window.qrcode);
   return __pwQrP || (__pwQrP = new Promise((ok, no) => {
-    const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'; s.async = true;
+    const s = document.createElement('script'); s.src = '/vendor/qrcode-generator-1.4.4.js'; s.async = true;
     s.onload = () => window.qrcode ? ok(window.qrcode) : no(new Error('QR')); s.onerror = () => { __pwQrP = null; no(new Error('QR')); };
     document.head.appendChild(s);
   }));
@@ -10587,7 +10587,7 @@ renderWishlistBadge();
 (function(){
   const QP_STYLE = window.__qpStyle || 'a';
   const PIN_STYLE = window.__qpPin || '6';
-  const QR_LIB = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js';
+  const QR_LIB = '/vendor/qrcode-generator-1.4.4.js';
   const FACE_TRIES = 3;
   const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const ks = n => Number(n || 0).toLocaleString('en-US');

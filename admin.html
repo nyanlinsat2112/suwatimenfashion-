@@ -5319,7 +5319,7 @@ async function runBackup(kind){
     } else {
       setBackupProgress('⏳ Excel File ပြုလုပ်နေသည်...');
       try{
-        await loadScriptOnce('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+        await loadScriptOnce('/vendor/xlsx-0.18.5.full.min.js');
         const wb = XLSX.utils.book_new();
         const summary = [['SUWATI MEN FASHION — Data Backup'], ['ထုတ်ယူချိန်', new Date().toLocaleString()], ['ထုတ်ယူသူ', currentAdminEmail||''], [], ['Table','Rows']]
           .concat(BACKUP_TABLES.map(t=>[BACKUP_LABELS[t]||t, (data[t]||[]).length]));
@@ -9049,7 +9049,7 @@ const BULK_HEAD_ALIASES = {
 };
 let bulkRows = [];
 const bulkEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-async function bulkLoadXLSX(){ await loadScriptOnce('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'); }
+async function bulkLoadXLSX(){ await loadScriptOnce('/vendor/xlsx-0.18.5.full.min.js'); }
 
 document.getElementById('bulk-template-btn')?.addEventListener('click', async () => {
   try{ await bulkLoadXLSX(); }catch(e){ showToast('⚠️ ' + e.message); return; }
@@ -9828,7 +9828,7 @@ async function printLabels(){
   if(total > 1000) return showToast('⚠️ တစ်ခါ ၁၀၀၀ ခုအထိသာ');
   const btn = document.getElementById('lbl-print'); btn.disabled = true; btn.textContent = '⏳ Label ပြင်ဆင်နေသည်...';
   try{
-    await axLoadScript('https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js', () => window.JsBarcode);
+    await axLoadScript('/vendor/jsbarcode-3.11.5.min.js', () => window.JsBarcode);
   }catch(e){ btn.disabled = false; btn.textContent = '🖨️ Label ထုတ်မည်'; return showToast('⚠️ ' + e.message); }
   const size = document.getElementById('lbl-size').value;
   const dims = size === 'a4' ? null : size.split('x').map(Number);
