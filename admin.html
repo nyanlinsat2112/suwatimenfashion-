@@ -2161,6 +2161,353 @@ html:is([data-theme],:not([data-theme])) .sd-sug-tx b{ display:block; font-size:
 html:is([data-theme],:not([data-theme])) .sd-sug-tx span{ display:block; font-size:11.5px; color:var(--grey); line-height:1.5; }
 html:is([data-theme],:not([data-theme])) .sd-sug-add{ flex-shrink:0; border-radius:12px; padding:8px 11px; font-size:12.5px; font-weight:700; white-space:nowrap; }
 html:is([data-theme],:not([data-theme])) .sd-sug-note{ font-size:11.5px; color:var(--grey); text-align:center; margin:8px 0 12px; }
+
+/* #####################################################################
+   🫧 GLASSY ACID (Nov 8) — Glass Theme ကို ပိုမှန်သား + ထောင့်ဝိုင်းကြီး · Home Dashboard (home-glassy.js)
+   ##################################################################### */
+html:is([data-theme],:not([data-theme])){
+  --g-r:24px; --g-card:rgba(255,255,255,.055); --g-line:rgba(255,255,255,.10);
+  --g-blob1:rgba(193,59,31,.24); --g-blob2:rgba(214,255,63,.13); --g-blob3:rgba(214,255,63,.06);
+  --g-sh:0 18px 40px -18px rgba(0,0,0,.75), 0 1px 0 rgba(255,255,255,.04) inset;
+  --hg-acid1:#ecff8a; --hg-acid2:#D6FF3F; --hg-acid3:#b9e81f; --hg-red:#ff7a5c;
+}
+html[data-theme="light"]{
+  --g-card:rgba(255,255,255,.5); --g-line:rgba(255,255,255,.8);
+  --g-blob1:rgba(243,185,162,.85); --g-blob2:rgba(246,228,214,.95); --g-blob3:rgba(241,201,174,.8);
+  --g-sh:0 18px 40px -20px rgba(120,60,30,.35);
+  --hg-red:#c13b1f;
+}
+html:is([data-theme],:not([data-theme])) .form-card{ -webkit-backdrop-filter:blur(24px) saturate(1.45); backdrop-filter:blur(24px) saturate(1.45); }
+@media (min-width:700px){
+  html:is([data-theme],:not([data-theme])) .admin-nav .tab-btn{ border-radius:14px; }
+  html:is([data-theme],:not([data-theme])) .admin-nav .tab-btn.active{ background:var(--hg-acid2); color:#141412; box-shadow:0 10px 22px -10px rgba(214,255,63,.55); }
+  html[data-theme="light"] .admin-nav .tab-btn.active{ background:#1f1d1a; color:#fff; box-shadow:0 10px 22px -12px rgba(0,0,0,.4); }
+  html:is([data-theme],:not([data-theme])) .admin-nav .tab-btn.active .tab-count-badge{ background:#141412; color:var(--hg-acid2); }
+}
+html:is([data-theme],:not([data-theme])) .td-tile{ transition:transform .25s cubic-bezier(.2,.8,.2,1); border-radius:22px; }
+html:is([data-theme],:not([data-theme])) .td-tile:hover{ transform:translateY(-4px); }
+.hg-hide{ display:none !important; }
+
+/* ===== Home ===== */
+#hg-root{ display:flex; flex-direction:column; gap:16px; margin-bottom:16px; }
+#hg-root button{ all:unset; box-sizing:border-box; cursor:pointer; }
+#hg-root button:focus-visible{ outline:2px solid var(--hg-acid2); outline-offset:2px; }
+#hg-root .hg-top{ display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:2px 4px 0; }
+#hg-root .hg-top h1{ margin:0; font-size:clamp(22px, 2.8vw, 32px); font-weight:700; letter-spacing:-.01em; line-height:1.4; }
+#hg-root .hg-top h1 em{ font-style:normal; color:var(--hg-acid2); }
+html[data-theme="light"] #hg-root .hg-top h1 em{ color:#c13b1f; }
+#hg-root .hg-top p{ margin:2px 0 0; font-size:13px; color:var(--grey); }
+#hg-root .hg-top p b{ color:var(--hg-red); }
+#hg-root .hg-acts{ display:flex; gap:8px; }
+#hg-root .hg-pill{ display:inline-flex; align-items:center; gap:7px; border-radius:99px; padding:10px 16px; font-weight:600; font-size:13px; cursor:pointer; border:1px solid var(--g-line); background:var(--s3); color:var(--concrete); width:auto; margin:0; }
+#hg-root .hg-pill.pri{ background:var(--hg-acid2); color:#141412; border-color:transparent; }
+html[data-theme="light"] #hg-root .hg-pill.pri{ background:#1f1d1a; color:#fff; }
+
+#hg-root .hg-row1{ display:grid; grid-template-columns:1.75fr 1fr; gap:16px; }
+#hg-root .hg-hero{ position:relative; overflow:hidden; border-radius:26px; padding:24px 26px; color:#141412; display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center;
+  background:linear-gradient(135deg, var(--hg-acid1) 0%, var(--hg-acid2) 50%, var(--hg-acid3) 100%); box-shadow:0 26px 50px -24px rgba(214,255,63,.45); }
+html[data-theme="light"] #hg-root .hg-hero{ background:linear-gradient(135deg,#f0846a 0%,#e2583b 45%,#c13b1f 100%); color:#fff; box-shadow:0 26px 50px -24px rgba(193,59,31,.7); }
+#hg-root .hg-hero::before{ content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(60% 80% at 15% 0%, rgba(255,255,255,.4), transparent 60%), radial-gradient(40% 60% at 100% 100%, rgba(0,0,0,.12), transparent 70%); }
+#hg-root .hg-hero > *{ position:relative; }
+#hg-root .hg-chipx{ display:inline-flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; padding:5px 11px; border-radius:99px; background:rgba(20,20,18,.08); border:1px solid rgba(20,20,18,.16); }
+html[data-theme="light"] #hg-root .hg-chipx{ background:rgba(255,255,255,.2); border-color:rgba(255,255,255,.35); }
+#hg-root .hg-chipx i{ width:7px; height:7px; border-radius:50%; background:#c13b1f; box-shadow:0 0 0 3px rgba(193,59,31,.25); animation:hgPulse 1.8s infinite; }
+html[data-theme="light"] #hg-root .hg-chipx i{ background:#fff; box-shadow:0 0 0 3px rgba(255,255,255,.3); }
+@keyframes hgPulse{ 50%{ box-shadow:0 0 0 6px rgba(193,59,31,0); } }
+#hg-root .hg-hero h2{ margin:12px 0 4px; font-size:15px; font-weight:700; line-height:1.4; }
+#hg-root .hg-hero h2 b{ display:block; font-family:var(--g-num); font-size:clamp(34px, 4.4vw, 50px); font-weight:700; letter-spacing:-.03em; line-height:1.05; margin-top:2px; }
+#hg-root .hg-hero h2 b small{ font-size:15px; font-weight:600; opacity:.7; letter-spacing:0; }
+#hg-root .hg-hero p{ margin:0; font-size:13px; opacity:.82; line-height:1.6; }
+#hg-root .hg-hs{ display:flex; margin:16px 0; }
+#hg-root .hg-hs div{ padding:0 16px; border-left:1px solid rgba(20,20,18,.18); }
+html[data-theme="light"] #hg-root .hg-hs div{ border-color:rgba(255,255,255,.3); }
+#hg-root .hg-hs div:first-child{ padding-left:0; border-left:0; }
+#hg-root .hg-hs b{ display:block; font-family:var(--g-num); font-size:24px; font-weight:700; letter-spacing:-.02em; }
+#hg-root .hg-hs span{ font-size:11px; opacity:.75; }
+#hg-root .hg-hb{ display:flex; gap:8px; flex-wrap:wrap; }
+#hg-root .hg-hb .hb{ width:auto; margin:0; border:0; border-radius:99px; padding:10px 16px; font-weight:700; font-size:13px; cursor:pointer; background:#141412; color:var(--hg-acid2); }
+#hg-root .hg-hb .hb.o{ background:transparent; color:#141412; border:1px solid rgba(20,20,18,.45); }
+html[data-theme="light"] #hg-root .hg-hb .hb{ background:#fff; color:#c13b1f; }
+html[data-theme="light"] #hg-root .hg-hb .hb.o{ color:#fff; border-color:rgba(255,255,255,.6); }
+#hg-root .hg-ring{ position:relative; width:170px; height:170px; padding:0; margin:0; border:0; background:transparent; cursor:pointer; color:inherit; }
+#hg-root .hg-ring > svg{ width:100%; height:100%; transform:rotate(-90deg); }
+#hg-root .hg-ring > svg circle{ fill:none; stroke-width:9; }
+#hg-root .hg-ring .bg{ stroke:rgba(20,20,18,.14); }
+#hg-root .hg-ring .fg{ stroke:#141412; stroke-linecap:round; transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1); }
+html[data-theme="light"] #hg-root .hg-ring .bg{ stroke:rgba(255,255,255,.25); } html[data-theme="light"] #hg-root .hg-ring .fg{ stroke:#fff; }
+#hg-root .hg-ring-t{ position:absolute; inset:0; display:grid; place-content:center; text-align:center; }
+#hg-root .hg-ring-t b{ font-family:var(--g-num); font-size:30px; font-weight:700; letter-spacing:-.02em; }
+#hg-root .hg-ring-t small{ font-size:11px; opacity:.8; }
+#hg-root .hg-ring .orb{ position:absolute; width:34px; height:34px; border-radius:50%; border:2px solid #141412; background:#fff; display:grid; place-items:center; font-size:15px; box-shadow:0 6px 14px -4px rgba(0,0,0,.3); }
+html[data-theme="light"] #hg-root .hg-ring .orb{ border-color:#fff; }
+
+#hg-root .hg-cal{ margin:0; padding:18px; display:flex; flex-direction:column; gap:10px; border-radius:26px; }
+#hg-root .hg-cal-h{ display:flex; align-items:center; gap:12px; }
+#hg-root .hg-cal-h .d{ flex-shrink:0; white-space:nowrap; font-family:var(--g-num); font-size:44px; font-weight:700; color:var(--hg-acid2); letter-spacing:-.04em; line-height:1; }
+html[data-theme="light"] #hg-root .hg-cal-h .d{ color:#c13b1f; }
+#hg-root .hg-cal-h b{ display:block; font-size:15px; }
+#hg-root .hg-cal-h small{ color:var(--grey); font-size:12px; }
+#hg-root .hg-cal-h .ic{ margin-left:auto; width:36px; height:36px; padding:0; border-radius:12px; display:grid; place-items:center; background:var(--s3); border:1px solid var(--g-line); cursor:pointer; }
+#hg-root .hg-days{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+#hg-root .hg-dy{ text-align:center; padding:7px 0; border-radius:14px; font-family:var(--g-num); font-size:12.5px; font-weight:700; background:var(--s2); border:1px solid var(--g-line); }
+#hg-root .hg-dy small{ display:block; font-size:9.5px; color:var(--grey); font-weight:500; }
+#hg-root .hg-dy.on{ background:var(--hg-acid2); color:#141412; border-color:transparent; box-shadow:0 10px 18px -8px rgba(214,255,63,.5); }
+#hg-root .hg-dy.on small{ color:rgba(20,20,18,.65); }
+html[data-theme="light"] #hg-root .hg-dy.on{ background:linear-gradient(140deg,#f0846a,#c13b1f); color:#fff; } html[data-theme="light"] #hg-root .hg-dy.on small{ color:rgba(255,255,255,.8); }
+#hg-root .hg-tk{ display:flex; align-items:center; gap:12px; width:100%; margin:0; padding:11px 12px; border-radius:16px; background:var(--s2); border:1px solid var(--g-line); cursor:pointer; }
+#hg-root .hg-tk .t{ font-family:var(--g-num); font-size:12px; color:var(--grey); font-weight:700; width:42px; }
+#hg-root .hg-tk .bar{ width:3px; align-self:stretch; border-radius:3px; background:var(--hg-red); }
+#hg-root .hg-tk .bar.ok{ background:var(--hg-acid2); } html[data-theme="light"] #hg-root .hg-tk .bar.ok{ background:#2f8a4a; }
+#hg-root .hg-tk b{ display:block; font-size:13px; } .hg-tk small{ color:var(--grey); font-size:11.5px; }
+#hg-root .hg-tk .tag{ margin-left:auto; font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:99px; background:color-mix(in srgb, var(--hg-red) 15%, transparent); color:var(--hg-red); white-space:nowrap; }
+#hg-root .hg-tk .tag.ok{ background:rgba(214,255,63,.14); color:var(--hg-acid2); } html[data-theme="light"] #hg-root .hg-tk .tag.ok{ background:rgba(47,138,74,.12); color:#2f8a4a; }
+
+#hg-root .hg-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+#hg-root .hg-st{ position:relative; overflow:hidden; display:block; width:100%; margin:0; padding:18px; border-radius:24px; cursor:pointer; transition:transform .25s cubic-bezier(.2,.8,.2,1); }
+#hg-root .hg-st:hover{ transform:translateY(-5px); }
+#hg-root .hg-st .h{ display:flex; align-items:center; justify-content:space-between; }
+#hg-root .hg-st .ic{ width:38px; height:38px; border-radius:13px; display:grid; place-items:center; background:var(--s3); border:1px solid var(--g-line); }
+#hg-root .hg-st .ic svg{ width:18px; height:18px; }
+#hg-root .hg-ch{ font-family:var(--g-num); font-size:11px; font-weight:700; padding:3px 8px; border-radius:99px; background:rgba(214,255,63,.13); color:var(--hg-acid2); }
+#hg-root .hg-ch.dn{ background:color-mix(in srgb, var(--hg-red) 15%, transparent); color:var(--hg-red); }
+html[data-theme="light"] #hg-root .hg-ch{ background:rgba(47,138,74,.12); color:#2f8a4a; }
+#hg-root .hg-st > b{ display:block; font-family:var(--g-num); font-size:28px; font-weight:700; letter-spacing:-.03em; margin:14px 0 2px; }
+#hg-root .hg-st > b small{ font-size:13px; font-weight:500; color:var(--grey); letter-spacing:0; }
+#hg-root .hg-st .l{ font-size:13px; font-weight:700; }
+#hg-root .hg-st .s{ font-size:11.5px; color:var(--grey); padding-right:86px; }
+#hg-root .hg-spark{ position:absolute; right:14px; bottom:14px; width:84px; height:32px; }
+#hg-root .hg-spark path{ fill:none; stroke:var(--hg-acid2); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+html[data-theme="light"] #hg-root .hg-spark path{ stroke:#c13b1f; }
+#hg-root .hg-st.hot{ color:#141412; background:linear-gradient(140deg, var(--hg-acid1), var(--hg-acid2)); border:0; box-shadow:0 22px 40px -20px rgba(214,255,63,.5); }
+html[data-theme="light"] #hg-root .hg-st.hot{ background:linear-gradient(140deg,#f0846a,#c13b1f); color:#fff; box-shadow:0 22px 40px -20px rgba(193,59,31,.7); }
+#hg-root .hg-st.hot .ic{ background:rgba(20,20,18,.08); border-color:rgba(20,20,18,.15); }
+#hg-root .hg-st.hot .s, #hg-root .hg-st.hot > b small{ color:inherit; opacity:.65; }
+#hg-root .hg-st.hot .hg-ch{ background:rgba(20,20,18,.1); color:inherit; }
+#hg-root .hg-st.hot .hg-spark path{ stroke:currentColor; }
+
+#hg-root .hg-row3{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; }
+#hg-root .hg-card{ margin:0; border-radius:26px; }
+#hg-root .hg-card-h{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+#hg-root .hg-card-h b{ font-size:15px; }
+#hg-root .hg-card-h button{ width:auto; margin:0; padding:4px 0; border:0; background:none; color:var(--hg-acid2); font-size:12px; font-weight:700; cursor:pointer; }
+html[data-theme="light"] #hg-root .hg-card-h button{ color:#c13b1f; }
+#hg-root .hg-od{ display:grid; grid-template-columns:auto 1fr auto auto; gap:12px; align-items:center; width:100%; margin:0; padding:10px 4px; border:0; border-top:1px solid var(--g-line); background:none; border-radius:0; cursor:pointer; }
+#hg-root .hg-od:first-of-type{ border-top:0; }
+#hg-root .hg-od .pa{ width:38px; height:38px; border-radius:12px; display:grid; place-items:center; font-size:17px; background:var(--s3); border:1px solid var(--g-line); }
+#hg-root .hg-od b{ display:block; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+#hg-root .hg-od > div{ min-width:0; }
+#hg-root .hg-od small{ color:var(--grey); font-size:11.5px; }
+#hg-root .hg-od .amt{ font-family:var(--g-num); font-weight:700; font-size:13.5px; }
+#hg-root .hg-od .stt{ font-size:10.5px; font-weight:700; padding:4px 9px; border-radius:99px; white-space:nowrap; }
+#hg-root .stt.p{ background:rgba(224,163,27,.16); color:#f2c561; } html[data-theme="light"] #hg-root .stt.p{ color:#a26b00; }
+#hg-root .stt.c{ background:rgba(214,255,63,.13); color:var(--hg-acid2); } html[data-theme="light"] #hg-root .stt.c{ background:rgba(47,138,74,.12); color:#2f8a4a; }
+#hg-root .stt.s{ background:rgba(110,140,255,.15); color:#9db4ff; } html[data-theme="light"] #hg-root .stt.s{ color:#3a5bc0; }
+#hg-root .stt.x{ background:var(--s3); color:var(--grey); }
+#hg-root .hg-ls{ display:flex; align-items:center; gap:12px; width:100%; margin:0; padding:10px 0; border:0; border-top:1px solid var(--g-line); background:none; border-radius:0; cursor:pointer; }
+#hg-root .hg-ls:first-of-type{ border-top:0; }
+#hg-root .hg-ls .nm{ flex:1; min-width:0; }
+#hg-root .hg-ls b{ display:block; font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#hg-root .hg-ls .meter{ height:6px; border-radius:6px; background:var(--s3); margin-top:6px; overflow:hidden; }
+#hg-root .hg-ls .meter i{ display:block; height:100%; border-radius:6px; background:linear-gradient(90deg,#ff9a7a,#c13b1f); }
+#hg-root .hg-ls .q{ font-family:var(--g-num); font-weight:700; font-size:13px; color:var(--hg-red); min-width:34px; text-align:right; }
+
+@media (max-width:1100px){ #hg-root .hg-stats{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:900px){ #hg-root .hg-row1, #hg-root .hg-row3{ grid-template-columns:1fr; } }
+@media (max-width:699px){
+  #hg-root .hg-hero{ grid-template-columns:1fr; padding:20px; }
+  #hg-root .hg-ring{ width:140px; height:140px; justify-self:center; order:-1; }
+  #hg-root .hg-hs b{ font-size:20px; } #hg-root .hg-hs div{ padding:0 12px; }
+  #hg-root .hg-stats{ gap:12px; }
+  #hg-root .hg-st{ padding:14px; }
+  #hg-root .hg-st > b{ font-size:21px; margin-top:12px; }
+  #hg-root .hg-st .s{ padding-right:0; }
+  #hg-root .hg-spark{ position:static; display:block; width:100%; height:24px; margin-top:8px; }
+  #hg-root .hg-acts .hg-pill span{ display:none; }
+}
+@media (prefers-reduced-motion: reduce){ #hg-root .hg-st, #hg-root .hg-ring .fg, #hg-root .hg-chipx i{ transition:none !important; animation:none !important; } }
+/* 🫧 Home — Global "ခလုတ်တန်း Grid" rule ကနေ ကင်းစေ · Stat ကတ် မှန်သား */
+#hg-root .hg-acts, #hg-root .hg-hb{ display:flex !important; grid-template-columns:none; }
+#hg-root .hg-pill, #hg-root .hg-hb .hb{ min-height:0; width:auto; justify-content:center; }
+#hg-root .hg-st{ background:var(--g-card); border:1px solid var(--g-line); box-shadow:var(--g-sh); -webkit-backdrop-filter:blur(24px) saturate(1.45); backdrop-filter:blur(24px) saturate(1.45); }
+#hg-root .hg-cal-h .ic{ min-height:0; }
+html[data-theme="light"] #hg-root .hg-hb .hb.o{ background:transparent; }
+@media (min-width:700px){
+  #admin-nav .tab-btn.active, html:is([data-theme],:not([data-theme])) #admin-nav .tab-btn.active{ background:var(--hg-acid2) !important; color:#141412 !important; border-color:transparent !important; }
+  html[data-theme="light"] #admin-nav .tab-btn.active{ background:#1f1d1a !important; color:#fff !important; }
+}
+
+/* =====================================================================
+   🔧 မညီတာ ပြင် + 🗂️ ပစ္စည်း Category Bar + ▮ Barcode (prod-tools.js)
+   ===================================================================== */
+/* Header — ✅ 0/7 Chip ကို တခြားခလုတ်တွေနဲ့ အမြင့်/ထောင့် တူအောင် */
+html:is([data-theme],:not([data-theme])) header #sd-chip.secondary{ height:44px !important; border-radius:12px !important; padding:0 12px 0 10px; }
+@media (max-width:699px){
+  html:is([data-theme],:not([data-theme])) header :is(#admin-sound-btn,#admin-theme-btn,#refresh-btn,#logout-btn,#sd-chip).secondary,
+  html:is([data-theme],:not([data-theme])) header :is(#admin-sound-btn,#admin-theme-btn,#refresh-btn,#logout-btn,#sd-chip){ width:38px !important; min-width:38px !important; height:38px !important; padding:0 !important; border-radius:11px !important; justify-content:center; }
+}
+/* Sidebar — Badge ပါတဲ့ Menu တွေ နောက်ခံ အနီ မဖြစ်တော့ (Badge ကပဲ သတိပေး) */
+html:is([data-theme],:not([data-theme])) #admin-nav .tab-btn.needs-attention:not(.active){ animation:none !important; background:transparent !important; box-shadow:none !important; border-color:transparent !important; }
+html:is([data-theme],:not([data-theme])) #admin-nav .tab-btn.needs-attention:not(.active):hover{ background:var(--s2, rgba(255,255,255,.06)) !important; }
+/* Category / Sub-Category Add — Input နဲ့ ခလုတ် တစ်တန်းတည်း အမြင့်တူ */
+html:is([data-theme],:not([data-theme])) :is(#category-form,#subcategory-form){ display:flex; gap:10px; align-items:stretch; flex-wrap:wrap; }
+html:is([data-theme],:not([data-theme])) :is(#category-form,#subcategory-form) .form-grid{ flex:1 1 280px; margin:0 !important; gap:10px; }
+html:is([data-theme],:not([data-theme])) :is(#category-form,#subcategory-form) .form-grid > *{ margin:0 !important; height:48px; }
+html:is([data-theme],:not([data-theme])) :is(#category-form,#subcategory-form) .form-actions{ margin:0 !important; display:flex !important; flex:0 0 auto; }
+html:is([data-theme],:not([data-theme])) :is(#category-form,#subcategory-form) .form-actions button{ height:48px !important; min-height:48px !important; margin:0 !important; padding:0 22px !important; width:auto !important; white-space:nowrap; }
+@media (max-width:520px){ html:is([data-theme],:not([data-theme])) #subcategory-form .form-actions{ flex:1 1 100%; } html:is([data-theme],:not([data-theme])) #subcategory-form .form-actions button{ width:100% !important; } }
+/* Order ကတ် — Status · Receipt · ဖျက်မည် တစ်တန်းတည်း (ဖုန်းမှာ Status အပေါ် · ခလုတ် ၂ ခု တစ်ဝက်စီ) */
+html:is([data-theme],:not([data-theme])) .order-card .ord-actions > select{ grid-column:auto !important; }
+@media (max-width:520px){ html:is([data-theme],:not([data-theme])) .order-card .ord-actions > select{ grid-column:1 / -1 !important; } }
+/* Order ကတ် — ပုံမရှိရင် "IMG" ကွက်အစား ပုံသေးလေး */
+html:is([data-theme],:not([data-theme])) .order-card img[src*="placehold.co"]{ opacity:.35; filter:grayscale(1); }
+/* Delivery ကတ် — Status + ခလုတ် ညီညီ (ဖုန်းမှာ အပေါ်အောက်) */
+html:is([data-theme],:not([data-theme])) .delivery-card div:has(> .delivery-action-btn){ display:grid !important; grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important; gap:8px !important; align-items:stretch; }
+html:is([data-theme],:not([data-theme])) .delivery-card div:has(> .delivery-action-btn) > *{ width:100% !important; margin:0 !important; min-height:46px; border-radius:12px; }
+html:is([data-theme],:not([data-theme])) .delivery-card div:has(> .delivery-action-btn) > .hint{ display:flex; align-items:center; gap:6px; padding:10px 12px; border-radius:12px; background:color-mix(in srgb, var(--acid, #D6FF3F) 8%, transparent); font-size:12.5px; line-height:1.5; }
+@media (max-width:560px){ html:is([data-theme],:not([data-theme])) .delivery-card div:has(> .delivery-action-btn){ grid-template-columns:1fr !important; } }
+
+/* ---------- 🗂️ Category Bar ---------- */
+html:is([data-theme],:not([data-theme])) .pt-card{ padding:14px !important; }
+html:is([data-theme],:not([data-theme])) .pt-search{ display:flex !important; gap:8px; align-items:stretch; }
+html:is([data-theme],:not([data-theme])) .pt-search #products-search{ flex:1; min-width:0; margin:0 !important; height:46px; }
+html:is([data-theme],:not([data-theme])) .pt-search button{ flex:0 0 46px; width:46px !important; min-width:46px; height:46px !important; min-height:46px !important; padding:0 !important; margin:0 !important; border-radius:12px; font-size:17px; display:flex; align-items:center; justify-content:center; }
+html:is([data-theme],:not([data-theme])) .pt-search button[hidden]{ display:none !important; }
+#pt-bar{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-row{ display:flex !important; flex-wrap:nowrap; gap:6px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; padding:1px; margin:0 -2px; mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent); -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent); }
+#pt-bar .pt-row::-webkit-scrollbar{ display:none; }
+#pt-bar .pt-row[hidden]{ display:none !important; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-chip{ all:unset; box-sizing:border-box; cursor:pointer; flex:0 0 auto; scroll-snap-align:start; display:inline-flex; align-items:center; gap:7px; height:36px; padding:0 13px; border-radius:999px;
+  font:600 13px/1 'Space Grotesk','Noto Sans Myanmar',sans-serif; color:var(--fg, #E9E4D8); background:var(--g-card, rgba(255,255,255,.05)); border:1px solid var(--g-line, rgba(255,255,255,.1)); transition:background .2s, color .2s, border-color .2s, transform .12s; white-space:nowrap; -webkit-tap-highlight-color:transparent; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-chip:active{ transform:scale(.96); }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-chip i{ font-style:normal; font-size:11px; font-weight:700; min-width:20px; height:20px; padding:0 6px; box-sizing:border-box; border-radius:99px; display:inline-flex; align-items:center; justify-content:center; background:rgba(127,127,127,.18); color:inherit; opacity:.85; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-chip.on{ background:var(--hg-acid2, #D6FF3F); color:#141412; border-color:transparent; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-chip.on i{ background:rgba(20,20,18,.14); opacity:1; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-subs .pt-chip{ height:32px; font-size:12.5px; padding:0 11px; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-subs .pt-chip.on{ background:transparent; color:var(--acid-text, #D6FF3F); border-color:var(--hg-acid2, #D6FF3F); }
+#pt-bar .pt-lbl{ flex:0 0 auto; align-self:center; color:var(--grey); font-size:14px; padding:0 2px 0 6px; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-foot{ display:flex !important; align-items:center; justify-content:space-between; gap:10px; }
+#pt-bar .pt-stk{ flex:1; min-width:0; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-stk .pt-chip{ height:30px; font-size:12px; padding:0 10px; background:transparent; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-stk .pt-chip.on{ background:var(--fg, #E9E4D8); color:var(--bg, #141412); }
+#pt-bar .pt-count{ flex:0 0 auto; font:500 12px 'Space Grotesk','Noto Sans Myanmar',sans-serif; color:var(--grey); display:inline-flex; align-items:center; gap:8px; }
+#pt-bar .pt-count b{ color:var(--fg, #E9E4D8); font-size:14px; }
+html:is([data-theme],:not([data-theme])) #pt-bar .pt-reset{ all:unset; cursor:pointer; font-size:12px; font-weight:600; color:var(--acid-text, #D6FF3F); padding:4px 2px; text-decoration:underline; text-underline-offset:3px; }
+html[data-theme="light"] #pt-bar .pt-chip{ color:#1f1d1a; }
+html[data-theme="light"] #pt-bar .pt-count b{ color:#1f1d1a; }
+html[data-theme="light"] #pt-bar .pt-subs .pt-chip.on{ color:#1f1d1a; }
+html[data-theme="light"] #pt-bar .pt-stk .pt-chip.on{ background:#1f1d1a; color:#fff; }
+/* ပစ္စည်းစာရင်း — Code ပြ · Barcode ခလုတ် */
+#products-list .pt-codes{ display:flex; flex-wrap:wrap; gap:6px; margin-top:4px !important; }
+#products-list .pt-codes span{ font:600 11px 'Space Mono',monospace; padding:3px 8px; border-radius:7px; background:rgba(127,127,127,.14); color:var(--grey); letter-spacing:.02em; }
+/* ပစ္စည်း Form — Barcode ကွက် */
+html:is([data-theme],:not([data-theme])) .pt-bc-field{ display:flex !important; gap:8px; align-items:stretch; }
+html:is([data-theme],:not([data-theme])) .pt-bc-field #product-barcode{ flex:1; min-width:0; margin:0 !important; height:48px; font-family:'Space Mono',monospace; letter-spacing:.04em; }
+html:is([data-theme],:not([data-theme])) .pt-bc-field button{ flex:0 0 auto; width:auto !important; height:48px !important; min-height:48px !important; margin:0 !important; padding:0 16px !important; border-radius:12px; white-space:nowrap; }
+#product-form .pt-bc-hint{ margin:-2px 0 4px !important; font-size:12px; }
+#product-form .pt-bc-hint b{ font:700 12.5px 'Space Mono',monospace !important; color:var(--acid-text, #D6FF3F); }
+html[data-theme="light"] #product-form .pt-bc-hint b{ color:#1f1d1a; }
+
+/* ---------- ▮ Barcode Dialog ---------- */
+.pt-ov{ position:fixed; inset:0; z-index:9000; background:rgba(8,8,7,.62); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; padding:16px; animation:ptIn .18s ease-out; }
+@keyframes ptIn{ from{ opacity:0; } }
+.pt-dlg{ width:min(560px,100%); max-height:min(86vh,760px); display:flex; flex-direction:column; border-radius:22px; overflow:hidden; background:var(--bg2, #1b1a17); color:var(--fg, #E9E4D8); border:1px solid var(--g-line, rgba(255,255,255,.12)); box-shadow:0 30px 80px rgba(0,0,0,.5); animation:ptUp .22s cubic-bezier(.2,.9,.3,1.1); }
+@keyframes ptUp{ from{ transform:translateY(14px) scale(.98); } }
+html[data-theme="light"] .pt-dlg{ background:#fbf8f2; color:#1f1d1a; }
+.pt-dh{ display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:18px 18px 12px; }
+.pt-dh small{ font:700 10.5px 'Space Mono',monospace; letter-spacing:.16em; color:var(--acid-text, #D6FF3F); }
+html[data-theme="light"] .pt-dh small{ color:#6a7a00; }
+.pt-dh h3{ margin:4px 0 0; font-size:18px; line-height:1.3; }
+.pt-ov .pt-x{ all:unset; cursor:pointer; flex:0 0 36px; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(127,127,127,.16); font-size:15px; }
+.pt-db{ padding:0 18px 12px; overflow:auto; display:flex; flex-direction:column; gap:14px; }
+.pt-st{ font-size:12.5px; font-weight:700; margin-bottom:8px; display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+.pt-st span{ font-weight:500; color:var(--grey); }
+.pt-bcbox{ background:#fff; border-radius:14px; padding:10px; display:flex; justify-content:center; }
+.pt-bcbox svg{ max-width:100%; height:auto; }
+.pt-bcbox.sm{ padding:6px; border-radius:10px; }
+.pt-vars{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px; }
+.pt-var{ border:1px solid var(--g-line, rgba(255,255,255,.1)); border-radius:14px; padding:8px; display:flex; flex-direction:column; gap:6px; }
+.pt-vh{ display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:12.5px; }
+.pt-vh span{ font:600 11px 'Space Mono',monospace; color:var(--grey); }
+.pt-vh span.z{ color:#ff6b4a; }
+.pt-note{ font-size:13px; padding:12px; border-radius:12px; background:rgba(127,127,127,.12); line-height:1.6; }
+.pt-ov .pt-link{ all:unset; cursor:pointer; font-weight:700; color:var(--acid-text, #D6FF3F); text-decoration:underline; }
+html[data-theme="light"] .pt-ov .pt-link{ color:#1f1d1a; }
+.pt-df{ display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:12px 18px 18px; border-top:1px solid var(--g-line, rgba(255,255,255,.08)); }
+.pt-df:has(> :only-child){ grid-template-columns:1fr; }
+.pt-df button{ width:100% !important; min-height:48px; margin:0 !important; border-radius:12px; }
+@media (max-width:520px){ .pt-ov{ align-items:flex-end; padding:0; } .pt-dlg{ border-radius:22px 22px 0 0; max-height:88vh; } .pt-df{ padding-bottom:calc(18px + env(safe-area-inset-bottom)); } }
+@media (prefers-reduced-motion:reduce){ .pt-ov, .pt-dlg{ animation:none; } }
+
+/* ပစ္စည်းစာရင်း ခလုတ်တန်း — ကွက်လပ် မကျန်အောင် (iPad: တစ်တန်းတည်း · ဖုန်း: ၃ + ၂) */
+html:is([data-theme],:not([data-theme])) #products-list .list-item .actions{ display:grid !important; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); grid-template-columns:none !important; gap:8px !important; }
+html:is([data-theme],:not([data-theme])) #products-list .list-item .actions > button{ width:100% !important; margin:0 !important; min-height:44px; padding:0 8px !important; display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap; border-radius:12px; }
+html:is([data-theme],:not([data-theme])) #products-list .list-item .actions > .del-btn{ order:9; color:#ff6b4a; }
+html[data-theme="light"] #products-list .list-item .actions > .del-btn{ color:var(--rust); }
+@media (max-width:699px){
+  html:is([data-theme],:not([data-theme])) #products-list .list-item .actions:has(> button:nth-child(5)){ grid-auto-flow:row; grid-template-columns:repeat(6,minmax(0,1fr)) !important; }
+  html:is([data-theme],:not([data-theme])) #products-list .list-item .actions:has(> button:nth-child(5)) > button{ grid-column:span 2; }
+  html:is([data-theme],:not([data-theme])) #products-list .list-item .actions:has(> button:nth-child(5)) > :is(.pm-quick,.del-btn){ grid-column:span 3; }
+}
+svg.bci{ width:15px; height:11px; flex:0 0 auto; vertical-align:-1px; margin-right:4px; }
+#products-list .pt-codes span{ display:inline-flex; align-items:center; }
+#products-list .pt-codes svg.bci{ width:12px; height:9px; }
+html:is([data-theme],:not([data-theme])) #category-form{ flex-wrap:nowrap; }
+html:is([data-theme],:not([data-theme])) #category-form .form-grid{ flex:1 1 0; min-width:0; grid-template-columns:1fr !important; }
+/* Category / Sub-Category စာရင်း — ခလုတ်များ အလျားလိုက် တစ်တန်း (iPad မှာ ဒေါင်လိုက် မစီတော့) */
+@media (min-width:700px){
+  html:is([data-theme],:not([data-theme])) :is(#categories-list,#subcategories-list) .list-item{ display:flex !important; flex-direction:row !important; align-items:center !important; gap:12px; padding:12px 14px !important; }
+  html:is([data-theme],:not([data-theme])) :is(#categories-list,#subcategories-list) .list-item .info{ flex:1 1 auto; min-width:0; }
+  html:is([data-theme],:not([data-theme])) :is(#categories-list,#subcategories-list) .list-item .actions{ display:flex !important; flex:0 0 auto; flex-direction:row !important; gap:8px !important; width:auto !important; margin:0 !important; }
+  html:is([data-theme],:not([data-theme])) :is(#categories-list,#subcategories-list) .list-item .actions > button{ width:auto !important; min-width:46px; height:44px !important; min-height:44px !important; padding:0 16px !important; margin:0 !important; border-radius:12px; display:flex; align-items:center; justify-content:center; }
+  html:is([data-theme],:not([data-theme])) :is(#categories-list,#subcategories-list) .list-item .actions > .move-cat-btn{ padding:0 !important; width:46px !important; }
+}
+html:is([data-theme],:not([data-theme])) :is(#categories-list,#subcategories-list) .del-cat-btn, html:is([data-theme],:not([data-theme])) #subcategories-list .del-subcat-btn{ color:#ff6b4a; }
+html[data-theme="light"] :is(#categories-list,#subcategories-list) :is(.del-cat-btn,.del-subcat-btn){ color:var(--rust); }
+/* 🏠 Home — 🎯 ပစ်မှတ် Ring Animation (Emoji မပါ) */
+#hg-root .hg-ring > svg{ overflow:visible; }
+#hg-root .hg-ring > svg circle{ fill:none; }
+#hg-root .hg-ring .bg, #hg-root .hg-ring .fg{ stroke-width:10; }
+#hg-root .hg-ring .trk{ stroke:rgba(20,20,18,.28); stroke-width:1.6; stroke-dasharray:1.2 5.5; stroke-linecap:round; transform-origin:60px 60px; transform-box:view-box; animation:hgSpin 40s linear infinite; }
+#hg-root .hg-ring .tip{ transform-origin:60px 60px; transform-box:view-box; transform:rotate(0deg); transition:transform 1.4s cubic-bezier(.2,.8,.2,1); }
+#hg-root .hg-ring .tip .dot{ fill:var(--hg-acid1, #E8FF8A); stroke:#141412; stroke-width:3.5; }
+#hg-root .hg-ring .tip .halo{ fill:#141412; opacity:.35; transform-origin:108px 60px; transform-box:view-box; animation:hgHalo 2.2s ease-out 1.5s infinite; }
+#hg-root .hg-ring .shine{ stroke:rgba(255,255,255,.9); stroke-width:4; stroke-linecap:round; opacity:0; filter:drop-shadow(0 0 3px rgba(255,255,255,.9)); }
+#hg-root .hg-ring .shine.run{ animation:hgShine 3.6s cubic-bezier(.45,0,.25,1) infinite; }
+#hg-root .hg-ring-t small{ letter-spacing:.04em; }
+#hg-root .hg-ring:hover .tip .dot{ stroke-width:4.5; }
+@keyframes hgSpin{ to{ transform:rotate(360deg); } }
+@keyframes hgHalo{ 0%{ transform:scale(1); opacity:.4; } 70%,100%{ transform:scale(2.6); opacity:0; } }
+@keyframes hgShine{ 0%{ stroke-dashoffset:0; opacity:0; } 12%{ opacity:1; } 60%{ opacity:1; } 72%,100%{ stroke-dashoffset:calc(12px - var(--len) * 1px); opacity:0; } }
+html[data-theme="light"] #hg-root .hg-ring .trk{ stroke:rgba(255,255,255,.45); }
+html[data-theme="light"] #hg-root .hg-ring .tip .dot{ fill:#fff; stroke:#1f1d1a; }
+html[data-theme="light"] #hg-root .hg-ring .tip .halo{ fill:#fff; opacity:.5; }
+/* ပစ်မှတ် ပြည့်ရင် — အစိမ်းစက်လေးတွေ ပွင့်ထွက် */
+#hg-root .hg-burst{ position:absolute; inset:0; pointer-events:none; }
+#hg-root .hg-burst i{ position:absolute; left:50%; top:50%; width:7px; height:7px; margin:-3.5px; border-radius:50%; background:#141412; opacity:0; animation:hgBurst 2.8s ease-out 1.3s infinite; }
+#hg-root .hg-burst i:nth-child(even){ background:#fff; width:5px; height:5px; margin:-2.5px; }
+#hg-root .hg-burst i:nth-child(1){ --a:0deg; animation-delay:1.30s; }
+#hg-root .hg-burst i:nth-child(2){ --a:45deg; animation-delay:1.34s; }
+#hg-root .hg-burst i:nth-child(3){ --a:90deg; animation-delay:1.38s; }
+#hg-root .hg-burst i:nth-child(4){ --a:135deg; animation-delay:1.42s; }
+#hg-root .hg-burst i:nth-child(5){ --a:180deg; animation-delay:1.46s; }
+#hg-root .hg-burst i:nth-child(6){ --a:225deg; animation-delay:1.50s; }
+#hg-root .hg-burst i:nth-child(7){ --a:270deg; animation-delay:1.54s; }
+#hg-root .hg-burst i:nth-child(8){ --a:315deg; animation-delay:1.58s; }
+@keyframes hgBurst{ 0%{ transform:rotate(var(--a)) translateY(-40%) scale(.4); opacity:0; } 10%{ opacity:1; } 45%,100%{ transform:rotate(var(--a)) translateY(-78px) scale(1); opacity:0; } }
+@media (prefers-reduced-motion: reduce){ #hg-root .hg-ring .trk, #hg-root .hg-ring .tip .halo, #hg-root .hg-ring .shine.run, #hg-root .hg-burst i{ animation:none !important; } #hg-root .hg-ring .tip{ transition:none; } }
+html[data-theme="light"] #hg-root .hg-ring .shine{ stroke:rgba(31,29,26,.55); filter:none; }
+
+/* 🛒 POS ခြင်း — အရေအတွက် − / + */
+.pos-cart-item .pci-n{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.pos-cart-item .pci-n small{ font-size:11.5px; color:var(--grey); font-family:var(--g-num, 'Space Mono', monospace); }
+.pos-cart-item .pci-q{ flex:0 0 auto; display:inline-flex !important; align-items:center; gap:0; border:1px solid var(--g-line, var(--bd)); border-radius:12px; overflow:hidden; background:var(--s3, transparent); }
+html:is([data-theme],:not([data-theme])) .pos-cart-item .pci-q .pci-b{ all:unset; box-sizing:border-box; cursor:pointer; width:34px; height:34px; display:grid; place-items:center; font:700 17px/1 var(--g-num, 'Space Grotesk', sans-serif); color:inherit; -webkit-tap-highlight-color:transparent; }
+html:is([data-theme],:not([data-theme])) .pos-cart-item .pci-q .pci-b:active{ background:var(--hg-acid2, #D6FF3F); color:#141412; }
+html:is([data-theme],:not([data-theme])) .pos-cart-item .pci-q .pci-b:disabled{ opacity:.3; cursor:default; background:none; color:inherit; }
+html:is([data-theme],:not([data-theme])) .pos-cart-item .pci-q .pci-i{ width:38px !important; min-width:0; height:34px; margin:0 !important; padding:0 !important; border:0 !important; border-radius:0 !important; background:transparent !important; text-align:center; font:700 14px var(--g-num, 'Space Grotesk', sans-serif); color:inherit; -moz-appearance:textfield; box-shadow:none !important; }
+.pos-cart-item .pci-q .pci-i::-webkit-inner-spin-button, .pos-cart-item .pci-q .pci-i::-webkit-outer-spin-button{ -webkit-appearance:none; margin:0; }
+.pos-cart-item .pci-t{ flex:0 0 auto; text-align:right; min-width:92px; }
+@media (max-width:420px){ .pos-cart-item{ flex-wrap:wrap; } .pos-cart-item .pci-n{ flex:1 1 100%; } .pos-cart-item .pci-q{ margin-right:auto; } }
 </style>
 </head>
 <body>
@@ -2386,6 +2733,11 @@ html:is([data-theme],:not([data-theme])) .sd-sug-note{ font-size:11.5px; color:v
           <select id="product-category"></select>
           <select id="product-subcategory"><option value="">Sub-Category (Optional)</option></select>
           <input type="number" id="product-price" placeholder="ဈေးနှုန်း (ကျပ်) — Gift Card ဆိုရင် ဒီကွက်ကို လျစ်လျူရှုပါ" required>
+          <div class="full pt-bc-field">
+            <input type="text" id="product-barcode" placeholder="Barcode — ပစ္စည်းပေါ်က Barcode (မရှိရင် ချန်ထားပါ)" autocomplete="off" autocapitalize="off" spellcheck="false">
+            <button type="button" class="secondary" id="product-barcode-scan">📷 Scan</button>
+          </div>
+          <div class="full hint pt-bc-hint" id="product-sku-hint"></div>
           <label class="full" style="display:flex; align-items:flex-start; gap:8px; font-family:'Space Mono',monospace; font-size:12.5px; border:1.5px solid var(--bd); padding:10px; margin:4px 0;">
             <input type="checkbox" id="product-is-giftcard" style="width:auto; flex-shrink:0; margin-top:2px;">
             <span style="flex:1; min-width:0; word-wrap:break-word;">🎁 ဒါက Gift Card ဖြစ်သည် — ပမာဏ Fix (10,000/20,000/50,000/100,000/300,000/500,000) ကို ရွေးပြီး တစ်ခုချင်းစီအတွက် Stock ခွဲသတ်မှတ်ရမည်၊ KBZPay ဖြင့်သာ ဝယ်ယူခွင့်ပြုမည်</span>
@@ -3780,6 +4132,14 @@ productForm.addEventListener('submit', async (e)=>{
     tags: selectedTags.join(', '),
     is_gift_card: document.getElementById('product-is-giftcard').checked,
   };
+  // ▮ Barcode (ပစ္စည်းပေါ်က Barcode) — ထပ်နေရင် မသိမ်း
+  const bcEl = document.getElementById('product-barcode');
+  if(bcEl){
+    const bc = bcEl.value.trim();
+    payload.barcode = bc || null;
+    const dup = bc && productsListCache.find(x => String(x.barcode || '').trim() === bc && String(x.id) !== String(id));
+    if(dup){ showToast('⚠️ ဒီ Barcode က "' + dup.name + '" မှာ သုံးပြီးသား ဖြစ်နေပါတယ်'); bcEl.focus(); return; }
+  }
   if(variantStock){
     payload.variant_stock = variantStock;
     let total = 0;
@@ -3821,6 +4181,12 @@ productForm.addEventListener('submit', async (e)=>{
     delete payload.preorder; delete payload.preorder_eta; delete payload.preorder_note;
     ({ error } = await save(payload));
     if(!error && hadPre) setTimeout(() => showToast('⚠️ Pre-order မသိမ်းရသေးပါ — Supabase မှာ SHOP-EXTRA.sql ကို Run ပါ'), 2200);
+  }
+  if(error && /barcode/.test(error.message || '')){
+    const hadBc = !!payload.barcode;
+    delete payload.barcode;
+    ({ error } = await save(payload));
+    if(!error && hadBc) setTimeout(() => showToast('⚠️ Barcode မသိမ်းရသေးပါ — Supabase မှာ PRODUCT-BARCODE.sql ကို Run ပါ'), 2000);
   }
   if(error && /color_images/.test(error.message || '')){
     // COLOR-IMAGES.sql မ Run ရသေးရင် — အရောင်ပုံ မပါဘဲ သိမ်းပြီး သတိပေး
@@ -3949,12 +4315,25 @@ async function loadProducts(){
   renderProductsList();
 }
 
+// 🔍 ရှာဖွေ — အမည် · Category · Sub-Category · Barcode · SUWATI Code (S12 / S12-0-1) + 🗂️ Category Bar (prod-tools.js)
+const BC_ICON = '<svg class="bci" viewBox="0 0 18 12" aria-hidden="true"><path d="M1 0v12M3.5 0v12M5.5 0v12M8.5 0v12M10.5 0v12M13.5 0v12M16.5 0v12" stroke="currentColor" stroke-width="1.3"/><path d="M4.5 0v12M12 0v12" stroke="currentColor" stroke-width="2.2"/></svg>';
+function productsFiltered(){
+  const q = (document.getElementById('products-search')?.value || '').trim().toLowerCase();
+  let data = productsListCache;
+  if(typeof ptCatFilter === 'function') data = data.filter(ptCatFilter);
+  if(q){
+    const sku = q.match(/^s(\d+)(?:-(?:\d+|x)){0,2}$/);
+    data = data.filter(p => sku ? String(p.sku_code) === sku[1]
+      : [p.name, p.category, p.subcategory, p.barcode].some(v => String(v || '').toLowerCase().includes(q)));
+  }
+  return data;
+}
 function renderProductsList(){
   const list = document.getElementById('products-list');
   const q = (document.getElementById('products-search')?.value || '').trim().toLowerCase();
   list.innerHTML='';
-  let data = productsListCache;
-  if(q){ data = data.filter(p => p.name.toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q)); }
+  const data = productsFiltered();
+  if(typeof ptRenderBar === 'function') ptRenderBar(data.length);
   if(!data.length){ list.innerHTML = '<p class="hint">ရှာဖွေမှုနှင့် ကိုက်ညီသော ပစ္စည်း မတွေ့ပါ</p>'; return; }
   data.forEach(p=>{
     const div = document.createElement('div');
@@ -3968,11 +4347,13 @@ function renderProductsList(){
         ${p.sizes ? `<p>Size: ${String(p.sizes).split(',').map(s=>s.trim()).filter(Boolean).join(' / ')}</p>` : ''}
         ${p.colors ? `<p>အရောင်: ${String(p.colors).split(',').map(s=>s.trim()).filter(Boolean).join(' / ')}</p>` : ''}
         ${p.tags ? `<p style="color:var(--warn-text);">🏷️ ${p.tags}</p>` : ''}
+        ${!p.is_gift_card && (p.sku_code || p.barcode) ? `<p class="pt-codes">${p.sku_code ? `<span>S${p.sku_code}</span>` : ''}${p.barcode ? `<span>${BC_ICON}${String(p.barcode).replace(/[<>&"]/g,'')}</span>` : ''}</p>` : ''}
         ${typeof saleBadgeText === 'function' && saleBadgeText(p) ? `<p class="ps-list-badge${saleState(p).on ? ' on' : ''}">${saleBadgeText(p)}</p>` : ''}
       </div>
       <div class="actions" style="flex-wrap:wrap;">
         <button class="secondary pin-btn" style="${p.pinned?'background:var(--acid); color:#141412; border-color:var(--acid);':''}">${p.pinned?'📌 Unpin':'📌 Pin'}</button>
         <button class="secondary edit-btn">ပြင်မည်</button>
+        ${p.is_gift_card ? '' : '<button class="secondary bc-btn" title="Barcode / Label">' + BC_ICON + 'Barcode</button>'}
         <button class="secondary del-btn">ဖျက်မည်</button>
       </div>`;
     div.querySelector('.pin-btn').addEventListener('click', async ()=>{
@@ -3983,6 +4364,7 @@ function renderProductsList(){
       loadProducts();
     });
     div.querySelector('.edit-btn').addEventListener('click', ()=>editProduct(p));
+    div.querySelector('.bc-btn')?.addEventListener('click', ()=>{ if(typeof openProductBarcode === 'function') openProductBarcode(p); });
     div.querySelector('.del-btn').addEventListener('click', ()=>deleteProduct(p.id, p.name));
     list.appendChild(div);
   });
@@ -3995,6 +4377,7 @@ async function editProduct(p){
   await updateProductSubcategoryDropdown();
   document.getElementById('product-subcategory').value = p.subcategory || '';
   document.getElementById('product-price').value = p.price;
+  if(document.getElementById('product-barcode')) document.getElementById('product-barcode').value = p.barcode || '';
   document.getElementById('product-sizes').value = p.sizes||'';
   document.getElementById('product-is-giftcard').checked = !!p.is_gift_card;
   document.getElementById('product-colors').value = p.colors||'';
@@ -6169,9 +6552,16 @@ function addPosCartItem(){
   if(stock <= 0){ showToast('ဒီရွေးချယ်မှု ကုန်သွားပါပြီ'); return; }
   if(qty > stock){ showToast(`လက်ကျန် ${stock} ခုပဲ ရှိပါတယ်`); return; }
 
-  posCart.push({
-    name: p.name, price: saleEffPrice(p), size: posSelectedSize, color: posSelectedColor, quantity: qty,
-  });
+  // တူတဲ့ ပစ္စည်း (Size/အရောင် တူ) ရှိပြီးသားဆို အရေအတွက်ပဲ တိုး — Scan ၂ ခါ ဖတ်ရင် ၂ ကြောင်း မဖြစ်တော့
+  const same = posCart.find(i => i.name === p.name && (i.size || null) === (posSelectedSize || null) && (i.color || null) === (posSelectedColor || null) && i.price === saleEffPrice(p));
+  if(same){
+    if(same.quantity + qty > stock){ showToast(`လက်ကျန် ${stock} ခုပဲ ရှိပါတယ် (ခြင်းထဲ ${same.quantity} ခု ရှိပြီး)`); return; }
+    same.quantity += qty;
+  } else {
+    posCart.push({
+      name: p.name, price: saleEffPrice(p), size: posSelectedSize, color: posSelectedColor, quantity: qty,
+    });
+  }
   posSelectedProduct = null; posSelectedSize = null; posSelectedColor = null;
   document.getElementById('pos-selected-product-area').innerHTML = '';
   renderPosCart();
@@ -6208,11 +6598,18 @@ function renderPosCart(){
     return;
   }
   emptyMsg.style.display = 'none';
-  list.innerHTML = posCart.map((item,idx)=>`
+  list.innerHTML = posCart.map((item,idx)=>{
+    const max = posCartStock(item);
+    return `
     <div class="pos-cart-item">
-      <span>${item.name}${item.size?' ('+item.size+(item.color?', '+item.color:'')+')':''} x${item.quantity}</span>
-      <span>${(item.price*item.quantity).toLocaleString()} ကျပ် <a href="#" onclick="removePosCartItem(${idx}); return false;" style="color:var(--rust); margin-left:8px;">✕</a></span>
-    </div>`).join('');
+      <span class="pci-n">${item.name}${item.size?' ('+item.size+(item.color?', '+item.color:'')+')':''}<small>${Number(item.price).toLocaleString()} × ${item.quantity}</small></span>
+      <span class="pci-q" role="group" aria-label="အရေအတွက်">
+        <button type="button" class="pci-b" onclick="posCartQty(${idx},-1)" ${item.quantity<=1?'disabled':''} aria-label="လျှော့">−</button>
+        <input type="number" class="pci-i" value="${item.quantity}" min="1" max="${max}" inputmode="numeric" onchange="posCartSetQty(${idx}, this.value)" aria-label="အရေအတွက်">
+        <button type="button" class="pci-b" onclick="posCartQty(${idx},1)" ${item.quantity>=max?'disabled':''} aria-label="တိုး">+</button>
+      </span>
+      <span class="pci-t">${(item.price*item.quantity).toLocaleString()} ကျပ် <a href="#" onclick="removePosCartItem(${idx}); return false;" style="color:var(--rust); margin-left:8px;" aria-label="ဖယ်ရှားရန်">✕</a></span>
+    </div>`; }).join('');
 
   const subtotal = getPosSubtotal();
   const discount = getPosDiscountAmount();
@@ -6412,6 +6809,31 @@ document.getElementById('pos-payment-method').addEventListener('change', (e)=>{
 document.getElementById('pos-split-method').addEventListener('change', syncPosPaymentAreas);
 document.getElementById('pos-split-cash').addEventListener('input', updatePosSplitDisplay);
 
+// 🛒 ခြင်းထဲက ပစ္စည်း အရေအတွက် တိုး/လျှော့ (Stock ထက် မကျော်)
+function posCartStock(item){
+  const p = (posProductsCache || []).find(x => x.name === item.name); if(!p) return 999;
+  const sz = item.size || '_', co = item.color || '_';
+  let st;
+  if(p.variant_stock && p.variant_stock[sz] && p.variant_stock[sz][co] !== undefined) st = p.variant_stock[sz][co];
+  else if(item.color && p.color_stock && p.color_stock[item.color] !== undefined) st = p.color_stock[item.color];
+  else st = p.status === 'sold_out' ? 0 : (p.stock_qty || 0);
+  // တူတဲ့ ပစ္စည်း တခြားကြောင်းမှာ ရှိရင် နုတ်
+  const other = posCart.filter(i => i !== item && i.name === item.name && (i.size||null) === (item.size||null) && (i.color||null) === (item.color||null)).reduce((s,i) => s + i.quantity, 0);
+  return Math.max(1, (parseInt(st) || 0) - other);
+}
+function posCartSetQty(idx, v){
+  const item = posCart[idx]; if(!item) return;
+  const max = posCartStock(item);
+  let n = parseInt(v) || 1;
+  if(n > max){ n = max; showToast(`လက်ကျန် ${max} ခုပဲ ရှိပါတယ်`); }
+  item.quantity = Math.max(1, n);
+  renderPosCart();
+}
+function posCartQty(idx, d){
+  const item = posCart[idx]; if(!item) return;
+  if(d > 0 && item.quantity >= posCartStock(item)) return showToast(`လက်ကျန် ${posCartStock(item)} ခုပဲ ရှိပါတယ်`);
+  posCartSetQty(idx, item.quantity + d);
+}
 function removePosCartItem(idx){
   posCart.splice(idx,1);
   renderPosCart();
@@ -6756,12 +7178,15 @@ function showReceiptOverlay(html){
     const st = document.createElement('style'); st.id = 'receipt-overlay-style';
     st.textContent = `
       #receipt-overlay{position:fixed; inset:0; z-index:100000; background:rgba(20,20,18,.96); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:flex; flex-direction:column; padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0);}
-      #receipt-overlay .ro-bar{display:flex; gap:8px; padding:10px 12px; background:#141412; border-bottom:3px solid #D6FF3F; flex-shrink:0;}
+      #receipt-overlay .ro-bar{display:flex; gap:8px; padding:10px 12px; background:#141412; border-bottom:3px solid #D6FF3F; flex-shrink:0; position:relative; z-index:5;}
       #receipt-overlay .ro-bar button{flex:1; padding:12px 8px; font-family:'Space Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; border:2.5px solid #E9E4D8;}
       #receipt-overlay .ro-close{background:#C13B1F; color:#fff; border-color:#C13B1F !important; flex:0 0 auto !important; padding:12px 16px !important;}
       #receipt-overlay .ro-print{background:#D6FF3F; color:#141412; border-color:#D6FF3F !important;}
-      #receipt-overlay iframe{flex:1; width:100%; border:none; background:transparent;}
-      #receipt-overlay .ro-paper{flex:1; display:flex; overflow:hidden; position:relative;}
+      #receipt-overlay iframe{display:block; width:100%; min-height:100%; border:none; background:transparent;}
+      #receipt-overlay .ro-paper{flex:1 1 0; min-height:0; overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; position:relative; z-index:1;}
+      #receipt-overlay .ro-fab{position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); z-index:6; padding:13px 26px; border-radius:99px; border:0; background:#C13B1F; color:#fff; font:700 14px 'Space Mono','Noto Sans Myanmar',monospace; box-shadow:0 10px 30px rgba(0,0,0,.45); cursor:pointer; opacity:0; pointer-events:none; transition:opacity .3s;}
+      #receipt-overlay .ro-fab.on{opacity:1; pointer-events:auto;}
+      #receipt-overlay .ro-end{height:84px;}
       #receipt-overlay .ro-slot{height:14px; flex-shrink:0; background:#2a2924; border-bottom:3px solid #141412; position:relative; overflow:hidden;}
       #receipt-overlay .ro-slot i{position:absolute; top:0; bottom:0; width:30%; background:linear-gradient(90deg, transparent, rgba(214,255,63,.7), transparent); animation:roScan .7s linear 3;}
       #receipt-overlay.ro-printing iframe{animation:roPrint 1.5s steps(16, end) both !important;}
@@ -6779,7 +7204,7 @@ function showReceiptOverlay(html){
   ov.innerHTML = `<div class="ro-bar">
       <button type="button" class="ro-close" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>
       <button type="button" class="ro-print" onclick="printReceiptOverlay()">🖨️ Print / PDF</button>
-    </div>${printing ? '<div class="ro-slot"><i></i></div>' : ''}<div class="ro-paper"><iframe id="receipt-overlay-frame" title="Receipt"></iframe></div>`;
+    </div>${printing ? '<div class="ro-slot"><i></i></div>' : ''}<div class="ro-paper"><iframe id="receipt-overlay-frame" title="Receipt" scrolling="no"></iframe><div class="ro-end"></div></div><button type="button" class="ro-fab" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>`;
   document.body.appendChild(ov);
   // Receipt ထဲက Print ခလုတ်ကလည်း အပြင် Page ရဲ့ Print Function ကို သုံးစေရန်
   document.getElementById('receipt-overlay-frame').srcdoc = String(html)
@@ -6787,6 +7212,15 @@ function showReceiptOverlay(html){
     .replace(/onclick="window\.print\(\)"/g, 'onclick="parent.printReceiptOverlay()"')
     // Receipt စက္ကူ (အဖြူ) သာ မြင်ရအောင် — နောက်ခံ ဖောက်ထွင်း (Printer ထဲက စက္ကူထွက်လာသလို မြင်ရ)
     .replace('</head>', '<style>html,body{background:transparent !important;} .receipt-box{background:#fff; box-shadow:0 10px 30px rgba(0,0,0,.35);}</style></head>');
+  // Receipt အရှည်ကြီး (ပစ္စည်းများ) — iframe ကို စာအရှည်အတိုင်း ချဲ့ပြီး အပြင်က Scroll (iPhone/iPad မှာ ပိတ်မည် ခလုတ် မပျောက်အောင်)
+  { const fr = document.getElementById('receipt-overlay-frame'), paper = ov.querySelector('.ro-paper'), fab = ov.querySelector('.ro-fab');
+    const fit = () => { try{ const d = fr.contentDocument; if(!d || !d.body) return; fr.style.height = Math.max(paper.clientHeight, d.documentElement.scrollHeight, d.body.scrollHeight) + 'px'; }catch(e){} };
+    fr.addEventListener('load', () => { fit(); setTimeout(fit, 300); setTimeout(fit, 1200); try{ fr.contentDocument.fonts && fr.contentDocument.fonts.ready.then(fit); }catch(e){} });
+    const showFab = () => { if(fab) fab.classList.toggle('on', paper.scrollHeight > paper.clientHeight + 40); };
+    paper.addEventListener('scroll', showFab, { passive:true });
+    setTimeout(showFab, printing ? 1700 : 400); setTimeout(showFab, 2500);
+    if(printing) setTimeout(() => ov.classList.remove('ro-printing'), 1700);
+  }
   window.__receiptPrevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
   try{ history.pushState({ receiptOverlay:true }, ''); }catch(e){}
@@ -9755,9 +10189,9 @@ function posAddByCode(code){
   selectPosProduct(r.p.name);
   posSelectedSize = r.size; posSelectedColor = r.color;
   renderPosSelectedProduct();
-  const before = posCart.length;
+  const before = posCart.reduce((a, i) => a + i.quantity, 0);
   addPosCartItem();
-  if(posCart.length > before){ showToast(`✅ ${r.p.name}${r.size ? ' · ' + r.size : ''}${r.color ? ' · ' + r.color : ''}`); return `✅ <b>${axEsc(r.p.name)}</b>${r.size ? ' · ' + axEsc(r.size) : ''}${r.color ? ' · ' + axEsc(r.color) : ''} — ခြင်းထဲ ရောက်ပြီ (${posCart.length})`; }
+  if(posCart.reduce((a, i) => a + i.quantity, 0) > before){ showToast(`✅ ${r.p.name}${r.size ? ' · ' + r.size : ''}${r.color ? ' · ' + r.color : ''}`); return `✅ <b>${axEsc(r.p.name)}</b>${r.size ? ' · ' + axEsc(r.size) : ''}${r.color ? ' · ' + axEsc(r.color) : ''} — ခြင်းထဲ ရောက်ပြီ (${posCart.reduce((a, i) => a + i.quantity, 0)})`; }
   return `⚠️ ${axEsc(r.p.name)} — Stock မလုံလောက်ပါ`;
 }
 (function injectPosScan(){
@@ -11424,7 +11858,7 @@ if(typeof renderProductsList === 'function'){
     const r = _rplPM.apply(this, arguments);
     try{
       const list = document.getElementById('products-list'); const q = (document.getElementById('products-search')?.value || '').trim().toLowerCase();
-      let data = productsListCache; if(q) data = data.filter(p => p.name.toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q));
+      let data = typeof productsFiltered === 'function' ? productsFiltered() : productsListCache; if(q && typeof productsFiltered !== 'function') data = data.filter(p => p.name.toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q));
       [...list.querySelectorAll(':scope > .list-item')].forEach((el, i) => { const p = data[i]; if(!p || p.is_gift_card || el.querySelector('.pm-quick')) return;
         const b = document.createElement('button'); b.type = 'button'; b.className = 'secondary pm-quick'; b.textContent = '📱 Post'; b.title = 'Facebook / TikTok Post ပုံထုတ်';
         b.onclick = e => { e.stopPropagation(); openPostMaker(p.id); };
@@ -13424,14 +13858,23 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
         if(sup.includes('qr_code') && sup.includes('code_128')) return new window.BarcodeDetector({ formats: WANT.filter(f => sup.includes(f)) });
       }
     }catch(e){}
-    if(!window.BarcodeDetectionAPI) await loadScript(PONY);
+    // ကိုယ့် Server (/vendor) က အရင်ယူ — မြန်မာမှာ jsDelivr ချိတ်မရတာ/နှေးတာ ရှောင် · မရမှ CDN
+    if(!window.BarcodeDetectionAPI){
+      try{ await loadScript('/vendor/barcode-detector-3.2.2-ponyfill.js'); window.__bdLocal = true; }
+      catch(e){ await loadScript(PONY); }
+    }
+    if(window.__bdLocal && !window.__bdOv){
+      window.__bdOv = true;
+      try{ window.BarcodeDetectionAPI.setZXingModuleOverrides({ locateFile: (p, pre) => /\.wasm$/.test(p) ? '/vendor/zxing_reader-3.1.3.wasm' : pre + p }); }catch(e){}
+    }
     const BD = window.BarcodeDetectionAPI.BarcodeDetector;
     const d = new BD({ formats: WANT });
     return d;
   }
   const getDetector = () => detP || (detP = makeDetector().catch(e => { detP = null; throw e; }));
   // Admin ဖွင့်ပြီး ခဏနေ ကြိုယူထား (ပထမဆုံး Scan မြန်အောင်)
-  setTimeout(() => { if(document.getElementById('pos-panel')) getDetector().then(d => { try{ const c = document.createElement('canvas'); c.width = c.height = 8; d.detect(c).catch(() => {}); }catch(e){} }, () => {}); }, 4000);
+  // (ကြိုမယူတော့ — Scan ခလုတ်နှိပ်မှ Library ယူ · Admin ဖွင့်ချိန် Console Error မထွက်အောင်)
+  false && setTimeout(() => { if(document.getElementById('pos-panel')) getDetector().then(d => { try{ const c = document.createElement('canvas'); c.width = c.height = 8; d.detect(c).catch(() => {}); }catch(e){} }, () => {}); }, 4000);
 
   // ---------- Scanner ----------
   let S = null;
@@ -14081,6 +14524,8 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     btn.click(); window.scrollTo({ top:0, behavior:'auto' });
   }
   window.openShopDayChecklist = openPanel;
+  // 🫧 home-glassy.js အတွက် (ဒီနေ့ Checklist အခြေအနေ)
+  window.shopDayStatus = () => ({ open:{ done:doneN('open'), total:visible('open').length }, close:{ done:doneN('close'), total:visible('close').length }, closeDone:allDone('close'), openTime:cfg.open_time, closeTime:cfg.close_time });
 
   // ---------- Data ----------
   const list = ph => (cfg[ph] || []).filter(t => t && t.key);
@@ -14526,6 +14971,395 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
   $('refresh-btn')?.addEventListener('click', () => { if(panel.classList.contains('active')) load(true); });
   // Role သတ်မှတ်ပြီးချိန် (Delivery ဆို ဖျောက်)
   new MutationObserver(() => syncChip()).observe($('admin-email-display') || document.body, { childList:true, characterData:true, subtree:true });
+})();
+
+// =====================================================================
+// SUWATI ADMIN — 🫧 Glassy Home (Nov 8) · "ဒီနေ့" စာမျက်နှာ ပုံစံသစ်
+//   renderTodayPanel ကို Wrap — အပေါ်က td-hero အစား:
+//     ① ကြိုဆို + ခလုတ်  ② Acid Hero (ဒီနေ့ ရောင်းရငွေ · ပစ်မှတ် Ring)  ③ ရက်စွဲ + Checklist
+//     ④ Stats ၄ ခု (Customer · Stock · ဒီလ ရောင်းရငွေ · Prepaid)  ⑤ နောက်ဆုံး Order · Stock နည်း
+//   ကျန်တဲ့ td-grid / ၇ ရက် / ရောင်းကောင်း ကတ်တွေ အောက်မှာ ဆက်ရှိ
+//   ADMIN_JS ထဲ 'shop-day' နောက်မှာ
+// =====================================================================
+(function(){
+  if(typeof renderTodayPanel !== 'function') return;
+  const $ = id => document.getElementById(id);
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money = n => Math.round(Number(n) || 0).toLocaleString();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const MM_DAY = ['တနင်္ဂနွေ','တနင်္လာ','အင်္ဂါ','ဗုဒ္ဓဟူး','ကြာသပတေး','သောကြာ','စနေ'];
+  const go = t => { try{ axGo(t); }catch(e){} window.scrollTo({ top:0, behavior:'auto' }); };
+  const getTarget = () => { try{ return Number(localStorage.getItem('suwati_day_target')) || 500000; }catch(e){ return 500000; } };
+  const ICON = {
+    users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg>',
+    box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>',
+    money:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
+    card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/></svg>',
+  };
+  const emojiOf = n => { const s = String(n || '').toLowerCase();
+    return /jean|pant|ဘီ|jort|short|baggy|cargo/.test(s) ? '👖' : /cap|ထုပ်|hat/.test(s) ? '🧢' : /hoodie|jacket|မိုးကာ/.test(s) ? '🧥' : /belt|ခါးပတ်|ခါးပိတ်/.test(s) ? '🪢' : /wallet|box/.test(s) ? '👛' : /gift/.test(s) ? '🎁' : '👕'; };
+  const ST = { pending_verification:['စစ်ရန်','p'], awaiting_payment:['ငွေမလွှဲ','p'], confirmed:['ပို့ရန်','s'], processing:['ပို့ရန်','s'], shipped:['ပို့နေ','s'], delivered:['ပြီး','c'], completed:['ပြီး','c'], cancelled:['ပယ်','x'] };
+  const ago = iso => { const m = Math.max(0, Math.round((Date.now() - new Date(iso)) / 60000)); return m < 1 ? 'ခုနက' : m < 60 ? `${m} မိနစ်က` : m < 1440 ? `${Math.round(m / 60)} နာရီက` : `${Math.round(m / 1440)} ရက်က`; };
+  const spark = (vals, w = 86, h = 34) => {
+    const a = vals.length ? vals : [0, 0]; const mx = Math.max(1, ...a), mn = Math.min(...a);
+    const pts = a.map((v, i) => `${(2 + i * (w - 4) / Math.max(1, a.length - 1)).toFixed(1)} ${(h - 3 - (v - mn) / Math.max(1, mx - mn) * (h - 8)).toFixed(1)}`);
+    return `<svg class="hg-spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path d="M${pts.join(' L')}"/></svg>`;
+  };
+  const pct = (a, b) => b ? Math.round((a - b) / b * 100) : null;
+  const chip = p => p == null ? '' : `<span class="hg-ch${p < 0 ? ' dn' : ''}">${p < 0 ? '↘' : '↗'} ${Math.abs(p)}%</span>`;
+
+  async function loadData(){
+    const now = new Date(), d0 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const m0 = new Date(now.getFullYear(), now.getMonth(), 1), pm0 = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const pmSame = new Date(pm0.getTime() + (now - m0));
+    const w0 = new Date(d0.getTime() - 6 * 86400000);
+    const q = async p => { try{ return await p; }catch(e){ return { data:null, error:e }; } };
+    const [ord, recent, prods, wal, cids] = await Promise.all([
+      q(sb.from('orders').select('id, order_group_id, total_amount, order_status, sale_channel, quantity, created_at, user_id, customer_phone').gte('created_at', pm0.toISOString()).limit(10000)),
+      q(sb.from('orders').select('id, order_group_id, customer_name, product_name, quantity, total_amount, order_status, sale_channel, payment_method, created_at').order('created_at', { ascending:false }).limit(40)),
+      q(sb.from('products').select('name, price, stock_qty, status, is_gift_card, preorder').limit(3000)),
+      q(sb.from('wallets').select('balance').limit(5000)),
+      q(sb.rpc('admin_customer_ids')),
+    ]);
+    const rows = (ord.data || []).filter(o => o.order_status !== 'cancelled');
+    const inR = (o, a, b) => { const t = new Date(o.created_at); return t >= a && t < b; };
+    const sum = a => a.reduce((s, o) => s + Number(o.total_amount || 0), 0);
+    const grp = a => new Set(a.map(o => o.order_group_id || o.id)).size;
+    const today = rows.filter(o => inR(o, d0, new Date(d0.getTime() + 86400000)));
+    const month = rows.filter(o => inR(o, m0, new Date(8.64e15)));
+    const prevSame = rows.filter(o => inR(o, pm0, pmSame));
+    const days = []; for(let i = 6; i >= 0; i--){ const a = new Date(d0.getTime() - i * 86400000), b = new Date(a.getTime() + 86400000); days.push(rows.filter(o => inR(o, a, b))); }
+    const who = o => o.user_id || o.customer_phone || o.order_group_id;
+    const items = (prods.data || []).filter(p => !p.is_gift_card);
+    const thr = typeof lowStockThreshold !== 'undefined' ? lowStockThreshold : 2;
+    const groups = []; const seen = new Set();
+    (recent.data || []).forEach(o => { const k = o.order_group_id || o.id; if(seen.has(k)) { const g = groups.find(x => x.k === k); if(g){ g.n += Number(o.quantity || 1); g.amt += Number(o.total_amount || 0); } return; } seen.add(k); groups.push({ k, o, n:Number(o.quantity || 1), amt:Number(o.total_amount || 0) }); });
+    return {
+      now, todaySum: sum(today), todayOrders: grp(today), todayItems: today.reduce((s, o) => s + Number(o.quantity || 0), 0),
+      toVerify: new Set((ord.data || []).filter(o => o.order_status === 'pending_verification').map(o => o.order_group_id || o.id)).size,
+      monthSum: sum(month), prevSum: sum(prevSame), daySums: days.map(sum),
+      custTotal: cids.error ? null : (cids.data || []).length, custMonth: new Set(month.map(who)).size, custPrev: new Set(prevSame.map(who)).size, dayCust: days.map(d => new Set(d.map(who)).size),
+      stockQty: items.reduce((s, p) => s + Math.max(0, Number(p.stock_qty || 0)), 0), stockVal: items.reduce((s, p) => s + Math.max(0, Number(p.stock_qty || 0)) * Number(p.price || 0), 0), dayItems: days.map(d => d.reduce((s, o) => s + Number(o.quantity || 0), 0)),
+      walBal: wal.error ? null : (wal.data || []).reduce((s, w) => s + Number(w.balance || 0), 0), walCnt: (wal.data || []).length,
+      recent: groups.slice(0, 5),
+      low: items.filter(p => !p.preorder && Number(p.stock_qty || 0) <= thr).sort((a, b) => (a.stock_qty || 0) - (b.stock_qty || 0)).slice(0, 5), lowThr: Math.max(thr, 1),
+    };
+  }
+
+  function sdStatus(){
+    try{ if(typeof window.shopDayStatus === 'function') return window.shopDayStatus(); }catch(e){}
+    return null;
+  }
+
+  function render(panel, D){
+    const now = D.now, h = now.getHours();
+    const greet = h < 12 ? 'မင်္ဂလာ နံနက်ခင်းပါ' : h < 17 ? 'မင်္ဂလာ နေ့လယ်ခင်းပါ' : 'မင်္ဂလာ ညနေခင်းပါ';
+    const nm = (typeof currentAdminName !== 'undefined' && currentAdminName) || (typeof currentAdminRole !== 'undefined' ? ({ owner:'Owner', manager:'Manager', staff:'Staff' }[currentAdminRole] || 'Admin') : 'Owner');
+    const target = getTarget(), p = Math.min(100, Math.round(D.todaySum / target * 100)), C = 301.59;
+    const sd = sdStatus();
+    const sdOpen = sd ? sd.open : null, sdClose = sd ? sd.close : null;
+    const sdTxt = sd ? (sd.closeDone ? 'ဆိုင်ပိတ်ပြီး 😴' : `Checklist ${sdOpen.done + sdClose.done}/${sdOpen.total + sdClose.total}`) : 'Checklist';
+    const strip = Array.from({ length:7 }, (_, i) => { const d = new Date(now); d.setDate(now.getDate() + i - 3); return `<div class="hg-dy${i === 3 ? ' on' : ''}"><small>${'SMTWTFS'[d.getDay()]}</small>${d.getDate()}</div>`; }).join('');
+    const tk = (t, ic, tt, sub, ph, st) => `<button type="button" class="hg-tk" data-sd="${ph}"><span class="t">${t}</span><span class="bar${st && st.done === st.total && st.total ? ' ok' : ''}"></span><div><b>${ic} ${tt}</b><small>${sub}</small></div>${st ? `<span class="tag${st.done === st.total && st.total ? ' ok' : ''}">${st.done === st.total && st.total ? 'ပြီး ✓' : `ကျန် ${st.total - st.done}`}</span>` : ''}</button>`;
+    const html = `
+    <div class="hg" id="hg-root">
+      <div class="hg-top">
+        <div><h1>${greet}၊ <em>${esc(nm)}</em> 👋</h1><p>${MM_DAY[now.getDay()]}နေ့ · ${now.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })}${D.toVerify ? ` · <b>အတည်မပြုရသေး Order ${D.toVerify}</b>` : ''}</p></div>
+        <div class="hg-acts"><button type="button" class="hg-pill" data-go="activitylog-panel">🕘 <span>Activity Log</span></button><button type="button" class="hg-pill pri" data-act="newprod">＋ <span>ပစ္စည်းအသစ်</span></button></div>
+      </div>
+      <div class="hg-row1">
+        <div class="hg-hero">
+          <div class="hg-hero-tx">
+            <span class="hg-chipx"><i></i>${sd && sdOpen.done === sdOpen.total ? 'ဆိုင်ဖွင့်ထား' : 'ဒီနေ့'} · ${now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}</span>
+            <h2>ဒီနေ့ ရောင်းရငွေ<br><b><span data-hg-n="${D.todaySum}">0</span><small> ကျပ်</small></b></h2>
+            <p>ပစ်မှတ် ${money(target)} ကျပ်ရဲ့ <b>${p}%</b> ရောက်ပြီ${p >= 100 ? ' 🎉' : ''}${D.toVerify ? ` · ငွေစစ်ရန် Order ${D.toVerify} ခု` : ''}</p>
+            <div class="hg-hs"><div><b data-hg-n="${D.todayOrders}">0</b><span>ဒီနေ့ Order</span></div><div><b data-hg-n="${D.toVerify}">0</b><span>စစ်ရန်</span></div><div><b data-hg-n="${D.todayItems}">0</b><span>ရောင်းရ ထည်</span></div></div>
+            <div class="hg-hb"><button type="button" class="hb" data-go="orders-panel">Orders ကြည့်မည် ↗</button><button type="button" class="hb o" data-go="pos-panel">＋ POS ရောင်းမည်</button></div>
+          </div>
+          <button type="button" class="hg-ring" title="ပစ်မှတ် ပြောင်းရန် နှိပ်ပါ" aria-label="ဒီနေ့ ပစ်မှတ် ${p}% · ပြောင်းရန်">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="trk" cx="60" cy="60" r="57"/>
+              <circle class="bg" cx="60" cy="60" r="48"/>
+              <circle class="fg" cx="60" cy="60" r="48" stroke-dasharray="${C}" stroke-dashoffset="${C}" data-off="${C * (1 - p / 100)}"/>
+              ${p >= 6 ? `<circle class="shine" cx="60" cy="60" r="48" stroke-dasharray="12 ${C}" style="--len:${(C * p / 100).toFixed(1)}"/>` : ''}
+              <g class="tip" data-deg="${p * 3.6}"><circle class="halo" cx="108" cy="60" r="7"/><circle class="dot" cx="108" cy="60" r="6.5"/></g>
+            </svg>
+            <span class="hg-ring-t"><b><span data-hg-n="${p}">0</span>%</b><small>ပစ်မှတ်</small></span>
+            ${p >= 100 ? '<span class="hg-burst" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>' : ''}
+          </button>
+        </div>
+        <div class="hg-cal form-card">
+          <div class="hg-cal-h"><div class="d">${String(now.getDate()).padStart(2, '0')}</div><div><b>${MM_DAY[now.getDay()]}</b><small>${now.toLocaleDateString('en', { month:'long', year:'numeric' })} · ${sdTxt}</small></div><button type="button" class="ic" data-sd="">✅</button></div>
+          <div class="hg-days">${strip}</div>
+          ${tk(sd ? sd.openTime : '08:00', '🌅', 'ဆိုင်ဖွင့် Checklist', 'အမ်းငွေ · Chat · Order · Stock', 'open', sdOpen)}
+          ${tk(sd ? sd.closeTime : '20:00', '🌙', 'ဆိုင်ပိတ် Checklist', 'ရောင်းစာရင်း · ငွေရှင်း · Delivery', 'close', sdClose)}
+        </div>
+      </div>
+      <div class="hg-stats">
+        <button type="button" class="hg-st form-card" data-go="customers-panel"><div class="h"><span class="ic">${ICON.users}</span>${chip(pct(D.custMonth, D.custPrev))}</div>
+          <b><span data-hg-n="${D.custTotal ?? D.custMonth}">0</span></b><div class="l">Customer</div><div class="s">ဒီလ ဝယ်သူ ${D.custMonth} ယောက်</div>${spark(D.dayCust)}</button>
+        <button type="button" class="hg-st form-card" data-go="inventory-panel"><div class="h"><span class="ic">${ICON.box}</span>${D.low.length ? `<span class="hg-ch dn">⚠ ${D.low.length}</span>` : ''}</div>
+          <b><span data-hg-n="${D.stockQty}">0</span><small> ထည်</small></b><div class="l">Stock စုစုပေါင်း</div><div class="s">တန်ဖိုး ${money(D.stockVal)} ကျပ်</div>${spark(D.dayItems)}</button>
+        <button type="button" class="hg-st hot" data-go="salesreport-panel"><div class="h"><span class="ic">${ICON.money}</span>${chip(pct(D.monthSum, D.prevSum))}</div>
+          <b><span data-hg-n="${D.monthSum}">0</span><small> ကျပ်</small></b><div class="l">ဒီလ ရောင်းရငွေ</div><div class="s">ပြီးခဲ့တဲ့လ ဒီအချိန် ${money(D.prevSum)}</div>${spark(D.daySums)}</button>
+        <button type="button" class="hg-st form-card" data-go="wallet-panel"><div class="h"><span class="ic">${ICON.card}</span></div>
+          <b>${D.walBal == null ? '—' : `<span data-hg-n="${D.walBal}">0</span><small> ကျပ်</small>`}</b><div class="l">Prepaid Card လက်ကျန်</div><div class="s">Card ${D.walCnt} ကတ်</div></button>
+      </div>
+      <div class="hg-row3">
+        <div class="form-card hg-card"><div class="hg-card-h"><b>🧾 နောက်ဆုံး Order များ</b><button type="button" data-go="orders-panel">အားလုံး ↗</button></div>
+          ${D.recent.length ? D.recent.map(g => { const o = g.o, st = ST[o.order_status] || [o.order_status || '—', 'x'];
+            return `<button type="button" class="hg-od" data-go="${o.sale_channel === 'in_store' ? 'salehistory-panel' : 'orders-panel'}"><span class="pa">${emojiOf(o.product_name)}</span><div><b>${esc(o.customer_name || 'Walk-in')} · ${esc(o.product_name || '')}${g.n > 1 ? ` ×${g.n}` : ''}</b><small>${o.sale_channel === 'in_store' ? '🏪 ဆိုင်ထဲ' : '🌐 Online'} · ${ago(o.created_at)}</small></div><span class="amt">${money(g.amt)}</span><span class="stt ${st[1]}">${st[0]}</span></button>`; }).join('') : '<p class="hint">Order မရှိသေးပါ</p>'}
+        </div>
+        <div class="form-card hg-card"><div class="hg-card-h"><b>⚠️ Stock နည်းနေတာ</b><button type="button" data-go="inventory-panel">Stock ↗</button></div>
+          ${D.low.length ? D.low.map(x => `<button type="button" class="hg-ls" data-go="inventory-panel"><div class="nm"><b>${esc(x.name)}</b><div class="meter"><i style="width:${Math.max(4, Math.min(100, (Number(x.stock_qty || 0) / (D.lowThr * 2)) * 100))}%"></i></div></div><span class="q">${Number(x.stock_qty || 0) <= 0 ? 'ကုန်' : x.stock_qty}</span></button>`).join('') : '<p class="hint">✓ Stock အားလုံး လုံလောက်ပါတယ်</p>'}
+        </div>
+      </div>
+    </div>`;
+    const old = panel.querySelector('#hg-root'); if(old) old.remove();
+    panel.querySelector('.td-hero')?.remove();
+    // အောက်က Stock နည်း ကတ် (အဟောင်း) — အသစ်မှာ ပါပြီ
+    [...panel.querySelectorAll(':scope > .form-card h3')].filter(h => /Stock နည်း/.test(h.textContent)).forEach(h => h.closest('.form-card').classList.add('hg-hide'));
+    panel.insertAdjacentHTML('afterbegin', html);
+    const root = panel.querySelector('#hg-root');
+    root.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
+    root.querySelectorAll('[data-sd]').forEach(b => b.addEventListener('click', () => { try{ window.openShopDayChecklist?.(b.dataset.sd || undefined); }catch(e){} }));
+    root.querySelector('[data-act="newprod"]')?.addEventListener('click', () => { go('products-panel'); setTimeout(() => { try{ window.pmOpen ? pmOpen('add') : null; }catch(e){} }, 250); });
+    root.querySelector('.hg-ring')?.addEventListener('click', async () => {
+      const v = prompt('ဒီနေ့ ရောင်းအား ပစ်မှတ် (ကျပ်)', String(getTarget()));
+      if(v == null) return; const n = Math.round(Number(String(v).replace(/[^\d]/g, '')));
+      if(n > 0){ try{ localStorage.setItem('suwati_day_target', String(n)); }catch(e){} showToast?.('🎯 ပစ်မှတ် ' + money(n) + ' ကျပ်'); refresh(true); }
+    });
+    // Animation
+    requestAnimationFrame(() => setTimeout(() => { const fg = root.querySelector('.hg-ring .fg'); if(fg) fg.style.strokeDashoffset = fg.dataset.off; const tp = root.querySelector('.hg-ring .tip'); if(tp) tp.style.transform = `rotate(${tp.dataset.deg}deg)`; const sh = root.querySelector('.hg-ring .shine'); if(sh) setTimeout(() => sh.classList.add('run'), 1500); }, 80));
+    root.querySelectorAll('[data-hg-n]').forEach(el => {
+      const to = Number(el.dataset.hgN) || 0;
+      if(reduce || !to){ el.textContent = money(to); return; }
+      const t0 = performance.now(); const step = t => { const k = Math.min(1, (t - t0) / 1000); el.textContent = money(to * (1 - Math.pow(1 - k, 3))); if(k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step);
+    });
+  }
+
+  let busy = false, last = null;
+  async function refresh(force){
+    const panel = $('today-panel'); if(!panel || busy) return;
+    busy = true;
+    try{ const D = (!force && last && Date.now() - last.t < 20000) ? last.D : await loadData(); last = { t:Date.now(), D }; render(panel, D); }
+    catch(e){ console.error('[home-glassy]', e); }
+    finally{ busy = false; }
+  }
+  const _r = renderTodayPanel;
+  renderTodayPanel = async function(){ const out = await _r.apply(this, arguments); await refresh(); return out; };
+
+  // 🏠 "ဒီနေ့" ကို Menu ထိပ်ဆုံး + Login ဝင်ရင် ပထမဆုံး ပြ
+  const tBtn = document.querySelector('.tab-btn[data-tab="today-panel"]');
+  const main = document.querySelector('#admin-nav .tabs-main');
+  if(tBtn && main){ tBtn.classList.add('main-tab'); main.prepend(tBtn); }
+  let landed = false;
+  const land = () => {
+    const dash = $('dashboard'); if(landed || !dash || getComputedStyle(dash).display === 'none') return;
+    landed = true;
+    setTimeout(() => { const b = document.querySelector('.tab-btn[data-tab="today-panel"]'); if(b && b.style.display !== 'none') b.click(); }, 400);
+  };
+  new MutationObserver(land).observe($('dashboard'), { attributes:true, attributeFilter:['style', 'class'] });
+  land();
+})();
+
+// SUWATI ADMIN — 🗂️ ပစ္စည်း Category Bar + ▮ Barcode စနစ်
+//   ① ပစ္စည်းများ စာမျက်နှာ — Category / Sub-Category / Stock ခလုတ်တန်း (နှိပ်ရုံနဲ့ စစ်) + 📷 Scan ရှာ
+//   ② ပစ္စည်း Form — Barcode ကွက် (📷 Scan / USB Scanner) + SUWATI Code ပြ
+//   ③ ပစ္စည်းတစ်ခုချင်း — ▮ Barcode ကြည့် · Label ထုတ်
+//   ④ POS — ပစ္စည်းပေါ်က Barcode (EAN/UPC/Code128) Scan ရင်လည်း ခြင်းထဲ ဝင်
+//   products.js (productsFiltered / renderProductsList) · admin-extra.js (skuCode / axVariants / printLabels) နောက်မှာ ထားရန်
+(function(){
+  const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const LS = 'suwati_pt_filter';
+  let F = { cat:'', sub:'', stk:'' };
+  try{ F = Object.assign(F, JSON.parse(sessionStorage.getItem(LS) || '{}')); }catch(e){}
+  const save = () => { try{ sessionStorage.setItem(LS, JSON.stringify(F)); }catch(e){} };
+  const thr = () => (typeof lowStockThreshold !== 'undefined' ? Number(lowStockThreshold) : 2) || 2;
+  const catOf = p => p.category || 'Top Wear';
+  const isOut = p => !p.is_gift_card && (p.status === 'sold_out' || Number(p.stock_qty || 0) <= 0);
+  const isLow = p => !p.is_gift_card && !isOut(p) && Number(p.stock_qty || 0) <= thr();
+  const STK = {
+    low:  { t:'⚠️ Stock နည်း', f:isLow },
+    out:  { t:'⛔ ကုန်', f:isOut },
+    nobc: { t:'Barcode မရှိ', f:p => !p.is_gift_card && !p.barcode },
+  };
+
+  // ---------- ① Category Bar ----------
+  window.ptCatFilter = p => (!F.cat || catOf(p) === F.cat) && (!F.sub || (p.subcategory || '') === F.sub) && (!F.stk || !STK[F.stk] || STK[F.stk].f(p));
+
+  function mountBar(){
+    const inp = document.getElementById('products-search'); if(!inp || document.getElementById('pt-bar')) return;
+    const card = inp.closest('.form-card') || inp.parentElement; card.classList.add('pt-card');
+    const row = document.createElement('div'); row.className = 'pt-search';
+    inp.parentNode.insertBefore(row, inp); row.appendChild(inp);
+    inp.placeholder = '🔍 အမည် · Category · Barcode · S12 ဖြင့် ရှာပါ...';
+    row.insertAdjacentHTML('beforeend', '<button type="button" class="secondary" id="pt-scan" title="Barcode Scan ပြီး ရှာ">📷</button><button type="button" class="secondary" id="pt-clear" title="ရှင်းမည်" hidden>✕</button>');
+    card.insertAdjacentHTML('beforeend', `<div id="pt-bar">
+      <div class="pt-row" id="pt-cats" role="tablist" aria-label="Category"></div>
+      <div class="pt-row pt-subs" id="pt-subs" aria-label="Sub-Category"></div>
+      <div class="pt-foot"><div class="pt-row pt-stk" id="pt-stk"></div><span class="pt-count" id="pt-count"></span></div>
+    </div>`);
+    card.addEventListener('click', e => {
+      const b = e.target.closest('[data-pt]'); if(!b) return;
+      const [k, v] = [b.dataset.pt, b.dataset.v];
+      if(k === 'cat'){ F.cat = F.cat === v ? '' : v; F.sub = ''; }
+      else if(k === 'sub'){ F.sub = F.sub === v ? '' : v; }
+      else if(k === 'stk'){ F.stk = F.stk === v ? '' : v; }
+      save(); renderProductsList();
+      if(k === 'cat') b.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
+    });
+    document.getElementById('pt-scan').addEventListener('click', () => {
+      if(typeof openScanner !== 'function') return showToast('⚠️ Scanner မရပါ');
+      openScanner(code => { inp.value = code; F = { cat:'', sub:'', stk:'' }; save(); renderProductsList();
+        const n = productsFiltered().length; return n ? `✅ ${n} ခု တွေ့ပါပြီ` : '❓ ဒီ Barcode နဲ့ ပစ္စည်း မတွေ့ပါ'; }, { title:'📷 Barcode Scan ပြီး ပစ္စည်းရှာ' });
+    });
+    document.getElementById('pt-clear').addEventListener('click', () => { inp.value = ''; renderProductsList(); inp.focus(); });
+    // USB Scanner — Enter နှိပ်ရင် Form မပို့
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); renderProductsList(); } });
+  }
+
+  window.ptRenderBar = function(shown){
+    mountBar();
+    const all = (typeof productsListCache !== 'undefined' ? productsListCache : []);
+    const cats = document.getElementById('pt-cats'); if(!cats) return;
+    // Category အစဉ် — Category စာမျက်နှာက အစဉ်အတိုင်း
+    const order = [...document.querySelectorAll('#product-category option')].map(o => o.value).filter(Boolean);
+    const cnt = {}; all.forEach(p => { cnt[catOf(p)] = (cnt[catOf(p)] || 0) + 1; });
+    const names = [...new Set([...order, ...Object.keys(cnt)])].filter(c => cnt[c]);
+    if(F.cat && !cnt[F.cat]){ F.cat = ''; F.sub = ''; }
+    const chip = (k, v, label, n, on) => `<button type="button" class="pt-chip${on ? ' on' : ''}" data-pt="${k}" data-v="${esc(v)}" aria-pressed="${on}">${label}${n != null ? `<i>${n}</i>` : ''}</button>`;
+    cats.innerHTML = chip('cat', '', 'အားလုံး', all.length, !F.cat) + names.map(c => chip('cat', c, esc(c), cnt[c], F.cat === c)).join('');
+    // Sub-Category
+    const subs = document.getElementById('pt-subs');
+    const sc = {}; if(F.cat) all.filter(p => catOf(p) === F.cat && p.subcategory).forEach(p => { sc[p.subcategory] = (sc[p.subcategory] || 0) + 1; });
+    const sn = Object.keys(sc).sort((a, b) => a.localeCompare(b));
+    if(F.sub && !sc[F.sub]) F.sub = '';
+    subs.hidden = !sn.length;
+    subs.innerHTML = sn.length ? `<span class="pt-lbl">↳</span>` + chip('sub', '', 'အကုန်', null, !F.sub) + sn.map(s => chip('sub', s, esc(s), sc[s], F.sub === s)).join('') : '';
+    // Stock
+    const base = all.filter(p => (!F.cat || catOf(p) === F.cat) && (!F.sub || (p.subcategory || '') === F.sub));
+    document.getElementById('pt-stk').innerHTML = Object.entries(STK).map(([k, x]) => { const n = base.filter(x.f).length; return n || F.stk === k ? chip('stk', k, x.t, n, F.stk === k) : ''; }).join('');
+    const q = (document.getElementById('products-search')?.value || '').trim();
+    document.getElementById('pt-clear').hidden = !q;
+    document.getElementById('pt-count').innerHTML = `<b>${shown}</b> / ${all.length} ခု` + (F.cat || F.stk || q ? ` <button type="button" class="pt-reset" id="pt-reset">ရှင်း</button>` : '');
+    const rs = document.getElementById('pt-reset');
+    if(rs) rs.onclick = () => { F = { cat:'', sub:'', stk:'' }; save(); const i = document.getElementById('products-search'); if(i) i.value = ''; renderProductsList(); };
+    // ရွေးထားတဲ့ Chip ကို မြင်ကွင်းထဲ
+    const on = cats.querySelector('.pt-chip.on'); if(on && cats.scrollWidth > cats.clientWidth) cats.scrollLeft = Math.max(0, on.offsetLeft - 40);
+  };
+  // Search ရိုက်တိုင်း Bar ပါ Update (products.js listener က renderProductsList ကို တိုက်ရိုက်ခေါ်)
+  document.getElementById('products-search')?.addEventListener('input', () => { const c = document.getElementById('pt-clear'); if(c) c.hidden = !document.getElementById('products-search').value; });
+  mountBar();
+
+  // ---------- ② Product Form — Barcode ----------
+  const bc = document.getElementById('product-barcode');
+  function skuHint(){
+    const h = document.getElementById('product-sku-hint'); if(!h) return;
+    const id = document.getElementById('product-id')?.value;
+    const p = id && (typeof productsListCache !== 'undefined') ? productsListCache.find(x => String(x.id) === String(id)) : null;
+    h.innerHTML = p && p.sku_code
+      ? `SUWATI Code <b>S${esc(p.sku_code)}</b> — Barcode မရှိလည်း 🏷️ Label ထုတ်ကပ်ပြီး POS မှာ Scan လို့ရပါတယ်`
+      : 'Barcode မရှိရင် ချန်ထားပါ — သိမ်းပြီးရင် SUWATI Code (S…) Auto ရပြီး Label ထုတ်လို့ရပါတယ်';
+  }
+  if(bc){
+    bc.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); bc.value = bc.value.trim(); showToast('✅ Barcode ' + bc.value); } });
+    document.getElementById('product-barcode-scan')?.addEventListener('click', () => {
+      if(typeof openScanner !== 'function') return showToast('⚠️ Scanner မရပါ');
+      openScanner(code => {
+        const c = String(code || '').trim();
+        if(/^S\d+(-(\d+|x)){0,2}$/i.test(c)) return '⚠️ ဒါ SUWATI Code — ပစ္စည်းပေါ်က Barcode ကို Scan ပါ';
+        const id = document.getElementById('product-id').value;
+        const dup = (productsListCache || []).find(x => String(x.barcode || '').trim() === c && String(x.id) !== String(id));
+        if(dup){ showToast(`⚠️ "${dup.name}" မှာ သုံးပြီးသား Barcode`); return `⚠️ <b>${esc(dup.name)}</b> မှာ သုံးပြီးသား`; }
+        bc.value = c; showToast('✅ Barcode ' + c); return `✅ <b>${esc(c)}</b>`;
+      }, { title:'📷 ပစ္စည်းပေါ်က Barcode ကို Scan ပါ' });
+    });
+    if(typeof editProduct === 'function'){ const _ep = editProduct; editProduct = async function(p){ const r = await _ep.apply(this, arguments); bc.value = p.barcode || ''; skuHint(); return r; }; }
+    if(typeof resetProductForm === 'function'){ const _rp = resetProductForm; resetProductForm = function(){ const r = _rp.apply(this, arguments); bc.value = ''; skuHint(); return r; }; }
+    skuHint();
+  }
+
+  // ---------- ③ ပစ္စည်းတစ်ခုချင်း Barcode ----------
+  const fmtOf = c => /^\d{13}$/.test(c) ? 'EAN13' : /^\d{8}$/.test(c) ? 'EAN8' : /^\d{12}$/.test(c) ? 'UPC' : 'CODE128';
+  function draw(svg, code, opt){
+    try{ JsBarcode(svg, code, Object.assign({ format:fmtOf(code), height:46, width:1.6, fontSize:12, margin:4, background:'#ffffff', lineColor:'#141412' }, opt)); }
+    catch(e){ try{ JsBarcode(svg, code, Object.assign({ format:'CODE128', height:46, width:1.6, fontSize:12, margin:4, background:'#ffffff', lineColor:'#141412' }, opt)); }catch(_){} }
+  }
+  window.openProductBarcode = async function(p){
+    document.getElementById('pt-ov')?.remove();
+    const ov = document.createElement('div'); ov.id = 'pt-ov'; ov.className = 'pt-ov';
+    const vars = (typeof axVariants === 'function' ? axVariants(p) : [{ size:null, color:null }]);
+    const qty = (s, c) => typeof axVarQty === 'function' ? axVarQty(p, s, c) : (p.stock_qty || 0);
+    ov.innerHTML = `<div class="pt-dlg" role="dialog" aria-modal="true" aria-label="Barcode">
+      <div class="pt-dh"><div><small>BARCODE</small><h3>${esc(p.name)}</h3></div><button type="button" class="pt-x" aria-label="ပိတ်">✕</button></div>
+      <div class="pt-db">
+        ${p.barcode ? `<div class="pt-sec"><div class="pt-st">ပစ္စည်းပေါ်က Barcode</div><div class="pt-bcbox"><svg data-c="${esc(p.barcode)}"></svg></div></div>` : `<div class="pt-note">ပစ္စည်းပေါ်က Barcode မထည့်ရသေးပါ — <button type="button" class="pt-link" data-act="edit">✎ ထည့်မည်</button></div>`}
+        ${p.sku_code ? `<div class="pt-sec"><div class="pt-st">SUWATI Code · Size / အရောင် အလိုက် <span>POS Scan ရင် ခြင်းထဲ တန်းဝင်</span></div>
+          <div class="pt-vars">${vars.map(v => { const c = skuCode(p, v.size, v.color); const q = qty(v.size, v.color); return `<div class="pt-var"><div class="pt-vh"><b>${[v.size, v.color].filter(Boolean).map(esc).join(' · ') || 'Standard'}</b><span class="${q <= 0 ? 'z' : ''}">${q <= 0 ? 'ကုန်' : q + ' ခု'}</span></div><div class="pt-bcbox sm"><svg data-c="${esc(c)}" data-sm="1"></svg></div></div>`; }).join('')}</div></div>`
+          : `<div class="pt-note">⚠️ SUWATI Code မရှိသေးပါ — Supabase မှာ SHOP-EXTRA.sql ကို Run ပါ</div>`}
+      </div>
+      <div class="pt-df">
+        <button type="button" class="secondary" data-act="copy">📋 Code ကူး</button>
+        ${p.sku_code ? '<button type="button" class="acid" data-act="label">🖨️ Label ထုတ်မည်</button>' : ''}
+      </div></div>`;
+    document.body.appendChild(ov);
+    const close = () => { ov.remove(); document.removeEventListener('keydown', onKey); };
+    const onKey = e => { if(e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    ov.addEventListener('click', async e => {
+      if(e.target === ov || e.target.closest('.pt-x')) return close();
+      const a = e.target.closest('[data-act]')?.dataset.act; if(!a) return;
+      if(a === 'edit'){ close(); await editProduct(p); document.getElementById('product-barcode')?.focus(); document.getElementById('product-form')?.scrollIntoView({ behavior:'smooth', block:'start' }); }
+      if(a === 'copy'){ const t = [p.barcode, p.sku_code ? 'S' + p.sku_code : ''].filter(Boolean).join(' / '); try{ await navigator.clipboard.writeText(t); showToast('📋 ' + t); }catch(_){ showToast(t); } }
+      if(a === 'label'){ close(); goLabel(p); }
+    });
+    try{ await axLoadScript('/vendor/jsbarcode-3.11.5.min.js', () => window.JsBarcode); }
+    catch(e){ try{ await axLoadScript('https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js', () => window.JsBarcode); }catch(_){ return showToast('⚠️ Barcode Library ယူ၍ မရပါ'); } }
+    ov.querySelectorAll('svg[data-c]').forEach(s => draw(s, s.dataset.c, s.dataset.sm ? { format:'CODE128', height:34, width:1.4, fontSize:11 } : {}));
+  };
+  async function goLabel(p){
+    document.querySelector('.tab-btn[data-tab="inventory-panel"]')?.click();
+    const card = document.getElementById('lbl-card'); if(!card) return;
+    card.open = true;
+    if(typeof fillLabelProducts === 'function') await fillLabelProducts();
+    const sel = document.getElementById('lbl-product'); if(sel){ sel.value = p.name; if(sel.value !== p.name) sel.value = '__all'; }
+    const m = document.getElementById('lbl-mode'); if(m) m.value = 'stock';
+    if(typeof renderLabelList === 'function') renderLabelList();
+    setTimeout(() => card.scrollIntoView({ behavior:'smooth', block:'start' }), 150);
+    showToast('🏷️ Label အရေအတွက် စစ်ပြီး 🖨️ နှိပ်ပါ');
+  }
+
+  // ---------- ④ POS — ပစ္စည်းပေါ်က Barcode ----------
+  const byBarcode = code => { const c = String(code || '').trim(); return c ? (typeof posProductsCache !== 'undefined' ? posProductsCache : []).find(x => x.barcode && String(x.barcode).trim() === c) : null; };
+  function posAddByBarcode(p){
+    const vars = typeof axVariants === 'function' ? axVariants(p) : [{ size:null, color:null }];
+    const inStock = vars.filter(v => typeof axVarQty !== 'function' || axVarQty(p, v.size, v.color) > 0);
+    selectPosProduct(p.name);
+    if(vars.length === 1 || inStock.length === 1){
+      const v = vars.length === 1 ? vars[0] : inStock[0];
+      posSelectedSize = v.size; posSelectedColor = v.color; renderPosSelectedProduct();
+      const before = posCart.reduce((a, i) => a + i.quantity, 0); addPosCartItem();
+      if(posCart.reduce((a, i) => a + i.quantity, 0) > before){ showToast(`✅ ${p.name}`); return `✅ <b>${esc(p.name)}</b>${v.size ? ' · ' + esc(v.size) : ''}${v.color ? ' · ' + esc(v.color) : ''}`; }
+      return `⚠️ ${esc(p.name)} — Stock မလုံလောက်ပါ`;
+    }
+    showToast(`👕 ${p.name} — Size / အရောင် ရွေးပြီး ထည့်ပါ`);
+    return `👕 <b>${esc(p.name)}</b> — Size / အရောင် ရွေးပါ`;
+  }
+  if(typeof posAddByCode === 'function'){
+    const _pa = posAddByCode;
+    posAddByCode = function(code){
+      const p = byBarcode(code);
+      if(p){ const r = posAddByBarcode(p); if(/ရွေးပါ/.test(r)) setTimeout(() => { try{ closeScanner(); }catch(e){} }, 700); return r; }
+      return _pa.apply(this, arguments);
+    };
+  }
+  const pin = document.getElementById('pos-product-search');
+  pin?.addEventListener('keydown', e => {
+    if(e.key !== 'Enter') return;
+    const p = byBarcode(pin.value); if(!p) return;
+    e.preventDefault(); posAddByBarcode(p); pin.value = ''; const r = document.getElementById('pos-product-results'); if(r) r.innerHTML = '';
+  });
 })();
 </script>
 </body>
