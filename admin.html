@@ -7184,8 +7184,10 @@ function showReceiptOverlay(html){
       #receipt-overlay .ro-print{background:#D6FF3F; color:#141412; border-color:#D6FF3F !important;}
       #receipt-overlay iframe{display:block; width:100%; min-height:100%; border:none; background:transparent;}
       #receipt-overlay .ro-paper{flex:1 1 0; min-height:0; overflow-x:hidden; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; position:relative; z-index:1;}
-      #receipt-overlay .ro-fab{position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%); z-index:6; padding:13px 26px; border-radius:99px; border:0; background:#C13B1F; color:#fff; font:700 14px 'Space Mono','Noto Sans Myanmar',monospace; box-shadow:0 10px 30px rgba(0,0,0,.45); cursor:pointer; opacity:0; pointer-events:none; transition:opacity .3s;}
+      #receipt-overlay .ro-fab{position:fixed; left:0; right:0; margin:0 auto; width:max-content; bottom:calc(16px + env(safe-area-inset-bottom,0px)); transform:none !important; touch-action:manipulation; z-index:6; padding:13px 26px; border-radius:99px; border:0; background:#C13B1F; color:#fff; font:700 14px 'Space Mono','Noto Sans Myanmar',monospace; box-shadow:0 10px 30px rgba(0,0,0,.45); cursor:pointer; opacity:0; pointer-events:none; transition:opacity .3s;}
       #receipt-overlay .ro-fab.on{opacity:1; pointer-events:auto;}
+      #receipt-overlay .ro-fab:active{ filter:brightness(.9); }
+      #receipt-overlay .ro-close{ touch-action:manipulation; }
       #receipt-overlay .ro-end{height:84px;}
       #receipt-overlay .ro-slot{height:14px; flex-shrink:0; background:#2a2924; border-bottom:3px solid #141412; position:relative; overflow:hidden;}
       #receipt-overlay .ro-slot i{position:absolute; top:0; bottom:0; width:30%; background:linear-gradient(90deg, transparent, rgba(214,255,63,.7), transparent); animation:roScan .7s linear 3;}
@@ -7193,18 +7195,38 @@ function showReceiptOverlay(html){
       @keyframes roPrint{ from{ transform:translateY(-92%); } to{ transform:translateY(0); } }
       @keyframes roScan{ from{ left:-30%; } to{ left:100%; } }
       @media (prefers-reduced-motion: reduce){ #receipt-overlay.ro-printing iframe, #receipt-overlay .ro-slot i{ animation:none !important; } }
+      /* 🖨️ 3D Printer — Print ထွက်ပြီး Printer အပေါ်တက်ပျောက် → ပြေစာပဲ ကျန် */
+      #receipt-overlay.ro-3d .ro-paper{ perspective:1100px; perspective-origin:50% 0; }
+      #receipt-overlay .ro-printer{ position:absolute; z-index:3; top:12px; left:0; right:0; margin:0 auto; width:min(370px, calc(100% - 16px)); height:64px;
+        transform:rotateX(14deg); transform-origin:50% 100%; background:linear-gradient(#2b2a26,#1b1a17); border:2px solid #3a3933; border-radius:14px 14px 6px 6px;
+        box-shadow:0 12px 0 #0c0c0b, 0 26px 40px rgba(0,0,0,.6); pointer-events:none; }
+      #receipt-overlay .ro-printer::before{ content:"SUWATI.PRINT"; position:absolute; left:18px; top:11px; font:400 15px 'Anton',sans-serif; letter-spacing:.12em; color:#E9E4D8; }
+      #receipt-overlay .ro-printer::after{ content:""; position:absolute; left:16px; right:16px; bottom:9px; height:8px; background:#000; border-radius:4px; box-shadow:inset 0 2px 4px #000; }
+      #receipt-overlay .ro-printer i{ position:absolute; right:20px; top:15px; width:10px; height:10px; border-radius:50%; background:#D6FF3F; box-shadow:0 0 12px #D6FF3F; animation:roBlink .5s steps(2) infinite; }
+      #receipt-overlay .ro-feed{ overflow:hidden; margin-top:62px; transition:margin-top .6s .9s cubic-bezier(.2,.8,.2,1); }
+      #receipt-overlay.ro-3d .ro-feed iframe{ transform-origin:50% 0; animation:roPrint3d 2.6s steps(24, end) both !important; }
+      #receipt-overlay.ro-3d.ro-done .ro-printer i{ animation:none; background:#34c759; box-shadow:0 0 12px #34c759; }
+      #receipt-overlay.ro-3d.ro-done .ro-printer{ animation:roLift .7s .45s cubic-bezier(.5,0,.75,0) forwards; }
+      #receipt-overlay.ro-3d.ro-done .ro-feed{ margin-top:0; }
+      #receipt-overlay.ro-3d.ro-done .ro-feed iframe{ animation:roSettle .6s .9s cubic-bezier(.2,.8,.2,1) both !important; }
+      @keyframes roPrint3d{ from{ transform:translateY(-100%) rotateX(8deg); } to{ transform:translateY(0) rotateX(6deg); } }
+      @keyframes roSettle{ from{ transform:rotateX(6deg); } to{ transform:none; } }
+      @keyframes roLift{ to{ transform:translateY(-140px) rotateX(60deg); opacity:0; visibility:hidden; } }
+      @keyframes roBlink{ 50%{ opacity:.25; } }
+      @media (prefers-reduced-motion: reduce){ #receipt-overlay .ro-printer{ display:none; } #receipt-overlay .ro-feed{ margin-top:0; transition:none; } #receipt-overlay.ro-3d .ro-feed iframe{ animation:none !important; } }
       @media screen{ #receipt-print-root{display:none !important;} }`;
     document.head.appendChild(st);
   }
   closeReceiptOverlay(true);
   const ov = document.createElement('div'); ov.id = 'receipt-overlay';
   // ⑬ POS အရောင်းပြီးချိန် — Receipt က Printer ထဲက ထွက်လာသလို
-  const printing = !!window.__fxPrintAnim; window.__fxPrintAnim = false;
-  if(printing) ov.classList.add('ro-printing');
+  window.__fxPrintAnim = false;
+  const printing = !matchMedia('(prefers-reduced-motion: reduce)').matches;   // Receipt ဖွင့်တိုင်း 3D Printer
+  ov.classList.add('ro-3d');
   ov.innerHTML = `<div class="ro-bar">
       <button type="button" class="ro-close" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>
       <button type="button" class="ro-print" onclick="printReceiptOverlay()">🖨️ Print / PDF</button>
-    </div>${printing ? '<div class="ro-slot"><i></i></div>' : ''}<div class="ro-paper"><iframe id="receipt-overlay-frame" title="Receipt" scrolling="no"></iframe><div class="ro-end"></div></div><button type="button" class="ro-fab" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>`;
+    </div><div class="ro-paper"><div class="ro-printer" aria-hidden="true"><i></i></div><div class="ro-feed"><iframe id="receipt-overlay-frame" title="Receipt" scrolling="no"></iframe></div><div class="ro-end"></div></div><button type="button" class="ro-fab" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>`;
   document.body.appendChild(ov);
   // Receipt ထဲက Print ခလုတ်ကလည်း အပြင် Page ရဲ့ Print Function ကို သုံးစေရန်
   document.getElementById('receipt-overlay-frame').srcdoc = String(html)
@@ -7218,8 +7240,9 @@ function showReceiptOverlay(html){
     fr.addEventListener('load', () => { fit(); setTimeout(fit, 300); setTimeout(fit, 1200); try{ fr.contentDocument.fonts && fr.contentDocument.fonts.ready.then(fit); }catch(e){} });
     const showFab = () => { if(fab) fab.classList.toggle('on', paper.scrollHeight > paper.clientHeight + 40); };
     paper.addEventListener('scroll', showFab, { passive:true });
-    setTimeout(showFab, printing ? 1700 : 400); setTimeout(showFab, 2500);
-    if(printing) setTimeout(() => ov.classList.remove('ro-printing'), 1700);
+    setTimeout(showFab, printing ? 3600 : 400); setTimeout(showFab, 4400);
+    setTimeout(() => { if(ov.isConnected) ov.classList.add('ro-done'); }, printing ? 2700 : 0);
+    setTimeout(() => ov.querySelector('.ro-printer')?.remove(), printing ? 4300 : 0);
   }
   window.__receiptPrevOverflow = document.body.style.overflow;
   document.body.style.overflow = 'hidden';
