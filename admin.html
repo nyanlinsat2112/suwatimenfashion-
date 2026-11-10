@@ -13529,14 +13529,18 @@ window.suwatiAI = (function(){
 (function(){
   const vv = window.visualViewport; if(!vv) return;
   const els = () => [document.getElementById('admin-bbar'), document.getElementById('admin-nav')].filter(Boolean);
-  let raf = 0;
+  // ⚠️ Scroll နေတုန်း Frame တိုင်း ရွှေ့ရင် iPhone မှာ Bar က တုန်/ခုန် (Glitch) ဖြစ်လို့ —
+  //    Scroll / Resize ရပ်ပြီး 180ms ငြိမ်မှ တစ်ခါပဲ ညှိ · ကွာဟချက် 2px အောက် / 160px အထက် (Rubber-band) ဆို မရွှေ့
+  let tm = 0, last = '';
   const fix = () => {
-    raf = 0;
+    tm = 0;
     const gap = Math.round(vv.height + vv.offsetTop - window.innerHeight);
     const kb = vv.height < window.innerHeight - 120;   // Keyboard ပေါ်နေ — မရွှေ့
-    els().forEach(el => { el.style.translate = (!kb && Math.abs(gap) > 1) ? `0 ${gap}px` : ''; });
+    const v = (!kb && Math.abs(gap) > 2 && Math.abs(gap) < 160) ? `0 ${gap}px` : '';
+    if(v === last) return; last = v;
+    els().forEach(el => { el.style.translate = v; });
   };
-  const q = () => { if(!raf) raf = requestAnimationFrame(fix); };
+  const q = () => { clearTimeout(tm); tm = setTimeout(fix, 180); };
   vv.addEventListener('resize', q); vv.addEventListener('scroll', q);
   window.addEventListener('scroll', q, { passive:true }); window.addEventListener('resize', q);
   document.addEventListener('visibilitychange', q);
