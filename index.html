@@ -4424,6 +4424,25 @@ function showReceiptOverlay(html){
       @keyframes roPrint{ from{ transform:translateY(-92%); } to{ transform:translateY(0); } }
       @keyframes roScan{ from{ left:-30%; } to{ left:100%; } }
       @media (prefers-reduced-motion: reduce){ #receipt-overlay.ro-printing iframe, #receipt-overlay .ro-slot i{ animation:none !important; } }
+      /* 🖨️ 3D Printer — Print ထွက်ပြီး Printer အပေါ်တက်ပျောက် → ပြေစာပဲ ကျန် */
+      #receipt-overlay.ro-3d .ro-paper{ perspective:1100px; perspective-origin:50% 0; }
+      #receipt-overlay .ro-printer{ position:absolute; z-index:3; top:12px; left:50%; width:min(370px, calc(100% - 16px)); height:64px; margin-left:calc(min(370px, calc(100% - 16px)) / -2);
+        transform:rotateX(14deg); transform-origin:50% 100%; background:linear-gradient(#2b2a26,#1b1a17); border:2px solid #3a3933; border-radius:14px 14px 6px 6px;
+        box-shadow:0 12px 0 #0c0c0b, 0 26px 40px rgba(0,0,0,.6); }
+      #receipt-overlay .ro-printer::before{ content:"SUWATI.PRINT"; position:absolute; left:18px; top:11px; font:400 15px 'Anton',sans-serif; letter-spacing:.12em; color:#E9E4D8; }
+      #receipt-overlay .ro-printer::after{ content:""; position:absolute; left:16px; right:16px; bottom:9px; height:8px; background:#000; border-radius:4px; box-shadow:inset 0 2px 4px #000; }
+      #receipt-overlay .ro-printer i{ position:absolute; right:20px; top:15px; width:10px; height:10px; border-radius:50%; background:#D6FF3F; box-shadow:0 0 12px #D6FF3F; animation:roBlink .5s steps(2) infinite; }
+      #receipt-overlay .ro-feed{ position:absolute; left:0; right:0; bottom:0; top:62px; overflow:hidden; display:flex; transition:top .6s .9s cubic-bezier(.2,.8,.2,1); }
+      #receipt-overlay.ro-3d .ro-feed iframe{ flex:1; transform-origin:50% 0; animation:roPrint3d 2.6s steps(24, end) both; }
+      #receipt-overlay.ro-3d.ro-done .ro-printer i{ animation:none; background:#34c759; box-shadow:0 0 12px #34c759; }
+      #receipt-overlay.ro-3d.ro-done .ro-printer{ animation:roLift .7s .45s cubic-bezier(.5,0,.75,0) forwards; }
+      #receipt-overlay.ro-3d.ro-done .ro-feed{ top:0; }
+      #receipt-overlay.ro-3d.ro-done .ro-feed iframe{ animation:roSettle .6s .9s cubic-bezier(.2,.8,.2,1) both; }
+      @keyframes roPrint3d{ from{ transform:translateY(-100%) rotateX(8deg); } to{ transform:translateY(0) rotateX(6deg); } }
+      @keyframes roSettle{ from{ transform:rotateX(6deg); } to{ transform:none; } }
+      @keyframes roLift{ to{ transform:translateY(-140px) rotateX(60deg); opacity:0; visibility:hidden; } }
+      @keyframes roBlink{ 50%{ opacity:.25; } }
+      @media (prefers-reduced-motion: reduce){ #receipt-overlay .ro-printer{ display:none; } #receipt-overlay .ro-feed{ top:0; transition:none; } #receipt-overlay.ro-3d .ro-feed iframe{ animation:none !important; } }
       @media screen{ #receipt-print-root{display:none !important;} }`;
     document.head.appendChild(st);
   }
@@ -4433,8 +4452,12 @@ function showReceiptOverlay(html){
   ov.innerHTML = `<div class="ro-bar">
       <button type="button" class="ro-close" onclick="closeReceiptOverlay()">✕ ပိတ်မည်</button>
       <button type="button" class="ro-print" onclick="printReceiptOverlay()">🖨️ Print / PDF</button>
-    </div><div class="ro-slot"><i></i></div><div class="ro-paper"><iframe id="receipt-overlay-frame" title="Receipt"></iframe></div>`;
+    </div><div class="ro-paper"><div class="ro-printer" aria-hidden="true"><i></i></div><div class="ro-feed"><iframe id="receipt-overlay-frame" title="Receipt"></iframe></div></div>`;
+  ov.classList.add('ro-3d');
   document.body.appendChild(ov);
+  // Print ပြီး (၂.၇ စက္ကန့်) → အစိမ်းမီး → Printer အပေါ်တက်ပျောက်
+  setTimeout(()=>{ if(ov.isConnected) ov.classList.add('ro-done'); }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 2700);
+  setTimeout(()=>{ ov.querySelector('.ro-printer')?.remove(); ov.classList.remove('ro-printing'); }, 4300);
   // Receipt ထဲက Print ခလုတ်ကလည်း အပြင် Page ရဲ့ Print Function ကို သုံးစေရန် + Auto Print ဖြုတ် + စက္ကူ (အဖြူ) သာ မြင်ရအောင်
   document.getElementById('receipt-overlay-frame').srcdoc = String(html)
     .replace(/<script>[^<]*window\.print\(\)[^<]*<\\?\/script>/g, '')
