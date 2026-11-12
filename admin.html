@@ -3532,6 +3532,7 @@ function adminPrompt(message, value, o){ return _adminDialog(message, { ...(o||{
 let currentAdminEmail = null;
 let currentAdminRole = 'owner';
 let currentAdminUserId = null;
+let currentAdminName = null;   // Staff စာမျက်နှာမှာ ပေးထားတဲ့ အမည် (admins.name) — Home ကြိုဆိုစာမှာ သုံး
 let currentAdminAllowedTabs = [];
 
 // 📶 Server ချိတ်မရ Box (Logout မလုပ် · ပြန်ကြိုးစား ခလုတ်)
@@ -3562,7 +3563,7 @@ async function checkSession(){
     for(let i = 0; i < 3; i++){
       try{
         const r = await Promise.race([
-          sb.from('admins').select('user_id, role, allowed_tabs').eq('user_id', session.user.id).maybeSingle(),
+          sb.from('admins').select('user_id, role, allowed_tabs, name').eq('user_id', session.user.id).maybeSingle(),
           new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), 12000)),
         ]);
         if(r.error) throw r.error;
@@ -3589,6 +3590,7 @@ async function checkSession(){
     currentAdminUserId = session.user.id;
     currentAdminRole = adminRow.role || 'owner';
     currentAdminAllowedTabs = adminRow.allowed_tabs || [];
+    currentAdminName = String(adminRow.name || '').trim() || null;
     const roleDisplayMap = { owner:'Owner', delivery:'Delivery', manager:'Manager', staff:'Staff' };
     document.getElementById('admin-email-display').textContent = `Logged in: ${currentAdminEmail} (${roleDisplayMap[currentAdminRole]||'Staff'})`;
     document.getElementById('dashboard-logo').innerHTML = currentAdminRole === 'delivery'
@@ -15081,7 +15083,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
   function render(panel, D){
     const now = D.now, h = now.getHours();
     const greet = h < 12 ? 'မင်္ဂလာ နံနက်ခင်းပါ' : h < 17 ? 'မင်္ဂလာ နေ့လယ်ခင်းပါ' : 'မင်္ဂလာ ညနေခင်းပါ';
-    const nm = (typeof currentAdminName !== 'undefined' && currentAdminName) || (typeof currentAdminRole !== 'undefined' ? ({ owner:'Owner', manager:'Manager', staff:'Staff' }[currentAdminRole] || 'Admin') : 'Owner');
+    const nm = (typeof currentAdminName !== 'undefined' && currentAdminName) || '';   // Staff အမည်သာ — မရှိရင် အမည် မခေါ်
     const target = getTarget(), p = Math.min(100, Math.round(D.todaySum / target * 100)), C = 301.59;
     const sd = sdStatus();
     const sdOpen = sd ? sd.open : null, sdClose = sd ? sd.close : null;
@@ -15091,7 +15093,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     const html = `
     <div class="hg" id="hg-root">
       <div class="hg-top">
-        <div><h1>${greet}၊ <em>${esc(nm)}</em> 👋</h1><p>${MM_DAY[now.getDay()]}နေ့ · ${now.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })}${D.toVerify ? ` · <b>အတည်မပြုရသေး Order ${D.toVerify}</b>` : ''}</p></div>
+        <div><h1>${greet}${nm ? `၊ <em>${esc(nm)}</em>` : ''} 👋</h1><p>${MM_DAY[now.getDay()]}နေ့ · ${now.toLocaleDateString(undefined, { year:'numeric', month:'long', day:'numeric' })}${D.toVerify ? ` · <b>အတည်မပြုရသေး Order ${D.toVerify}</b>` : ''}</p></div>
         <div class="hg-acts"><button type="button" class="hg-pill" data-go="activitylog-panel">🕘 <span>Activity Log</span></button><button type="button" class="hg-pill pri" data-act="newprod">＋ <span>ပစ္စည်းအသစ်</span></button></div>
       </div>
       <div class="hg-row1">
@@ -15099,11 +15101,11 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
           <div class="hg-hero-tx">
             <span class="hg-chipx"><i></i>${sd && sdOpen.done === sdOpen.total ? 'ဆိုင်ဖွင့်ထား' : 'ဒီနေ့'} · ${now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}</span>
             <h2>ဒီနေ့ ရောင်းရငွေ<br><b><span data-hg-n="${D.todaySum}">0</span><small> ကျပ်</small></b></h2>
-            <p>ပစ်မှတ် ${money(target)} ကျပ်ရဲ့ <b>${p}%</b> ရောက်ပြီ${p >= 100 ? ' 🎉' : ''}${D.toVerify ? ` · ငွေစစ်ရန် Order ${D.toVerify} ခု` : ''}</p>
+            <p>Target ${money(target)} ကျပ်ရဲ့ <b>${p}%</b> ရောက်ပြီ${p >= 100 ? ' 🎉' : ''}${D.toVerify ? ` · ငွေစစ်ရန် Order ${D.toVerify} ခု` : ''}</p>
             <div class="hg-hs"><div><b data-hg-n="${D.todayOrders}">0</b><span>ဒီနေ့ Order</span></div><div><b data-hg-n="${D.toVerify}">0</b><span>စစ်ရန်</span></div><div><b data-hg-n="${D.todayItems}">0</b><span>ရောင်းရ ထည်</span></div></div>
             <div class="hg-hb"><button type="button" class="hb" data-go="orders-panel">Orders ကြည့်မည် ↗</button><button type="button" class="hb o" data-go="pos-panel">＋ POS ရောင်းမည်</button></div>
           </div>
-          <button type="button" class="hg-ring" title="ပစ်မှတ် ပြောင်းရန် နှိပ်ပါ" aria-label="ဒီနေ့ ပစ်မှတ် ${p}% · ပြောင်းရန်">
+          <button type="button" class="hg-ring" title="Target ပြောင်းရန် နှိပ်ပါ" aria-label="ဒီနေ့ Target ${p}% · ပြောင်းရန်">
             <svg viewBox="0 0 120 120" aria-hidden="true">
               <circle class="trk" cx="60" cy="60" r="57"/>
               <circle class="bg" cx="60" cy="60" r="48"/>
@@ -15111,7 +15113,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
               ${p >= 6 ? `<circle class="shine" cx="60" cy="60" r="48" stroke-dasharray="12 ${C}" style="--len:${(C * p / 100).toFixed(1)}"/>` : ''}
               <g class="tip" data-deg="${p * 3.6}"><circle class="halo" cx="108" cy="60" r="7"/><circle class="dot" cx="108" cy="60" r="6.5"/></g>
             </svg>
-            <span class="hg-ring-t"><b><span data-hg-n="${p}">0</span>%</b><small>ပစ်မှတ်</small></span>
+            <span class="hg-ring-t"><b><span data-hg-n="${p}">0</span>%</b><small>Target</small></span>
             ${p >= 100 ? '<span class="hg-burst" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>' : ''}
           </button>
         </div>
@@ -15152,9 +15154,9 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     root.querySelectorAll('[data-sd]').forEach(b => b.addEventListener('click', () => { try{ window.openShopDayChecklist?.(b.dataset.sd || undefined); }catch(e){} }));
     root.querySelector('[data-act="newprod"]')?.addEventListener('click', () => { go('products-panel'); setTimeout(() => { try{ window.pmOpen ? pmOpen('add') : null; }catch(e){} }, 250); });
     root.querySelector('.hg-ring')?.addEventListener('click', async () => {
-      const v = prompt('ဒီနေ့ ရောင်းအား ပစ်မှတ် (ကျပ်)', String(getTarget()));
+      const v = prompt('ဒီနေ့ ရောင်းအား Target (ကျပ်)', String(getTarget()));
       if(v == null) return; const n = Math.round(Number(String(v).replace(/[^\d]/g, '')));
-      if(n > 0){ try{ localStorage.setItem('suwati_day_target', String(n)); }catch(e){} showToast?.('🎯 ပစ်မှတ် ' + money(n) + ' ကျပ်'); refresh(true); }
+      if(n > 0){ try{ localStorage.setItem('suwati_day_target', String(n)); }catch(e){} showToast?.('🎯 Target ' + money(n) + ' ကျပ်'); refresh(true); }
     });
     // Animation
     requestAnimationFrame(() => setTimeout(() => { const fg = root.querySelector('.hg-ring .fg'); if(fg) fg.style.strokeDashoffset = fg.dataset.off; const tp = root.querySelector('.hg-ring .tip'); if(tp) tp.style.transform = `rotate(${tp.dataset.deg}deg)`; const sh = root.querySelector('.hg-ring .shine'); if(sh) setTimeout(() => sh.classList.add('run'), 1500); }, 80));
