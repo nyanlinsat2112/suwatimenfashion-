@@ -6137,7 +6137,7 @@ async function openPrepaidCard(){
         <div class="pc-face pc-back">
           <div class="pc-mag"></div>
           <div class="pc-pin-label">SECURITY PIN</div>
-          <div class="pc-pin-sub">TAP BOXES TO SHOW</div>
+          <div class="pc-pin-sub">TAP FOR NEW PIN</div>
           <div class="pc-pin" id="pc-pin-display" data-pin="${esc(pin)}" data-revealed="false" onclick="event.stopPropagation(); togglePinReveal()">${pinBoxes}</div>
           <div class="pc-flip-hint">TAP TO FLIP ↻</div>
           <div class="pc-panel">
@@ -6276,7 +6276,7 @@ function renderCardSecurity(){
     <details class="pc-sec-pin" ${locked?'open':''}>
       <summary>🔑 PIN ပြောင်းရန်</summary>
       <div class="pc-sec-form">
-        <label>PIN အဟောင်း <small>(Card နောက်ကျောမှာ ကြည့်လို့ရ)</small>${pinIn('pc-pin-old','••••')}</label>
+        <label>PIN အဟောင်း <small>(မေ့ရင် Card နောက်ကျော PIN ကွက်ကို နှိပ်ပြီး PIN အသစ် ယူပါ)</small>${pinIn('pc-pin-old','••••')}</label>
         <label>PIN အသစ် (ဂဏန်း ၄ လုံး)${pinIn('pc-pin-new','••••')}</label>
         <label>PIN အသစ် ထပ်ရိုက်ပါ${pinIn('pc-pin-new2','••••')}</label>
         <div class="pc-sec-err" id="pc-pin-err" role="alert"></div>
@@ -6789,7 +6789,7 @@ const prepaidPayAnim = (function(){
     f.dataset.mode = mode; f.hidden = false; const word = bioWord();
     f.innerHTML = `
       <div class="pc-sec-form">
-        <label>Card PIN ၄ လုံး <small>(Card နောက်ကျောမှာ ကြည့်လို့ရ)</small>${pinIn('pc-bio-pin')}</label>
+        <label>Card PIN ၄ လုံး <small>(မေ့ရင် Card နောက်ကျော PIN ကွက်ကို နှိပ်ပြီး PIN အသစ် ယူပါ)</small>${pinIn('pc-bio-pin')}</label>
         <div class="pc-sec-err" id="pc-bio-err" role="alert"></div>
         <button type="button" class="submit-order-btn" id="pc-bio-go" onclick="cpBioGo('${mode}')">${mode === 'off' ? '🔓 ' + word + ' ပိတ်မည်' : '🙂 ' + word + ' ချိတ်မည်'}</button>
       </div>`;
@@ -6958,6 +6958,8 @@ const prepaidPayAnim = (function(){
   window.togglePinReveal = async function(){
     const el = document.getElementById('pc-pin-display'); if(!el || el.dataset.busy) return;
     if(el.dataset.revealed === 'true'){ clearTimeout(pinHideT); paintPin(el, null); return; }
+    // 🔐 PIN ကို Hash နဲ့ ဝှက်သိမ်းထားလို့ ပြန်မပြနိုင် — PIN အသစ် ထုတ်ပေး (Bug M9)
+    if(!(await siteConfirm('🔐 လုံခြုံရေးအတွက် PIN ကို ဝှက်သိမ်းထားလို့ ပြန်ပြလို့ မရပါ။\n\nPIN အသစ် ထုတ်ပေးမလား?\n(PIN အဟောင်း မရတော့ပါ · PIN Lock ဖြစ်နေရင်လည်း ပြန်ဖွင့်ပေးပါမည်)', { ok:'PIN အသစ် ယူမည်', icon:'🔐' }))) return;
     el.dataset.busy = '1';
     try{
       let st = window.__cpBio;
@@ -6981,7 +6983,9 @@ const prepaidPayAnim = (function(){
       else if(error && /reveal_card_pin|function|schema cache/i.test(error.message || '') && el.dataset.pin) pin = el.dataset.pin;   // FACE-ID-PIN.sql မ Run ရသေးရင်
       else { showSiteToast('⚠️ ' + (error?.message || 'PIN ယူ၍ မရပါ').replace(/^AUTH_REQUIRED:\s*/, '')); return; }
       paintPin(el, pin);
-      clearTimeout(pinHideT); pinHideT = setTimeout(() => { if(el.isConnected) paintPin(el, null); }, 20000);   // ၂၀ စက္ကန့်ကြာရင် ပြန်ဖုံး
+      showSiteToast('✅ PIN အသစ် — ' + pin + ' (မှတ်ထားပါ · ၆၀ စက္ကန့်ကြာရင် ပြန်ဖုံးပါမည်)');
+      try{ if(window.__pcState && window.__pcState.reason === 'pin_lock'){ window.__pcState = { frozen:false, reason:null }; if(typeof renderCardSecurity === 'function') renderCardSecurity(); } }catch(e){}
+      clearTimeout(pinHideT); pinHideT = setTimeout(() => { if(el.isConnected) paintPin(el, null); }, 60000);   // ၆၀ စက္ကန့်ကြာရင် ပြန်ဖုံး
     }finally{ delete el.dataset.busy; }
   };
   try{ togglePinReveal = window.togglePinReveal; }catch(e){}
