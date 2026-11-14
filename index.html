@@ -290,7 +290,7 @@
   .bn-wrap{max-width:1180px; margin:0 auto; padding:22px 24px 4px; position:relative;}
   .bn-wrap .banner-strip{max-width:none; margin:0; padding:0; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain;}
   .bn-wrap .banner-strip::-webkit-scrollbar{display:none;}
-  .bn-wrap .banner-card{flex:0 0 100%; height:auto; aspect-ratio:16/9; max-height:520px; scroll-snap-align:center; border:3px solid var(--ink); box-shadow:6px 6px 0 var(--ink); margin-right:6px; -webkit-user-select:none; user-select:none;}
+  .bn-wrap .banner-card{flex:0 0 100%; height:auto; aspect-ratio:16/9; max-height:340px; scroll-snap-align:center; border:3px solid var(--ink); box-shadow:6px 6px 0 var(--ink); margin-right:6px; -webkit-user-select:none; user-select:none;}
   .bn-wrap .banner-card.no-link{cursor:default;}
   .bn-wrap .banner-card img{opacity:1; display:block; -webkit-user-drag:none;}
   .bn-wrap .banner-card .banner-text{justify-content:flex-end; align-items:flex-start; gap:6px; padding:18px 18px 18px; background:linear-gradient(to top, rgba(20,20,18,.82), rgba(20,20,18,.25) 45%, transparent 70%);}
@@ -302,9 +302,8 @@
   .bn-wrap .bn-dots{display:flex; justify-content:center; gap:7px; padding:12px 0 2px;}
   .bn-wrap .bn-dots button{width:9px; height:9px; padding:0; border:2px solid var(--ink); background:transparent; cursor:pointer; transition:width .25s;}
   .bn-wrap .bn-dots button.on{width:26px; background:var(--rust); border-color:var(--rust);}
-  .bn-wrap .bn-nav{position:absolute; top:calc(22px + (100% - 50px) / 2); width:42px; height:42px; margin-top:-21px; border:2.5px solid var(--ink); background:var(--acid); color:#141412; font:700 20px/1 sans-serif; cursor:pointer; z-index:2; display:none;}
-  .bn-wrap .bn-prev{left:10px;} .bn-wrap .bn-next{right:10px;}
-  @media (hover:hover) and (min-width:700px){ .bn-wrap.multi .bn-nav{display:block;} }
+  /* Desktop / iPad — အမြင့် လျှော့ (ဘေးတိုက် ရှည်ရှည်) */
+  @media (min-width:601px){ .bn-wrap .banner-card{aspect-ratio:3/1; max-height:340px;} .bn-wrap .banner-card .banner-title{font-size:clamp(26px, 3.6vw, 44px);} }
   @media (max-width:600px){ .bn-wrap{padding:16px 16px 2px;} .bn-wrap .banner-card{aspect-ratio:4/3; box-shadow:4px 4px 0 var(--ink);} }
 
   .product-tag-badge{
@@ -2431,7 +2430,7 @@ body:has(.modal-overlay.open:not(.closing) > #checkout-modal-content > .lq) .cha
   </div>
 </section>
 
-<div class="bn-wrap" id="bn-wrap" hidden><div class="banner-strip" id="banner-strip"></div><button type="button" class="bn-nav bn-prev" aria-label="ရှေ့ Banner">‹</button><button type="button" class="bn-nav bn-next" aria-label="နောက် Banner">›</button><div class="bn-dots" id="bn-dots"></div></div>
+<div class="bn-wrap" id="bn-wrap" hidden><div class="banner-strip" id="banner-strip"></div><div class="bn-dots" id="bn-dots"></div></div>
 
 <section class="about">
   <div>
@@ -3090,8 +3089,6 @@ async function loadBanners(){
     const go = i => { const n = strip.children.length; if(!n) return; i = (i + n) % n; strip.scrollTo({ left: strip.children[i].offsetLeft - strip.offsetLeft, behavior:'smooth' }); };
     strip.addEventListener('scroll', () => { const i = cur(); dots.querySelectorAll('button').forEach((d, k) => d.classList.toggle('on', k === i)); }, { passive:true });
     dots.addEventListener('click', e => { const d = e.target.closest('button'); if(d){ go([...dots.children].indexOf(d)); restart(); } });
-    wrap.querySelector('.bn-prev').addEventListener('click', () => { go(cur() - 1); restart(); });
-    wrap.querySelector('.bn-next').addEventListener('click', () => { go(cur() + 1); restart(); });
     // ၅ စက္ကန့်တစ်ခါ အလိုလို ပြောင်း · လက်ထိထားရင် / Animation ပိတ်ထားရင် မပြောင်း
     let hold = false;
     strip.addEventListener('pointerdown', () => { hold = true; }, { passive:true });
