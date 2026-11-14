@@ -1,0 +1,6 @@
+# 🔒 Website မှာ Public မဖြစ်စေချင်တဲ့ ဖိုင်များ (Bug L6) — GitHub မှာတော့ ကျန်ပါမယ်
+/*.sql
+/*.ts
+/FILES-README.md
+/suwatimenfashion/
+.DS_Store

@@ -2732,11 +2732,30 @@ function renderFilterChips(categories){
   }
 }
 
+// ⏱️ Network နှေး/ချိတ်မရ ဆိုရင် အမြဲ "Load လုပ်နေသည်" မှာ မရပ်အောင် — ၁၅ စက္ကန့် Timeout (Bug M10)
+function netTimeoutSignal(ms){
+  try{ if(window.AbortSignal && AbortSignal.timeout) return AbortSignal.timeout(ms); }catch(e){}
+  try{ const c = new AbortController(); setTimeout(() => c.abort(), ms); return c.signal; }catch(e){ return undefined; }
+}
+function loadFailHtml(what, retryFn){
+  return `<div class="empty-note load-fail" style="text-align:center;">
+    <p style="margin:0 0 10px;">📶 ${what} Load မလုပ်နိုင်ပါ — Internet ကို စစ်ပြီး ပြန်စမ်းပါ</p>
+    <button type="button" class="submit-order-btn" style="width:auto; padding:10px 20px; margin:0 auto;" onclick="this.disabled=true; this.textContent='Load လုပ်နေသည်...'; ${retryFn}()">🔄 ပြန်စမ်းမည်</button>
+  </div>`;
+}
+
 async function loadProducts(){
   const grid = document.getElementById('products-grid');
-  const { data, error } = await sb.from('products').select('*').neq('visible', false).order('created_at', { ascending:false });
+  let data = null, error = null;
+  try{
+    let q = sb.from('products').select('*').neq('visible', false).order('created_at', { ascending:false });
+    const sig = netTimeoutSignal(15000); if(sig && q.abortSignal) q = q.abortSignal(sig);
+    ({ data, error } = await q);
+  }catch(e){ error = e; }
   if(error || !data){
-    grid.innerHTML = '<p class="empty-note">ပစ္စည်းများ Load မလုပ်နိုင်ပါ</p>';
+    // Auto-refresh မှာ မရရင် ရှိပြီးသား ပစ္စည်းစာရင်းကို မဖျက်
+    if(window.__productsLoaded && typeof allProducts !== 'undefined' && allProducts.length) return;
+    grid.innerHTML = loadFailHtml('ပစ္စည်းများ', 'loadProducts');
     return;
   }
   // 📌 Pin လုပ်ထားတဲ့ ပစ္စည်းများ အပေါ်ဆုံးမှာ (Pin အချင်းချင်းနဲ့ ကျန်တာတွေက အသစ်ဆုံး အရင်)
@@ -3031,8 +3050,19 @@ function renderProductGrid(){
 
 async function loadPosts(){
   const grid = document.getElementById('posts-grid');
-  const { data, error } = await sb.from('posts').select('*').order('created_at', { ascending:false }).limit(6);
-  if(error || !data || data.length===0){
+  let data = null, error = null;
+  try{
+    let q = sb.from('posts').select('*').order('created_at', { ascending:false }).limit(6);
+    const sig = netTimeoutSignal(15000); if(sig && q.abortSignal) q = q.abortSignal(sig);
+    ({ data, error } = await q);
+  }catch(e){ error = e; }
+  if(error || !data){
+    // Error ကို "Post မရှိ" နဲ့ မရောပြ (Bug M10)
+    if(grid.querySelector('.post-card, article, img')) return;
+    grid.innerHTML = loadFailHtml('Post များ', 'loadPosts');
+    return;
+  }
+  if(data.length===0){
     grid.innerHTML = '<p class="empty-note">လောလောဆယ် Post မရှိသေးပါ။</p>';
     return;
   }
@@ -3218,7 +3248,16 @@ function initAutoRefreshSystem(){
 // SUWATI MEN FASHION — Cart
 // (index.html ကနေ ခွဲထုတ်ထားသည် — ဖိုင်အစဉ်အတိုင်း Load ရမည်)
 // ================= CART =================
-let cart = JSON.parse(localStorage.getItem('suwati_cart') || '[]');
+// 🛡️ ဖုန်းထဲ Data ပျက်နေလည်း Site တစ်ခုလုံး မရပ်အောင် (Bug M8)
+function safeLocalList(key){
+  try{
+    const v = JSON.parse(localStorage.getItem(key) || '[]');
+    if(Array.isArray(v)) return v.filter(x => x && typeof x === 'object');
+  }catch(e){}
+  try{ localStorage.removeItem(key); }catch(e){}
+  return [];
+}
+let cart = safeLocalList('suwati_cart');
 
 function saveCart(){
   localStorage.setItem('suwati_cart', JSON.stringify(cart));
@@ -3339,7 +3378,7 @@ let pendingWishlistRemovalName = null;
 let wishlistInitialized = false;
 
 function loadWishlistLocal(){
-  wishlist = JSON.parse(localStorage.getItem('suwati_wishlist') || '[]');
+  wishlist = safeLocalList('suwati_wishlist');
 }
 
 function saveWishlistLocal(){
@@ -3353,7 +3392,7 @@ async function initWishlist(){
     wishlist = error ? [] : (data||[]).map(r=>({ id:r.id, name:r.product_name, price:Number(r.price), image_url:r.image_url }));
 
     // Guest အနေနဲ့ Browser ထဲ Save ထားခဲ့တဲ့ Wishlist ရှိရင် DB ထဲ ပေါင်းထည့် (တစ်ခါတည်း Migrate)
-    const local = JSON.parse(localStorage.getItem('suwati_wishlist') || '[]');
+    const local = safeLocalList('suwati_wishlist');
     if(local.length){
       for(const item of local){
         if(!wishlist.some(w=>w.name===item.name)){
