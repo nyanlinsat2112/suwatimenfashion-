@@ -5333,21 +5333,15 @@ async function loadOrders(){
       refreshAllAttentionStates();
       logActivity('order_status_changed', `#${g.group_display_id.slice(0,8).toUpperCase()} → ${newStatus}`);
 
-      // Order ကို "ပယ်ဖျက်" (Cancelled/Refund) ပြောင်းလိုက်ရင် Stock ကို ပြန်တိုးပေး
+      // 🛡️ Stock ပြန်တိုး/လျှော့ + Prepaid ငွေ ပြန်အမ်း = Database Trigger က အလိုလို လုပ်ပြီး (BUGFIX-2026-11-15 · M6)
       if(newStatus === 'cancelled' && !wasAlreadyCancelled){
-        await restoreStockForRows(g.rows);
-        showToast('Stock ပြန်တိုးပေးပြီးပါပြီ');
-
-        // Prepaid Card ဖြင့် ဝယ်ထားတဲ့ Order ဖြစ်ရင် ငွေကို Card ထဲ ပြန်ထည့်ပေး (တစ်ခါသာ)
         const refundTotal = walletRefundAmountFor(g.rows);
-        if(refundTotal > 0 && g.rows[0].user_id){
-          await adminRefundToCard(g.rows[0].user_id, refundTotal, g.group_display_id, `Order Refund — #${g.group_display_id.slice(0,8).toUpperCase()}`);
-        }
+        showToast(refundTotal > 0 && g.rows[0].user_id
+          ? `✅ Stock ပြန်တိုး + Prepaid Card ထဲ ${refundTotal.toLocaleString()} ကျပ် ပြန်အမ်းပြီး (တစ်ခါသာ)`
+          : '✅ Stock ပြန်တိုးပေးပြီးပါပြီ');
       }
-      // ပယ်ဖျက်ပြီးသားကို ပြန်ဖွင့် — Stock ပြန်လျှော့
       if(wasAlreadyCancelled && newStatus !== 'cancelled'){
-        const short = await takeStockForRows(g.rows);
-        showToast(short.length ? `⚠️ Stock မလုံလောက်ပါ — ${short.join(', ')}` : 'Stock ပြန်လျှော့ပြီးပါပြီ');
+        showToast('✅ Stock ပြန်လျှော့ပြီး (မလုံလောက်ရင် Noti ဝင်ပါမည်)');
       }
 
       sendOrderStatusChat(g, newStatus, cancellation_reason);
@@ -5389,29 +5383,6 @@ async function sendOrderStatusChat(g, status, reason){
     const message = msgs[status]; if(!message) return;
     await sb.from('chat_messages').insert({ user_id:userId, customer_name:r0.customer_name || null, sender:'admin', message, read_by_admin:true, read_by_customer:false });
   }catch(e){ console.error('status chat failed', e); }
-}
-
-// 🛡️ Prepaid ငွေ ပြန်အမ်း — Order တစ်ခုကို တစ်ခါသာ (Server က ALREADY_REFUNDED နဲ့ တားသည်) · Bug C2
-async function adminRefundToCard(userId, amount, ref, desc){
-  const { error } = await sb.rpc('credit_wallet', { p_user_id: userId, p_amount: amount, p_type: 'refund', p_description: desc, p_reference: ref });
-  if(!error){ showToast(`✅ Prepaid Card ထဲ ${Number(amount).toLocaleString()} ကျပ် ပြန်ထည့်ပေးပြီးပါပြီ`); return true; }
-  const m = String(error.message || '');
-  if(/ALREADY_REFUNDED|wallet_tx_refund_once|duplicate key/i.test(m)) showToast('ℹ️ ဒီ Order ရဲ့ Prepaid ငွေကို ပြန်အမ်းပြီးသားပါ — ထပ်မအမ်းပါ');
-  else showToast('❌ Prepaid ငွေ ပြန်အမ်း မရပါ — ' + m);
-  return false;
-}
-
-// ပယ်ဖျက်ပြီးသား Order ပြန်ဖွင့်ရင် Stock ပြန်လျှော့ — မလုံလောက်တဲ့ ပစ္စည်းစာရင်း ပြန်ပေး
-async function takeStockForRows(rows){
-  const short = [];
-  for(const r of rows){
-    if(r.product_name === '🎁 Gift ထုပ်ပိုး ဝန်ဆောင်မှု' || r.product_name === '🏷️ Promo Code') continue;
-    try{
-      const { data: ok, error } = await sb.rpc('decrement_stock', { p_name:r.product_name, p_qty:r.quantity, p_color:r.color||null, p_size:r.size||null });
-      if(error || ok !== true) short.push(r.product_name);
-    }catch(e){ short.push(r.product_name); }
-  }
-  return short;
 }
 
 async function restoreStockForRows(rows){
@@ -7500,13 +7471,11 @@ function renderSaleHistory(){
       const { data: changedRows, error } = await sb.from('orders').update(updatePayload).in('id', g.ids).neq('order_status', 'cancelled').select('id');
       if(error){ showToast('Error: '+error.message); btn.disabled=false; return; }
       if(!(changedRows && changedRows.length)){ showToast('ဒီ Order ကို ပယ်ဖျက်ပြီးသားပါ'); loadSaleHistory(); return; }
-      await restoreStockForRows(g.rows);
+      // Stock ပြန်တိုး + Prepaid ငွေ ပြန်အမ်း = Database Trigger က လုပ်ပြီး (M6)
       logActivity('sale_refunded', `#${g.group_display_id.slice(0,8).toUpperCase()} (${g.customer_name}) — ${g.total_amount.toLocaleString()} ကျပ်`);
-
-      // Prepaid Card ဖြင့် ဝယ်ထားတဲ့ Order/Sale ဖြစ်ရင် ငွေကို Card ထဲ ပြန်ထည့်ပေး (တစ်ခါသာ)
       const refundAmt = walletRefundAmountFor(g.rows);
       if(refundAmt > 0 && g.rows[0].user_id){
-        await adminRefundToCard(g.rows[0].user_id, refundAmt, g.group_display_id, `Order Refund — #${g.group_display_id.slice(0,8).toUpperCase()}`);
+        showToast(`✅ Prepaid Card ထဲ ${refundAmt.toLocaleString()} ကျပ် ပြန်အမ်းပြီး (တစ်ခါသာ)`);
       }
 
       if(g.sale_channel !== 'in_store'){
