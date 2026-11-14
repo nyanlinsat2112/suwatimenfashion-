@@ -286,6 +286,26 @@
   }
   .banner-card .banner-title{font-family:'Anton',sans-serif; font-size:22px; line-height:1;}
   .banner-card .banner-subtitle{font-family:'Space Mono',monospace; font-size:13px; color:var(--acid); margin-top:4px;}
+  /* 🖼️ Banner Slider (Nov 14) — အပြည့်ပုံကြီး · ဆွဲလှန် · ခလုတ် · Link */
+  .bn-wrap{max-width:1180px; margin:0 auto; padding:22px 24px 4px; position:relative;}
+  .bn-wrap .banner-strip{max-width:none; margin:0; padding:0; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain;}
+  .bn-wrap .banner-strip::-webkit-scrollbar{display:none;}
+  .bn-wrap .banner-card{flex:0 0 100%; height:auto; aspect-ratio:16/9; max-height:520px; scroll-snap-align:center; border:3px solid var(--ink); box-shadow:6px 6px 0 var(--ink); margin-right:6px; -webkit-user-select:none; user-select:none;}
+  .bn-wrap .banner-card.no-link{cursor:default;}
+  .bn-wrap .banner-card img{opacity:1; display:block; -webkit-user-drag:none;}
+  .bn-wrap .banner-card .banner-text{justify-content:flex-end; align-items:flex-start; gap:6px; padding:18px 18px 18px; background:linear-gradient(to top, rgba(20,20,18,.82), rgba(20,20,18,.25) 45%, transparent 70%);}
+  .bn-wrap .banner-card .banner-title{font-size:clamp(26px, 7vw, 54px); line-height:.95; letter-spacing:.01em; color:#E9E4D8;}
+  .bn-wrap .banner-card .banner-subtitle{font-size:clamp(12px, 3.4vw, 16px); margin-top:0; font-weight:700;}
+  .bn-wrap .bn-cta{margin-top:8px; display:inline-flex; align-items:center; gap:6px; background:var(--acid); color:#141412; border:2.5px solid #141412; box-shadow:3px 3px 0 #141412;
+    font:700 14px 'Noto Sans Myanmar','Space Mono',sans-serif; padding:9px 16px; cursor:pointer; pointer-events:auto;}
+  .bn-wrap .bn-cta:active{transform:translate(2px,2px); box-shadow:1px 1px 0 #141412;}
+  .bn-wrap .bn-dots{display:flex; justify-content:center; gap:7px; padding:12px 0 2px;}
+  .bn-wrap .bn-dots button{width:9px; height:9px; padding:0; border:2px solid var(--ink); background:transparent; cursor:pointer; transition:width .25s;}
+  .bn-wrap .bn-dots button.on{width:26px; background:var(--rust); border-color:var(--rust);}
+  .bn-wrap .bn-nav{position:absolute; top:calc(22px + (100% - 50px) / 2); width:42px; height:42px; margin-top:-21px; border:2.5px solid var(--ink); background:var(--acid); color:#141412; font:700 20px/1 sans-serif; cursor:pointer; z-index:2; display:none;}
+  .bn-wrap .bn-prev{left:10px;} .bn-wrap .bn-next{right:10px;}
+  @media (hover:hover) and (min-width:700px){ .bn-wrap.multi .bn-nav{display:block;} }
+  @media (max-width:600px){ .bn-wrap{padding:16px 16px 2px;} .bn-wrap .banner-card{aspect-ratio:4/3; box-shadow:4px 4px 0 var(--ink);} }
 
   .product-tag-badge{
     position:absolute; top:8px; left:8px; display:flex; flex-direction:column; gap:3px; z-index:2;
@@ -2411,7 +2431,7 @@ body:has(.modal-overlay.open:not(.closing) > #checkout-modal-content > .lq) .cha
   </div>
 </section>
 
-<div class="banner-strip" id="banner-strip"></div>
+<div class="bn-wrap" id="bn-wrap" hidden><div class="banner-strip" id="banner-strip"></div><button type="button" class="bn-nav bn-prev" aria-label="ရှေ့ Banner">‹</button><button type="button" class="bn-nav bn-next" aria-label="နောက် Banner">›</button><div class="bn-dots" id="bn-dots"></div></div>
 
 <section class="about">
   <div>
@@ -3033,29 +3053,68 @@ async function loadPosts(){
   });
 }
 
-// ---------- Banners ----------
+// ---------- Banners (Nov 14 — ပုံအပြည့် Slider · ခလုတ် · Link ချိတ်) ----------
+//   link_url ပုံစံ: ''(Link မရှိ) · #products · #cat=<Category> · #p=<Product id> · https://… · www.… · m.me/… · tel:/viber:
+const bnEsc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+let bnTimer = 0;
 async function loadBanners(){
   const { data, error } = await sb.from('banners').select('*').eq('active', true).order('sort_order');
-  const strip = document.getElementById('banner-strip');
-  if(error || !data || !data.length){ strip.style.display='none'; return; }
-  strip.style.display='flex';
-  strip.innerHTML = data.map(b=>`
-    <div class="banner-card" onclick="handleBannerClick('${(b.link_url||'').replace(/'/g,"\\'")}')">
-      <img src="${b.image_url || 'https://placehold.co/400x200/141412/E9E4D8?text=SUWATI'}" alt="${b.title}">
+  const wrap = document.getElementById('bn-wrap'), strip = document.getElementById('banner-strip'), dots = document.getElementById('bn-dots');
+  if(!wrap || !strip) return;
+  clearInterval(bnTimer);
+  if(error || !data || !data.length){ wrap.hidden = true; strip.innerHTML = ''; return; }
+  wrap.hidden = false; strip.style.display = 'flex';
+  wrap.classList.toggle('multi', data.length > 1);
+  strip.innerHTML = data.map((b, i) => {
+    const link = String(b.link_url || '').trim();
+    const cta = link ? (/^#p=/.test(link) ? 'ကြည့်မည် →' : /^https?:|^www\.|\.com|\.me\b|^m\.me|^viber:|^tel:/i.test(link) ? 'ဖွင့်မည် ↗' : 'ဝယ်မည် →') : '';
+    return `<div class="banner-card${link ? '' : ' no-link'}" data-i="${i}" data-link="${bnEsc(link)}" ${link ? 'role="link" tabindex="0"' : ''}>
+      <img src="${bnEsc(b.image_url || 'https://placehold.co/1600x900/141412/E9E4D8?text=SUWATI')}" alt="${bnEsc(b.title)}" loading="${i ? 'lazy' : 'eager'}" draggable="false">
       <div class="banner-text">
-        <div class="banner-title">${b.title}</div>
-        ${b.subtitle ? `<div class="banner-subtitle">${b.subtitle}</div>` : ''}
+        ${b.title ? `<div class="banner-title">${bnEsc(b.title)}</div>` : ''}
+        ${b.subtitle ? `<div class="banner-subtitle">${bnEsc(b.subtitle)}</div>` : ''}
+        ${cta ? `<button type="button" class="bn-cta">${cta}</button>` : ''}
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+  dots.innerHTML = data.length > 1 ? data.map((_, i) => `<button type="button" aria-label="Banner ${i + 1}"${i ? '' : ' class="on"'}></button>`).join('') : '';
+  if(!strip.__bnBound){
+    strip.__bnBound = true;
+    // နှိပ်ရင် Link သွား (ဆွဲလှန်နေတာ မဟုတ်မှ)
+    let sx = 0, moved = false;
+    strip.addEventListener('pointerdown', e => { sx = e.clientX; moved = false; }, { passive:true });
+    strip.addEventListener('pointermove', e => { if(Math.abs(e.clientX - sx) > 8) moved = true; }, { passive:true });
+    strip.addEventListener('click', e => { const c = e.target.closest('.banner-card'); if(!c || moved) return; handleBannerClick(c.dataset.link); });
+    strip.addEventListener('keydown', e => { if(e.key === 'Enter'){ const c = e.target.closest('.banner-card'); if(c) handleBannerClick(c.dataset.link); } });
+    const cur = () => Math.round(strip.scrollLeft / Math.max(1, strip.clientWidth));
+    const go = i => { const n = strip.children.length; if(!n) return; i = (i + n) % n; strip.scrollTo({ left: strip.children[i].offsetLeft - strip.offsetLeft, behavior:'smooth' }); };
+    strip.addEventListener('scroll', () => { const i = cur(); dots.querySelectorAll('button').forEach((d, k) => d.classList.toggle('on', k === i)); }, { passive:true });
+    dots.addEventListener('click', e => { const d = e.target.closest('button'); if(d){ go([...dots.children].indexOf(d)); restart(); } });
+    wrap.querySelector('.bn-prev').addEventListener('click', () => { go(cur() - 1); restart(); });
+    wrap.querySelector('.bn-next').addEventListener('click', () => { go(cur() + 1); restart(); });
+    // ၅ စက္ကန့်တစ်ခါ အလိုလို ပြောင်း · လက်ထိထားရင် / Animation ပိတ်ထားရင် မပြောင်း
+    let hold = false;
+    strip.addEventListener('pointerdown', () => { hold = true; }, { passive:true });
+    strip.addEventListener('pointerup', () => { hold = false; restart(); }, { passive:true });
+    function restart(){ clearInterval(bnTimer); if(strip.children.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      bnTimer = setInterval(() => { if(!hold && !document.hidden) go(cur() + 1); }, 5000); }
+    strip.__bnRestart = restart;
+  }
+  strip.scrollLeft = 0; strip.__bnRestart();
 }
 
 function handleBannerClick(link){
-  if(!link) return;
-  if(link.startsWith('#')){
-    document.querySelector(link)?.scrollIntoView({behavior:'smooth'});
-  } else {
-    window.open(link, '_blank');
-  }
+  link = String(link || '').trim(); if(!link) return;
+  const toGrid = () => document.getElementById('products')?.scrollIntoView({ behavior:'smooth', block:'start' });
+  let m;
+  if((m = link.match(/^#cat=(.+)$/))){ const c = decodeURIComponent(m[1]); if(typeof filterByCategory === 'function') filterByCategory(c); else toGrid(); return; }
+  if((m = link.match(/^#p=(.+)$/))){ const id = decodeURIComponent(m[1]); const p = (typeof allProducts !== 'undefined' ? allProducts : []).find(x => String(x.id) === id);
+    if(p && typeof openProductDetailByName === 'function') openProductDetailByName(p.name); else toGrid(); return; }
+  if(link.startsWith('#')){ const el = document.querySelector(link === '#product' ? '#products' : link); el ? el.scrollIntoView({ behavior:'smooth', block:'start' }) : toGrid(); return; }
+  if(/^(tel|viber|mailto):/i.test(link)){ location.href = link; return; }
+  if(!/^https?:\/\//i.test(link)) link = 'https://' + link.replace(/^\/+/, '');
+  try{ const u = new URL(link); if(u.origin === location.origin){ location.href = u.href; return; } }catch(e){ return; }
+  window.open(link, '_blank', 'noopener');
 }
 
 

@@ -111,6 +111,7 @@
   .date-filter-wrap input[type="date"]{ display:block; }
   .form-grid .full{grid-column:1/-1;}
   @media(max-width:560px){.form-grid{grid-template-columns:1fr;}}
+  .bn-linkbox{display:grid; gap:8px;} .bn-linkbox > label{font-size:13px; font-weight:700;} .bn-linkbox [hidden]{display:none !important;}
   .form-actions{display:flex; gap:10px; margin-top:14px;}
 
   .list-item{
@@ -3128,8 +3129,23 @@ html:is([data-theme],:not([data-theme])) .pos-cart-item .pci-q .pci-i{ width:38p
         <div class="form-grid">
           <input type="text" id="banner-title" placeholder="ခေါင်းစဉ် (ဥပမာ NEW ARRIVAL)" required>
           <input type="text" id="banner-subtitle" placeholder="အောက်စာသား (ဥပမာ 20% OFF)">
-          <input type="text" id="banner-link" placeholder="Link (ဥပမာ #products) — Optional">
+          <div class="full bn-linkbox">
+            <label for="banner-link-type">🔗 Banner နှိပ်ရင် ဘယ်ကို သွားမလဲ</label>
+            <select id="banner-link-type">
+              <option value="">Link မချိတ် (ပုံပဲ ပြ · ခလုတ် မပါ)</option>
+              <option value="all">👕 ပစ္စည်းအားလုံး</option>
+              <option value="cat">🗂️ Category တစ်ခု</option>
+              <option value="p">🏷️ ပစ္စည်း တစ်ခု</option>
+              <option value="url">🌐 Link ကိုယ်တိုင်ထည့် (Facebook · TikTok · Website)</option>
+            </select>
+            <select id="banner-link-cat" hidden aria-label="Category ရွေးရန်"></select>
+            <select id="banner-link-p" hidden aria-label="ပစ္စည်း ရွေးရန်"></select>
+            <input type="text" id="banner-link-url" hidden placeholder="https://www.facebook.com/..." inputmode="url" autocapitalize="off">
+            <input type="hidden" id="banner-link">
+            <small class="hint" id="banner-link-hint">Link ချိတ်ရင် Banner ပေါ်မှာ "ဝယ်မည် →" ခလုတ် အလိုလို ပေါ်ပါမယ်</small>
+          </div>
           <input type="number" id="banner-sort" placeholder="Order (နံပါတ်ငယ်ရင် အရင်ပေါ်မည်)" value="0">
+          <label class="full hint" for="banner-image" style="margin:4px 0 -4px;">🖼️ ပုံ — အလျား ပုံ (16:9 · ဥပမာ 1600×900) ဆို အလှဆုံး · ဖုန်းမှာ အလယ်ပိုင်းကို ပြပါမယ်</label>
           <input type="file" id="banner-image" accept="image/*" class="full">
           <div id="banner-image-preview" class="full" style="display:flex; gap:8px; margin-top:6px;"></div>
           <label class="full" style="display:flex; align-items:center; gap:6px; font-family:'Space Mono',monospace; font-size:12.5px;">
@@ -6378,7 +6394,7 @@ async function loadBanners(){
       <img src="${imgSrc}" style="cursor:zoom-in;" onclick="openLightbox('${imgSrc}')">
       <div class="info">
         <h4>${b.title} ${!b.active ? '<span class="mono" style="font-size:10px; color:var(--grey);">(Inactive)</span>' : ''}</h4>
-        <p>${b.subtitle||'-'} · Order: ${b.sort_order} ${b.link_url ? '· Link: '+b.link_url : ''}</p>
+        <p>${b.subtitle||'-'} · Order: ${b.sort_order} · ${!b.link_url ? 'Link မချိတ်' : b.link_url === '#products' ? '🔗 ပစ္စည်းအားလုံး' : /^#cat=/.test(b.link_url) ? '🔗 Category: ' + decodeURIComponent(b.link_url.slice(5)) : /^#p=/.test(b.link_url) ? '🔗 ပစ္စည်း တစ်ခု' : '🔗 ' + b.link_url}</p>
       </div>
       <div class="actions">
         <button class="secondary edit-btn">ပြင်မည်</button>
@@ -6404,6 +6420,47 @@ function editBanner(b){
   document.getElementById('banner-cancel').style.display='inline-block';
   window.scrollTo({top:0, behavior:'smooth'});
 }
+
+// ---------- 🔗 Banner Link ရွေးစနစ် (Nov 14) — ရိုက်စရာ မလို · Website က နားလည်တဲ့ ပုံစံ ထုတ်ပေး ----------
+//   '' · #products · #cat=<Category> · #p=<Product id> · https://…
+(function(){
+  const $ = id => document.getElementById(id);
+  const type = $('banner-link-type'), cat = $('banner-link-cat'), prod = $('banner-link-p'), url = $('banner-link-url'), out = $('banner-link');
+  if(!type) return;
+  const esc = v => String(v ?? '').replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+  let loaded = false;
+  async function loadOpts(){
+    if(loaded) return; loaded = true;
+    try{
+      const [c, p] = await Promise.all([ sb.from('categories').select('name').order('name'), sb.from('products').select('id,name').order('name').limit(1000) ]);
+      cat.innerHTML = '<option value="">— Category ရွေးပါ —</option>' + (c.data || []).map(x => `<option value="${esc(x.name)}">${esc(x.name)}</option>`).join('');
+      prod.innerHTML = '<option value="">— ပစ္စည်း ရွေးပါ —</option>' + (p.data || []).map(x => `<option value="${esc(x.id)}">${esc(x.name)}</option>`).join('');
+      if(out.value) set(out.value);
+    }catch(e){ loaded = false; }
+  }
+  function sync(){
+    const t = type.value;
+    cat.hidden = t !== 'cat'; prod.hidden = t !== 'p'; url.hidden = t !== 'url';
+    out.value = t === 'all' ? '#products' : t === 'cat' ? (cat.value ? '#cat=' + encodeURIComponent(cat.value) : '') : t === 'p' ? (prod.value ? '#p=' + encodeURIComponent(prod.value) : '') : t === 'url' ? url.value.trim() : '';
+  }
+  function set(v){
+    v = String(v || '').trim(); let m;
+    if(!v){ type.value = ''; }
+    else if(v === '#products' || v === '#product'){ type.value = 'all'; }
+    else if((m = v.match(/^#cat=(.+)$/))){ type.value = 'cat'; const n = decodeURIComponent(m[1]); if(![...cat.options].some(o => o.value === n)) cat.insertAdjacentHTML('beforeend', `<option value="${esc(n)}">${esc(n)}</option>`); cat.value = n; }
+    else if((m = v.match(/^#p=(.+)$/))){ type.value = 'p'; const n = decodeURIComponent(m[1]); if(![...prod.options].some(o => o.value === n)) prod.insertAdjacentHTML('beforeend', `<option value="${esc(n)}">(ပစ္စည်း ID ${esc(n.slice(0, 8))})</option>`); prod.value = n; }
+    else { type.value = 'url'; url.value = v; }
+    sync(); out.value = v;
+  }
+  window.bnLinkSet = set;
+  [type, cat, prod].forEach(el => el.addEventListener('change', () => { if(el === type) loadOpts(); sync(); }));
+  url.addEventListener('input', sync);
+  type.addEventListener('focus', loadOpts);
+  document.getElementById('banner-form').addEventListener('submit', sync, true);     // သိမ်းခင် နောက်ဆုံးတန်ဖိုး
+  document.getElementById('banner-form').addEventListener('reset', () => setTimeout(() => set(''), 0));
+  if(typeof editBanner === 'function'){ const _e = editBanner; editBanner = function(b){ const r = _e.apply(this, arguments); loadOpts(); set(b && b.link_url); return r; }; }
+  document.querySelector('.tab-btn[data-tab="banners-panel"]')?.addEventListener('click', loadOpts);
+})();
 
 async function deleteBanner(id, title){
   if(!await adminConfirm('ဒီ Banner ကို ဖျက်မှာ သေချာပါသလား?')) return;
