@@ -281,7 +281,7 @@ begin
   end loop;
 end $function$;
 
--- ---------- L9: chat-images / delivery-photos = Private  (⏳ Owner ခွင့်ပြုမှ Run · index/admin Signed URL Code နဲ့ တွဲ) ----------
+-- ---------- L9: chat-images / delivery-photos = Private  (15 Nov ညနေ Run ပြီး · index/admin Signed URL Code နဲ့ တွဲ) ----------
 -- Website/Admin က Public URL ကို Signed URL (၁ နာရီ) နဲ့ အလိုလို အစားထိုးပြ (index.html / admin.html "Bug L9")
 drop policy if exists "Customers view own chat images" on storage.objects;
 create policy "Customers view own chat images" on storage.objects for select

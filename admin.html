@@ -3412,6 +3412,75 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// 🔒 Private ပုံ (chat-images / delivery-photos) — DB ထဲက Public URL ကို ပြတဲ့အခါ Signed URL (၁ နာရီ) နဲ့ အလိုလို အစားထိုး (Bug L9)
+(function(){
+  const RE = /\/storage\/v1\/object\/public\/(chat-images|delivery-photos)\/([^?#"'\s]+)/;
+  const cache = new Map(), pending = new Map();
+  let timer = null;
+  function flush(){
+    timer = null;
+    const jobs = [...pending.entries()]; pending.clear();
+    jobs.forEach(async ([bucket, m]) => {
+      const paths = [...m.keys()];
+      let res = [];
+      try{ const { data } = await sb.storage.from(bucket).createSignedUrls(paths, 3600); res = data || []; }catch(e){}
+      paths.forEach((p, i) => {
+        const hit = res.find(r => r && r.path === p) || res[i];
+        const url = hit && hit.signedUrl && !hit.error ? hit.signedUrl : null;
+        if(url) cache.set(bucket + '/' + p, { url, exp: Date.now() + 50 * 60 * 1000 });
+        (m.get(p) || []).forEach(fn => fn(url));
+      });
+    });
+  }
+  function sign(bucket, path){
+    const c = cache.get(bucket + '/' + path);
+    if(c && c.exp > Date.now()) return Promise.resolve(c.url);
+    return new Promise(res => {
+      if(!pending.has(bucket)) pending.set(bucket, new Map());
+      const m = pending.get(bucket);
+      if(!m.has(path)) m.set(path, []);
+      m.get(path).push(res);
+      if(!timer) timer = setTimeout(flush, 30);
+    });
+  }
+  function fix(el, attr){
+    if(!el || !el.getAttribute) return;
+    const v = el.getAttribute(attr); if(!v) return;
+    const mm = v.match(RE); if(!mm) return;
+    if(el.dataset.privSign === v) return;
+    el.dataset.privSign = v;
+    let path = mm[2]; try{ path = decodeURIComponent(path); }catch(e){}
+    sign(mm[1], path).then(url => {
+      if(el.getAttribute(attr) !== v) return;
+      if(url) el.setAttribute(attr, url);
+      else if(attr === 'src'){ el.alt = '🔒 ပုံ'; el.style.display = 'none'; }
+    });
+  }
+  function scan(root){
+    if(!root || root.nodeType !== 1) return;
+    if(root.tagName === 'IMG') fix(root, 'src');
+    else if(root.tagName === 'A') fix(root, 'href');
+    root.querySelectorAll('img[src*="/object/public/chat-images/"],img[src*="/object/public/delivery-photos/"]').forEach(el => fix(el, 'src'));
+    root.querySelectorAll('a[href*="/object/public/chat-images/"],a[href*="/object/public/delivery-photos/"]').forEach(el => fix(el, 'href'));
+  }
+  window.privImgUrl = async function(u){
+    const mm = String(u || '').match(RE); if(!mm) return u;
+    let path = mm[2]; try{ path = decodeURIComponent(path); }catch(e){}
+    return (await sign(mm[1], path)) || u;
+  };
+  function start(){
+    if(!document.body){ return setTimeout(start, 50); }
+    scan(document.body);
+    new MutationObserver(list => {
+      for(const r of list){
+        if(r.type === 'attributes') fix(r.target, r.attributeName);
+        else r.addedNodes.forEach(scan);
+      }
+    }).observe(document.documentElement, { childList:true, subtree:true, attributes:true, attributeFilter:['src', 'href'] });
+  }
+  start();
+})();
+
 function showToast(msg){
   const t = document.getElementById('toast');
   // 🫧 Glass Toast — အမျိုးအစားအလိုက် Icon/အရောင် (✅ ⚠️ ❌ 🚫 …)
