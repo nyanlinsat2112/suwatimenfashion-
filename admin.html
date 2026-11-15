@@ -5464,7 +5464,7 @@ async function restoreStockForRows(rows){
 }
 
 // ---------- SETTINGS ----------
-const SETTINGS_PUBLIC_COLS = 'id,kbzpay_qr_url,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
+const SETTINGS_PUBLIC_COLS = 'id,kbzpay_qr_url,kbzpay_qr_text,kbzpay_qr_src,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
 async function loadSettingsForm(){
   // 🔒 admin_email ကို admin_private_settings (Admin သီးသန့်) ကနေ ဖတ် — SECURITY-OCT18.sql မ Run ရသေးရင် settings ကနေ
   let { data, error } = await sb.from('settings').select('*').eq('id', 1).single();
@@ -5490,6 +5490,36 @@ async function loadSettingsForm(){
     img.src = data.kbzpay_qr_url;
     img.style.display='block';
   }
+  try{ syncKbzQrText(data); }catch(e){ console.error(e); }
+}
+
+// 🔳 KBZPay QR ပုံထဲက စာကို ဖတ်ပြီး သိမ်း — Website က SUWATI Style (Logo ပါ) နဲ့ ပြန်ဆွဲပြ
+//    QR ပုံ ပြောင်းတိုင်း အလိုလို ပြန်ဖတ် · ဖတ်မရရင် Website က မူလပုံအတိုင်း ပြ
+async function syncKbzQrText(data){
+  const url = data && data.kbzpay_qr_url;
+  const note = (() => {
+    let el = document.getElementById('kbz-qr-sync');
+    const img = document.getElementById('current-qr');
+    if(!el && img){ el = document.createElement('div'); el.id = 'kbz-qr-sync'; el.style.cssText = 'font-size:12px; margin:6px 0 10px; line-height:1.5;'; img.insertAdjacentElement('afterend', el); }
+    return el;
+  })();
+  const say = (t) => { if(note) note.textContent = t; };
+  if(!url){ say(''); return; }
+  if(data.kbzpay_qr_src === url && data.kbzpay_qr_text){ say('✅ Website မှာ SUWATI Style (Logo ပါ) QR နဲ့ ပြနေပါတယ်'); return; }
+  if(typeof window.__qrDetector !== 'function'){ say(''); return; }
+  say('⏳ QR စာ ဖတ်နေပါတယ်...');
+  try{
+    const blob = await (await fetch(url, { cache:'no-store' })).blob();
+    const bmp = await createImageBitmap(blob);
+    const det = await window.__qrDetector();
+    const res = await det.detect(bmp);
+    const hit = (res || []).find(r => r.format === 'qr_code' && r.rawValue);
+    if(!hit){ say('⚠️ QR ဖတ်မရပါ — Website မှာ မူလပုံအတိုင်း ပြပါမည် (ပုံ ပိုရှင်းတာ ပြန်တင်ကြည့်ပါ)'); return; }
+    const { error } = await sb.from('settings').update({ kbzpay_qr_text: hit.rawValue, kbzpay_qr_src: url }).eq('id', 1);
+    if(error){ say('⚠️ QR စာ သိမ်းမရပါ — ' + error.message); return; }
+    data.kbzpay_qr_text = hit.rawValue; data.kbzpay_qr_src = url;
+    say('✅ QR ဖတ်ပြီး — Website မှာ SUWATI Style (Logo ပါ) QR နဲ့ ပြပါမည်');
+  }catch(e){ console.error(e); say('⚠️ QR စာ ဖတ်မရပါ — Website မှာ မူလပုံအတိုင်း ပြပါမည်'); }
 }
 
 
@@ -14036,6 +14066,7 @@ html[data-theme="light"] .pq-st i{ border-top-color:#5f8f00; }
     return d;
   }
   const getDetector = () => detP || (detP = makeDetector().catch(e => { detP = null; throw e; }));
+  window.__qrDetector = getDetector;   // KBZPay QR စာဖတ်ရန် (Settings)
   // Admin ဖွင့်ပြီး ခဏနေ ကြိုယူထား (ပထမဆုံး Scan မြန်အောင်)
   // (ကြိုမယူတော့ — Scan ခလုတ်နှိပ်မှ Library ယူ · Admin ဖွင့်ချိန် Console Error မထွက်အောင်)
 

@@ -298,3 +298,9 @@ create policy "Customers view own delivery photos" on storage.objects for select
     and exists (select 1 from public.orders o where o.user_id = auth.uid() and o.delivery_photo_url like '%' || name)
   );
 update storage.buckets set public = false where id in ('chat-images', 'delivery-photos');
+
+-- ---------- KBZPay QR — SUWATI Style ပြန်ဆွဲရန် QR စာ ----------
+-- Admin က QR ပုံကို ဖတ်ပြီး kbzpay_qr_text / kbzpay_qr_src (ဘယ်ပုံကနေ ဖတ်လဲ) သိမ်း · Website က src = kbzpay_qr_url ကိုက်မှသာ သုံး
+alter table public.settings add column if not exists kbzpay_qr_text text;
+alter table public.settings add column if not exists kbzpay_qr_src text;
+grant select (kbzpay_qr_text, kbzpay_qr_src) on public.settings to anon, authenticated;

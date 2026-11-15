@@ -382,6 +382,17 @@
   .qr-box{text-align:center; padding:14px; background:#fff; border:2px dashed var(--ink);}
   .qr-box img{max-width:220px; margin:0 auto 10px;}
   .qr-box{color:#141412;} .qr-box .qr-note{color:#5c574c !important;}
+  /* 🔳 KBZPay QR — SUWATI Style (ကရင်မ် · အနက်ကွက် · အလယ် S. Logo) */
+  .kq{ width:min(250px, 100%); margin:0 auto 12px; background:#141412; color:#E9E4D8; border-radius:18px; padding:12px 12px 10px; box-shadow:0 10px 26px rgba(0,0,0,.22); position:relative; }
+  .kq-top{ display:flex; align-items:center; justify-content:space-between; gap:8px; padding:2px 4px 10px; font:700 11px 'Space Mono',monospace; letter-spacing:.12em; }
+  .kq-top b{ font:400 17px 'Anton','Archivo Black',sans-serif; letter-spacing:.04em; }
+  .kq-top b i{ font-style:normal; color:#C13B1F; }
+  .kq-pay{ display:inline-flex; align-items:center; gap:5px; background:#0b56b3; color:#fff; border-radius:999px; padding:3px 9px; font:700 10.5px 'Space Grotesk','Space Mono',sans-serif; letter-spacing:.06em; }
+  .kq-cv{ display:block; width:100%; height:auto; aspect-ratio:1; border-radius:12px; background:#E9E4D8; }
+  .kq-cap{ margin-top:9px; font-size:11.5px; line-height:1.5; color:#cfc8b8; text-align:center; }
+  .kq-save{ display:inline-flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; padding:7px 14px; border-radius:999px; background:#D6FF3F; color:#141412 !important; font:700 12px 'Space Grotesk','Noto Sans Myanmar',sans-serif; text-decoration:none; }
+  .kq-cut{ position:absolute; top:46px; width:14px; height:14px; border-radius:50%; background:#fff; }
+  .kq-cut.l{ left:-7px; } .kq-cut.r{ right:-7px; }
   .qr-note{font-size:12.5px; color:var(--grey); font-family:'Space Mono',monospace; margin-top:8px; line-height:1.6;}
   .upload-box{border:2px dashed var(--ink); padding:16px; text-align:center;}
   .upload-preview{max-width:160px; margin:12px auto 0; border:2px solid var(--ink);}
@@ -2296,6 +2307,12 @@ html[data-theme="dark"] #checkout-modal-content:has(> .lq){
 .lq .msgr-prev{ padding:0 12px; }
 .lq-bar{ flex:0 0 auto; display:flex; align-items:flex-end; gap:8px; padding:8px 10px calc(10px + env(safe-area-inset-bottom)) !important; background:var(--lq-hd); border-top:1px solid var(--lq-edge) !important; }
 .lq .msgr-ib{ background:var(--lq-bub); border:1px solid var(--lq-edge); color:var(--lq-ink); }
+/* 🛠️ ပုံပို့ခလုတ် — .modal-box label (display:block · margin-bottom) က မနိုင်အောင် (15 Nov) */
+.modal-box label.msgr-ib, .lq label.msgr-ib{ display:grid; place-items:center; margin:0; padding:0; width:40px; height:40px; align-self:flex-end; font-size:0; letter-spacing:0; }
+.modal-box label.msgr-ib svg{ width:22px; height:22px; display:block; }
+/* 🏷️ Chat ခေါင်း Logo */
+.lq-av.lq-logo{ background:#1b1b19; overflow:hidden; }
+.lq-av.lq-logo img{ width:80%; height:80%; object-fit:contain; display:block; }
 #checkout-modal-content .lq .msgr-in{ background:var(--lq-bub) !important; border:1px solid var(--lq-edge) !important; color:var(--lq-ink); }
 #checkout-modal-content .lq .msgr-in::placeholder{ color:var(--lq-sub); }
 #checkout-modal-content .lq .msgr-send{ background:var(--lq-acc) !important; box-shadow:0 6px 16px var(--lq-glow) !important; }
@@ -3693,7 +3710,7 @@ let cachedSettings = null;
 async function getSettings(){
   if(cachedSettings) return cachedSettings;
   // 🔒 admin_email ကို Customer ဘက် မယူ (SETTINGS-PRIVACY.sql နဲ့ အတူ) — Column အသစ်ထည့်ရင် ဒီ List ထဲ ထည့်ပါ
-  const COLS = 'id,kbzpay_qr_url,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
+  const COLS = 'id,kbzpay_qr_url,kbzpay_qr_text,kbzpay_qr_src,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
   let { data, error } = await sb.from('settings').select(COLS).eq('id', 1).single();
   if(error){ ({ data, error } = await sb.from('settings').select('*').eq('id', 1).single()); if(data) delete data.admin_email; }
   if(!error) cachedSettings = data;
@@ -4113,7 +4130,7 @@ async function renderCheckoutStep2(){
     <div class="modal-section">
       <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန် — <span id="co-kbz-amount" style="color:var(--rust);">${currentOrder.total.toLocaleString()} ကျပ်</span></div>
       <div class="qr-box">
-        ${qrUrl ? `<img src="${qrUrl}" alt="KBZPay QR">` : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
+        ${qrUrl ? kbzQrHtml(qrUrl) : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
         <div class="qr-note">${instructions}</div>
       </div>
     </div>
@@ -5595,6 +5612,73 @@ function pwMemberCodes(box, id){
   const cv = back.querySelector('.pw-qr canvas');
   if(cv) pwQrLib().then(() => { if(cv.isConnected) pwQrDraw(cv, id); }).catch(() => back.classList.add('no-qr'));
 }
+// 🔳 KBZPay QR — Admin က ဖတ်ထားတဲ့ QR စာ (kbzpay_qr_text) ရှိပြီး ပုံနဲ့ ကိုက်မှသာ SUWATI Style နဲ့ ပြန်ဆွဲ · မဟုတ်ရင် မူလပုံ
+function kbzQrHtml(qrUrl){
+  const st = (typeof cachedSettings !== 'undefined' && cachedSettings) || {};
+  const t = st.kbzpay_qr_text;
+  if(!t || st.kbzpay_qr_src !== qrUrl) return `<img src="${qrUrl}" alt="KBZPay QR">`;
+  const enc = encodeURIComponent(t);
+  return `<div class="kq" data-kq="${enc}">
+    <i class="kq-cut l"></i><i class="kq-cut r"></i>
+    <div class="kq-top"><b>SUWATI<i>.</i>MEN</b><span class="kq-pay">KBZPay</span></div>
+    <canvas class="kq-cv" width="600" height="600" aria-label="KBZPay QR"></canvas>
+    <div class="kq-cap">KBZPay App › Scan နဲ့ ငွေလွှဲပါ<br>ဒီဖုန်းနဲ့ပဲ ချေရင် ပုံသိမ်းပြီး Scan › ပုံရွေးပါ</div>
+    <div style="text-align:center;"><a class="kq-save" download="SUWATI-KBZPay-QR.png" href="${qrUrl}">⬇ ပုံသိမ်းမည်</a></div>
+  </div>`;
+}
+function kbzQrDraw(canvas, text){
+  const q = window.qrcode(0, 'H'); q.addData(text, 'Byte'); q.make();
+  const n = q.getModuleCount(), m = 3, cells = n + m * 2, px = Math.max(6, Math.floor(720 / cells));
+  canvas.width = canvas.height = cells * px;
+  const c = canvas.getContext('2d');
+  c.fillStyle = '#E9E4D8'; c.fillRect(0, 0, canvas.width, canvas.height);
+  let L = Math.round(n * 0.22); if((n - L) % 2) L++;
+  const s0 = (n - L) / 2, s1 = s0 + L;
+  const inFinder = (r, k) => (r < 7 && k < 7) || (r < 7 && k >= n - 7) || (r >= n - 7 && k < 7);
+  const rr = (x, y, w, h, rad) => { c.beginPath(); c.moveTo(x + rad, y); c.arcTo(x + w, y, x + w, y + h, rad); c.arcTo(x + w, y + h, x, y + h, rad); c.arcTo(x, y + h, x, y, rad); c.arcTo(x, y, x + w, y, rad); c.closePath(); c.fill(); };
+  c.fillStyle = '#141412';
+  for(let r = 0; r < n; r++) for(let k = 0; k < n; k++){
+    if(inFinder(r, k)) continue;
+    if(r >= s0 - 1 && r < s1 + 1 && k >= s0 - 1 && k < s1 + 1) continue;
+    if(q.isDark(r, k)) rr((k + m) * px + px * .06, (r + m) * px + px * .06, px * .88, px * .88, px * .28);
+  }
+  // ထောင့် ၃ ခု (Finder) — ထောင့်ဝိုင်း
+  [[0, 0], [0, n - 7], [n - 7, 0]].forEach(([r, k]) => {
+    const x = (k + m) * px, y = (r + m) * px;
+    c.fillStyle = '#141412'; rr(x, y, 7 * px, 7 * px, px * 1.8);
+    c.fillStyle = '#E9E4D8'; rr(x + px, y + px, 5 * px, 5 * px, px * 1.2);
+    c.fillStyle = '#141412'; rr(x + 2 * px, y + 2 * px, 3 * px, 3 * px, px * .9);
+  });
+  // အလယ် Logo — S.
+  const lx = (s0 + m) * px, size = L * px;
+  c.fillStyle = '#141412'; rr(lx, lx, size, size, size * .22);
+  c.fillStyle = '#E9E4D8'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.font = `900 ${Math.round(size * 0.62)}px Arial, Helvetica, sans-serif`;
+  c.fillText('S', lx + size * 0.47, lx + size * 0.53);
+  c.fillStyle = '#C13B1F';
+  const d = Math.round(size * 0.13); c.fillRect(Math.round(lx + size * 0.70), Math.round(lx + size * 0.72), d, d);
+}
+function kbzQrPaintAll(root){
+  const list = (root || document).querySelectorAll ? (root || document).querySelectorAll('.kq[data-kq]:not([data-done])') : [];
+  if(!list.length) return;
+  pwQrLib().then(() => list.forEach(box => {
+    if(box.dataset.done) return;
+    box.dataset.done = '1';
+    const cv = box.querySelector('canvas'), a = box.querySelector('.kq-save');
+    try{
+      kbzQrDraw(cv, decodeURIComponent(box.dataset.kq));
+      try{ if(a) a.href = cv.toDataURL('image/png'); }catch(e){}
+    }catch(e){
+      console.error(e);
+      box.outerHTML = `<img src="${a ? a.getAttribute('href') : ''}" alt="KBZPay QR">`;
+    }
+  })).catch(() => list.forEach(box => { const a = box.querySelector('.kq-save'); box.outerHTML = `<img src="${a ? a.getAttribute('href') : ''}" alt="KBZPay QR">`; }));
+}
+try{
+  new MutationObserver(list => { for(const r of list) if(r.addedNodes.length){ kbzQrPaintAll(document); break; } })
+    .observe(document.documentElement, { childList:true, subtree:true });
+}catch(e){}
+
 let __pwQrP = null;
 function pwQrLib(){
   if(window.qrcode) return Promise.resolve(window.qrcode);
@@ -6109,7 +6193,7 @@ async function openWalletTopup(){
     <div class="modal-section">
       <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန်</div>
       <div class="qr-box">
-        ${qrUrl ? `<img src="${qrUrl}" alt="KBZPay QR">` : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
+        ${qrUrl ? kbzQrHtml(qrUrl) : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
         <div class="qr-note">${instructions}</div>
       </div>
     </div>
@@ -6447,7 +6531,7 @@ async function openPayLaterUpload(idx){
     <div class="modal-section">
       <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန်</div>
       <div class="qr-box">
-        ${qrUrl ? `<img src="${qrUrl}" alt="KBZPay QR">` : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
+        ${qrUrl ? kbzQrHtml(qrUrl) : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
         <div class="qr-note">${instructions}</div>
       </div>
     </div>
@@ -7434,7 +7518,7 @@ async function openGiftCardPurchase(presetAmount){
     <div class="modal-section">
       <div class="modal-label">KBZPAY ဖြင့် ငွေပေးချေရန်</div>
       <div class="qr-box">
-        ${qrUrl ? `<img src="${qrUrl}" alt="KBZPay QR">` : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
+        ${qrUrl ? kbzQrHtml(qrUrl) : '<p class="mono" style="font-size:12px;">QR Code ကို Admin App ကနေ ထည့်ပေးရန် လိုပါသေးသည်</p>'}
       </div>
     </div>
     <div class="modal-section">
@@ -7872,7 +7956,7 @@ async function renderChatWidget(){
   box.innerHTML = `
     <div class="lq">
       <div class="lq-hd">
-        <span class="lq-av">SU</span>
+        <span class="lq-av lq-logo"><img src="/app-icon-192.png" alt="SUWATI" width="44" height="44"></span>
         <span class="lq-nm"><b>SUWATI MEN FASHION</b><small><i class="lq-on"></i>Online · Admin + 🤖 AI ဖြေပေးပါတယ်</small></span>
         <button type="button" class="lq-x" onclick="closeCheckout()" aria-label="ပိတ်ရန်">✕</button>
       </div>${body}
