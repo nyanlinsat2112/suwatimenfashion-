@@ -629,6 +629,14 @@ html[data-theme="dark"] .wishlist-heart svg{ stroke:var(--cream) !important; }
 html[data-theme="dark"] .wishlist-heart.active svg{ stroke:var(--rust) !important; fill:var(--rust) !important; }
 .pin-badge{ background:var(--black) !important; }
 /* ဖုန်းမှာ ဈေးနှုန်းကို အောက်က Row မှာ ပြပြီးသားမို့ Sticker မပြ */
+/* 🏷️ ဈေး Tag နဲ့ "ခုပဲ ကျန်သည်" Tag — အရွယ်/အမြင့် တူအောင် (16 Nov) */
+.card .swatch .tag, .card .swatch .lowstock-tag{ top:auto; bottom:10px; height:30px; padding:0 10px; display:inline-flex; align-items:center; gap:4px; box-sizing:border-box; border-width:2px; border-style:solid; font-family:'Space Mono','Noto Sans Myanmar',monospace; font-size:12px; font-weight:700; line-height:1; white-space:nowrap; transform:none; z-index:2; }
+.card .swatch .tag{ right:10px; left:auto; }
+.card .swatch .lowstock-tag{ left:10px; right:auto; }
+@media (max-width:560px){
+  .card .swatch .tag, .card .swatch .lowstock-tag{ bottom:8px; height:24px; padding:0 7px; font-size:10.5px; }
+  .card .swatch .tag{ right:8px; } .card .swatch .lowstock-tag{ left:8px; }
+}
 @media (max-width:560px){ .card .swatch .tag{ display:none; } }
 
 /* 📍 Checkout လိပ်စာ Dropdown */
