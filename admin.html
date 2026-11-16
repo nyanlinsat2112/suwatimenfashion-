@@ -3247,6 +3247,7 @@ html:is([data-theme],:not([data-theme])) .pos-cart-item .pci-q .pci-i{ width:38p
             <img id="current-qr" alt="" style="max-width:140px; display:none; border:2px solid var(--concrete); margin-bottom:10px;">
           </div>
           <input type="file" id="settings-qr" class="full" accept="image/*">
+          <input type="text" id="settings-kbz-name" class="full" maxlength="60" placeholder="KBZPay Account နာမည် (ဥပမာ Aye Lin Sat) — QR အောက်မှာ ပြပါမည်">
           <textarea id="settings-instructions" class="full" placeholder="ငွေပေးချေမှု ညွှန်ကြားချက်"></textarea>
           <input type="email" id="settings-admin-email" class="full" placeholder="Admin Email (Order အသစ်ရှိရင် အသိပေးမည့် email)">
         </div>
@@ -5464,7 +5465,7 @@ async function restoreStockForRows(rows){
 }
 
 // ---------- SETTINGS ----------
-const SETTINGS_PUBLIC_COLS = 'id,kbzpay_qr_url,kbzpay_qr_text,kbzpay_qr_src,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
+const SETTINGS_PUBLIC_COLS = 'id,kbzpay_qr_url,kbzpay_qr_text,kbzpay_qr_src,kbzpay_name,payment_instructions,ticker_text,gift_wrap_price,delivery_zones,delivery_note,low_stock_threshold,pay_later_enabled,unpaid_cancel_hours,topup_bonus,cart_reminder_hours';
 async function loadSettingsForm(){
   // 🔒 admin_email ကို admin_private_settings (Admin သီးသန့်) ကနေ ဖတ် — SECURITY-OCT18.sql မ Run ရသေးရင် settings ကနေ
   let { data, error } = await sb.from('settings').select('*').eq('id', 1).single();
@@ -5472,6 +5473,7 @@ async function loadSettingsForm(){
   if(error || !data) return;
   try{ const pv = await sb.from('admin_private_settings').select('admin_email').eq('id', 1).maybeSingle(); if(!pv.error && pv.data) data.admin_email = pv.data.admin_email; }catch(e){}
   document.getElementById('settings-instructions').value = data.payment_instructions || '';
+  { const kn = document.getElementById('settings-kbz-name'); if(kn) kn.value = data.kbzpay_name || ''; }
   document.getElementById('settings-admin-email').value = data.admin_email || '';
   document.getElementById('settings-ticker').value = data.ticker_text || '';
   const backupCard = document.getElementById('backup-card');
@@ -5938,6 +5940,7 @@ document.getElementById('settings-form').addEventListener('submit', async (e)=>{
   const file = document.getElementById('settings-qr').files[0];
   const adminEmail = document.getElementById('settings-admin-email').value.trim();
   const payload = { payment_instructions: document.getElementById('settings-instructions').value };
+  { const kn = document.getElementById('settings-kbz-name'); if(kn) payload.kbzpay_name = kn.value.trim() || null; }
   if(file){
     const url = await uploadImage(file);
     if(url) payload.kbzpay_qr_url = url;

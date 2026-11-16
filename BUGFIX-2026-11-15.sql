@@ -304,3 +304,7 @@ update storage.buckets set public = false where id in ('chat-images', 'delivery-
 alter table public.settings add column if not exists kbzpay_qr_text text;
 alter table public.settings add column if not exists kbzpay_qr_src text;
 grant select (kbzpay_qr_text, kbzpay_qr_src) on public.settings to anon, authenticated;
+
+-- ---------- KBZPay Account နာမည် (QR အောက်မှာ ပြ · Admin › Settings ကနေ ပြင်) ----------
+alter table public.settings add column if not exists kbzpay_name text;
+grant select (kbzpay_name) on public.settings to anon, authenticated;
