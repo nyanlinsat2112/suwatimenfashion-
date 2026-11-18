@@ -5696,11 +5696,48 @@ function kbzQrPaintAll(root){
     const host = box.closest('.qr-box') || box.parentElement;
     if(host && !host.querySelector('.kq-dl')){
       const dl = document.createElement('div'); dl.className = 'kq-dl';
-      dl.innerHTML = `<a class="kq-save" download="SUWATI-KBZPay-QR.png" href="${href}">⬇ QR ပုံ သိမ်းမည်</a>
+      dl.innerHTML = `<button type="button" class="kq-save">⬇ QR ပုံ သိမ်းမည်</button>
         <small>ဒီဖုန်းနဲ့ပဲ ငွေချေမယ်ဆိုရင် — ပုံသိမ်းပြီး KBZPay › Scan › 🖼 ပုံရွေးပါ</small>`;
       host.appendChild(dl);
+      const sb = dl.querySelector('.kq-save');
+      if(sb) sb.addEventListener('click', () => kbzQrSave(cv, sb));
     }
   })).catch(() => list.forEach(back));
+}
+// ⬇ QR ပုံ သိမ်း — iOS/PWA မှာ <a download> မအလုပ်လုပ်လို့ Share Sheet (Save Image) အရင် · မရရင် Download · iOS မှာ ပုံပြပြီး ဖိနှိပ်ခိုင်း
+async function kbzQrSave(cv, btn){
+  const NAME = 'SUWATI-KBZPay-QR.png';
+  const blob = await new Promise(res => { try{ cv.toBlob(res, 'image/png'); }catch(e){ res(null); } });
+  if(!blob){ let u=''; try{ u = cv.toDataURL('image/png'); }catch(e){} if(u) kbzQrShowImg(u); return; }
+  let file = null;
+  try{ file = new File([blob], NAME, { type:'image/png' }); }catch(e){}
+  try{
+    if(file && navigator.canShare && navigator.canShare({ files:[file] })){
+      await navigator.share({ files:[file], title:'SUWATI KBZPay QR' });
+      return;
+    }
+  }catch(e){ if(e && e.name === 'AbortError') return; }
+  const ua = navigator.userAgent || '';
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if(isIOS){ kbzQrShowImg(URL.createObjectURL(blob)); return; }
+  try{
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = u; a.download = NAME; a.style.display = 'none';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { a.remove(); URL.revokeObjectURL(u); }, 5000);
+  }catch(e){ try{ kbzQrShowImg(cv.toDataURL('image/png')); }catch(e2){} }
+}
+function kbzQrShowImg(url){
+  const old = document.getElementById('kq-img-ov'); if(old) old.remove();
+  const ov = document.createElement('div'); ov.id = 'kq-img-ov';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(20,20,18,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;box-sizing:border-box;';
+  ov.innerHTML = '<div style="color:#fff;font-size:14px;text-align:center;line-height:1.6;">QR ပုံကို <b>ဖိနှိပ်ထား</b>ပြီး<br><b>"Add to Photos"</b> (သို့) <b>"Save Image"</b> ရွေးပါ</div>'
+    + '<img alt="KBZPay QR" style="max-width:100%;max-height:68vh;border-radius:12px;background:#E9E4D8;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto;">'
+    + '<button type="button" style="min-height:46px;padding:10px 28px;border:2px solid #fff;background:transparent;color:#fff;font-size:15px;border-radius:10px;">✕ ပိတ်မည်</button>';
+  ov.querySelector('img').src = url;
+  ov.querySelector('button').onclick = () => ov.remove();
+  document.body.appendChild(ov);
 }
 try{
   new MutationObserver(list => { for(const r of list) if(r.addedNodes.length){ kbzQrPaintAll(document); break; } })
